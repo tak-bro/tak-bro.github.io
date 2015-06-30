@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>임베디드 소프트웨어 - IEEE 802.15.4, 15.4e</title>
+    <meta name="description" content="" />
+    
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="../assets/images/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="../assets/css/screen.css?v=8b1a777478" />
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <link rel="stylesheet" type="text/css" href="../assets/css/prism.css?v=8b1a777478" />
+    
+    
+   
+
+
+    <link rel="canonical" href="http://localhost:2368/imbedideu-sopeuteuweeo-iot-peurotokol-nonmun02/" />
+    
+    <meta property="og:site_name" content="Pythonic" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="임베디드 소프트웨어 - IEEE 802.15.4, 15.4e" />
+    <meta property="og:description" content="프로토콜 버전 버전 : 15.4  2003 ~ 2006년도 버전 : 15.4e  (4e : Industry IoT, 산업용 IoT) ~ 2010    Industry IoT의 특징:         신뢰성   예전부터 무선통신은 신뢰성과는 관련이 없었지만, 신뢰성이 있다고 얘기함(but 잘 안믿음. banking, VPN처럼)   ex) Internet &amp;lt;-&gt; Intranet   방향 : battery..." />
+    <meta property="og:url" content="http://localhost:2368/imbedideu-sopeuteuweeo-iot-peurotokol-nonmun02/" />
+    <meta property="article:published_time" content="2015-03-17T07:31:16.250Z" />
+    <meta property="article:modified_time" content="2015-04-10T04:15:05.037Z" />
+    <meta property="article:tag" content="Embedded Software" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="임베디드 소프트웨어 - IEEE 802.15.4, 15.4e" />
+    <meta name="twitter:description" content="프로토콜 버전 버전 : 15.4  2003 ~ 2006년도 버전 : 15.4e  (4e : Industry IoT, 산업용 IoT) ~ 2010    Industry IoT의 특징:         신뢰성   예전부터 무선통신은 신뢰성과는 관련이 없었지만, 신뢰성이 있다고 얘기함(but 잘 안믿음. banking, VPN처럼)   ex) Internet &amp;lt;-&gt; Intranet   방향 : battery..." />
+    <meta name="twitter:url" content="http://localhost:2368/imbedideu-sopeuteuweeo-iot-peurotokol-nonmun02/" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Pythonic",
+    "author": {
+        "@type": "Person",
+        "name": "njir",
+        "image": "http://localhost:2368/content/images/2015/03/tumblr_mjm5ksBtYP1r9164to1_500.jpg",
+        "url": "http://localhost:2368/author/tak",
+        "sameAs": null
+    },
+    "headline": "임베디드 소프트웨어 - IEEE 802.15.4, 15.4e",
+    "url": "http://localhost:2368/imbedideu-sopeuteuweeo-iot-peurotokol-nonmun02/",
+    "datePublished": "2015-03-17T07:31:16.250Z",
+    "dateModified": "2015-04-10T04:15:05.037Z",
+    "keywords": "Embedded Software",
+    "description": "프로토콜 버전 버전 : 15.4  2003 ~ 2006년도 버전 : 15.4e  (4e : Industry IoT, 산업용 IoT) ~ 2010    Industry IoT의 특징:         신뢰성   예전부터 무선통신은 신뢰성과는 관련이 없었지만, 신뢰성이 있다고 얘기함(but 잘 안믿음. banking, VPN처럼)   ex) Internet &amp;lt;-&gt; Intranet   방향 : battery..."
+}
+    </script>
+
+    <meta name="generator" content="Ghost 0.5" />
+    <link rel="alternate" type="application/rss+xml" title="Pythonic" href="http://localhost:2368/rss/" />
+    <script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+ 	 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+ 	 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+ 		 })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ 		 ga('create', 'UA-46214266-2', 'auto');
+ ga('send', 'pageview');
+	
+		</script>
+    
+    <script>
+			window.techno = {
+				baseUrl: 'http://localhost:2368',
+				hbData: {
+					pagination:{
+						pages: ''
+					}
+				}
+			};
+			
+		window.techno.config = { 
+	
+		logo: '[YOUR LOGO]',
+		author: {			
+				social: [
+					{ 
+					   href: 'https://github.com/njir',
+					   icon: 'fa-github',
+					   title: 'Github'
+					},
+					{ 
+						href: 'https://twitter.com/njir123',
+					  icon: 'fa-twitter',
+						title: 'Twitter'
+					},
+					{ 
+						href: 'https://www.linkedin.com/in/hyungtak',
+					  icon: 'fa-linkedin',
+						title: 'LinkedIn'
+					},
+					{ 
+						href: 'mailto:njir.naver@daum.net',
+					  icon: 'fa-envelope',
+						title: 'Email'
+					},
+					{ 
+						href: 'https://njir.github.io/rss/',
+					  icon: 'fa-rss',
+						title: 'Rss'
+					}
+				]
+		},
+		disqus: {
+				shortname: '[YOUR DISQUS SHORTNAME]'
+		},
+		google: {
+				analytics: function(ga) {
+					var account ='[YOUR GA ACCOUNT]';
+					var domain = '[YOUR GA DOMAIN]';
+
+					ga('create', account, domain);
+					//ga('require', 'displayfeatures');
+					ga('send', 'pageview');
+				}
+		},
+};
+			
+			
+			
+	</script>
+     
+    
+    
+</head>
+<body class="post-template tag-embedded-software nav-closed">
+
+    <div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="index.html#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+            <li class="nav-home" role="presentation"><a href="../index.html">Home</a></li>
+            <li class="nav-advanced-java" role="presentation"><a href="../tag/advanced-java/index.html">Advanced Java</a></li>
+            <li class="nav-embedded-software" role="presentation"><a href="../tag/embedded-software/index.html">Embedded Software</a></li>
+            <li class="nav-swift" role="presentation"><a href="../tag/swift/index.html">Swift</a></li>
+    </ul>
+    <a class="subscribe-button icon-feed" href="../rss/index.html">Subscribe</a>
+</div>
+<span class="nav-cover"></span>
+
+
+    <div class="site-wrapper">
+
+        
+
+
+<header class="main-header tag-head " style="background-image: url(../content/images/2015/03/camera-581126_1920.jpg)">
+    <nav class="main-nav overlay clearfix">
+        <a class="blog-logo" href="http://localhost:2368"><img src="../content/images/2015/03/ghost-2.png" alt="Blog Logo" /></a>
+            <a class="menu-button" href="index.html#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
+    </nav>
+    
+    <div class="vertical">
+        <div class="main-header-content inner">
+            <h1 class="page-title">Embedded Software</h1>
+            <h2 class="page-description">
+                임베디드 소프트웨어 - IEEE 802.15.4, 15.4e
+            </h2>
+        </div>
+    </div>
+
+</header>
+
+
+
+<main class="content" role="main">
+    <article class="post tag-embedded-software">
+
+        <header class="post-header">
+            <h2 class="post-title">임베디드 소프트웨어 - IEEE 802.15.4, 15.4e</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2015-03-17">17 March 2015</time>  on <a href="../tag/embedded-software/index.html">Embedded Software</a>
+            </section>
+        </header>
+
+
+        <section class="post-content">
+        
+            <h4 id="">프로토콜 버전</h4>
+
+<ul>
+<li>버전 : 15.4 
+<ul><li>2003 ~ 2006년도</li></ul></li>
+<li>버전 : <strong>15.4e</strong>  (4e : Industry IoT, 산업용 IoT)
+<ul><li>~ 2010 </li></ul></li>
+</ul>
+
+<blockquote>
+  <p><strong>Industry IoT의 특징:</strong></p>
+  
+  <ul>
+  <li>신뢰성
+  <ul><li>예전부터 무선통신은 신뢰성과는 관련이 없었지만, 신뢰성이 있다고 얘기함(but 잘 안믿음. banking, VPN처럼)</li>
+  <li>ex) Internet &lt;-> Intranet</li>
+  <li>방향 : battery -> "Wifi" -> <strong>속도를 높이는게 목표</strong></li></ul></li>
+  <li>실시간성</li>
+  <li>Industry IoT의 표준화 : IEC, ISO (국제 표준이 완성됨)</li>
+  <li>IoT의 표준화 목표 : IETF(인터넷 표준 만드는 곳) -> GP IoT</li>
+  </ul>
+</blockquote>
+
+<p>이 논문에서는 산업용 IoT에 대한 얘기를 많이함</p>
+
+<hr />
+
+<h4 id="ieee802154">IEEE 802.15.4</h4>
+
+<ul>
+<li>Low-Power Radio Hardware
+<ul><li>무선으로 radio가 나감(transmission over the air)</li>
+<li>데이터를 아날로그 시그널로 바꿔줘야함</li>
+<li>PA에서 신호 증폭해서 송신</li>
+<li>sensitivity : 리시버가 받을 수 있는 가장 약한 신호, 
+<ul><li>1pW까지 받을 수 있음  </li></ul></li>
+<li>low power radio의 output : 0 dBm or 1mW</li>
+<li>-90 dBm : 1pW</li>
+<li>단위 Conversion 중요</li></ul></li>
+</ul>
+
+<blockquote>
+  <p><strong>decibel과 dBm의 차이</strong></p>
+  
+  <ul>
+  <li>decibel은 bel의 1/10</li>
+  <li>dB : 어떤 측정값을 log스케일로 표현</li>
+  <li>dBm : mW단위의 전력을 dB스케일로 나타낸 단위
+  <ul><li>dBm은 절대값 </li></ul></li>
+  <li>1W : 0dB(10*log1 = 0dB)
+  <ul><li>1mW = -30dB</li></ul></li>
+  </ul>
+</blockquote>
+
+<ul>
+<li>Fading, Shadowing 때문에 시그널이 약해짐</li>
+</ul>
+
+<blockquote>
+  <p><strong>Fading</strong></p>
+  
+  <ul>
+  <li>Fading : 경로가 다른 2 이상의 전파가 간섭(상보, 소멸)하여 신호가 불규칙하게 변하는 현상
+  <ul><li>ex) AP에서 스마트폰이 신호를 받을 때 여러개가 보내지는데 각각의 신호가 동시에 도착하지 않는다. 이 신호들이 서로 간섭하여 신호가 일그러짐 </li></ul></li>
+  <li>이를 막기 위해 <strong>다이버시티</strong> 사용</li>
+  </ul>
+</blockquote>
+
+<ul>
+<li>dBm 높다는 것은 약한신호도 증폭할 수 있다.</li>
+<li>PA &amp; LNA : 상당량의 전류 소모
+<ul><li>ex) AT86RF231이라는 칩을 사용하면 13mA 전류가 흐른다.</li></ul></li>
+<li>결론 : 보내는 거와 받는 과정이 모두 파워 소모를 한다.
+<ul><li>이 파워가 모두 배터리다.</li>
+<li>ex) AA 배터리가 3000mAh일 때, 13mA 소모하는 칩을 사용하면 230시간동안, 10일동안 사용 가능(3000mAh / 13mA = 230h = 약 10일)
+<ul><li>mAh : charge의 단위, coulomb : 1A가 1초동안 흐른 전하량</li></ul></li></ul></li>
+</ul>
+
+<h4 id="ieee802154e">IEEE 802.15.4e</h4>
+
+<ul>
+<li>IEEE 802.15.4 PHY layer는 오프셋을 사용하는 QPSK 방식(<strong>O-QPSK</strong>) 사용</li>
+<li>250 kbps로 굉장히 낮음</li>
+<li>8 more chips are sent over a 2 Mcps link. -> Direct Sequence Spread Spectrum(DSSS)</li>
+<li><p>128 bytes 의 기본 슬롯 싸이클(아래 그림 참조)
+<img src="https://njir-github-io-njir-5.c9.io/content/images/1.png" alt="" /></p>
+
+<ul><li>그림(b)의 time slot이 그림(a)의 각 0,1,2,..에 들어간다.</li></ul></li>
+<li><p>채널 하핑 : 보내거나 받을게 있을때만 깨어남 나머지는 잔다.(아래 그림 참조)
+<img src="https://njir-github-io-njir-5.c9.io/content/images/2.png" alt="" /></p>
+
+<ul><li>위의 time slot 0에서는 A, B를 제외하곤 다른들은 다 잔다.</li>
+<li>time slot 1에서는 DCA 세개만 깨어있음(둘이 동시에 보내면 깨지기 때문에 캐리어 센싱)</li>
+<li>time slot 3은 BFEGD가 깨어있으나 주파수가 다르기 때문에 싱크를 계속 맞춰야한다. 즉, 100ms 마다 비콘을 맞추고 있는것(beaconing과는 다름)</li></ul></li>
+<li><p>15.4e : 채널 하핑(Fig1,2, 그림) + <strong>Beacon(동시에 깨어나고 자는 방식)</strong> </p>
+
+<blockquote>
+  <ul><li>Beaconing : 동시에 자고 동시에 일어나는 방식</li>
+  <li>Hopping은 TSMP의 방식</li></ul>
+</blockquote></li>
+<li><p>위의 두 방식을 통해 1%를 낮출 수 있음</p></li>
+</ul>
+
+<blockquote>
+  <p><strong>TSMP</strong></p>
+  
+  <ul>
+  <li>표준 프로토콜이 아님</li>
+  <li>산업용으로는 많이 사용
+  <ul><li>ex) Emerson : 공장에 9200개의 산업용 네트워크 설치, steel, refineries, chemical, industrial ....</li></ul></li>
+  <li>GP IoT</li>
+  </ul>
+</blockquote>
+            
+            
+            
+              
+            
+            
+            
+        </section>
+
+        <footer class="post-footer">
+
+
+            <figure class="author-image">
+                <a class="img" href="../author/tak/index.html" style="background-image: url(../content/images/2015/03/tumblr_mjm5ksBtYP1r9164to1_500.jpg)"><span class="hidden">njir's Picture</span></a>
+            </figure>
+
+            <section class="author">
+                <h4><a href="../author/tak/index.html">njir</a></h4>
+
+                    <p>Read <a href="../author/tak/index.html">more posts</a> by this author.</p>
+                <div class="author-meta">
+                    
+                    
+                </div>
+            </section>
+
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="https://twitter.com/share?text=%EC%9E%84%EB%B2%A0%EB%94%94%EB%93%9C%20%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4%20-%20IEEE%20802.15.4%2C%2015.4e&amp;url=http://localhost:2368/imbedideu-sopeuteuweeo-iot-peurotokol-nonmun02/"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:2368/imbedideu-sopeuteuweeo-iot-peurotokol-nonmun02/"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://localhost:2368/imbedideu-sopeuteuweeo-iot-peurotokol-nonmun02/"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+
+
+
+
+                <div id="disqus_thread"></div>
+                  <script type="text/javascript">
+                  /* * * CONFIGURATION VARIABLES * * */
+                           var disqus_shortname = 'njir';
+    
+                              /* * * DON'T EDIT BELOW THIS LINE * * */
+                 (function() {
+                       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                       })();
+                       </script>
+                    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+            
+
+
+
+
+
+
+
+        </footer>
+
+    </article>
+</main>
+
+
+
+        <footer class="site-footer clearfix">
+            <section class="copyright"><a href="http://localhost:2368">Pythonic</a> &copy; 2015</section>
+            <section class="poweredby">Proudly published with <a href="https://ghost.org">Ghost</a></section>
+        </footer>
+
+    </div>
+
+    <script src="../public/jquery.js?v=8b1a777478"></script>
+
+    <script type="text/javascript" src="../assets/js/jquery.fitvids.js?v=8b1a777478"></script>
+    <script type="text/javascript" src="../assets/js/index.js?v=8b1a777478"></script>
+    <script type="text/javascript" src="../assets/js/prism.js?v=8b1a777478"></script>
+    <script type='text/javascript' src="../assets/js/knockout-3.3.0.js?v=8b1a777478"></script>
+  
+
+</body>
+</html>

@@ -1,0 +1,2726 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Pythonic]]></title><description><![CDATA[Thoughts, stories and ideas.]]></description><link>http://localhost:2368/</link><generator>Ghost 0.5</generator><lastBuildDate>Tue, 30 Jun 2015 12:58:10 GMT</lastBuildDate><atom:link href="http://localhost:2368/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[임베디드 소프트웨어 - 6Lowpan Layer]]></title><description><![CDATA[<h6 id="6lowapn">6lowapn</h6>
+
+<ul>
+<li>6lowpan layer(= Adapation layer) 기능
+<ul><li>MTU F&amp;R
+<ul><li>1.2K -> 128 bytes</li></ul></li>
+<li>Header Compression
+<ul><li>IPv6 Header : 40 bytes(16src+16dst+8)</li>
+<li>UDP : 8 bytes</li></ul></li></ul></li>
+</ul>
+
+<hr>
+
+<ul>
+<li><p>A(origin)->B->C->D(final dst)</p>
+
+<blockquote>
+  <ul><li>A &lt;-> B : NetworkA </li>
+  <li>B &lt;-> C : NetworkB</li>
+  <li><strong><em>실제 네트워크 주소는 MAC 주소이다.</em></strong>
+  <ul><li>따라서 MAC 헤더는 매번 바뀐다.</li></ul></li></ul>
+</blockquote>
+
+<ul><li>IPv6 128bits
+<ul><li>[   64   ][   64   ]</li>
+<li>64 : Network ~ Prefix</li>
+<li>64 : Host ID &lt;= MAC &lt;- EUI 64</li></ul></li>
+<li>IPv4 : A,B,C 클래스 형태 -> CIDR(Classless Inter Domain Router)
+<ul><li>현재 우리가 쓰고 있는 형태</li></ul></li></ul></li>
+</ul>
+
+<hr>
+
+<ul>
+<li>3가지 경우</li>
+<li>1) A->B
+<ul><li>[IP][10bytes]</li>
+<li>IPv4 : [MAC][IP][DAta]</li>
+<li>[A->B]이 없음(mac, ip사이에) 32bit가 없어짐</li>
+<li>[IP] : 8bytes</li>
+<li>MAC : B&lt;-A</li>
+<li>IP : 8</li>
+<li>data : 10</li></ul></li>
+<li>2) A->B
+<ul><li>100bytes</li>
+<li>[ip][0 ~    50][51 <del> 100]</del></li>
+<li>fragmentation
+<ul><li>각각의 패킷에 ID와 변위(offset)정보가 들어간다.</li>
+<li>여기서 ID는 서로 같다</li></ul></li></ul></li>
+<li>[MAC][A->B][id][8byte | ~~    ] <br>
+<ul><li>ID가 같다. offset 0~50</li></ul></li>
+<li>[MAC][A->B][id][8 |  ~~   ] <br>
+<ul><li>ID가 같다. offset 50 ~00
+** 여기서도 [A->B] 없어도 된다. 압축 가능</li></ul></li>
+<li><p>3) A->B->C : 여기서는 Header가 있어야 한다.</p></li>
+<li><p>위 패킷에서 8byte 정보를 1bytes로 줄이는거</p></li>
+</ul>
+
+<hr>
+
+<p><strong>중요 시험문제</strong></p>
+
+<h6 id="ipv6neighbordiscovery">IPv6 Neighbor Discovery</h6>
+
+<blockquote>
+  <p>ARP : IP주소 -> MAC주소로 변환
+  IPv6에서는 ARP가 존재하지 않음(ARP가 ND와 합쳐짐)</p>
+</blockquote>
+
+<ul>
+<li>Host의 전원이 켜졌을 때 
+<ul><li>1) RS(Router Solicitation) : Host가 Router가 어딨냐고 물어봄</li>
+<li>2) RA(Router Advertisement) : 라우터가 응답함
+<ul><li>Host는 Netowrk Prefix를 얻어옴(주소)</li></ul></li>
+<li>3) DAD(Duplicate Address Detection)</li>
+<li>4) NS(Neighbor Solicitaion) : My address. 네트워크에 내 주소를 뿌림(내 주소를 누가 쓰고있는지 확인하기위해)
+<ul><li>주소가 중복된다면 NA(Neighbor Address)를 받음(없어야 정상임)</li></ul></li></ul></li>
+<li><strong>4가지의 ICMP 메세지 : RS, RA, NS, NA</strong></li>
+<li>Stateless AA</li>
+</ul>
+
+<hr>
+
+<h6 id="dhcp">DHCP</h6>
+
+<ul>
+<li>가장 많이 쓰임</li>
+<li>1) RS</li>
+<li>2) RA</li>
+<li>3) DHCP Requeset 라우터가 DHCP Server에 Request</li>
+<li>4) DHCP Reply : 서버로부터 IP를 받아옴</li>
+<li>DHCP는 <strong>Stateful AA(Stateful Address Auto Configuration)</strong>
+<ul><li>IPv6 ND는 중복을 각자가 감지하지만 DHCP는 서버가 중복을 처리함</li></ul></li>
+</ul>
+
+<p>DBM, SNR, Channel Scheduling, Mesh Header, ND 용어 무엇인지</p>
+
+<hr>
+
+<h6 id="6lowpannd">6lowpan ND</h6>
+
+<ul>
+<li>IPv6 ND는 DHCP를 커버하기 어려움</li>
+<li>A -> B -> C -> D(Router)
+<ul><li>1)A -> B : RS RA 과정을 거침</li>
+<li>2) A -> B : NS</li>
+<li>3) B -> Router : Soft Cache (DB에 아이피를 저장하는 형태, 하지만 시간이 지나면 expire)</li>
+<li>4) Router -> B : Unicast(IP정보를 B에게 Unicast로 전달)</li>
+<li>5) B->A : NA</li></ul></li>
+</ul>]]></description><link>http://localhost:2368/imbedideu-sopeuteuweeo-6lowpan-layer/</link><guid isPermaLink="false">5f9ae77f-868e-4471-8b6c-5fb1ce2c0122</guid><category><![CDATA[Embedded Software]]></category><dc:creator><![CDATA[njir]]></dc:creator><pubDate>Thu, 16 Apr 2015 10:07:55 GMT</pubDate></item><item><title><![CDATA[임베디드 소프트웨어 - Connecting to the Internet 02]]></title><description><![CDATA[<h6 id="pathmtudiscovery">Path MTU Discovery</h6>
+
+<ul>
+<li>Path MTU는 전체 구간의 <strong>최소값</strong>임</li>
+<li>IPv6는 중간에 짜르는게 안됨(Fragmentation X)</li>
+<li><p>IPv6 : 128bit = 16byte(주소) -> 40byte(16byte SRC + 16byte DST + 8byte)</p>
+
+<blockquote>
+  <p><strong><em>why?</em></strong></p>
+  
+  <ul><li>Packet header가 4배나 늘어남 -> 속도 느려짐</li>
+  <li>라우터의 유연한 기능은 버리자</li></ul>
+</blockquote></li>
+<li><p>IPv6는 전송을 못하면 ICMP Error를 전송(B->A)</p>
+
+<ul><li>A -> B -> <strong>(IoT구간 MTU=128byte) C -> D</strong>
+<ul><li>A: MTU=100k</li>
+<li>B: MTU=50k</li>
+<li>C: MTU=128byte(실제로)</li></ul></li>
+<li>ICMP Error(PTM)</li>
+<li>B->C로 보낼 때 <strong>C는 MTU를 1.2K라고 보냄(프로토콜 상)</strong></li>
+<li>결국 C는 1.2K 패킷을 받게 됨</li>
+<li>이 패킷을 1/10로 나눠야함 -> 6LoWPAN</li></ul></li>
+</ul>
+
+<hr>
+
+<h6 id="6lowpanadaptationlayer25shimlayer">6LoWPAN = Adaptation Layer(2.5계층, Shim Layer)</h6>
+
+<ul>
+<li>Error가 크고, 속도가 느리고, <strong>Low Power Consumption</strong>(<strong><em>원인</em></strong>)-> MTU가 128byte로 작아짐(<strong><em>결과</em></strong>)
+
+
+<blockquote>
+  <p><strong>Adaptation Layer가 필요한 이유:</strong></p>
+  
+  <ul><li><strong>Fragmentation &amp; Reassemble</strong>(필수)</li>
+  <li>Header Compression
+  <ul><li>IPv6의 헤더 크기를 줄임(꼭 안해도 됨)</li></ul></li></ul></blockquote></li>
+  </ul>
+  
+  <p><img src="https://njir-github-io-njir-5.c9.io/content/images/packet.png" alt="">
+   - FCF부터 FChk까지가 127bytes
+   - Len(1bytes)까지 포함해서 128bytes
+   - SFD : 패킷 관련 내용 시작
+   - Dst16, Src16 : 맥주소 (Dst가 중요함. 내가 듣고 있다가 DST가 ‘나’이면 그 이후부터 들으면 됨)
+    - 그 이후부터 데이터임
+  <strong>Mac주소의 사이즈</strong> : EUI 48, 64bit(대세는 64bit가 되어감)</p>
+
+
+<hr>
+
+
+
+
+<h6 id="routeroverip">Router Over IP</h6>
+
+<img src="https://njir-github-io-njir-5.c9.io/content/images/routeoverip.png" alt="Router Over IP">
+
+<ul>
+<li>IP계층의 헤더를 보고 라우팅함.</li>
+<li>중간 라우터 오버헤드 높음</li>
+<li>속도 느림(중간에 매번 합쳐지고 다시 쪼개고 그러니까)</li>
+<li>메모리 많이 있어야함</li>
+<li>미국의 IETF의 표준</li>
+<li>ex) 첫번째 그림에서 파란색 부분을 쪼개야 할 때(A->B)
+<ul><li>1) B&lt;-A [  A->D | Data1  ] </li>
+<li>2) B&lt;-A [ ----  Data2 ----    ] </li>
+<li>3) B&lt;-A [ ----  Data3 ----    ]
+<ul><li>2), 3)은 어디로 보낼지 헤더 정보가 없다.</li>
+<li>해결방법 : 쪼개진 패킷은 각각의 ID가 있는데, 중간 라우터마다 다시 합치고 쪼갠다(Fragmentation &amp; Reassemble)</li></ul></li></ul></li>
+</ul>
+
+<hr>
+
+<h6 id="meshunderip">Mesh Under IP</h6>
+
+<ul>
+<li>중간 라우터에서 합쳐지지 않고 따로따로 감 </li>
+<li>도착지에서 합쳐지기 때문에 중간에 유실되면 확인방법 없음</li>
+<li>속도 빠름, 중간 라우터에서 메모리 필요 없음</li>
+<li>유럽의 ISO, IEC 는 Mesh Under로 표준</li>
+<li>ex) A->B로 보낼 때 쪼개긴 하지만 A->D 정보를 쪼개진 패킷의 Adaptation Layer에 각각 넣음
+<ul><li>[A->D][Data1]</li>
+<li>[A->D][Data2]</li>
+<li>[A->D][Data3]
+<ul><li>경로 정보가 각각의 패킷에 담겨있다.</li>
+<li><strong>앞으로 뺀 헤더([A->B])를 Mesh Header =  MultiHop Header 라 부른다.</strong></li>
+<li>각각의 독립적인 패킷이 되버림</li></ul></li></ul></li>
+</ul>]]></description><link>http://localhost:2368/imbedi/</link><guid isPermaLink="false">d5aa1d28-f9ff-4e61-a489-35af4f86d9ec</guid><category><![CDATA[Embedded Software]]></category><dc:creator><![CDATA[njir]]></dc:creator><pubDate>Tue, 07 Apr 2015 05:37:56 GMT</pubDate></item><item><title><![CDATA[임베디드 소프트웨어 - Connecting to the Internet 01]]></title><description><![CDATA[<h6 id="ieee802154ewifipowerplugmainpowerbatteryonnoreplace">IEEE802.15.4e가 wifi에 비해 에너지 소모를 줄일 수 있는 방법(Power Plug : Main Power, Battery On : No Replace)</h6>
+
+<ul>
+<li>TSCH(Time Slicing이 배터리, Channel Hopping이 패딩(jamming) 방지)
+<ul><li>time slicing, 계속 잘라서 쓰자</li>
+<li>필요할 때만 온전히 다쓴다.</li>
+<li>최소단위로 쪼개서 쓰는 것</li></ul></li>
+<li>Beaconning
+<ul><li>비콘이 뜰 때 Cyclic Behavior(주기적으로 깨어남)</li></ul></li>
+</ul>
+
+<blockquote>
+  <p><strong>Notes:</strong> 
+  둘다 표준이지만 모두 다 구현할 필요 없다. 대세는 TSCH방식 </p>
+  
+  <p>Frequency Hopping은 Jamming을 방지하기 위해(배터리와는 무관)</p>
+</blockquote>
+
+<hr>
+
+<h6 id="2bacd">2. B-> A &lt;- C &lt;- D</h6>
+
+<p><img src="https://njir-github-io-njir-5.c9.io/content/images/abce.png" alt=""></p>
+
+<ul>
+<li>cycle 0일 때
+아무것도 안붙어있으면 0번만 듣고 있음</li>
+<li>ex) Offset = 0, slot = 0 : A가 Advertisement (A->ALL)
+<ul><li>B와 C가 Join request 해야함(<strong><em>Join Request는 동시에 할 수 없음</em></strong>)</li>
+<li>A가 B,C에게 Join Response</li>
+<li>A가 C에게 Set Link(off=0, t=2, Adv / off=1, t=2, RX모드), SetLink(... C->A)</li>
+<li>C가 Adv</li>
+<li>D가 C에게 Join Request</li>
+<li>C가 A에게 Join Request</li>
+<li>A가 C에게 Join Response</li>
+<li>C가 D에게 Join Response</li>
+<li>그 후 A가 Set Link</li>
+<li>D->C, C->A time slot 순으로 가는게 효율적이다.(ex time slot=5일때 D->C, slot=6일때 C->)</li>
+<li>D도 브로드캐스트하게 해줘야함(Router(동그라미)는 브로드캐스트, Host(사각형)는 브로드캐스트 필요 없음)</li></ul></li>
+</ul>
+
+<blockquote>
+  <ul>
+  <li>3장은 Channel &amp; Mac(Medium Access Control)에 관한 얘기</li>
+  <li>여기서 Medium은 Air -> 시간을 쪼개서 전송한다는 뜻</li>
+  </ul>
+</blockquote>
+
+<hr>
+
+<h6 id="4connectingtotheinternet">4장 Connecting to the internet</h6>
+
+<ul>
+<li>Low Power WPAN
+<ul><li>작은 패킷 사이즈</li>
+<li>low bandwidth</li>
+<li><strong>high unreliabilty</strong></li>
+<li>low cost</li>
+<li>long idle periods</li>
+<li>mesh topologies</li>
+<li>battery</li>
+<li>support for address with different lengths</li></ul></li>
+<li>IPv6의 MTU(Maximum Transmission Unit)
+<ul><li>40 bytes long IPv6 header</li>
+<li>IPv6 default minimum MTU size = 1280 bytes</li>
+<li>한번에 패킷을 보낼 수 있는 최대 크기</li>
+<li>MTU 자체가 1280bytes = 1.2kb보다 커야한다.(권장사항은 1.5kb)</li>
+<li>패킷 보낼 수 있는 사이즈가 (1byte ~ 1280bytes)</li>
+<li><strong>min MTU = 1.2k</strong></li>
+<li>MTU가 커지면 커질수록 한번에 보낼 수 있는 패킷크기가 커진다. -> 에러가 작아진다</li>
+<li>MTU 작아지면 에러율 커짐</li></ul></li>
+<li>IoT(IEEE802.15.4)에서는 MTU size = 128 bytes이다.
+<ul><li>IoT를 IPv6에 어떻게 달수 있나</li>
+<li>눈속임(6LoWPAN Adaptaion Layer을 통해서)</li></ul></li>
+</ul>
+
+<hr>
+
+<h6 id="aserverbciot6lowpandesensor">A(Server)-> B-> C(IoT 6LoWPAN)-> D-> E(Sensor)</h6>
+
+<blockquote>
+  <ul>
+  <li>A : Originator, E : Final Destination</li>
+  <li>A에서 B MTU = 10K</li>
+  <li>B에서 C MTU = 3k</li>
+  <li>C에서 D MTU = 128bytes</li>
+  <li>D에서 C MTU = 128bytes</li>
+  </ul>
+</blockquote>
+
+<ol>
+<li>A가 B에게 전송할 때, Ping으로 테스트함(물어봄) <br>
+<ul><li>MTU보다 크면 ICMP Error(Packet Too Big), 자신의 MTU정보(B의 MTU = 3K) 전달</li>
+<li>위 과정을 PATH MTU discovery</li>
+<li>B가 자신은 MTU 3k라고 보내고, A는 3K의 패킷을 보냄</li></ul></li>
+<li>B가 C에게 전송하는데, 보낼 패킷을 Ping으로 테스트 <br>
+<ul><li><strong>C는 ICMP Error(PTB) 보내는데, 여기서 MTU정보는 1.2K로 보냄(속여서, min MTU)</strong></li>
+<li>B는 1.2K의 패킷을 전송함</li></ul></li>
+<li>C는 1.2K패킷을 받고, 6LoWPAN가 패킷을 10개로 쪼개야한다.</li>
+</ol>]]></description><link>http://localhost:2368/imbedideu-sopeuteuweeo/</link><guid isPermaLink="false">35b12ab6-3c68-4855-ad48-0b44a775b8e8</guid><category><![CDATA[Embedded Software]]></category><dc:creator><![CDATA[njir]]></dc:creator><pubDate>Tue, 07 Apr 2015 05:22:59 GMT</pubDate></item><item><title><![CDATA[임베디드 소프트웨어 - IEEE 802.15.4e, Scheduling]]></title><description><![CDATA[<h6 id="ieee802154">IEEE 802.15.4</h6>
+
+<ul>
+<li>2.4GHz대역의 16개 채널을 갖고 있음</li>
+<li>하나당 2MHz(중심 frequnecy로부터 5MHz)</li>
+<li>패킷 전송 절차 : Preamble -> SFD -> LEN</li>
+<li>1) Preamble : 패킷을 전송하려고 할 때(시작 할때), 모든 무선 MAC(wifi 등)은 0101010...로 떤다(128us(마이크로sec)동안)
+<ul><li>Locking하기 위해서</li></ul></li>
+<li>2) SFD(Start of Frame Delimiter)
+<ul><li>Start of Frame을 구분하는 구분자(특정 ID)</li>
+<li>패킷이 오는 것을 알 수 있다.</li>
+<li>패킷이 아님. 패킷의 시작임</li>
+<li>ex) 01001 ...</li></ul></li>
+<li>3) LEN(Length)
+<ul><li>8bit</li>
+<li>패킷의 최대 길이는 <strong>128Bytes</strong></li>
+<li>Receiver 입장에서 LEN을 읽은 후, 데이터가 어디서부터 언제까지 오는지 알 수 있다.
+
+
+<blockquote>
+  총 128Bytes 중 <strong>실제 데이터는 127Bytes(LEN까지 포함해서 128bytes)</strong></blockquote></li></ul></li>
+  <li><strong><em>Once lockedoon, the receiver waits for the SFD, then for the length byte.</em></strong></li>
+  </ul>
+  <hr>
+
+
+<h4 id="powersavinglinklayerieee802154e">Power-Saving Link Layer - IEEE 802.15.4e</h4>
+
+<ul>
+<li>Star Topology에서는 IoT의 모든 사물들을 커버하려면 빽빽히 AP가 있어야 한다. -> 너무 많이 있어야함</li>
+<li>실제로 IoT는 AP에서 이어진 host들이 서로 연결되는 Mesh Network를 이루어야 한다.</li>
+<li>Wifi(AP) 입장에서는 Host가 두개의 Wifi를 붙이는 것을 허용안한다.</li>
+<li>초기에는 패킷을 전달해주기 위해 연결다리에 있는 호스트는 무조건 켜져 있어야 했다.(<strong>100% duty cycle</strong>이어야만 한다.) -> Duty Cycle Management가 어렵다. -> 해결방법 : Time Slicing, Beconning(이전 포스트 내용)</li>
+<li>TSCH(Time Synchronized Channel Hopping)
+<ul><li>TSMP : 이미 표준으로 등록되어 있다.(WirelessHART standard)</li></ul></li>
+</ul>
+
+<h6 id="slotframestructure">Slotframe Structure</h6>
+
+<ul>
+<li>Slotframe is a group of slots which repeat over time.</li>
+<li>Slotframe당 slot 4개</li>
+<li>보내는 주기가 정해짐
+<ul><li>ex1) Host A가 5초에 한번, Host B가 10초에 한번, Host C가 20초에 한번씩 <strong>주기적으로</strong> 패킷을 전송할 때, 하나당 time slot을 20초로 잡아야 한다.(가장 긴 시간)</li>
+<li>ex2) 1초에 한번 보내면 timeslot 100개</li></ul></li>
+<li>time slot 중 ACK의 시간 10ms(앞 포스트 Fig1.(b))</li>
+<li>sleeping slot에서는 라디오를 아예 보내지 않는다.</li>
+<li>실제로는 time slot 굉장히 크다.</li>
+<li>Single slot은 충분히 길어야 한다. 10ms정도</li>
+<li>When an upper layer generates a packet, is sends it to the MAC Layer
+<ul><li>전송 큐(transmist queue)에 넣고 보낸다.</li>
+<li>MAC Layer는 큐에 패킷이 있는지 검사한다.
+<ul><li>있으면 패킷 보냄 -> ACK 기다림(ACK을 못받으면 dummy slot을 만들고 다시 전송)</li>
+<li>없으면 다시 sleep</li></ul></li></ul></li>
+<li>reception slot은 radio를 키고 받고 끈다.
+
+
+<blockquote>
+  이 패러그래프 주제는 100% duty cycle 문제를 해결(duty cycle을 낮추기 위해)하기 위해 Multichannel hopping (Time Slotted Channel Hopping) -> 같이 깨고 같이 잘 수 있다.</blockquote></li>
+  </ul>
+  <h6 id="scheduling">Scheduling</h6>
+
+
+<ul>
+<li>두 가지 접근 방법 (centralized approach, distributed)</li>
+<li>Centralized approach : 혼자서 
+<ul><li>효율적인 스케쥴링이 가능하다.</li>
+<li>topology가 변하는 경우 re-form을 해줘야 함.-> distributed approach
+<ul><li>This type of approach has been commercially available since TSMP</li></ul></li></ul></li>
+<li>Distributed approach : 자기가 각각 결정함. 문제 발생 가능</li>
+</ul>
+
+<h6 id="synchronization">Synchronization</h6>
+
+<ul>
+<li>802.15.4e에는 beacon이 없다.</li>
+<li>두가지 방법
+<ul><li>Acknowledgement-Based synchronization : 보내는 host의 시간과 싱크 조절</li>
+<li>Frame-Based synchronization</li></ul></li>
+</ul>
+
+<h6 id="channelhopping">Channel Hopping</h6>
+
+<ul>
+<li>interference, multipath fading 완화시킨다</li>
+</ul>
+
+<h6 id="networkformation">Network Formation</h6>
+
+<p><img src="https://njir-github-io-njir-5.c9.io/content/images/fig3.png" alt="fig3">
+<img src="https://njir-github-io-njir-5.c9.io/content/images/fig4.png" alt="fig4">
+채널 A가 스케쥴링 관리(super, AP, Centralized)</p>
+
+<p>0번 slot은 advertising(default provisioning channel)</p>
+
+<blockquote>
+  <ul>
+  <li>A가 AP라고 advertise(Cycle 0번. (Fig.3))</li>
+  <li>Fig.3의 k는 Cycle 횟수를 뜻함</li>
+  </ul>
+</blockquote>
+
+<ol>
+<li>Cycle 0일 때(k=0) <br>
+<ul><li>1) time slot=0 (ASN=0)
+<ul><li>A가 Advertise</li></ul></li>
+<li>2) time slot=1 (ASN=1)
+<ul><li>B가 기다리고 있다 Join Request</li></ul></li></ul></li>
+<li>Cycle 1일때(k=1) : time slot 한바퀴 돌고 다시 처음으로 돌아온다. <br>
+<ul><li>1) time slot=0 (ASN=7)
+<ul><li>A가 B에게 Join Response</li></ul></li></ul></li>
+<li>Cycle 2일때(k=2) <br>
+<ul><li>1) time slot=0 (ASN=14) : Set Link
+<ul><li>t=2, chO=0, Adv : time slot=2, 0번 채널에 Advertise 설정</li>
+<li>t=3, chO=1 RX : time slot=3, 1번 채널에서 B RX 설정</li></ul></li></ul></li>
+<li>Cycle 3일때(k=3) <br>
+<ul><li>1) time slot=0 (ASN=21) : Set Link
+<ul><li>t=4, chO=2, B->A : time slot=4, 2번 채널에 B->A 설정</li></ul></li>
+<li>2) time slot=2 (ASN=23)
+<ul><li>B가 Advertising</li></ul></li>
+<li>3) time slot=3 (ASN=24) 
+<ul><li>B의 Advertising을 받고 C가 B에게 Join Request</li></ul></li>
+<li>4) time slot=4 (ASN=25)
+<ul><li>B가 C의 Request를 A에게 전달(<strong><em>B가 Centralized가 아니라서</em></strong>)</li></ul></li></ul></li>
+<li>Cycle 4일때(k=4) <br>
+<ul><li>1) time slot=0 (ASN=28)
+<ul><li>A가 B에게 C의 Join Request에 대하여 Response 전달</li></ul></li>
+<li>2) time slot=2 (ASN=30)
+<ul><li>B가 C에게 Response 전달</li></ul></li></ul></li>
+<li>Cycle 5일때(k=5) <br>
+<ul><li>1) time slot=0 (ASN=35) : A가 B에게 전달
+<ul><li>t=5, chO=3, C->B : time slot=5, 3번 채널에 C->B 전달</li></ul></li>
+<li>2) time slot=2 (ASN=37) : B가 C를 세팅
+<ul><li>t=5, chO=3, C->B : time slot=5, 3번 채널에 C->B 세팅</li></ul></li>
+<li><strong><em>이 order는 B,C둘다 전달 되어야함</em></strong></li></ul></li>
+<li>Cycle 6일때(k=6) <br>
+<ul><li>1) time slot=0 (ASN=42) : Set Link
+<ul><li>t=6, chO=4, B->A : time slot=6, 4번 채널에 B->A 설정</li></ul></li></ul></li>
+</ol>]]></description><link>http://localhost:2368/imbedideu/</link><guid isPermaLink="false">8c171ea1-3a63-4859-92a0-44ac8fc7b84f</guid><category><![CDATA[Embedded Software]]></category><dc:creator><![CDATA[njir]]></dc:creator><pubDate>Wed, 25 Mar 2015 11:38:57 GMT</pubDate></item><item><title><![CDATA[Swift - Foundation Framework 02]]></title><description><![CDATA[<h6 id="">직렬화</h6>
+
+<ul>
+<li>바이너리 형태로 변환</li>
+<li>바이너리 데이터 다루기 : NSData
+<ul><li>직렬화된 데이터를 읽고, 파일로 쓰기</li></ul></li>
+<li>직렬화 담당 : 아카이버/언아카이버
+<ul><li>직렬화 : NSKeyedArchiver</li>
+<li>역직렬화 : NSKeyedUnarchiver</li></ul></li>
+<li>직렬화 프로토콜 : NSCoding</li>
+</ul>
+
+<pre><code class="language-swift">//파일로 저장
+let filePath = "/Users/sdt5/Desktop/array.plist"  
+let ret = NSKeyedArchiver.archiveRootObject("String Data", toFile: filePath)
+
+//파일에서 읽어오기
+let str = NSKeyedUnarchiver.unarchiveObjectWithFile(filePath) as String  
+println("파일에서 복원 : \(str)")
+
+//NSData 로 직렬화
+let data = NSKeyedArchiver.archivedDataWithRootObject("String Data")
+
+//NSData 에서 읽어오기
+let str2 = NSKeyedUnarchiver.unarchiveObjectWithData(data) as String  
+println("NSData 에서 복원 : \(str2)")  
+</code></pre>
+
+<ul>
+<li>Key-Value 방식으로 직렬화</li>
+<li><strong>커스텀 클래스 직렬화</strong>
+<ul><li>NSCoding 프로토콜</li>
+<li>클래스에 프로토콜 채택</li>
+<li>인코딩/디코딩(init) 메소드 작성</li>
+<li>프로토콜 + init -> required</li></ul></li>
+</ul>
+
+<pre><code class="language-swift">//저장
+var obj = Person(name : "태연", birthyear : 1989)
+
+let filePath = "/Users/sdt5/Desktop/array.plist"  
+let ret = NSKeyedArchiver.archiveRootObject(obj, toFile: filePath)  
+// 복원
+let obj2 = NSKeyedUnarchiver.unarchiveObjectWithFile(filePath) as Person  
+println("name : \(obj2.name) - birthyear : \(obj2.birthyear)")
+</code></pre>
+
+<ul>
+<li>상속과 직렬화
+<ul><li>부모 클래스도 직렬화, 자식 클래스에서 super 호출</li>
+<li>인코딩/디코딩하는 코드에서 부모 클래스의 인코딩/디코딩 코드 호출해야 함</li></ul></li>
+</ul>
+
+<hr>
+
+<h6 id="">타이머</h6>
+
+<ul>
+<li>NSTimer</li>
+<li>타이머 중지</li>
+</ul>
+
+<pre><code class="language-swift ">func invalidate()  
+</code></pre>
+
+<pre><code class="language-swift">class Alarm : NSObject {  
+    func ring(){
+        println("Wake up!")
+    }
+}
+
+var obj = Alarm()  
+obj.ring()
+
+let timer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: obj, selector: Selector("ring"), userInfo: nil, repeats: true) //1초 뒤에 ring method 실행 . 콘솔 기반은 테스트 힘듦  
+// 커맨드 라인툴의 환경상 바로 동작작
+timer.fire()
+</code></pre>
+
+<h6 id="">알림</h6>
+
+<ul>
+<li>NSNotification</li>
+<li>알림 센터(NSNotificationCenter)를 이용, 알림 방송(notifier)</li>
+<li>알림 센터에 알림 청취(receive) - 알림 감시자 등록</li>
+</ul>
+
+<pre><code class="language-swift">//알림 센터와 알림 이름
+let notiCenter = NSNotificationCenter.defaultCenter()  
+let NotiName = "CustomNotification"
+
+//알림 감시용 클래스 생성. NSObject 상속 필요
+class MyClass : NSObject {  
+    func handleNoti(noti : NSNotification){
+        println("알림 발생!")
+    }
+}
+
+//알림 센터에 알림에 대한 감시자 객체 등록
+let obj = MyClass()  
+notiCenter.addObserver(obj, selector: Selector("handleNoti:"), name: NotiName, object: nil)
+
+//알림 발송
+notiCenter.postNotificationName(NotiName, object: nil)  
+//알림 발송(알림 객체로)
+let noti = NSNotification(name: NotiName, object: obj)  
+notiCenter.postNotification(noti)  
+</code></pre>
+
+<hr>
+
+<h6 id="">멀티쓰레드</h6>
+
+<ul>
+<li>사용자의 경험자 경험</li>
+<li>기다리면 -> 홈버튼</li>
+<li>NSThread
+<ul><li>멀티쓰레드에서 셀렉터 실행</li>
+<li>현재 동작 중인 쓰레드 정보</li>
+<li>메인 혹은 쓰레드 확인</li></ul></li>
+</ul>
+
+<pre><code class="language-swift">class MyThread : NSThread {  
+    override func main(){
+        for var i = 0 ; i &lt; 10 ; i++ {
+            println("\(name) - \(i)")
+        }
+    }
+}
+
+var thread1 = MyThread()  
+thread1.name = "thread1"  
+var thread2 = MyThread()  
+thread2.name = "thread2"
+
+thread1.start()  
+thread2.start()
+
+while(true){}  
+</code></pre>
+
+<ul>
+<li>NSOperation, NSOperationQueue
+<ul><li>쓰레드 큐</li>
+<li>동시 동작 쓰래드 갯수 조절</li>
+<li>쓰레드 대기/동작</li>
+<li>큐를 이용한 쓰레드 관리</li></ul></li>
+</ul>
+
+<pre><code class="language-swift">class MyThread : NSOperation {  
+    var title : String!
+    override func main(){
+        for var i = 0 ; i &lt; 10 ; i++ {
+            println("\(title) - \(i)")
+        }
+    }
+}
+
+var thread1 = MyThread()  
+thread1.title = "thread1"  
+var thread2 = MyThread()  
+thread2.title = "thread2"  
+var thread3 = MyThread()  
+thread3.title = "thread3"
+
+var queue = NSOperationQueue()  
+queue.maxConcurrentOperationCount = 2  
+queue.addOperation(thread1)  
+queue.addOperation(thread2)  
+queue.addOperation(thread3)
+
+while(true){}  
+</code></pre>
+
+<hr>
+
+<h6 id="">네트워크</h6>
+
+<ul>
+<li>NSURL : 리소스 위치 정보
+<ul><li>지역 파일, http(s) URL 다루기</li>
+<li>URL에 허용되지 않는 문자 - 한글 -> 인코딩</li></ul></li>
+<li>NSURLRequest : 리소스 요청</li>
+<li>NSURLResponse : 요청에 대한 응답</li>
+<li>NSURLConnection : 연결</li>
+<li>리소스 얻기
+<ul><li>NSData 객체로 생성</li></ul></li>
+</ul>
+
+<pre><code class="language-swift">let urlStr = "http://images.apple.com/v/imac-with-retina/a/images/overview/intro_fallback_xlarge.jpg"  
+let url = NSURL(string : urlStr)!
+
+if let data = NSData(contentsOfURL : url){  
+    println("size : \(data.length)")
+    let image = NSImage(data: data)
+}
+</code></pre>]]></description><link>http://localhost:2368/swift-paundeisyeon-peureimweokeu-2/</link><guid isPermaLink="false">99cfbd1c-d470-409d-9a33-52db442c9b91</guid><category><![CDATA[Swift]]></category><dc:creator><![CDATA[njir]]></dc:creator><pubDate>Fri, 20 Mar 2015 06:57:04 GMT</pubDate></item><item><title><![CDATA[Swift - Foundation Framework 01]]></title><description><![CDATA[<h6 id="">프레임워크와 클래스</h6>
+
+<ul>
+<li>OS X, iOS용 어플리케이션의 기본 프레임워크</li>
+<li>클래스 접두어 NS~
+<ul><li>데이터 다루기</li>
+<li>네트워크</li>
+<li>파일처리</li></ul></li>
+</ul>
+
+<blockquote>
+  <p>Object C와 프레임워크</p>
+  
+  <ul>
+  <li>Swift 언어 발표 이전 개발 언어로 Object C</li>
+  <li>많은 프레임워크가 Object C 형태로 제공</li>
+  <li>API 특징
+  <ul><li>Failable Initializer</li>
+  <li>AnyObject 타입</li></ul></li>
+  </ul>
+</blockquote>
+
+<h6 id="nsobject">NSObject</h6>
+
+<ul>
+<li>파운데이션 프레임워크 중 가장 기본 클래스</li>
+<li>메모리 관리</li>
+<li>타입 체크 : AnyObject 타입 사용하면 검사 필요</li>
+<li>객체 비교 : isEqual
+<ul><li>func isEqual(object : AnyObject?) -> Bool</li>
+<li>파운데이션의 기능 구현 -> Swift의 기능에도 동작</li>
+<li>isEquals 메소드 작성하면 ==로도 사용</li></ul></li>
+</ul>
+
+<pre><code class="language-swift">// 객체 비교
+class Rectangle : NSObject {  
+    var width : Int
+    var height : Int
+
+    init(width : Int, height : Int){
+        self.width = width
+        self.height = height
+    }
+
+    override func isEqual(object: AnyObject?) -&gt; Bool {
+        if let another = object as? Rectangle{
+            return self.width == another.width &amp;&amp; self.height == another.height
+        }
+        return false
+    }
+}
+
+var obj1 = Rectangle(width : 10, height : 20)  
+var obj2 = Rectangle(width : 10, height : 20)  
+var obj3 = Rectangle(width : 30, height : 30)
+
+obj1 == obj2    //isEqual 호출, true  
+obj1.isEqual(obj3) //isEqual, false  
+</code></pre>
+
+<ul>
+<li>셀렉터 : 메소드 식별 정보
+<ul><li>사용자 이벤트에 반응하는 메소드</li>
+<li>타이머의 시간 간격에 호출하는 메소드</li>
+<li>알림이 발생하면 동작하는 메소드</li>
+<li>자주 사용</li>
+<li>Select 구조체 사용</li>
+<li>메소드 식별 문자열을 집어넣음</li>
+<li>메소드 식별방법 : 메소드 이름과 파라미터 정보
+<ul><li>식별 문자열
+<ul><li>파라미터 유무에 따라 콜론으로 구별 //Selector("greeting:")</li>
+<li>파라미터 2개 이상시, 콜론과 외부 파라미터 이름으로 구별 //Selector("greeting:with:")</li></ul></li>
+<li>메소드 호출 가능 여부 검사
+<ul><li>func respondsToSelector(aSelector : Selector) -> Bool</li></ul></li></ul></li>
+<li>Initializer의 셀렉터
+<ul><li>파라미터가 있는 경우
+<ul><li>init<strong>With</strong> + 첫번째 외부 파라미터</li>
+<li>Selector("initWithWho:emotion:")</li></ul></li></ul></li></ul></li>
+</ul>
+
+<pre><code class="language-swift"> lass Rectangle : NSObject {
+    var width : Int
+    var height : Int
+
+    init(width : Int, height : Int){
+        self.width = width
+        self.height = height
+    }
+
+    override func isEqual(object: AnyObject?) -&gt; Bool {
+        if let another = object as? Rectangle{
+            return self.width == another.width &amp;&amp; self.height == another.height
+        }
+        return false
+    }
+
+    func size() -&gt; Int{
+        return width * height
+    }
+
+    func setWidth(w : Int, height h : Int) {
+        self.width = w
+        self.height = h
+    }
+}
+
+var obj1 = Rectangle(width : 10, height : 20)
+
+let sizeSelector = Selector("size")  
+obj1.respondsToSelector(sizeSelector)  
+obj1.respondsToSelector("setWidth:height:")     // true  
+obj1.respondsToSelector("initWithWidth:height:")    //true  
+</code></pre>
+
+<blockquote>
+  <p><strong>Selector()는 컴파일하고 나서야 에러 찾을 수 있음. 파라미터가 없는데 : 붙였다던지 등등</strong></p>
+</blockquote>
+
+<h6 id="nslog">NSLog</h6>
+
+<ul>
+<li>콘솔에 정보 출력</li>
+<li>포맷 문자 : %a(객체 타입), %d(정수), %f(실수)</li>
+</ul>
+
+<pre><code class="language-swift">class Rectangle : NSObject {  
+    var width : Int = 0
+    var height : Int = 0
+
+    override var description : String {
+        return "Rectangle \(width), \(height)"
+    }
+}
+
+var obj1 = Rectangle()  
+NSLog("%@", obj2)   //Rectangle 0, 0  
+</code></pre>
+
+<hr>
+
+<h6 id="">데이터 다루기</h6>
+
+<ul>
+<li>문자열, 배열, 딕셔너리와 같이 데이터를 다루는 클래스 제공
+<ul><li>문자열 : NSString </li>
+<li>배열 : NSArray </li>
+<li>딕셔너리 : NSDictionary</li></ul></li>
+<li>데이터 변경 가능한(Mutable)클래스와 변경 불가능한 클래스(Immutable)
+<ul><li>파운데이션은 별도의 클래스</li></ul></li>
+<li>Swift에서 제공되는 데이터 타입 : 밸류 타입</li>
+<li>파운데이션 프레임워크가 제공하는 클래스 : 레퍼런스 타입</li>
+<li>호환되는 부분이 많음</li>
+</ul>
+
+<h6 id="nsstring">NSString</h6>
+
+<ul>
+<li>NSString 클래스의 메소드 같이 사용</li>
+<li>문자열 비교 : isEqualToString:
+<ul><li>Swift 문자열과 호환됨</li></ul></li>
+</ul>
+
+<pre><code class="language-swift">let switfStr = "string"  
+let nsSTr : NSString = "string"  
+swiftStr == nsStr //true  
+</code></pre>
+
+<ul>
+<li>문자열 길이 : length
+<ul><li>Swift 문자열 사용 불가</li></ul></li>
+</ul>
+
+<pre><code class="language-swift">str.length // NSString만 사용  
+countElements(swiftStr) // Swift 문자열 길이  
+</code></pre>
+
+<pre><code class="language-swift">var str : String = "Hello Swift"  
+var str2 : NSString = "HI"  
+var str3 : String = str2    // String타입, "Hi"
+
+str2.length  
+str3.length //Error  
+countElements(str3)  
+</code></pre>
+
+<ul>
+<li>찾기
+<ul><li>NSRange 객체가 반환</li></ul></li>
+</ul>
+
+<pre><code class="language-swift">// 함수
+func rangeOfString(aString : String) -&gt; NSRange  
+func rangeOfString(aString : String, options mask : NSStringCompareOptions) -&gt; NSRange
+
+var nsStr : NSString = "Hello Swift"  
+let range = nsStr.rangeOfString("ell")  
+if range.location != NSNotFound {  
+    println("found")
+else {  
+    println("not found")
+}
+</code></pre>
+
+<ul>
+<li>문자열 가공
+<ul><li>문자열 자르기(substring)
+<ul><li>NSString, String이 조금 다르게 동작(타입)</li></ul></li>
+<li>문자열 덧붙이기
+<ul><li>트리밍</li>
+<li>문자열을 덧붙인 문자열
+
+
+<blockquote>
+  <p>문자열 가공 부분은 API나 책 참고할 것</p></blockquote></li></ul></li></ul></li>
+  <li>변환<p></p>
+  
+  <ul><li>원시 타입 변환 (String 타입은 사용 불가)</li></ul></li>
+  </ul>
+
+<pre><code class="language-swift">let boolStr : NSString = "true"  
+let boolRet = boolStr.boolValue
+
+let intStr : NSString = "123"  
+let intRet = intStr.intValue  
+</code></pre>
+
+
+<ul>
+<li>대소문자 변환</li>
+</ul>
+
+<pre><code class="language-swift">var uppercaseString : String { get}  
+</code></pre>
+
+<ul>
+<li>저장
+<ul><li>파일 저장</li>
+<li>에러 다루기 : NSErrorPointer
+<ul><li>NSError 옵셔널 변수 생성</li>
+<li>&amp; 연산자와 사용</li></ul></li></ul></li>
+</ul>
+
+<pre><code class="language-swift">let filePath = "/Users/sdt5/Deskop/test.txt"  
+var error : NSError?  
+let ret = str3.writeToFile(filePath, atomically: true, encoding: NSUTF8StringEncoding, error: &amp;error)
+
+if ret {  
+    println("success")
+}
+else {  
+    println("fail. \(error?.localizedDescription)")
+}
+</code></pre>
+
+<ul>
+<li>가변 문자열
+<ul><li>NSMutableString 클래스</li>
+<li>문자열 수정하는 메소드, 변환타입 void</li>
+<li>NSString : 불가변형</li></ul></li>
+</ul>
+
+<pre><code class="language-swift">// 추가
+func insertString(aString : String, atIndex loc : Int)  
+func appendString(aString : String)  
+// 삭제
+func deleteCharactersInRange(range : NSRange)  
+// 새로운 문자열로 저장
+func setString(aString : String)  
+</code></pre>
+
+<ul>
+<li>레퍼런스 타입
+<ul><li><strong>스위프트 문자열 String과 NSString의 가장 큰 차이 : 밸류 타입 vs 레퍼런스 타입</strong></li>
+<li>NSMutableString으로 문자열 하나를 수정했을 때, 레퍼런스 타입이라 둘 다 바뀜</li>
+<li>String은 바뀌지 않음</li></ul></li>
+</ul>
+
+<pre><code class="language-swift">//NSMutableString
+var mStr1 = NSMutableString(string: "Hello")  
+var mStr2 = mStr1
+
+mStr1.appendString(" Foundation")  
+mStr1 // Hello Foundation  
+mStr2 // Hello Foundation
+
+// String
+var str1 = "Hello"  
+var str2 = str1
+
+str1.append("c")
+
+str1 // Helloc  
+str2 // Hello  
+</code></pre>
+
+<hr>
+
+<h6 id="">배열</h6>
+
+<ul>
+<li>파운데이션 : NSArray, NSMutableArray
+<ul><li>다양한 타입 다루기, AnyObject</li>
+<li>let array2 : NSArray = ["sdsd", "sds", da"]</li></ul></li>
+<li>Swift : [Type] 
+<ul><li>한 종류의 타입으로 사용</li>
+<li>let swiftArray = ["a", "b", "c"]</li></ul></li>
+<li>파일 저장(XML형태로 저장. plist)과 복원</li>
+<li>복원 - Failable Initializer</li>
+<li>가변형 배열 NSMutableArray</li>
+</ul>
+
+<pre><code class="language-swift">var array = [1,2,3] //swift  
+var array2 : NSArray = [1,2,3] //NSArray
+
+array.count  
+array.count  
+countElements(array)  
+//countElements(array2) //Error
+
+var array3 : [AnyObject] = array2  
+var array4 = array2 as [Int]
+
+//array.objectAtIndex(0) //Error
+array2.objectAtIndex(1)
+
+array2.writeToFile("/Users/sdt5/Desktop/array.plist", atomically: true)  // array.plist 파일 생성됨  
+</code></pre>
+
+<h6 id="">딕셔너리</h6>
+
+<ul>
+<li>파운테이션 : NSDictionary, NSMutableDictionary</li>
+<li>딕셔너리 항목 접근
+<ul><li>첨자 표기</li>
+<li>objectForKey:</li></ul></li>
+</ul>
+
+<pre><code class="language-swift">var dic1 : [Int : NSObject] = [1: "a", 2 : "b", 3: "c"]  
+dic1[4] = 123  
+var dic2 : NSMutableDictionary = [1:"a", 2:"b", 3:"c"]  
+dic2[4] = 123
+
+//dic1.objectForKey(1) //Error
+dic2.objectForKey(4)  
+</code></pre>
+
+<hr>
+
+<h6 id="">날짜와 시간</h6>
+
+<ul>
+<li>NSDateFormatter : 포맷에 맞는 날짜 표시</li>
+<li>날짜와 시간 포맷</li>
+</ul>
+
+<pre><code class="language-swift">var now = NSDate()  
+var yester = NSDate(timeIntervalSinceNow: -3600*24) //어제 날짜
+
+var formatter = NSDateFormatter()  
+formatter.dateStyle = NSDateFormatterStyle.MediumStyle  
+formatter.timeStyle = NSDateFormatterStyle.LongStyle
+
+formatter.stringFromDate(now)
+
+formatter.dateFormat = "yy/MM/dd"  
+</code></pre>
+
+<ul>
+<li>로케일
+<ul><li>NSLocale : 지역 고유의 표기법</li>
+<li>지역, 언어권, 언어코드 (US, ko_KR)</li></ul></li>
+<li>켈린더, 날짜 컴포넌트
+<ul><li>NSCalendar, NSDateComponent</li></ul></li>
+</ul>
+
+<pre><code class="language-swift">var calendar = NSCalendar.currentCalendar()  
+calendar.component(NSCalendarUnit.CalendarUnitWeekOfYear, fromDate: now)  
+</code></pre>
+
+<h6 id="">파일 다루기</h6>
+
+<ul>
+<li>NSFileManager : 파일 시스템을 다루는 기능
+<ul><li>폴더 내 파일 목록</li>
+<li>파일 존애 여부 확인</li>
+<li>파일 복사, 이동 삭제</li></ul></li>
+<li>파일 매니저 객체는 싱글톤 메소드를 이용해서 생성</li>
+</ul>
+
+<pre><code class="language-swift">class func defaultManager() -&gt; NSFileManager  
+</code></pre>
+
+<ul>
+<li>폴더 내 파일 목록 : func contentsOfDirectoryAtPath(..)</li>
+</ul>
+
+<pre><code class="language-swift">let dirPath = "/Users/sdt5/Desktop"  
+var error : NSError?  
+let fm = NSFileManager.defaultManager()  
+let contentsOfDir = fm.contentsOfDirectoryAtPath(dirPath, error: &amp;error)
+
+if let fileList = contentsOfDir {  
+    println("file list in \(dirPath)")
+    for file in fileList {
+        println("\(file)")
+    }
+}
+else{  
+    println("Error : \(error)")
+}
+</code></pre>
+
+<ul>
+<li>파일 복사, 이동, 삭제
+<ul><li>복사 : copyItemAtPath</li>
+<li>이동 : moveItemAtPath</li>
+<li>삭제 : removeItemAtPath</li></ul></li>
+</ul>
+
+<pre><code class="language-swift">let fm = NSFileManager.defaultManager()  
+var error : NSError?
+
+let originPath = "/Users/sdt5/Desktop/array.plist"  
+if fm.fileExistsAtPath(originPath){  
+    println("파일 존재")
+    let copyPath = "/Users/sdt5/Desktop/copy"
+
+    // 파일 복사
+    var ret = fm.copyItemAtPath(originPath, toPath : copyPath, error: &amp;error)
+    if !ret {
+        println("복사 실패 \(error)")
+    }
+
+    // 파일 삭제
+    ret = fm.removeItemAtPath(copyPath, error: &amp;error)
+    if !ret {
+        println("삭제 실패 \(error)")
+    }
+}
+else{  
+    println("파일 없음")
+}
+</code></pre>
+
+<ul>
+<li>파일 내용 읽기/쓰기
+<ul><li>NSFileHandler 사용</li></ul></li>
+</ul>
+
+<blockquote>
+  <p><strong><em>나머지는 API문서 참고</em></strong></p>
+</blockquote>
+
+<hr>]]></description><link>http://localhost:2368/swift-paundeisyeon-peureimweokeu/</link><guid isPermaLink="false">a17c8ade-ca9b-45aa-8d28-070a3615825e</guid><category><![CDATA[Swift]]></category><dc:creator><![CDATA[njir]]></dc:creator><pubDate>Fri, 20 Mar 2015 02:20:55 GMT</pubDate></item><item><title><![CDATA[Swift - Optional Chain, Generic]]></title><description><![CDATA[<h6 id="">옵셔널 체인</h6>
+
+<ul>
+<li>옵셔널로 선언된 변수나 프로퍼티에 접근하려면 if let을 이용한 옵셔널 바인딩을 이용하거나 강제 어래핑을 한다.</li>
+<li>옵셔널 채인은 nil로 인한 에러 없이 옵셔널 타입 사용 가능</li>
+<li>옵셔널 프로퍼티에 ?를 이용해서 접근하는 방식</li>
+</ul>
+
+<pre><code class="language-swift">let number3 = john.phone?.number  
+</code></pre>
+
+<hr>
+
+<h6 id="">타입 체크와 변환</h6>
+
+<ul>
+<li>타입 체크 : is</li>
+<li>타입 변환 : as</li>
+</ul>
+
+<pre><code class="language-swift">let pets : [Animal] = [Dog("스누피"), Cat("이엘"), Cat("라즈")]  
+pets[0] is Cat  
+pets[1] is Cat  
+//
+let myDog : Dog = pets[0] as Dog  
+</code></pre>
+
+<ul>
+<li>타입 체크가 필요한 상황
+<ul><li>상속</li>
+<li>AnyObject : 모든 오브젝트</li>
+<li>Any : 모든 타입
+<ul><li>타입별 메소드, 프로퍼티 사용 불가 -> 타입 캐스팅 필요</li></ul></li></ul></li>
+</ul>
+
+<pre><code class="language-swift">for one in anyArray{  
+    if one is String{
+        println("문자열 \(one)")
+    }
+    else if one is Int {
+        var i = one as Int
+        println("다음 숫자 \(i+1)")
+    }
+}
+</code></pre>
+
+<hr>
+
+<h6 id="">타입 알리아스</h6>
+
+<ul>
+<li>타입에 이름주기</li>
+</ul>
+
+<pre><code class="language-swift"> typealias Century = Int
+ var thisEra : Century
+ thisEra = 21
+</code></pre>
+
+<ul>
+<li>클로저는 타입 알리아스</li>
+</ul>
+
+<pre><code class="language-swift">typealias ResultHandler = (Int)-&gt;Void  
+</code></pre>
+
+<h2 id=""> </h2>
+
+<h6 id="">제네릭</h6>
+
+<ul>
+<li>타입에 대한 엄격함</li>
+<li>타입별로 같은 기능</li>
+<li>제네릭 프로그래밍 
+<ul><li>데이터의 타입에 의존하지 않고 작성하는 프로그래밍 방식</li></ul></li>
+<li>두 종류의 타입을 사용하는 예 : 딕셔너리</li>
+</ul>
+
+<pre><code class="language-swift"> struct Array&lt;T&gt; {
+     subscript (index : Int) -&gt; T
+
+    var first : T? { get}
+    var last : T? { get }
+    mutating func append(newElement : T)
+}
+</code></pre>
+
+<hr>
+
+<h6 id="">접근 조절</h6>
+
+<ul>
+<li>클래스 기본 값 : internal</li>
+<li>프로퍼티, 메소드 기본값
+<ul><li>public 클래스 : internal 프로퍼티, 메소드</li>
+<li>internal 클래스 : internal 프로퍼티, 메소드</li>
+<li>private 클래스 : private 프로퍼티, 메소드</li></ul></li>
+<li>클래스의 제어 레벨을 넘지 못함</li>
+</ul>
+
+<pre><code class="language-swift"> public class PublicClass{
+     public func publicMethod(){
+        println("public")
+    }
+    internal func internalMethod(){
+        println("internal")
+    }
+    private func privateMethod(){
+        println("private")
+    }
+}
+</code></pre>]]></description><link>http://localhost:2368/swift-obsyeoneol-cein/</link><guid isPermaLink="false">abacf034-fe3d-4afa-a026-0a0b8c28b3cf</guid><category><![CDATA[Swift]]></category><dc:creator><![CDATA[njir]]></dc:creator><pubDate>Thu, 19 Mar 2015 07:56:13 GMT</pubDate></item><item><title><![CDATA[Swift - Extension, 연산자, 비교]]></title><description><![CDATA[<h6 id="">확장</h6>
+
+<ul>
+<li>첨자 표기</li>
+<li>타입 내 타입</li>
+<li>연산자 정의</li>
+<li>리터럴 호환</li>
+<li>클래스(구조체, enum) 확장
+<ul><li>프로퍼티, 메소드, 프로토콜, 서브스크립트, nested type</li></ul></li>
+<li>ObjectiveC의 카테고리(Category)</li>
+<li>계산 프로퍼티만 가능(저장 X)</li>
+<li>프로토콜 채택</li>
+<li>Subscript 작성 가능</li>
+</ul>
+
+<pre><code class="language-swift">extension Dog {  
+    func bike() {
+        println("dfdfdf")
+    }
+}
+</code></pre>
+
+<hr>
+
+<h6 id="subscript">Subscript</h6>
+
+<p>subscript : 첨자 표기[n] <br>
+ - 인덱스(숫자), 키, 범위</p>
+
+<pre><code class="language-swift">extension String {  
+    subscript(index : Int) -&gt; String {
+        return self[index..&lt;index]
+    }
+    subscript(range:Range&lt;Int&gt;) -&gt; String {
+        let start = advance(startIndex, range.startIndex, endIndex)
+        let end = advance(startIndex, range.endIndex, endIndex)
+        return self[start...end]
+    }
+}
+</code></pre>
+
+<hr>
+
+<h6 id="">타입 내 타입</h6>
+
+<ul>
+<li>클래스나 구조체, Enum 타입 내부에 다른 타입 작성 가능</li>
+</ul>
+
+<h6 id="">싱글턴 패턴</h6>
+
+<ul>
+<li>어떤 클래스의 인스턴스는 오직 하나임을 보장하며, 이 인스턴스에 접근할 수 있는 전역적인 접촉점을 제공하는 패턴</li>
+<li>다른 객체가 아니라 같은 객체를 생성하도록</li>
+</ul>
+
+<pre><code class="language-swift">class MyClass {  
+    class var sharedInstance : MyClass {
+        // 클래스에 타입 계산 프로퍼티(class stored property)지원이 안돼서 struct 사용
+        struct Static{
+            static var instance : MyClass! = nil
+        }
+        // static 프로퍼티가 nil일 때만 객체 생성(한 번만 생성)
+        if Static.instance == nil {
+            Static.instance = MyClass()
+        }
+        return Static.instance
+    }
+}
+
+let obj1 = MyClass.sharedInstance  
+let obj2 = MyClass.sharedInstance  
+obj1 === obj2 // true - 같은 객체  
+</code></pre>
+
+<hr>
+
+<h6 id="">연산자</h6>
+
+<ul>
+<li>기능 작성 : 메소드</li>
+<li>할당, 반환타입, 주석, 메소드 or 프로퍼티 접근용 점. 불가</li>
+<li>기존의 or 새로운 연산자 정의</li>
+<li>단일 연산자 vs 이진 연산자</li>
+<li>연산자 위치(단일 연산자) - 전위, 후위</li>
+<li>이진 연산자 : 결합 순서</li>
+<li>연산자는 타입 외부에 작성</li>
+</ul>
+
+<pre><code class="language-swift">class Point {  
+    var x : Int
+    var y : Int
+    init(x : Int, y: Int){
+        self.x = x
+        self.y = y
+    }
+}
+
+func +(left: Point, right : Int) -&gt; Point {  
+    return Point(x: left.x + right, y: left.y + right)
+}
+
+func +(left: Point, right:(Int, Int) )-&gt;Point{  
+    return Point(x: left.x + right.0, y: left.y + right.1)
+}
+
+var p1 = Point(x:1, y:1)  
+p1 + 2 // x:3, y:3  
+p1 + (3, 5) // x: 4, y: 6  
+</code></pre>
+
+<ul>
+<li>전위연산자 
+<ul><li>prefix operator</li></ul></li>
+<li>후위연산자
+<ul><li>postfix operator</li></ul></li>
+</ul>
+
+<h6 id="">새로운 연산자</h6>
+
+<ul>
+<li>새로운 연산자 선언 : operator</li>
+<li>연산자 위치 : prefix, infix, postfix</li>
+<li>연산자 우선 순위 : precedence</li>
+</ul>
+
+<pre><code class="language-swift">infix operator **{associativity left precedence 145}  
+</code></pre>
+
+<ul>
+<li>다른 연산자와 precedence를 같게 만들면 결합 순서도 신경써야 함</li>
+</ul>
+
+<h6 id="">비교</h6>
+
+<ul>
+<li>같음 비교 
+<ul><li>객체 주소 비교 : ===, 레퍼런스 타입에만 사용</li>
+<li>객체 내용 비교 : = =연산자</li></ul></li>
+</ul>]]></description><link>http://localhost:2368/swift-extension/</link><guid isPermaLink="false">c65dcc62-a877-4844-8e08-4386e31b908a</guid><category><![CDATA[Swift]]></category><dc:creator><![CDATA[njir]]></dc:creator><pubDate>Thu, 19 Mar 2015 07:23:24 GMT</pubDate></item><item><title><![CDATA[Swift - 클로저]]></title><description><![CDATA[<h6 id="">클로저</h6>
+
+<ul>
+<li>메소드이자 객체</li>
+<li>Object C에서는 블록</li>
+<li>클로저를 파라미터로 사용하는 것은 파라미터의 타입이 파라미터 -> 번환타입 형태</li>
+</ul>
+
+<pre><code class="language-swift">func sayHello() -&gt; String {  
+    return "Hello"
+}
+var v1 = sayHello()  
+var v2 = sayHello    // v1 과 차이점이 무엇?  
+println(v1)  
+println(v2())  
+</code></pre>
+
+<ul>
+<li>반환값으로</li>
+</ul>
+
+<pre><code class="language-swift">func sayHello() -&gt; String {  
+    return "Hello"
+}
+func hello1() -&gt; String {  
+    return sayHello()
+}
+func hello2() -&gt; ???? {    //void-&gt;String or ()-&gt;String  
+    retrn sayHello
+}
+</code></pre>
+
+<ul>
+<li>파라미터로</li>
+</ul>
+
+<pre><code class="language-swift">func sayHello() -&gt; String {  
+    return "Hello"
+}
+func hello3(arg : String) {}  
+func hello4(arg : ????) {}    //void-&gt;String or ()-&gt;String
+
+hello3(sayHello())  
+hello4(sayHello)  
+</code></pre>
+
+<h6 id="">클로저 사용하기</h6>
+
+<ul>
+<li>클로저를 사용하는 API</li>
+<li>Array의 sort메소드
+func sort(isOrderedBefore : (T, T) -> Bool)  </li>
+<li>클로저 정의</li>
+</ul>
+
+<pre><code class="language-swift">{ (Parameters) -&gt; RETURN_TYPE in
+    // 클로저 동작 코드
+}
+</code></pre>
+
+<pre><code class="language-swift">(Int, Int) -&gt; Int
+func add(i : Int, b : Int) -&gt; Int {  
+    return i + b
+}
+</code></pre>
+
+<h6 id="">클로저 사용</h6>
+
+<ul>
+<li>타입 : (T, T) -> Bool</li>
+<li>파라미터 타입 정의 생략 가능</li>
+<li>1줄 return인 경우 -> return 생략'</li>
+<li>파라미터 선언 생략
+<ul><li>$0, $1, $2로 파라미터 사용</li></ul></li>
+<li>Tailing Closure</li>
+</ul>
+
+<pre><code class="language-swift">array.sort({(a: Int, b: Int} -&gt; Bool in return a&lt;b})  
+array.sort({(a, b} -&gt; Bool in return a&lt;b})  
+array.sort({(a, b} -&gt; Bool in a&lt;b})  
+array.sort({$0 &lt; $1})  
+array.sort{$0 &lt; $1}  
+</code></pre>
+
+<hr>
+
+<h6 id="">클로저 정의하기</h6>
+
+<ul>
+<li>두 값을 더하는 함수</li>
+</ul>
+
+<pre><code class="language-swift">func add(i : Int, j : Int) -&gt; Int{  
+    let sum = i + j
+    return sum
+}
+let ret = add(1,2)  
+println("1+2 = \(ret)")  
+</code></pre>
+
+<ul>
+<li>이 함수에 클로저를 파라미터로 추가</li>
+<li>결과를 처리하는 클로저 추가</li>
+<li>비동기 방식으로 api를 만들때 handler 이용</li>
+</ul>
+
+<pre><code class="language-swift">func add(i : Int, j : Int, handler: (Int) -&gt; Void){  
+    let sum = i + j
+    handler(sum)
+}
+//사용
+add(3,4 {(return : Int) -&gt; Void in  
+    println("3+4 = \(result)")
+})
+//trailing closure
+add(5,6) {(result)-&gt; Void in  
+    println("5+6 = \(result)")
+}
+</code></pre>
+
+<ul>
+<li>클로저 자체가 옵셔널</li>
+<li>클로저가 반환타입인 함수
+<ul><li>함수 내 함수 정의 가능</li>
+<li>함수는 클로저의 한 형태</li>
+<li>inline방식 가능</li></ul></li>
+</ul>]]></description><link>http://localhost:2368/swift-keulrojeo/</link><guid isPermaLink="false">39004244-2b6f-4c54-9d2c-6b995a7558d7</guid><category><![CDATA[Swift]]></category><dc:creator><![CDATA[njir]]></dc:creator><pubDate>Thu, 19 Mar 2015 06:20:22 GMT</pubDate></item><item><title><![CDATA[Swift - 프로토콜]]></title><description><![CDATA[<h6 id="">프로토콜</h6>
+
+<ul>
+<li>메소드 호출 규격</li>
+</ul>
+
+<pre><code class="language-swift">protocol Singing {  
+    func sing() //선언만
+}
+</code></pre>
+
+<ul>
+<li>메소드의 선언만 작성</li>
+<li>인터페이스
+<ul><li>구현이 없어서 단독 사용 불가</li>
+<li>메소드 호출 약속</li></ul></li>
+<li>iOS 어플리케이션 개발에서 자주 사용되는 패턴</li>
+<li>상속과 함께 사용하면 부모클래스를 첫 번째로</li>
+<li>프로토콜 정의, 클래스 채택 - override 아님</li>
+<li>다중 프로토콜 채택 가능
+<ul><li>메소드 충돌되지 않도록 주의</li></ul></li>
+</ul>
+
+<pre><code class="language-swift">protocol Species {  
+    class func species() -&gt; String
+}
+
+class Cat : Singing, Species {  
+    func sing(){
+        println("cat cat")
+    }
+    class func species() -&gt; String {
+        return "고양이"
+    }
+}
+</code></pre>
+
+<ul>
+<li>프로토콜 내 타입 메소드
+<ul><li>클래스 : class를 이용한 타입 메소드</li>
+<li>구조체와 enum : static을 이용한 타입 메소드</li></ul></li>
+</ul>
+
+<pre><code class="language-swift">protocol Species {  
+    class func species() -&gt; String
+}
+
+class Cat : Singing, Species {  
+    func sing(){
+        println("cat cat")
+    }
+    class func species() -&gt; String {
+        return "고양이"
+    }
+}
+
+struct Cow : Species {  
+    static func species() -&gt; String {
+        return "소"
+    }
+}
+</code></pre>
+
+<hr>
+
+<h6 id="">프로퍼티</h6>
+
+<ul>
+<li>프로퍼티 선언 : 프로퍼티의 get/set 행위 선언</li>
+<li>클래스 채택
+<ul><li>계산 프로퍼티</li>
+<li>저장 프로퍼티</li></ul></li>
+</ul>
+
+<pre><code class="language-swift">protocol Singing {  
+    func sing() //선언만
+    var duration : Int { get }
+    var volume : Float { get set}
+}
+
+class Bird : Singing {  
+    func sing() {
+        println("sing!")
+    }
+    var duration : Int {
+        get {
+            return 0
+        }
+    }
+    var volume : Float = 0.0
+}
+</code></pre>
+
+<hr>
+
+<h6 id="">프로토콜에 초기화 메소드 선언</h6>
+
+<ul>
+<li>구현시 <strong>required</strong> </li>
+<li>프로토콜 내 failable initializer 선언</li>
+</ul>
+
+<pre><code class="language-swift">protocol Named {  
+    init(name : String)
+}
+
+class Monster : Named {  
+    let name : String
+    required init(name : String){
+        self.name = name
+    }
+}
+</code></pre>
+
+<hr>
+
+<h6 id="">프로토콜 타입</h6>
+
+<ul>
+<li>프로토콜을 타입으로 사용</li>
+</ul>
+
+<pre><code class="language-swift">var singingAnimal : Singing = Human()  
+singingAnimal.sing()  
+</code></pre>
+
+<ul>
+<li>프로토콜에 작성한 메소드, 프로퍼티만 사용</li>
+<li>타입 오류</li>
+</ul>
+
+<h6 id="">프로토콜 상속</h6>
+
+<ul>
+<li>다른 프로토콜 상속 가능</li>
+</ul>
+
+<pre><code class="language-swift">protocol Entertaining : Singing, Dancing {}
+
+class Human : Entertaining {  
+    func sing(){
+        println("sdsd")
+    }
+    func danve(){
+        println("dancing")
+    }
+}
+</code></pre>
+
+<ul>
+<li>Entertaining 포로토콜을 채택하고 Entertaining이 상속하는 모든 프로토콜에 선언한 모든 메소드를 작성해야함</li>
+</ul>
+
+<h6 id="">클래스 전용 프로토콜</h6>
+
+<ul>
+<li>클래스에서만 채택 가능(구조체, enum 에러)</li>
+<li>class 키워드 사용</li>
+</ul>
+
+<pre><code class="language-swift">protocol PROTOCOL_NAME : class, SUPER_PROTOCOL {  
+}
+</code></pre>
+
+<h6 id="">필수 항목과 선택 항목</h6>
+
+<ul>
+<li>필수 항목 - 구현 안하면 에러</li>
+<li>선택 항목 : optional</li>
+<li>@objc 키워드로 프로토콜 선언
+<ul><li>objectC 코드에서 사용할 수 있도록 하는 키워드</li></ul></li>
+</ul>
+
+<pre><code class="language-swift">@objc protocol Baking {
+    func baking()   //필수 구현 메소드
+    optional func makeDough() //선택 구현 메소드
+}
+</code></pre>
+
+<hr>
+
+<ul>
+<li>다각형의 면적을 구하는 SizeMeasuable, 각 변의 길이가 같은 Equilateral 프로토콜</li>
+</ul>
+
+<pre><code class="language-swift">class Shape {  
+    var edge : Int
+
+    init(numberOfEdge : Int){
+        edge = numberOfEdge
+    }
+
+    func description() -&gt; String{
+        return "\(edge)각형"
+    }
+}
+
+protocol SizeMeasurable{  
+    func size() -&gt; Double
+}
+
+protocol Equilateral {  
+    var isEquilateral : Bool { get}
+    init?(equilateral : Double)
+}
+
+class Rectangle : Shape, SizeMeasurable, Equilateral {  
+    var width : Double
+    var height : Double
+
+    init(width : Double, height : Double){
+        self.width = width
+        self.height = height
+        super.init(numberOfEdge: 4)
+    }
+
+    var isEquilateral : Bool {
+        return width == height
+    }
+
+    required convenience init?(equilateral : Double){
+        self.init(width : equilateral, height : equilateral)
+        if equilateral &lt; 0 {
+            return nil
+        }
+    }
+
+    func size() -&gt; Double{
+        return Double(width * height)
+    }
+
+    override func description() -&gt; String {
+        return "사각형가로 \(width) 세로 \(height)"
+    }
+}
+
+if let obj1 = Rectangle(equilateral: 20){  
+    println("\(obj1.description()), size : \(obj1.size()), 정사각형 : \(obj1.isEquilateral)")
+    // 사각형가로 20.0 세로 20.0, size : 400.0, 정사각형 : true
+}
+</code></pre>]]></description><link>http://localhost:2368/swift-peurotokol/</link><guid isPermaLink="false">d1e23ab9-9d66-41de-bd82-5e1802198d32</guid><category><![CDATA[Swift]]></category><dc:creator><![CDATA[njir]]></dc:creator><pubDate>Thu, 19 Mar 2015 05:19:13 GMT</pubDate></item><item><title><![CDATA[Swift - 구조체와 Enum]]></title><description><![CDATA[<h6 id="">구조체</h6>
+
+<ul>
+<li>클래스처럼 프로퍼티와 함수를 선언</li>
+<li>클래스와 구조체
+<ul><li>같은점 : 데이터, 행위</li>
+<li>다른점 : 상속, 레퍼런스vs밸류, ARC(레퍼런스 타입만)</li></ul></li>
+<li>구조체 정의</li>
+</ul>
+
+<pre><code class="language-swift">////// 1
+struct Point {  
+    var x = 0
+    var y = 0
+
+    func description() -&gt; String {
+        return "point : \(x), \(y)"
+    }
+}
+
+var p1 = Point()  
+p1.x = 10  
+p1.y = 20  
+var p2 = Point(x : 3, y : 5)
+
+//// 2
+struct MyStruct {  
+    var var1 : Int = 0
+}
+class MyClass {  
+    var var1 : Int = 0
+}
+var struct1 = MyStruct()  
+var struct2 = MyStruct(var1 : 10)  
+var obj = MyClass()
+</code></pre>
+
+<ul>
+<li>구조체도 객체 생성되면 - 초기화 필요</li>
+<li>초기화 메소드 작성
+<ul><li>구조체도 클래스와 마찬가지로 초기화 과정 필요</li>
+<li>상속 없으므로 부모 클래스의 초기화 위임 없음</li>
+<li>convenience initializer : convenience 생략</li></ul></li>
+</ul>
+
+<pre><code class="language-swift"> struct Point {
+    var x = 0
+    var y = 0
+
+    init(){
+        self.x = 0
+        self.y = 0
+    }
+
+    func description() -&gt; String {
+        return "point : \(x), \(y)"
+    }
+}
+</code></pre>
+
+<ul>
+<li>정적 메소드와 프로퍼티 : static
+<ul><li>객체를 생성하지 않고 사용하는 메소드</li></ul></li>
+</ul>
+
+<pre><code class="language-swift">struct Point {  
+    var x = 0
+    var y = 0
+
+    static func newPoint(x : Int, y : Int) -&gt; Point {
+        var newObj = Point(x: x, y: y)
+        return newObj
+    }
+  }
+</code></pre>
+
+<ul>
+<li>구조체의 데이터
+<ul><li>초기화 메소드에서 설정 가능</li>
+<li>구조체 외부에서 설정 가능</li>
+<li><strong>구초제 내부에서 설정 불가</strong>
+<ul><li>mutating 으로 내부에서 데이터 설정</li></ul></li></ul></li>
+</ul>
+
+<pre><code class="language-swift">struct MyStruct {  
+    var var1 : Int = 0
+    var var2 : String
+    init() {
+        self.init(str : "Hello")
+    }
+    init(str : String){
+        var2 = str
+    }
+    static var var3 = "Struct"
+    mutating func increase(){
+        var1++
+    }
+}
+
+class MyClass {  
+    var var1 : Int = 0
+    var var2 : String
+    convenience  init() {
+        self.init(str : "Hello")
+    }
+    init(str : String){
+        var2 = str
+    }
+}
+
+var struct1 = MyStruct()  
+var struct3 = struct1  
+struct1.var1 = 10   //var1 : 10, var2 : "Hello"  
+struct3 //var1 : 0, var2 : "Hello"
+
+var obj = MyClass()
+</code></pre>
+
+<ul>
+<li>struct, array, dictionary .. 밸류 타입</li>
+</ul>
+
+<pre><code class="language-swift">var array = [1,2,3]  
+var array2 = array  
+array += [4] //[1, 2, 3, 4]  
+array2          // [1,2,3]  
+</code></pre>
+
+<hr>
+
+<h6 id="enum">Enum</h6>
+
+<ul>
+<li>열거형(Enumeration Type)</li>
+<li>옵션 중 하나의 값</li>
+<li>타입이 있는 Enum은 case로 할당된 값으로 다룰 수 있다</li>
+<li>범위 벗어나면 nil -> 옵셔널</li>
+</ul>
+
+<pre><code class="language-swift">var ael = Pet(rawValue : 0)!  
+ael.rawValue  
+</code></pre>
+
+<ul>
+<li>계산프로퍼티, 메소드 사용 가능
+<ul><li>저장 프로퍼티는 불가능</li></ul></li>
+<li>Association</li>
+</ul>
+
+<pre><code class="language-swift">enum Day : Int {  
+    case AM
+    case PM
+    func desc() -&gt; String{
+        switch self{
+        case .AM :
+            return "오전"
+        case .PM :
+            return "오후"
+        }
+    }
+}
+
+Day.AM  
+Day.PM  
+let e1 = Day(rawValue : 0)  
+Day.AM.rawValue  
+Day.AM.desc()   //"오전"  
+</code></pre>
+
+<ul>
+<li>프로퍼티와 메소드</li>
+</ul>
+
+<pre><code class="language-swift">enum Pet : Int {  
+    case Cat = 0
+    case Dog
+    case Other
+
+    var name : String{
+        switch self {
+        case .Cat:
+            return "고양이"
+        case .Dog :
+            return "개"
+        default:
+            return "기타"
+        }
+    }
+
+    func description() -&gt; String {
+        return self.name
+    }
+}
+
+var raz = Pet.Cat  
+raz.name    //고양이  
+raz.description()  //고양이  
+</code></pre>]]></description><link>http://localhost:2368/gujocewa-enum/</link><guid isPermaLink="false">4e48b6ee-7bb4-48e8-bc1f-067985596ee5</guid><category><![CDATA[Swift]]></category><dc:creator><![CDATA[njir]]></dc:creator><pubDate>Thu, 19 Mar 2015 04:08:25 GMT</pubDate></item><item><title><![CDATA[Swift - 상속]]></title><description><![CDATA[<h6 id="">상속</h6>
+
+<ul>
+<li>기존 클래스에서 새 클래스 작성</li>
+<li>프로퍼티, 메소드 그대로 사용</li>
+</ul>
+
+<pre><code class="language-swift">class [자식 클래스] : [부모 클래스] {}  
+</code></pre>
+
+<ul>
+<li>재정의하기 : override
+<ul><li>메소드</li></ul></li>
+</ul>
+
+<pre><code class="language-swift"> // 자식 클래스에서
+override func size() -&gt; Int {  
+    return width * width
+}
+</code></pre>
+
+<ul>
+<li>프로퍼티</li>
+</ul>
+
+<pre><code class="language-swift">override var width : Int {  
+        didSet {
+            if height != width {
+                height = width
+            }
+        }
+    }
+override var isSquare : Bool {  
+    get {
+        return true
+    }
+}
+</code></pre>
+
+<ul>
+<li>override 누락하면 에러</li>
+<li>재사용이 아닌데 override 사용하면 에러</li>
+<li>final : 상속을 방지하거나 메소드, 프로퍼티 오버라이딩 방지할때</li>
+<li>super : 부모 클래스를 참조하기 위한 포인터</li>
+</ul>
+
+<pre><code class="language-swift">class Parent {  
+    func description() -&gt; String {
+        return "부모클래스"
+    }
+}
+
+class Child : Parent {  
+    func printDescription(){
+        println("super.description :  \(super.description())")
+        println("self.description :  \(self.description())")
+    }
+}
+
+var obj = Child()  
+obj.printDescription()  
+//super.description :  부모클래스
+//self.description :  부모클래스
+</code></pre>
+
+<pre><code class="language-swift">class Parent {  
+    func description() -&gt; String {
+        return "부모클래스"
+    }
+}
+
+class Child : Parent {  
+    override func description() -&gt; String {
+        return "자식클래스"
+    }
+    func printDescription(){
+        println("super.description :  \(super.description())")
+        println("self.description :  \(self.description())")
+    }
+}
+
+var obj = Child()  
+obj.printDescription()  
+//super.description :  부모클래스
+//self.description :  자식클래스
+</code></pre>
+
+<hr>
+
+<h6 id="">상속과 초기화 메소드</h6>
+
+<ul>
+<li>상속 : 부모 클래스의 프로퍼티 상속</li>
+<li>초기화 메소드 : 프로퍼티 초기화 필수</li>
+<li>자식 클래스의 초기화 메소드
+<ul><li>부모 클래스의 초기화도 필요 > 초기화 위임</li></ul></li>
+<li>부모 클래스의 초기화 메소드를 상속하는 경우. 2가지
+<ul><li>자식 클래스에 Designated Initializer를 작성하지 않은 경우</li>
+<li>부모 클래스의 모든 Designated Initializer를 재정의 -> Convenience Initializer 상속</li></ul></li>
+</ul>
+
+<pre><code class="language-swift">class Parent {  
+    var a : Int
+    // Designated Initializer
+    init(a : Int){
+        self.a = a
+    }
+    //Convenience Initializer
+    convenience init(){
+        self.init(a : 0)
+    }
+}
+//별도의 초가화가 필요하지 않는 자식 클래스
+class Child : Parent {  
+    var b = 100
+}
+// main.swift
+var childObj1 = Child(a : 10) // 부모클래스의 Designated Initializer로 객체 생성  
+var childObj2 = Child() // 부모클래스의 Convenience Initializer로 객체 생성
+</code></pre>
+
+<hr>
+
+<h6 id="initializer">자식 클래스의 Initializer</h6>
+
+<ul>
+<li>자식 클래스의 Designated Initializer</li>
+</ul>
+
+<pre><code class="language-swift">init([파라미터]){  
+    // 자식 클래스의 프로퍼티 초기화
+    // 부모 클래스의 Designated Initializer 호출
+    // 자식 클래스의 나머지 초기화 동작
+}
+</code></pre>
+
+<pre><code class="language-swift">class Parent {  
+    var a : Int
+    //부모의 Designated Initializer
+    init(a : Int){
+        self.a = 0
+    }
+}
+
+class Child : Parent {  
+    var b : Int
+    //자식클래스의 Designated Initializer
+    init(a : Int, b : Int){
+        //같은 클래스의 초기화 먼저
+        self.b =  b
+        //부모 클래스의 Designated Initializer 호출
+        super.init(a : a)
+    }
+}
+</code></pre>
+
+<ul>
+<li>자식 클래스의 Convenience Initializer</li>
+</ul>
+
+<pre><code class="language-swift">convenience init([파라미터]){  
+    //같은 클래스의 초기화 메소드 호출
+    //초기화 코드
+}
+</code></pre>
+
+<h6 id="2twophaseinitializer">2단계 초기화(Two Phase Initializer)</h6>
+
+<ul>
+<li>객체를 안전하게 초기화하기 위해 2단계 초기화로 진행</li>
+<li>Phase1에서는 객체를 생성하는 시작단계로 객체를 저장할 메모리 공간을 확보하고 클래스 프로퍼티가 초기화된다.</li>
+<li>Phase2는 클래스 상속 구조에서 최상위 클래스의 프로퍼티 초기값 설정 이후부터 시작이다.</li>
+</ul>
+
+<hr>
+
+<h6 id="">초기화 메소드 재정의</h6>
+
+<ul>
+<li>초기화 메소드를 재정의하려면 overrice 지시자를 이용</li>
+<li>자식 클래스에서 부모 클래스의 모든 designated initializer를 재정의하면 부모 클래스의 convenience Initializer를 상속받는다.</li>
+</ul>
+
+<pre><code class="language-swift">class Parent {  
+    var a : Int
+    var width : Int = 0
+    init(a : Int){
+        self.a = a
+    }
+    convenience init(){
+        self.init(a : 0)
+    }
+}
+
+
+class Child : Parent{  
+    var b : Int
+    init(b : Int){
+        self.b = b
+        super.init(a : 0)
+    }
+    override init(a : Int){
+        self.b = 10
+        super.init(a : a)
+    }
+}
+
+var obj1 = Parent(a : 10)  
+var obj2 = Child(b : 20)  
+var obj3 = Child()  
+var obj4 = Child(a: 30)  
+</code></pre>
+
+<ul>
+<li>Required Initializer
+<ul><li>자식 클래스에서 부모 클래스의 초기화 메소드를 반드시 재정의하도록 하려면 부모 클래스의 초기화 메소드에 required 지시자를 붙인다. </li>
+<li>자식 클래스는 부모 클래스에서 required로 선언된 모든 초기화 메소드를 재정의해야 한다.</li></ul></li>
+<li>Failable Initializer
+<ul><li>초기화 조건을 검사하는 코드는 부모 클래스의 초가화 메소드 위임을 마친 이후에 작성한다.</li></ul></li>
+</ul>
+
+<hr>
+
+<h5 id="">초기화 메소드 정리</h5>
+
+<ul>
+<li>초기화 메소드 위임에 관련된 규칙
+<ul><li>Designated Initializer는 부모 클래스의 Designated Initializer를 호출한다.</li>
+<li>Convenience Initializer는 같은 클래스의 다른 초기화 메소드를 호출한다.</li>
+<li>Convenience Initializer는 초기화 메소드 위임을 따라 Designated Initializer를 호출한다.</li></ul></li>
+<li>클래스의 Designated Initializer는 부모 클래스의 Designated Initializer를 호출하기 전에 같은 클래스에서 작성한 모든 프로퍼티의 초기값을 설정한다.</li>
+<li>부모 클래스에서 상속받은 프로퍼티는 부모 클래스의 초기화 메소드로 초기값을 설정하고 난 다음에 자식 클래스에서 초기값을 설정한다.</li>
+<li>Convenience Initializer는 다른 초기화 메소드로 객체 초기화를 위임해서 객체 초기화를 완료한 다음에 값을 설정하도록 작성한다.</li>
+<li>초기화 메소드에서 객체 초기화가 끝나기 전 프로퍼티를 사용하는 다른 메소드 호출은 금지된다.</li>
+</ul>
+
+<pre><code class="language-swift">class Shape {  
+    var edge : Int
+
+    init(numberOfEdge : Int){
+        edge = numberOfEdge
+    }
+
+    func description() -&gt; String {
+        return "\(edge)각형"
+    }
+}
+
+class Rectangle : Shape {  
+    var width : Double
+    var height : Double
+
+    init(width : Double, height : Double){
+        self.width = width
+        self.height = height
+        super.init(numberOfEdge : 4)
+    }
+
+    convenience init(){
+        self.init(width : 0, height : 0)
+    }
+
+   override func description() -&gt; String {
+        return "사각형 가로 \(width) 세로 \(height)"
+    }
+
+    func size() -&gt; Double {
+        return Double(width * height)
+    }
+}
+
+class Triangle : Shape {  
+    var a = 0.0
+    var b = 0.0
+    var c = 0.0
+
+    init(a : Double, b : Double, c: Double){
+        self.a = a
+        self.b = b
+        self.c = c
+        super.init(numberOfEdge : 3)
+    }
+
+   override func description() -&gt; String {
+        return "삼각형 \(a), \(b), \(c)"
+    }
+
+    func size() -&gt; Double{
+        let s : Double = (a + b + c) / 2
+        let result = sqrt(s * (s - a) * (s - b) * (s - c))
+        return result
+    }
+}
+
+var obj1 = Rectangle(width: 10, height: 20)  
+var obj2 = Rectangle()  
+obj2.width = 20  
+obj2.height = 10
+
+var obj3 = Triangle(a: 3, b: 4, c: 5)  
+</code></pre>]]></description><link>http://localhost:2368/sangsog/</link><guid isPermaLink="false">039b749d-84ce-4035-a003-391ddfd6401a</guid><category><![CDATA[Swift]]></category><dc:creator><![CDATA[njir]]></dc:creator><pubDate>Thu, 19 Mar 2015 04:08:02 GMT</pubDate></item><item><title><![CDATA[Swift - 메모리 관리(ARC)]]></title><description><![CDATA[<h6 id="">메모리 관리</h6>
+
+<ul>
+<li>객체 생성 -> 메모리 차지</li>
+<li>메모리 공간의 제약 -> 메모리 관리</li>
+<li>메모리 관리
+<ul><li>필요한 객체 유지</li>
+<li>필요없는 객체 해제</li></ul></li>
+<li>사용 중이라는 표시 - own(소유하기)</li>
+<li>객체 소유하는 방법 : 강한 참조(Strong pointer)</li>
+</ul>
+
+<h6 id="">객체 소유 관리</h6>
+
+<ul>
+<li>레퍼런스 카운트 - 강항 참조의 갯수 
+<ul><li>객체 사용 -> 레퍼런스 카운트 늘리기</li>
+<li>객체 사용 끝 -> 레퍼런스 카운트 감소</li>
+<li>레퍼런스 카운트가 0이면 사용 끝</li></ul></li>
+</ul>
+
+<h6 id="arc">ARC</h6>
+
+<ul>
+<li>객체 사용/사용 완료 - 레퍼런스 카운트 증가와 감소
+<ul><li>수동 관리</li>
+<li>자동 관리</li></ul></li>
+<li>Automatic Reference Counting : 자동 레퍼런스 카운트 관리
+<ul><li>객체의 레퍼런스 관리 코드 자동 생성(컴파일)</li>
+<li>클래스에만 적용</li>
+<li>밸류 타입(구조체, enum)에는 미적용</li></ul></li>
+</ul>
+
+<h6 id="">객체 소유와 해체</h6>
+
+<ul>
+<li>객체 생성 - 객체 소유</li>
+</ul>
+
+<pre><code class="language-swift">var ptr : MyClass? = MyClass() //레퍼런스 카운트가 1 증가  
+</code></pre>
+
+<ul>
+<li>소유 해제 : 옵셔널로 선언</li>
+</ul>
+
+<pre><code class="language-swift">ptr = nil //레퍼런스 카운트 1 감소  
+</code></pre>
+
+<ul>
+<li>해제 확인하기 : deinit</li>
+</ul>
+
+<pre><code class="language-swift">class test{  
+    deinit{
+        println("객체가 메모리에서 해제")
+    }
+}
+
+var testObj : test? = test()  
+testObj = nil   //객체가 메모리에서 해제  
+</code></pre>
+
+<hr>
+
+<h6 id="">객체를 소유하는 포인터 - 강한 참조</h6>
+
+<ul>
+<li>소유권 해제가 객체의 해제는 아니다</li>
+</ul>
+
+<pre><code class="language-swift">var anotherPointer = obj  
+</code></pre>
+
+<ul>
+<li>강한 참조의 문제
+<ul><li>두 클래스에서 상호 참조(두개 이상의 관계에서도 가능)</li>
+<li>서로 소유하므로 해제되지 않음(메모리 누수)</li>
+<li>수동으로 해제되도록 작성해야 함</li></ul></li>
+</ul>
+
+<pre><code class="language-swift">class MyClass {  
+    var ptr : MyClass2?
+    deinit {
+        println("My Class 객체 해제")
+    }
+}
+
+class MyClass2 {  
+    var ptr : MyClass?
+    deinit {
+        println("MyClass2 객체 해제")
+    }
+}
+
+var obj : MyClass? = MyClass()  
+var obj2 : MyClass2? = MyClass2()  
+obj?.ptr = obj2  
+obj2?.ptr = obj
+
+obj = nil    // 객체가 해제되지 않음  
+obj2 = nil  // 객체가 해제되지 않음  
+</code></pre>
+
+<hr>
+
+<h6 id="">소유하지 않는 포인터</h6>
+
+<ul>
+<li>강한 참조 : 객체를 소유하는 포인터</li>
+<li>약한 참조 : 객체를 소유하지 않는 포인터
+<ul><li>weak
+<ul><li>참조하던 객체가 해제되면 자동으로 nil</li>
+<li>nil이 되므로 옵셔널</li>
+<li>상호 독립적으로 사용 가능
+<ul><li>ex) 사용자와 스마트폰, 운전자와 자동차</li></ul></li></ul></li></ul></li>
+</ul>
+
+<pre><code class="language-swift">class Student {  
+    var phone : Phone?
+    deinit{
+        println("Student 객체가 메모리에서 해제")
+    }
+}
+
+class Phone {  
+    weak var owner : Student?
+    deinit{
+        println("Phone 객체가 메모리에서 해제")
+    }
+}
+
+var owner : Student? = Student()  
+var iphone : Phone? = Phone()
+
+iphone!.owner = owner  
+owner!.phone = iphone
+
+owner = nil  // Student 객체가 메모리에서 해제"  
+iphone = nil // Phone 객체가 메모리에서 해제  
+</code></pre>
+
+<ul>
+<li>unowned
+<ul><li>참조하던 객체가 해제되도 nil로 변하지 않음</li>
+<li>옵셔널로 선언하지 않음 -> 에러 조심!</li>
+<li>완전히 종속적인 경우에 사용
+<ul><li>ex) 신용카드와 사용자, 국가와 도시</li></ul></li></ul></li>
+</ul>
+
+<pre><code class="language-swift"> class Person {
+    var card : CreditCard?
+    deinit {
+        println("Person 객체 해제")
+    }
+}
+
+class CreditCard {  
+    unowned var owner : Person
+    init(owner : Person){
+        self.owner = owner
+    }
+    deinit {
+        println("CreditCard 객체 해제")
+    }
+}
+
+var person : Person? = Person()  
+var card : CreditCard? = CreditCard(owner : person!)  
+person = nil  
+card = nil  
+</code></pre>
+
+<hr>
+
+<h6 id="">콜렉션과 소유권</h6>
+
+<ul>
+<li>콜렉션에 객체 저장
+<ul><li>콜렉션이 객체 소유</li></ul></li>
+<li>콜렉션에서 객체 삭제
+<ul><li>소유권 해제</li></ul></li>
+<li>콜렉션 객체 해제
+<ul><li>소유권 해제</li></ul></li>
+</ul>
+
+<pre><code class="language-swift">var owner2 : Student? = Student()  
+var owner3 : Student? = Student()  
+var array = [owner2, owner3]
+
+owner2 = nil // 객체가 해제되지 않는다.  
+array.removeAtIndex(0) // Student 객체가 메모리에서 해제"  
+</code></pre>]]></description><link>http://localhost:2368/memori-gwanriarc/</link><guid isPermaLink="false">c86285f4-cbf9-4108-a1b7-13ce3148aa9c</guid><category><![CDATA[Swift]]></category><dc:creator><![CDATA[njir]]></dc:creator><pubDate>Thu, 19 Mar 2015 04:07:43 GMT</pubDate></item><item><title><![CDATA[Swift - 메소드]]></title><description><![CDATA[<h6 id="">인스턴스 메소드</h6>
+
+<ul>
+<li>객체를 생성하고 객체에 메소드를 호출하는 방식</li>
+<li>객체에 반영된 값인 프로퍼티를 사용할 수 있다.</li>
+</ul>
+
+<h6 id="">타입 메소드</h6>
+
+<ul>
+<li>객체를 생성하지 않고 동작하는 메소드</li>
+<li>메소드를 선언하면서 func 앞에 class 키워드를 이용</li>
+<li><strong>프로퍼티에 접근할 수 없다</strong></li>
+</ul>
+
+<pre><code class="language-swift">class MyClass {  
+    var property = 0
+    class func typeMethod(){
+        property = 3    // Error. 타입 메소드에서 프로퍼티 접근 불가
+    }
+    func instanceMethod(){
+        property = 1    // 인스턴스 메소드에서 프로퍼티 접근 가능
+    }
+}
+</code></pre>
+
+<ul>
+<li>인스턴스 메소드는 객체를 생성하고 객체에 호출</li>
+<li>타입 메소드는 클래스에 호출</li>
+</ul>
+
+<pre><code class="language-swift">var obj = MyClass()  
+obj.instanceMethod()
+
+MyClass.typeMethod()  
+</code></pre>
+
+<ul>
+<li>팩토리 메소드(Factory Method)가 타입 메소드의 대표 예
+
+
+<blockquote>
+  Factory Method : 객체를 생성하는 목적으로 작성하는 디자인 패전 중 하나의 코드 작성 패턴</blockquote></li>
+  </ul>
+<pre><code class="language-swift">class Rectangle {  
+    var width : Int
+    var height : Int
+
+    init(width : Int, height : Int){
+        self.width = width
+        self.height = height
+    }
+
+    class func newRectangle(width : Int, height : Int) -&gt; Rectangle{
+        let obj = Rectangle(width: width, height : height)
+        return obj
+    }
+}
+</code></pre>
+
+
+<pre><code class="language-swift">//팩토리 메소드를 이용해 객체를 생성하는 코드
+var rect = Rectangle.newRectangle(70, height : 80)    // 두번째부터 외부파라미터  
+</code></pre>
+
+
+
+
+<hr>
+
+
+
+
+<h6 id="">타입 프로퍼티</h6>
+
+<ul>
+<li>class 키워드를 이용</li>
+<li>스위프트 버전 1.1에서 클래스에 계산 프로퍼티만 타입 프로퍼티로 사용할 수 있다.</li>
+</ul>
+
+<pre><code class="language-swift">class Rectangle{  
+    var width = 0
+    var height = 0
+    class var name : String {
+        return "사각형"
+    }
+}
+//main.swift
+Rectangle.name  
+</code></pre>
+
+<h6 id="">프로퍼티 감시</h6>
+
+<ul>
+<li>프로퍼티의 값 변경 감시</li>
+<li>값 변경 전
+<ul><li>willSet</li>
+<li>변경될 값 : newValue</li></ul></li>
+<li>값 변경 이후
+<ul><li>didSet</li>
+<li>이전 값 : oldValue</li></ul></li>
+<li>Object C - KVO</li>
+</ul>
+
+<pre><code class="language-swift">class Rectangle{  
+    var width = 0
+    var height : Int = 0 {
+        //프로퍼티에 값이 설정된 후에 동작
+        didSet {
+            // 0보다 작으면 0으로 변경
+            if height &lt; 0 {
+                height = 0
+            }
+            println("height didSet \(height) - oldValue : \(oldValue)")
+        }
+    }
+}
+</code></pre>]]></description><link>http://localhost:2368/inseuteonseu-mesodeu/</link><guid isPermaLink="false">c031f968-d824-409d-a838-876fff7d6e93</guid><category><![CDATA[Swift]]></category><dc:creator><![CDATA[njir]]></dc:creator><pubDate>Thu, 19 Mar 2015 04:07:26 GMT</pubDate></item><item><title><![CDATA[Swift - 클래스]]></title><description><![CDATA[<h4 id="">클래스</h4>
+
+<ul>
+<li>프로젝트에서 클래스는
+<ul><li>하나의 swift 파일에 다수의 클래스 작성</li>
+<li>클래스마다 swift 파일 작성</li></ul></li>
+<li>템플릿
+<ul><li>Cocoa Class(클래스를 만듦, 부모클래스 정할 수 있음)</li>
+<li>Swift File(부모 클래스 없이 파일만)</li></ul></li>
+<li>main.swift : 처음 동작 코드</li>
+<li>객체 생성</li>
+</ul>
+
+<pre><code class="language-swift">var obj = Rectangle()  // new 사용 안함  
+let obj2 = Rectangle()  
+</code></pre>
+
+<blockquote>
+  <ul>
+  <li>var 새로운 객체 대입 가능</li>
+  <li>let : 대입 불가능</li>
+  </ul>
+</blockquote>
+
+<ul>
+<li>객체 생성 - 주소</li>
+<li>객체 비교 : 같은 주소 vs 같은 데이터</li>
+<li>객체 주소 비교 : '==='</li>
+</ul>
+
+<pre><code class="language-swift">var obj1 = Rectangle()  
+var obj2 = obj1  
+var obj3 = Rectangle()
+
+obj1 === obj2 //true  
+obj1 === obj3 //false  
+</code></pre>
+
+<hr>
+
+<h6 id="">프로퍼티 : 클래스나 구조체 값 다루기</h6>
+
+<ul>
+<li>종류 : 저장 프로퍼티, 계산 프로퍼티</li>
+<li>저장 프로퍼티(stored property)
+<ul><li>값을 저장하고 얻어오는 용도</li>
+<li>클래스 내 변수, 상수 정의
+<ul><li>초기값, 옵셔널 </li></ul></li></ul></li>
+<li>계산 프로퍼티(compucated property)
+<ul><li>값 저장하지 않음</li>
+<li>계산된 값을 얻어오거나, 계산하도록 제공</li>
+<li>메소드가 아님</li>
+<li>읽고 쓰기 가능 : get/set 모두 작성</li>
+<li>읽기 전용: get만 작성, get 선언 생략가능</li>
+<li>사용 방법</li></ul></li>
+</ul>
+
+<pre><code>var [프로퍼티 이름] : [type] {  
+    get {
+        return [계산 결과]
+    }
+    set(newValue){
+        }
+    }
+</code></pre>
+
+<hr>
+
+<h6 id="">메소드 : 클래스 내에 작성하는 함수</h6>
+
+<ul>
+<li>첫번째 파라메터 : 외부 파라미터 이름 사용 안함</li>
+<li>두번째 파라메터부터 : 외부 파타미터 이름 사용</li>
+<li><p>내부 파라미터 이름으로 자동 사용</p></li>
+<li><p>외부파라미터 이름 설정</p></li>
+<li>두번째 파라미터 외부 파라미터 이름은 내부 파라미터 이름 그대로</li>
+<li><p>첫번째 파라미터도 외부 파라미터로 설정하려면 # 주거나, 수동으로 지정</p>
+
+<blockquote>
+  <p><strong>함수와 클래스함수의 차이점:</strong></p>
+  
+  <ul><li>클래스 함수는 두번째 파라미터부터 외부 파라미터 이름 사용해야함</li></ul>
+</blockquote></li>
+<li><p>외부 파라미터 이름을 사용하지 않으려면 _(언더스코어) 기호를 붙인다.->두번째 파라미터부터 적용가능</p></li>
+</ul>
+
+<pre><code class="language-swift">// counter.swift
+class Counter{  
+    var count = 0
+    func increment(){
+        count++
+    }
+    func incrementBy(amount : Int, numberOfTimes : Int){
+        count += amount * numberOfTimes
+    }
+    func reset(){
+        count = 0
+    }
+    func test(amount : Int, time number : Int){
+        count += amount * number
+    }
+    func notUsingExternal(amount : Int, _ number : Int){
+        count += amount * number
+    }
+    func selfCount(count : Int){
+        self.count = count
+    }
+}
+
+// main.swift
+let counter = Counter()  
+counter.increment()         // 1  
+counter.incrementBy(5, numberOfTimes : 5)   // 6  
+counter.reset()                  // 0  
+counter.test(4, time : 6)  
+counter.notUsingExternal(3, 5)
+</code></pre>
+
+<hr>
+
+<h6 id="">초기화</h6>
+
+<ul>
+<li>클래스 초기화</li>
+<li>모든 프로퍼티(옵셔널 제외)는 객체 생성시 초기화
+<ul><li>초기값</li>
+<li>초기화 메소드</li></ul></li>
+<li>객체 준비 과정
+<ul><li>메모리 공간 준비</li>
+<li>객체 사용 준비</li>
+<li>초기값이 설정된 프로퍼티 - 초기값 설정</li>
+<li>옵셔널의 초기값 - nil</li>
+<li>그외 초기화 과정 필요</li></ul></li>
+</ul>
+
+<h6 id="init">초기화 메소드 init()</h6>
+
+<ul>
+<li>클래스의 프로퍼티가 옵셔널이 아니고 초기값ㅇ르 설정하지 않으면, 객체를 생성하면서 이 프로퍼티 초기값을 설정하는 메소드가 필요 -> Initializer</li>
+<li>초기화 메소드는 func 지시자가 없고 반환값이 없는 init 메소드</li>
+</ul>
+
+<pre><code class="language-swift">class Rectangle(){  
+    var width : Int
+    var height : Int
+    let edges = 0
+    // 초기화
+    init(){
+        width = 0
+        height = 0
+        edged = 4     // 초기화메소드에서 상수값을 설정할 수 있다.
+    }
+}
+</code></pre>
+
+<blockquote>
+  <p><strong>tips:</strong></p>
+  
+  <p>init 메소드는 다른 메소드와는 다르게 첫 번째 파라미터부터 외부 파라미터 이름을 사용한다. 외부 파라미터를 사용하지 않으려면 _(언더스코어) 기호 사용하거나 수동으로 지정하여야 한다.</p>
+</blockquote>
+
+<h6 id="designatedinitializer">Designated Initializer : 모든 값 초기화</h6>
+
+<ul>
+<li>클래스에 초기화가 안된 프로퍼티가 있다면 반드시 1개 이상의 Designated Initializer가 있어야 한다.</li>
+<li>초기화가 필요한 <strong>모든 프로퍼티</strong>의 초기값을 설정</li>
+</ul>
+
+<pre><code class="language-swift">class MyClass {  
+    var a : Int
+    var b : Int  
+    func otherprepare() {
+        //다른 초기화 동작
+    }
+    init(a : Int, b : Int){
+        self.a = a
+        self.b = b
+        otherprepare()    // 프로퍼티 초기화 후에는 허용
+    }
+}
+</code></pre>
+
+<pre><code class="language-swift">// 단, 초기화 과정이 끝나기 전에 다른 메소드 호출은 에러 발생
+init(a : Int, b : Int){  
+      self.a = a
+    otherprepare()    // Error
+    self.b = b
+}
+</code></pre>
+
+<h6 id="convenienceinitializer">Convenience Initializer</h6>
+
+<p><ul>
+<li>초기화가 필요한 모든 프로퍼티의 초기값을 설정하지 않는다.</li>
+<li>단독으로 객체의 초기화 과정 완료 불가</li>
+<li>다른 초기화 메소드를 이용해서 초기화 과정 수행</li></ul></p>
+
+<blockquote>
+  Initialize Delegation : 다른 초기화 메소드에게 나모지 초기화를 위임하는 것
+  
+<pre><code class="language-swift">// Music.swift
+class Music {  
+    var title : String
+    var artist : String
+
+    init(title : String, artist : String){
+        self.title = title
+        self.artist = artist
+    }
+    convenience init(artist : String){
+        self.init(title : "", artist : artist)
+    }
+}
+
+// main.swift
+let music3 = Music(artist: "다이나믹듀오")  
+music3.title = "고백"  
+</code></pre>
+</blockquote>]]></description><link>http://localhost:2368/keulraeseu/</link><guid isPermaLink="false">dc7df509-186b-489b-8b7c-bd0721959ad2</guid><category><![CDATA[Swift]]></category><dc:creator><![CDATA[njir]]></dc:creator><pubDate>Thu, 19 Mar 2015 04:06:57 GMT</pubDate></item></channel></rss>

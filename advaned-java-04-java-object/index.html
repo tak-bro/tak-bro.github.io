@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Advanced Java 04 - Java Object</title>
+    <meta name="description" content="" />
+    
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="../assets/images/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="../assets/css/screen.css?v=8b1a777478" />
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <link rel="stylesheet" type="text/css" href="../assets/css/prism.css?v=8b1a777478" />
+    
+    
+   
+
+
+    <link rel="canonical" href="http://localhost:2368/advaned-java-04-java-object/" />
+    
+    <meta property="og:site_name" content="Pythonic" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Advanced Java 04 - Java Object" />
+    <meta property="og:description" content="Interface class정의시 &quot;어떤 정보가 어떻게 되면 외부에 알려준다.&quot;와 같은 경우에 사용 예를 들어 함수 정의시 변수가 10의 배수가 되면 외부에 알려주고 싶을 때 사용 public interface CounterListener{       public voic onNotifyCount(int count); } public class Counter {       private int mCount=0;..." />
+    <meta property="og:url" content="http://localhost:2368/advaned-java-04-java-object/" />
+    <meta property="article:published_time" content="2015-03-07T05:06:24.651Z" />
+    <meta property="article:modified_time" content="2015-03-15T02:00:18.234Z" />
+    <meta property="article:tag" content="Advanced Java" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Advanced Java 04 - Java Object" />
+    <meta name="twitter:description" content="Interface class정의시 &quot;어떤 정보가 어떻게 되면 외부에 알려준다.&quot;와 같은 경우에 사용 예를 들어 함수 정의시 변수가 10의 배수가 되면 외부에 알려주고 싶을 때 사용 public interface CounterListener{       public voic onNotifyCount(int count); } public class Counter {       private int mCount=0;..." />
+    <meta name="twitter:url" content="http://localhost:2368/advaned-java-04-java-object/" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Pythonic",
+    "author": {
+        "@type": "Person",
+        "name": "njir",
+        "image": "http://localhost:2368/content/images/2015/03/tumblr_mjm5ksBtYP1r9164to1_500.jpg",
+        "url": "http://localhost:2368/author/tak",
+        "sameAs": null
+    },
+    "headline": "Advanced Java 04 - Java Object",
+    "url": "http://localhost:2368/advaned-java-04-java-object/",
+    "datePublished": "2015-03-07T05:06:24.651Z",
+    "dateModified": "2015-03-15T02:00:18.234Z",
+    "keywords": "Advanced Java",
+    "description": "Interface class정의시 &quot;어떤 정보가 어떻게 되면 외부에 알려준다.&quot;와 같은 경우에 사용 예를 들어 함수 정의시 변수가 10의 배수가 되면 외부에 알려주고 싶을 때 사용 public interface CounterListener{       public voic onNotifyCount(int count); } public class Counter {       private int mCount=0;..."
+}
+    </script>
+
+    <meta name="generator" content="Ghost 0.5" />
+    <link rel="alternate" type="application/rss+xml" title="Pythonic" href="http://localhost:2368/rss/" />
+    <script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+ 	 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+ 	 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+ 		 })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ 		 ga('create', 'UA-46214266-2', 'auto');
+ ga('send', 'pageview');
+	
+		</script>
+    
+    <script>
+			window.techno = {
+				baseUrl: 'http://localhost:2368',
+				hbData: {
+					pagination:{
+						pages: ''
+					}
+				}
+			};
+			
+		window.techno.config = { 
+	
+		logo: '[YOUR LOGO]',
+		author: {			
+				social: [
+					{ 
+					   href: 'https://github.com/njir',
+					   icon: 'fa-github',
+					   title: 'Github'
+					},
+					{ 
+						href: 'https://twitter.com/njir123',
+					  icon: 'fa-twitter',
+						title: 'Twitter'
+					},
+					{ 
+						href: 'https://www.linkedin.com/in/hyungtak',
+					  icon: 'fa-linkedin',
+						title: 'LinkedIn'
+					},
+					{ 
+						href: 'mailto:njir.naver@daum.net',
+					  icon: 'fa-envelope',
+						title: 'Email'
+					},
+					{ 
+						href: 'https://njir.github.io/rss/',
+					  icon: 'fa-rss',
+						title: 'Rss'
+					}
+				]
+		},
+		disqus: {
+				shortname: '[YOUR DISQUS SHORTNAME]'
+		},
+		google: {
+				analytics: function(ga) {
+					var account ='[YOUR GA ACCOUNT]';
+					var domain = '[YOUR GA DOMAIN]';
+
+					ga('create', account, domain);
+					//ga('require', 'displayfeatures');
+					ga('send', 'pageview');
+				}
+		},
+};
+			
+			
+			
+	</script>
+     
+    
+    
+</head>
+<body class="post-template tag-advanced-java nav-closed">
+
+    <div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="index.html#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+            <li class="nav-home" role="presentation"><a href="../index.html">Home</a></li>
+            <li class="nav-advanced-java" role="presentation"><a href="../tag/advanced-java/index.html">Advanced Java</a></li>
+            <li class="nav-embedded-software" role="presentation"><a href="../tag/embedded-software/index.html">Embedded Software</a></li>
+            <li class="nav-swift" role="presentation"><a href="../tag/swift/index.html">Swift</a></li>
+    </ul>
+    <a class="subscribe-button icon-feed" href="../rss/index.html">Subscribe</a>
+</div>
+<span class="nav-cover"></span>
+
+
+    <div class="site-wrapper">
+
+        
+
+
+<header class="main-header tag-head " style="background-image: url(../content/images/2015/03/camera-581126_1920.jpg)">
+    <nav class="main-nav overlay clearfix">
+        <a class="blog-logo" href="http://localhost:2368"><img src="../content/images/2015/03/ghost-2.png" alt="Blog Logo" /></a>
+            <a class="menu-button" href="index.html#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
+    </nav>
+    
+    <div class="vertical">
+        <div class="main-header-content inner">
+            <h1 class="page-title">Advanced Java</h1>
+            <h2 class="page-description">
+                Advanced Java 04 - Java Object
+            </h2>
+        </div>
+    </div>
+
+</header>
+
+
+
+<main class="content" role="main">
+    <article class="post tag-advanced-java">
+
+        <header class="post-header">
+            <h2 class="post-title">Advanced Java 04 - Java Object</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2015-03-07">07 March 2015</time>  on <a href="../tag/advanced-java/index.html">Advanced Java</a>
+            </section>
+        </header>
+
+
+        <section class="post-content">
+        
+            <h4 id="interface">Interface</h4>
+
+<ul>
+<li>class정의시 "어떤 정보가 어떻게 되면 외부에 알려준다."와 같은 경우에 사용</li>
+<li>예를 들어 함수 정의시 변수가 10의 배수가 되면 외부에 알려주고 싶을 때 사용</li>
+</ul>
+
+<pre><code class="language-java">public interface CounterListener{  
+    public voic onNotifyCount(int count);
+}
+public class Counter {  
+    private int mCount=0;
+    CounterListener mListener;
+    public void setCounterListener(CounterListener listener){
+        mLisener = listener;
+    }
+public void inc(){  
+    mCount++;
+    if(mCount % 10 ==0){
+        //notify out side
+        if(mListener != null){
+                mListener.onNotifyCount(mCount)
+            }
+        }
+    }
+}
+</code></pre>
+
+<ul>
+<li>공통적으로 사용되는 속성을 정의하고자 할 때</li>
+<li>객체간 값을 비교하는 속성을 정의하고자 하는 경우 해당 속성을 interface로 정의하고 class에서 이 interface를 implements하게 한 다음, 해당 class의 객체를 interface type으로 변환하여 사용</li>
+</ul>
+
+<hr />
+
+<h4 id="inner">inner 클래스</h4>
+
+<ul>
+<li>클래스 안에서 클래스를 정의하는 것</li>
+<li>When? 클래스 내부에서만 사용되는 클래스를 정의할 때</li>
+</ul>
+
+<pre><code class="language-java">public class OutterClass{  
+    public void printMessage(OutterClass obj){..}
+    public class InnerClass{
+        public voide invokeOutter(){
+            printMessage(OuterClass.this); 
+            // outter 클래스의 객체가 생성되어 있을 때만 inner 클래스의 객체 생성 가능 
+            // static으로 정의되면 따로 생성 가능
+        }
+    }
+}
+</code></pre>
+
+<hr />
+
+<h4 id="anonymous">Anonymous 클래스</h4>
+
+<ul>
+<li>이름 없이 class를 정의하여 객체를 생성한 class</li>
+</ul>
+
+<h4 id="theinstanceofoperator">The instanceof Operator</h4>
+
+<ul>
+<li>객체의 타입을 알아보는 연산자</li>
+</ul>
+
+<pre><code class="language-java">public class Employee extends Object  
+public class Manager extends Employee  
+public class Engineer extends Employee  
+public void doSomething(Employee e){    // 타입이 super에 해당해야함  
+    if(e instanceof Manager){
+        // Manager
+    } else if(e instanceof Engineer){
+        // Engineer
+    } else {
+        ..
+    }
+}
+</code></pre>
+
+<h4 id="catingobject">Cating Object</h4>
+
+<ul>
+<li>객체를 캐스팅함으로써 그 객체의 모든 멤버에 접근할 수 있다.</li>
+<li>(class의 type)객체</li>
+</ul>
+
+<h4 id="objectclass">Object Class</h4>
+
+<ul>
+<li>Object 클래스는 모든 클래스의 최상위 클래스</li>
+<li>즉, 자바에서의 모든 클래스의 super class</li>
+</ul>
+
+<hr />
+
+<h4 id="theoperatorcomparedwiththeequalsmethod">The '==' Operator Compared With the equals Method</h4>
+
+<ul>
+<li>'= =' 연산자는 두 개의 레퍼런스가 같은지를 판단한다.(그 객체가 같은지) 같은 객체인지를 판단</li>
+<li>'equals()'는 안에 있는 내용이 같은지를 판단</li>
+</ul>
+
+<pre><code class="language-java">String a = new String("test");  
+String b = a;  
+if (a == b) {  
+    // true
+}
+
+
+String a = new String("test");  
+String b = new String("test");  
+// a==b 아님
+if(a.equals(b)){  
+    //true
+}
+</code></pre>
+
+<h4 id="thetostringmethod">The toString Method</h4>
+
+<ul>
+<li>자바의 모든 객체는 string 연산 가능</li>
+<li>객체를 String으로 바꿀 때 사용</li>
+</ul>
+
+<h4 id="wrapperclasses">Wrapper Classes</h4>
+
+<ul>
+<li>Primitive 타입(int, char, byte...)을 오브젝트처럼 다룰 수 있다.</li>
+<li>자바는 Primitive 타입에 해당하는 각 오브젝트 클래스를 정의하고 있다.</li>
+</ul>
+
+<p>Primitive Type     | Wrapper Class <br />
+boolean            | Boolean <br />
+byte               | Byte <br />
+char     | Characater <br />
+... | ...</p>
+
+<h4 id="obectruntimevm">Obect Runtime 구조(자바 VM)</h4>
+
+<ul>
+<li>자바는 스택이 있고 스택 안에 Local Variable Array가 있다. (int i, j=30 ...) 변수들이 있는 공간</li>
+<li>HEAP : new로 생성할 때, new로 만든 객체가 들어감</li>
+<li>CLASS AREA : 내가 만든 class , 코드가 메모리에 올라가는 곳</li>
+<li>바이트 코드 : stack 기반의 명령어 + 객체지향 명령어로 구성</li>
+</ul>
+            
+            
+            
+              
+            
+            
+            
+        </section>
+
+        <footer class="post-footer">
+
+
+            <figure class="author-image">
+                <a class="img" href="../author/tak/index.html" style="background-image: url(../content/images/2015/03/tumblr_mjm5ksBtYP1r9164to1_500.jpg)"><span class="hidden">njir's Picture</span></a>
+            </figure>
+
+            <section class="author">
+                <h4><a href="../author/tak/index.html">njir</a></h4>
+
+                    <p>Read <a href="../author/tak/index.html">more posts</a> by this author.</p>
+                <div class="author-meta">
+                    
+                    
+                </div>
+            </section>
+
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="https://twitter.com/share?text=Advanced%20Java%2004%20-%20Java%20Object&amp;url=http://localhost:2368/advaned-java-04-java-object/"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:2368/advaned-java-04-java-object/"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://localhost:2368/advaned-java-04-java-object/"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+
+
+
+
+                <div id="disqus_thread"></div>
+                  <script type="text/javascript">
+                  /* * * CONFIGURATION VARIABLES * * */
+                           var disqus_shortname = 'njir';
+    
+                              /* * * DON'T EDIT BELOW THIS LINE * * */
+                 (function() {
+                       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                       })();
+                       </script>
+                    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+            
+
+
+
+
+
+
+
+        </footer>
+
+    </article>
+</main>
+
+
+
+        <footer class="site-footer clearfix">
+            <section class="copyright"><a href="http://localhost:2368">Pythonic</a> &copy; 2015</section>
+            <section class="poweredby">Proudly published with <a href="https://ghost.org">Ghost</a></section>
+        </footer>
+
+    </div>
+
+    <script src="../public/jquery.js?v=8b1a777478"></script>
+
+    <script type="text/javascript" src="../assets/js/jquery.fitvids.js?v=8b1a777478"></script>
+    <script type="text/javascript" src="../assets/js/index.js?v=8b1a777478"></script>
+    <script type="text/javascript" src="../assets/js/prism.js?v=8b1a777478"></script>
+    <script type='text/javascript' src="../assets/js/knockout-3.3.0.js?v=8b1a777478"></script>
+  
+
+</body>
+</html>

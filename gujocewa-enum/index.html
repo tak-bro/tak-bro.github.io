@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Swift - 구조체와 Enum</title>
+    <meta name="description" content="" />
+    
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="../assets/images/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="../assets/css/screen.css?v=8b1a777478" />
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <link rel="stylesheet" type="text/css" href="../assets/css/prism.css?v=8b1a777478" />
+    
+    
+   
+
+
+    <link rel="canonical" href="http://localhost:2368/gujocewa-enum/" />
+    
+    <meta property="og:site_name" content="Pythonic" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Swift - 구조체와 Enum" />
+    <meta property="og:description" content="구조체 클래스처럼 프로퍼티와 함수를 선언 클래스와 구조체 같은점 : 데이터, 행위 다른점 : 상속, 레퍼런스vs밸류, ARC(레퍼런스 타입만) 구조체 정의 ////// 1 struct Point {       var x = 0     var y = 0     func description() -&amp;gt; String {         return &quot;point : \(x), \(y)&quot;     } } var p1 = Point()   p1...." />
+    <meta property="og:url" content="http://localhost:2368/gujocewa-enum/" />
+    <meta property="article:published_time" content="2015-03-19T04:08:25.710Z" />
+    <meta property="article:modified_time" content="2015-03-19T04:10:01.824Z" />
+    <meta property="article:tag" content="Swift" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Swift - 구조체와 Enum" />
+    <meta name="twitter:description" content="구조체 클래스처럼 프로퍼티와 함수를 선언 클래스와 구조체 같은점 : 데이터, 행위 다른점 : 상속, 레퍼런스vs밸류, ARC(레퍼런스 타입만) 구조체 정의 ////// 1 struct Point {       var x = 0     var y = 0     func description() -&amp;gt; String {         return &quot;point : \(x), \(y)&quot;     } } var p1 = Point()   p1...." />
+    <meta name="twitter:url" content="http://localhost:2368/gujocewa-enum/" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Pythonic",
+    "author": {
+        "@type": "Person",
+        "name": "njir",
+        "image": "http://localhost:2368/content/images/2015/03/tumblr_mjm5ksBtYP1r9164to1_500.jpg",
+        "url": "http://localhost:2368/author/tak",
+        "sameAs": null
+    },
+    "headline": "Swift - 구조체와 Enum",
+    "url": "http://localhost:2368/gujocewa-enum/",
+    "datePublished": "2015-03-19T04:08:25.710Z",
+    "dateModified": "2015-03-19T04:10:01.824Z",
+    "keywords": "Swift",
+    "description": "구조체 클래스처럼 프로퍼티와 함수를 선언 클래스와 구조체 같은점 : 데이터, 행위 다른점 : 상속, 레퍼런스vs밸류, ARC(레퍼런스 타입만) 구조체 정의 ////// 1 struct Point {       var x = 0     var y = 0     func description() -&amp;gt; String {         return &quot;point : \\(x), \\(y)&quot;     } } var p1 = Point()   p1...."
+}
+    </script>
+
+    <meta name="generator" content="Ghost 0.5" />
+    <link rel="alternate" type="application/rss+xml" title="Pythonic" href="http://localhost:2368/rss/" />
+    <script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+ 	 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+ 	 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+ 		 })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ 		 ga('create', 'UA-46214266-2', 'auto');
+ ga('send', 'pageview');
+	
+		</script>
+    
+    <script>
+			window.techno = {
+				baseUrl: 'http://localhost:2368',
+				hbData: {
+					pagination:{
+						pages: ''
+					}
+				}
+			};
+			
+		window.techno.config = { 
+	
+		logo: '[YOUR LOGO]',
+		author: {			
+				social: [
+					{ 
+					   href: 'https://github.com/njir',
+					   icon: 'fa-github',
+					   title: 'Github'
+					},
+					{ 
+						href: 'https://twitter.com/njir123',
+					  icon: 'fa-twitter',
+						title: 'Twitter'
+					},
+					{ 
+						href: 'https://www.linkedin.com/in/hyungtak',
+					  icon: 'fa-linkedin',
+						title: 'LinkedIn'
+					},
+					{ 
+						href: 'mailto:njir.naver@daum.net',
+					  icon: 'fa-envelope',
+						title: 'Email'
+					},
+					{ 
+						href: 'https://njir.github.io/rss/',
+					  icon: 'fa-rss',
+						title: 'Rss'
+					}
+				]
+		},
+		disqus: {
+				shortname: '[YOUR DISQUS SHORTNAME]'
+		},
+		google: {
+				analytics: function(ga) {
+					var account ='[YOUR GA ACCOUNT]';
+					var domain = '[YOUR GA DOMAIN]';
+
+					ga('create', account, domain);
+					//ga('require', 'displayfeatures');
+					ga('send', 'pageview');
+				}
+		},
+};
+			
+			
+			
+	</script>
+     
+    
+    
+</head>
+<body class="post-template tag-swift nav-closed">
+
+    <div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="index.html#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+            <li class="nav-home" role="presentation"><a href="../index.html">Home</a></li>
+            <li class="nav-advanced-java" role="presentation"><a href="../tag/advanced-java/index.html">Advanced Java</a></li>
+            <li class="nav-embedded-software" role="presentation"><a href="../tag/embedded-software/index.html">Embedded Software</a></li>
+            <li class="nav-swift" role="presentation"><a href="../tag/swift/index.html">Swift</a></li>
+    </ul>
+    <a class="subscribe-button icon-feed" href="../rss/index.html">Subscribe</a>
+</div>
+<span class="nav-cover"></span>
+
+
+    <div class="site-wrapper">
+
+        
+
+
+<header class="main-header tag-head " style="background-image: url(../content/images/2015/03/camera-581126_1920.jpg)">
+    <nav class="main-nav overlay clearfix">
+        <a class="blog-logo" href="http://localhost:2368"><img src="../content/images/2015/03/ghost-2.png" alt="Blog Logo" /></a>
+            <a class="menu-button" href="index.html#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
+    </nav>
+    
+    <div class="vertical">
+        <div class="main-header-content inner">
+            <h1 class="page-title">Swift</h1>
+            <h2 class="page-description">
+                Swift - 구조체와 Enum
+            </h2>
+        </div>
+    </div>
+
+</header>
+
+
+
+<main class="content" role="main">
+    <article class="post tag-swift">
+
+        <header class="post-header">
+            <h2 class="post-title">Swift - 구조체와 Enum</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2015-03-19">19 March 2015</time>  on <a href="../tag/swift/index.html">Swift</a>
+            </section>
+        </header>
+
+
+        <section class="post-content">
+        
+            <h6 id="">구조체</h6>
+
+<ul>
+<li>클래스처럼 프로퍼티와 함수를 선언</li>
+<li>클래스와 구조체
+<ul><li>같은점 : 데이터, 행위</li>
+<li>다른점 : 상속, 레퍼런스vs밸류, ARC(레퍼런스 타입만)</li></ul></li>
+<li>구조체 정의</li>
+</ul>
+
+<pre><code class="language-swift">////// 1
+struct Point {  
+    var x = 0
+    var y = 0
+
+    func description() -&gt; String {
+        return "point : \(x), \(y)"
+    }
+}
+
+var p1 = Point()  
+p1.x = 10  
+p1.y = 20  
+var p2 = Point(x : 3, y : 5)
+
+//// 2
+struct MyStruct {  
+    var var1 : Int = 0
+}
+class MyClass {  
+    var var1 : Int = 0
+}
+var struct1 = MyStruct()  
+var struct2 = MyStruct(var1 : 10)  
+var obj = MyClass()
+</code></pre>
+
+<ul>
+<li>구조체도 객체 생성되면 - 초기화 필요</li>
+<li>초기화 메소드 작성
+<ul><li>구조체도 클래스와 마찬가지로 초기화 과정 필요</li>
+<li>상속 없으므로 부모 클래스의 초기화 위임 없음</li>
+<li>convenience initializer : convenience 생략</li></ul></li>
+</ul>
+
+<pre><code class="language-swift"> struct Point {
+    var x = 0
+    var y = 0
+
+    init(){
+        self.x = 0
+        self.y = 0
+    }
+
+    func description() -&gt; String {
+        return "point : \(x), \(y)"
+    }
+}
+</code></pre>
+
+<ul>
+<li>정적 메소드와 프로퍼티 : static
+<ul><li>객체를 생성하지 않고 사용하는 메소드</li></ul></li>
+</ul>
+
+<pre><code class="language-swift">struct Point {  
+    var x = 0
+    var y = 0
+
+    static func newPoint(x : Int, y : Int) -&gt; Point {
+        var newObj = Point(x: x, y: y)
+        return newObj
+    }
+  }
+</code></pre>
+
+<ul>
+<li>구조체의 데이터
+<ul><li>초기화 메소드에서 설정 가능</li>
+<li>구조체 외부에서 설정 가능</li>
+<li><strong>구초제 내부에서 설정 불가</strong>
+<ul><li>mutating 으로 내부에서 데이터 설정</li></ul></li></ul></li>
+</ul>
+
+<pre><code class="language-swift">struct MyStruct {  
+    var var1 : Int = 0
+    var var2 : String
+    init() {
+        self.init(str : "Hello")
+    }
+    init(str : String){
+        var2 = str
+    }
+    static var var3 = "Struct"
+    mutating func increase(){
+        var1++
+    }
+}
+
+class MyClass {  
+    var var1 : Int = 0
+    var var2 : String
+    convenience  init() {
+        self.init(str : "Hello")
+    }
+    init(str : String){
+        var2 = str
+    }
+}
+
+var struct1 = MyStruct()  
+var struct3 = struct1  
+struct1.var1 = 10   //var1 : 10, var2 : "Hello"  
+struct3 //var1 : 0, var2 : "Hello"
+
+var obj = MyClass()
+</code></pre>
+
+<ul>
+<li>struct, array, dictionary .. 밸류 타입</li>
+</ul>
+
+<pre><code class="language-swift">var array = [1,2,3]  
+var array2 = array  
+array += [4] //[1, 2, 3, 4]  
+array2          // [1,2,3]  
+</code></pre>
+
+<hr />
+
+<h6 id="enum">Enum</h6>
+
+<ul>
+<li>열거형(Enumeration Type)</li>
+<li>옵션 중 하나의 값</li>
+<li>타입이 있는 Enum은 case로 할당된 값으로 다룰 수 있다</li>
+<li>범위 벗어나면 nil -> 옵셔널</li>
+</ul>
+
+<pre><code class="language-swift">var ael = Pet(rawValue : 0)!  
+ael.rawValue  
+</code></pre>
+
+<ul>
+<li>계산프로퍼티, 메소드 사용 가능
+<ul><li>저장 프로퍼티는 불가능</li></ul></li>
+<li>Association</li>
+</ul>
+
+<pre><code class="language-swift">enum Day : Int {  
+    case AM
+    case PM
+    func desc() -&gt; String{
+        switch self{
+        case .AM :
+            return "오전"
+        case .PM :
+            return "오후"
+        }
+    }
+}
+
+Day.AM  
+Day.PM  
+let e1 = Day(rawValue : 0)  
+Day.AM.rawValue  
+Day.AM.desc()   //"오전"  
+</code></pre>
+
+<ul>
+<li>프로퍼티와 메소드</li>
+</ul>
+
+<pre><code class="language-swift">enum Pet : Int {  
+    case Cat = 0
+    case Dog
+    case Other
+
+    var name : String{
+        switch self {
+        case .Cat:
+            return "고양이"
+        case .Dog :
+            return "개"
+        default:
+            return "기타"
+        }
+    }
+
+    func description() -&gt; String {
+        return self.name
+    }
+}
+
+var raz = Pet.Cat  
+raz.name    //고양이  
+raz.description()  //고양이  
+</code></pre>
+            
+            
+            
+              
+            
+            
+            
+        </section>
+
+        <footer class="post-footer">
+
+
+            <figure class="author-image">
+                <a class="img" href="../author/tak/index.html" style="background-image: url(../content/images/2015/03/tumblr_mjm5ksBtYP1r9164to1_500.jpg)"><span class="hidden">njir's Picture</span></a>
+            </figure>
+
+            <section class="author">
+                <h4><a href="../author/tak/index.html">njir</a></h4>
+
+                    <p>Read <a href="../author/tak/index.html">more posts</a> by this author.</p>
+                <div class="author-meta">
+                    
+                    
+                </div>
+            </section>
+
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="https://twitter.com/share?text=Swift%20-%20%EA%B5%AC%EC%A1%B0%EC%B2%B4%EC%99%80%20Enum&amp;url=http://localhost:2368/gujocewa-enum/"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:2368/gujocewa-enum/"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://localhost:2368/gujocewa-enum/"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+
+
+
+
+                <div id="disqus_thread"></div>
+                  <script type="text/javascript">
+                  /* * * CONFIGURATION VARIABLES * * */
+                           var disqus_shortname = 'njir';
+    
+                              /* * * DON'T EDIT BELOW THIS LINE * * */
+                 (function() {
+                       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                       })();
+                       </script>
+                    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+            
+
+
+
+
+
+
+
+        </footer>
+
+    </article>
+</main>
+
+
+
+        <footer class="site-footer clearfix">
+            <section class="copyright"><a href="http://localhost:2368">Pythonic</a> &copy; 2015</section>
+            <section class="poweredby">Proudly published with <a href="https://ghost.org">Ghost</a></section>
+        </footer>
+
+    </div>
+
+    <script src="../public/jquery.js?v=8b1a777478"></script>
+
+    <script type="text/javascript" src="../assets/js/jquery.fitvids.js?v=8b1a777478"></script>
+    <script type="text/javascript" src="../assets/js/index.js?v=8b1a777478"></script>
+    <script type="text/javascript" src="../assets/js/prism.js?v=8b1a777478"></script>
+    <script type='text/javascript' src="../assets/js/knockout-3.3.0.js?v=8b1a777478"></script>
+  
+
+</body>
+</html>

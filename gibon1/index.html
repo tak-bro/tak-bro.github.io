@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Swift - 기본 문법과 타입</title>
+    <meta name="description" content="" />
+    
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="../assets/images/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="../assets/css/screen.css?v=8b1a777478" />
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <link rel="stylesheet" type="text/css" href="../assets/css/prism.css?v=8b1a777478" />
+    
+    
+   
+
+
+    <link rel="canonical" href="http://localhost:2368/gibon1/" />
+    
+    <meta property="og:site_name" content="Pythonic" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Swift - 기본 문법과 타입" />
+    <meta property="og:description" content="기본문법 별도의 main함수를 작성하지 않는다. main 소스 코드의 글로벌 영역의 코드에서 시작한다. main이 아닌 다른 소스 파일에는 함수나 타입을 선언하는 코드만 작성한다. 세미콜론 생략 가능 변수의 값을 출력하려면 역슬래쉬()와 괄호 이용 var str = &quot;hello&quot;   println(&quot;\(str)&quot;)   연산자 다른 언어와..." />
+    <meta property="og:url" content="http://localhost:2368/gibon1/" />
+    <meta property="article:published_time" content="2015-03-19T04:04:48.424Z" />
+    <meta property="article:modified_time" content="2015-03-19T04:04:49.844Z" />
+    <meta property="article:tag" content="Swift" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Swift - 기본 문법과 타입" />
+    <meta name="twitter:description" content="기본문법 별도의 main함수를 작성하지 않는다. main 소스 코드의 글로벌 영역의 코드에서 시작한다. main이 아닌 다른 소스 파일에는 함수나 타입을 선언하는 코드만 작성한다. 세미콜론 생략 가능 변수의 값을 출력하려면 역슬래쉬()와 괄호 이용 var str = &quot;hello&quot;   println(&quot;\(str)&quot;)   연산자 다른 언어와..." />
+    <meta name="twitter:url" content="http://localhost:2368/gibon1/" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Pythonic",
+    "author": {
+        "@type": "Person",
+        "name": "njir",
+        "image": "http://localhost:2368/content/images/2015/03/tumblr_mjm5ksBtYP1r9164to1_500.jpg",
+        "url": "http://localhost:2368/author/tak",
+        "sameAs": null
+    },
+    "headline": "Swift - 기본 문법과 타입",
+    "url": "http://localhost:2368/gibon1/",
+    "datePublished": "2015-03-19T04:04:48.424Z",
+    "dateModified": "2015-03-19T04:04:49.844Z",
+    "keywords": "Swift",
+    "description": "기본문법 별도의 main함수를 작성하지 않는다. main 소스 코드의 글로벌 영역의 코드에서 시작한다. main이 아닌 다른 소스 파일에는 함수나 타입을 선언하는 코드만 작성한다. 세미콜론 생략 가능 변수의 값을 출력하려면 역슬래쉬()와 괄호 이용 var str = &quot;hello&quot;   println(&quot;\\(str)&quot;)   연산자 다른 언어와..."
+}
+    </script>
+
+    <meta name="generator" content="Ghost 0.5" />
+    <link rel="alternate" type="application/rss+xml" title="Pythonic" href="http://localhost:2368/rss/" />
+    <script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+ 	 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+ 	 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+ 		 })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ 		 ga('create', 'UA-46214266-2', 'auto');
+ ga('send', 'pageview');
+	
+		</script>
+    
+    <script>
+			window.techno = {
+				baseUrl: 'http://localhost:2368',
+				hbData: {
+					pagination:{
+						pages: ''
+					}
+				}
+			};
+			
+		window.techno.config = { 
+	
+		logo: '[YOUR LOGO]',
+		author: {			
+				social: [
+					{ 
+					   href: 'https://github.com/njir',
+					   icon: 'fa-github',
+					   title: 'Github'
+					},
+					{ 
+						href: 'https://twitter.com/njir123',
+					  icon: 'fa-twitter',
+						title: 'Twitter'
+					},
+					{ 
+						href: 'https://www.linkedin.com/in/hyungtak',
+					  icon: 'fa-linkedin',
+						title: 'LinkedIn'
+					},
+					{ 
+						href: 'mailto:njir.naver@daum.net',
+					  icon: 'fa-envelope',
+						title: 'Email'
+					},
+					{ 
+						href: 'https://njir.github.io/rss/',
+					  icon: 'fa-rss',
+						title: 'Rss'
+					}
+				]
+		},
+		disqus: {
+				shortname: '[YOUR DISQUS SHORTNAME]'
+		},
+		google: {
+				analytics: function(ga) {
+					var account ='[YOUR GA ACCOUNT]';
+					var domain = '[YOUR GA DOMAIN]';
+
+					ga('create', account, domain);
+					//ga('require', 'displayfeatures');
+					ga('send', 'pageview');
+				}
+		},
+};
+			
+			
+			
+	</script>
+     
+    
+    
+</head>
+<body class="post-template tag-swift nav-closed">
+
+    <div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="index.html#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+            <li class="nav-home" role="presentation"><a href="../index.html">Home</a></li>
+            <li class="nav-advanced-java" role="presentation"><a href="../tag/advanced-java/index.html">Advanced Java</a></li>
+            <li class="nav-embedded-software" role="presentation"><a href="../tag/embedded-software/index.html">Embedded Software</a></li>
+            <li class="nav-swift" role="presentation"><a href="../tag/swift/index.html">Swift</a></li>
+    </ul>
+    <a class="subscribe-button icon-feed" href="../rss/index.html">Subscribe</a>
+</div>
+<span class="nav-cover"></span>
+
+
+    <div class="site-wrapper">
+
+        
+
+
+<header class="main-header tag-head " style="background-image: url(../content/images/2015/03/camera-581126_1920.jpg)">
+    <nav class="main-nav overlay clearfix">
+        <a class="blog-logo" href="http://localhost:2368"><img src="../content/images/2015/03/ghost-2.png" alt="Blog Logo" /></a>
+            <a class="menu-button" href="index.html#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
+    </nav>
+    
+    <div class="vertical">
+        <div class="main-header-content inner">
+            <h1 class="page-title">Swift</h1>
+            <h2 class="page-description">
+                Swift - 기본 문법과 타입
+            </h2>
+        </div>
+    </div>
+
+</header>
+
+
+
+<main class="content" role="main">
+    <article class="post tag-swift">
+
+        <header class="post-header">
+            <h2 class="post-title">Swift - 기본 문법과 타입</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2015-03-19">19 March 2015</time>  on <a href="../tag/swift/index.html">Swift</a>
+            </section>
+        </header>
+
+
+        <section class="post-content">
+        
+            <h6 id="">기본문법</h6>
+
+<ul>
+<li>별도의 main함수를 작성하지 않는다.</li>
+<li>main 소스 코드의 글로벌 영역의 코드에서 시작한다.</li>
+<li>main이 아닌 다른 소스 파일에는 함수나 타입을 선언하는 코드만 작성한다.</li>
+<li>세미콜론 생략 가능</li>
+<li>변수의 값을 출력하려면 역슬래쉬()와 괄호 이용</li>
+</ul>
+
+<pre><code class="language-swift">var str = "hello"  
+println("\(str)")  
+</code></pre>
+
+<ul>
+<li>연산자
+<ul><li>다른 언어와 달리 나머지 연산은 실수에서 사용가능하다.</li>
+<li>3.5 % 2 // = 1.5</li></ul></li>
+<li>범위 연산자
+<ul><li>Closed Range(1...10) : 시작과 끝 모두 포함</li>
+<li>Half Closed Range(1..&lt;9) : 시작 포함, 종료값 포함X</li></ul></li>
+<li>변수 선언
+<ul><li>변수의 타입은 변수 이름 뒤에 콜론(:)을 이용</li></ul></li>
+</ul>
+
+<pre><code class="language-swift">var i = 1  
+var f : Float = 1.1  
+</code></pre>
+
+<ul>
+<li>변수의 타입이 정해지면 그 타입에 맞는 값을 입력해야함</li>
+<li>정수형으로 선언된 변수에 실수 값 대입하면 컴파일 에러</li>
+</ul>
+
+<pre><code class="language-swift">var i = 1  
+i = 3.14 //Error  
+</code></pre>
+
+<ul>
+<li>상수는 let을 이용해 선언</li>
+</ul>
+
+<pre><code class="language-swift">let constant = 234  
+</code></pre>
+
+<ul>
+<li>데이터 타입
+<ul><li>정수형 타입에 Int8, Int16, Int32, Int64 사용</li>
+<li>이들 모두는 서로 다른 타입임(섞어서 사용X)</li>
+<li>변환 함수 사용</li></ul></li>
+</ul>
+
+<pre><code class="language-swift">let var3 : Int16 = Int16(var1)  
+</code></pre>
+
+<ul>
+<li>문자열
+<ul><li>문자열(String)에 문자(Character)를 덧붙이는 연산자는 타입 에러 발생
+
+
+<blockquote>
+  현재 버전에서 문자열 덧불일 때 6개 이상은 에러 발생</li></ul></li>
+  </ul>
+<pre><code class="language-swift">var str1 = "\(1)"+"\(2)"+"\(3)"+"\(4)"+"\(5)"  
+var str2 = "\(1)"+"\(2)"+"\(3)"+"\(4)"+"\(5)"+"\(6)" // Error  
+</code></pre>
+</blockquote>
+
+<ul>
+<li>문자열 길이
+<ul><li>countElements(str)이라는 전역 함수</li>
+<li>버전에 따라 해당 함수명이 달라지고 있다.</li></ul></li>
+</ul>
+
+<h6 id="">튜플</h6>
+
+<ul>
+<li>괄호를 이용해서 여러 값을 하나로 묶은 것으로 다양한 타입의 값을 다룰 수 있다</li>
+</ul>
+
+<pre><code class="language-swift">var one = (1, "asd", "가나다")  
+</code></pre>
+
+<ul>
+<li>튜플을 구성하는 각 항목마다 이름을 선언할 수 있다</li>
+</ul>
+
+<pre><code class="language-swift">let two = (num : 2, eng : "two", kor : "둘")  
+// 이름으로 다음과 같이 접근 가능
+two.num // 2  
+two.kor // "둘"  
+</code></pre>
+
+<ul>
+<li>_(언더스코어)를 이용하면 값을 얻어오지 않음</li>
+</ul>
+
+<pre><code class="language-swift">let (num, _, _) = two  
+num // 2  
+</code></pre>
+
+<h6 id="">배열</h6>
+
+<ul>
+<li>다수의 데이터를 인덱스로 다루는 타입</li>
+<li>var로 선언된 배열 변수는 배열의 내용 변경 가능</li>
+<li>let으로 선언하면 내용 변경 불가(Immutable)</li>
+</ul>
+
+<pre><code class="language-swift">var intArray : [Int] = [1, 2, 3, 4, 5]  
+let strArray = ["A", "B", "c"]  
+</code></pre>
+
+<ul>
+<li><strong>아무 원소도 포함하지 않는 공백 배열을 만드려면 다음과 같이 선언해야함</strong></li>
+</ul>
+
+<pre><code class="language-swift">var emptyArray = [Int]()  
+var emptyArray2 = [String]()  
+</code></pre>
+
+<ul>
+<li>배열에 원소를 추가하려면 +연산자나 append 메소드 이용(마지막 인덱스에 추가)</li>
+</ul>
+
+<pre><code class="language-swift">var intArray : [Int] = [1,2,3]  
+intArray += [4]  
+intArray.append(5)  
+// 특정 위치에 추가하려면 or 삭제
+func insert(newElement: T, atIndex : Int)  
+func removeAtIndex(index : Int) -&gt; T  
+</code></pre>
+
+<h6 id="">딕셔너리</h6>
+
+<ul>
+<li>Key-Value 방식으로 데이터 다루는 콜렉션 타입</li>
+<li>딕셔너리에 저장된 키는 유일해야 함</li>
+</ul>
+
+<pre><code class="language-swift">var dic1 : [String:Int] = ["1월" : 1, "2월" : 2, "3월" : 3]  
+var dic2 = ["1월" : "January", "2월" : "February", "3월" : "March"]  
+// 접근
+dic1["2월"] // 2  
+</code></pre>
+
+<ul>
+<li>항목을 추가하려면 저장되지 않은 키를 이용해서 값 설정</li>
+</ul>
+
+<pre><code class="language-swift">dic1["4월"] = "april"  
+</code></pre>
+
+<ul>
+<li>기존에 저장된 값을 이용해서 값을 입력하거나 updateValue 메소드를 이용하여 값 변경 가능</li>
+</ul>
+
+<pre><code class="language-swift">dic1["4월"] = "중간고사"  
+dic1.updateValue("계절의 여왕", forKey : "5월")  
+</code></pre>
+
+<ul>
+<li>삭제하려면 다음과 같이 사용</li>
+</ul>
+
+<pre><code class="language-swift">dic1.removeValueForKey("4월")  
+dic1["3월"] = nil  
+</code></pre>
+
+<h6 id="if">if문</h6>
+
+<ul>
+<li>if조건문에서 조건에는 반드시 부울 형태의 결과가 나타나도록 조건을 작성해야 한다.</li>
+<li>조건을 감싸는 괄호는 생략 가능</li>
+<li>바디의 중괄호는 생략 불가(한 줄이라도 괄호 써야함)</li>
+</ul>
+
+<pre><code class="language-swift">if 3 &gt; 3 {  
+    println("3이 2보다 크다")
+}
+</code></pre>
+
+<h6 id="switch">switch문</h6>
+
+<ul>
+<li>다른 언어와 좀 다르다</li>
+<li>정수 타입 외에도 다양한 타입의 값을 제어식으로 사용 가능</li>
+<li>제어식 조건에 맞는 첫 case를 하나만 실행하므로 break문장을 별도로 작성하지 않는다.</li>
+<li>switch에는 제어식의 모든 범위를 비교해야하므로 default를 작성해야한다.</li>
+<li>fallthrough는 조건에 맞는 case 실행 이후의 case도 비교</li>
+</ul>
+
+<pre><code class="language-swift">var someValue = 3  
+switch soemValue {  
+    case 1:
+        prinln("1")
+        fallthrough // 이후 case 도 비교
+    default:
+        println("other")
+}
+</code></pre>
+
+<ul>
+<li>case에 문자열이나 튜플 등이 들어간 조건식을 작성할 수 있다.</li>
+<li>where를 이용해서 바인딩 조건을 추가로 작성 가능</li>
+</ul>
+
+<pre><code class="language-swift">var someValue = (3, 5)  
+switch someValue {  
+    case (1, 5) :
+        println("1")
+    case (1...3 , 6..&lt;8):
+        println("1~3, 6~7")
+    case (5, let y):
+        println("5, \(y)")
+    case let(x,y) where x==y:
+        println("x, y 동일한 값")
+    default:
+        println("other")
+}
+</code></pre>
+
+<h6 id="">반복</h6>
+
+<ul>
+<li>for, while문 사용</li>
+<li>배열과 같은 콜렉션 타입인 경우 for-in 사용 가능</li>
+</ul>
+
+<pre><code class="language-swift">var str = "hello"  
+for c in str {  
+    println("\(c)")
+}
+</code></pre>
+
+<ul>
+<li>딕셔너리의 모든 원소를 순회하려면 튜플을 이용해서 for-in 이용</li>
+</ul>
+
+<pre><code class="language-swift">for (kor, eng) in dic1 {  
+    println("Key : \(kor), Value : \(eng)")
+}
+</code></pre>
+            
+            
+            
+              
+            
+            
+            
+        </section>
+
+        <footer class="post-footer">
+
+
+            <figure class="author-image">
+                <a class="img" href="../author/tak/index.html" style="background-image: url(../content/images/2015/03/tumblr_mjm5ksBtYP1r9164to1_500.jpg)"><span class="hidden">njir's Picture</span></a>
+            </figure>
+
+            <section class="author">
+                <h4><a href="../author/tak/index.html">njir</a></h4>
+
+                    <p>Read <a href="../author/tak/index.html">more posts</a> by this author.</p>
+                <div class="author-meta">
+                    
+                    
+                </div>
+            </section>
+
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="https://twitter.com/share?text=Swift%20-%20%EA%B8%B0%EB%B3%B8%20%EB%AC%B8%EB%B2%95%EA%B3%BC%20%ED%83%80%EC%9E%85&amp;url=http://localhost:2368/gibon1/"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:2368/gibon1/"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://localhost:2368/gibon1/"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+
+
+
+
+                <div id="disqus_thread"></div>
+                  <script type="text/javascript">
+                  /* * * CONFIGURATION VARIABLES * * */
+                           var disqus_shortname = 'njir';
+    
+                              /* * * DON'T EDIT BELOW THIS LINE * * */
+                 (function() {
+                       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                       })();
+                       </script>
+                    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+            
+
+
+
+
+
+
+
+        </footer>
+
+    </article>
+</main>
+
+
+
+        <footer class="site-footer clearfix">
+            <section class="copyright"><a href="http://localhost:2368">Pythonic</a> &copy; 2015</section>
+            <section class="poweredby">Proudly published with <a href="https://ghost.org">Ghost</a></section>
+        </footer>
+
+    </div>
+
+    <script src="../public/jquery.js?v=8b1a777478"></script>
+
+    <script type="text/javascript" src="../assets/js/jquery.fitvids.js?v=8b1a777478"></script>
+    <script type="text/javascript" src="../assets/js/index.js?v=8b1a777478"></script>
+    <script type="text/javascript" src="../assets/js/prism.js?v=8b1a777478"></script>
+    <script type='text/javascript' src="../assets/js/knockout-3.3.0.js?v=8b1a777478"></script>
+  
+
+</body>
+</html>
