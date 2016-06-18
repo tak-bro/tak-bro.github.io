@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Swift - 메모리 관리(ARC)</title>
+    <meta name="description" content="" />
+    
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="../../../../assets/images/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="../../../../assets/css/screen.css?v=44185cf282" />
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <link rel="stylesheet" type="text/css" href="../../../../assets/css/prism.css?v=44185cf282" />
+    
+    
+   
+
+
+    <link rel="canonical" href="index.html" />
+    
+    <meta property="og:site_name" content="Pythonic" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Swift - 메모리 관리(ARC)" />
+    <meta property="og:description" content="메모리 관리 객체 생성 -&gt; 메모리 차지 메모리 공간의 제약 -&gt; 메모리 관리 메모리 관리 필요한 객체 유지 필요없는 객체 해제 사용 중이라는 표시 - own(소유하기) 객체 소유하는 방법 : 강한 참조(Strong pointer) 객체 소유 관리 레퍼런스 카운트 -..." />
+    <meta property="og:url" content="http://localhost:2368/2015/03/19/memori-gwanriarc/" />
+    <meta property="article:published_time" content="2015-03-19T04:07:43.532Z" />
+    <meta property="article:modified_time" content="2015-03-19T04:12:38.361Z" />
+    <meta property="article:tag" content="Swift" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Swift - 메모리 관리(ARC)" />
+    <meta name="twitter:description" content="메모리 관리 객체 생성 -&gt; 메모리 차지 메모리 공간의 제약 -&gt; 메모리 관리 메모리 관리 필요한 객체 유지 필요없는 객체 해제 사용 중이라는 표시 - own(소유하기) 객체 소유하는 방법 : 강한 참조(Strong pointer) 객체 소유 관리 레퍼런스 카운트 -..." />
+    <meta name="twitter:url" content="http://localhost:2368/2015/03/19/memori-gwanriarc/" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Pythonic",
+    "author": {
+        "@type": "Person",
+        "name": "njir",
+        "image": "http://localhost:2368/content/images/2015/03/tumblr_mjm5ksBtYP1r9164to1_500.jpg",
+        "url": "http://localhost:2368/author/tak",
+        "sameAs": null
+    },
+    "headline": "Swift - 메모리 관리(ARC)",
+    "url": "http://localhost:2368/2015/03/19/memori-gwanriarc/",
+    "datePublished": "2015-03-19T04:07:43.532Z",
+    "dateModified": "2015-03-19T04:12:38.361Z",
+    "keywords": "Swift",
+    "description": "메모리 관리 객체 생성 -&gt; 메모리 차지 메모리 공간의 제약 -&gt; 메모리 관리 메모리 관리 필요한 객체 유지 필요없는 객체 해제 사용 중이라는 표시 - own(소유하기) 객체 소유하는 방법 : 강한 참조(Strong pointer) 객체 소유 관리 레퍼런스 카운트 -..."
+}
+    </script>
+
+    <meta name="generator" content="Ghost 0.5" />
+    <link rel="alternate" type="application/rss+xml" title="Pythonic" href="../../../../rss/index.html" />
+    <script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+ 	 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+ 	 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+ 		 })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ 		 ga('create', 'UA-46214266-2', 'auto');
+ ga('send', 'pageview');
+	
+		</script>
+    
+    <script>
+			window.techno = {
+				baseUrl: 'http://localhost:2368',
+				hbData: {
+					pagination:{
+						pages: ''
+					}
+				}
+			};
+			
+		window.techno.config = { 
+	
+		logo: '[YOUR LOGO]',
+		author: {			
+				social: [
+					{ 
+					   href: 'https://github.com/njir',
+					   icon: 'fa-github',
+					   title: 'Github'
+                    },
+                    {
+                        href: 'https://www.linkedin.com/in/hyungtak',
+                        icon: 'fa-linkedin',
+                        title: 'LinkedIn'
+                    },
+                    {
+                        href: 'https://www.facebook.com/jinpcbang',
+                        icon: 'fa-facebook',
+                        title: 'Facebook'
+                    },
+                    {
+                        href: 'mailto:njirtak@gmail.com',
+                        icon: 'fa-envelope',
+                        title: 'Email'
+                    },
+                ]
+        },
+		disqus: {
+				shortname: '[YOUR DISQUS SHORTNAME]'
+		},
+		google: {
+				analytics: function(ga) {
+					var account ='[YOUR GA ACCOUNT]';
+					var domain = '[YOUR GA DOMAIN]';
+
+					ga('create', account, domain);
+					//ga('require', 'displayfeatures');
+					ga('send', 'pageview');
+				}
+		},
+};
+			
+			
+			
+	</script>
+     
+    
+    
+</head>
+<body class="post-template tag-swift nav-closed">
+
+    <div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="index.html#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+            <li class="nav-ohmygithub" role="presentation"><a href="http://njir.github.io/oh-my-github/">oh-my-github</a></li>
+            <li class="nav-swift" role="presentation"><a href="http://njir.github.io/tag/swift/">Swift</a></li>
+            <li class="nav-embedded-software" role="presentation"><a href="http://njir.github.io/tag/embedded-software/">Embedded Software</a></li>
+            <li class="nav-advanced-java" role="presentation"><a href="http://njir.github.io/tag/advanced-java/">Advanced Java</a></li>
+    </ul>
+    <a class="subscribe-button icon-feed" href="../../../../rss/index.html">Subscribe</a>
+</div>
+<span class="nav-cover"></span>
+
+
+    <div class="site-wrapper">
+
+        
+
+
+<header class="main-header tag-head " style="background-image: url(../../../../content/images/2015/03/camera-581126_1920.jpg)">
+    <nav class="main-nav overlay clearfix">
+        <a class="blog-logo" href="../../../../index.html"><img src="../../../../content/images/2015/03/ghost-2.png" alt="Blog Logo" /></a>
+            <a class="menu-button" href="index.html#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
+    </nav>
+    
+    <div class="vertical">
+        <div class="main-header-content inner">
+            <h1 class="page-title">Swift</h1>
+            <h2 class="page-description">
+                Swift - 메모리 관리(ARC)
+            </h2>
+        </div>
+    </div>
+
+</header>
+
+
+
+<main class="content" role="main">
+    <article class="post tag-swift">
+
+        <header class="post-header">
+            <h2 class="post-title">Swift - 메모리 관리(ARC)</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2015-03-19">19 March 2015</time>  on <a href="http://localhost:2368/tag/swift/">Swift</a>
+            </section>
+        </header>
+
+
+        <section class="post-content">
+        
+            <h6 id="">메모리 관리</h6>
+
+<ul>
+<li>객체 생성 -> 메모리 차지</li>
+<li>메모리 공간의 제약 -> 메모리 관리</li>
+<li>메모리 관리
+<ul><li>필요한 객체 유지</li>
+<li>필요없는 객체 해제</li></ul></li>
+<li>사용 중이라는 표시 - own(소유하기)</li>
+<li>객체 소유하는 방법 : 강한 참조(Strong pointer)</li>
+</ul>
+
+<h6 id="">객체 소유 관리</h6>
+
+<ul>
+<li>레퍼런스 카운트 - 강항 참조의 갯수 
+<ul><li>객체 사용 -> 레퍼런스 카운트 늘리기</li>
+<li>객체 사용 끝 -> 레퍼런스 카운트 감소</li>
+<li>레퍼런스 카운트가 0이면 사용 끝</li></ul></li>
+</ul>
+
+<h6 id="arc">ARC</h6>
+
+<ul>
+<li>객체 사용/사용 완료 - 레퍼런스 카운트 증가와 감소
+<ul><li>수동 관리</li>
+<li>자동 관리</li></ul></li>
+<li>Automatic Reference Counting : 자동 레퍼런스 카운트 관리
+<ul><li>객체의 레퍼런스 관리 코드 자동 생성(컴파일)</li>
+<li>클래스에만 적용</li>
+<li>밸류 타입(구조체, enum)에는 미적용</li></ul></li>
+</ul>
+
+<h6 id="">객체 소유와 해체</h6>
+
+<ul>
+<li>객체 생성 - 객체 소유</li>
+</ul>
+
+<pre><code class="language-swift">var ptr : MyClass? = MyClass() //레퍼런스 카운트가 1 증가  
+</code></pre>
+
+<ul>
+<li>소유 해제 : 옵셔널로 선언</li>
+</ul>
+
+<pre><code class="language-swift">ptr = nil //레퍼런스 카운트 1 감소  
+</code></pre>
+
+<ul>
+<li>해제 확인하기 : deinit</li>
+</ul>
+
+<pre><code class="language-swift">class test{  
+    deinit{
+        println("객체가 메모리에서 해제")
+    }
+}
+
+var testObj : test? = test()  
+testObj = nil   //객체가 메모리에서 해제  
+</code></pre>
+
+<hr />
+
+<h6 id="">객체를 소유하는 포인터 - 강한 참조</h6>
+
+<ul>
+<li>소유권 해제가 객체의 해제는 아니다</li>
+</ul>
+
+<pre><code class="language-swift">var anotherPointer = obj  
+</code></pre>
+
+<ul>
+<li>강한 참조의 문제
+<ul><li>두 클래스에서 상호 참조(두개 이상의 관계에서도 가능)</li>
+<li>서로 소유하므로 해제되지 않음(메모리 누수)</li>
+<li>수동으로 해제되도록 작성해야 함</li></ul></li>
+</ul>
+
+<pre><code class="language-swift">class MyClass {  
+    var ptr : MyClass2?
+    deinit {
+        println("My Class 객체 해제")
+    }
+}
+
+class MyClass2 {  
+    var ptr : MyClass?
+    deinit {
+        println("MyClass2 객체 해제")
+    }
+}
+
+var obj : MyClass? = MyClass()  
+var obj2 : MyClass2? = MyClass2()  
+obj?.ptr = obj2  
+obj2?.ptr = obj
+
+obj = nil    // 객체가 해제되지 않음  
+obj2 = nil  // 객체가 해제되지 않음  
+</code></pre>
+
+<hr />
+
+<h6 id="">소유하지 않는 포인터</h6>
+
+<ul>
+<li>강한 참조 : 객체를 소유하는 포인터</li>
+<li>약한 참조 : 객체를 소유하지 않는 포인터
+<ul><li>weak
+<ul><li>참조하던 객체가 해제되면 자동으로 nil</li>
+<li>nil이 되므로 옵셔널</li>
+<li>상호 독립적으로 사용 가능
+<ul><li>ex) 사용자와 스마트폰, 운전자와 자동차</li></ul></li></ul></li></ul></li>
+</ul>
+
+<pre><code class="language-swift">class Student {  
+    var phone : Phone?
+    deinit{
+        println("Student 객체가 메모리에서 해제")
+    }
+}
+
+class Phone {  
+    weak var owner : Student?
+    deinit{
+        println("Phone 객체가 메모리에서 해제")
+    }
+}
+
+var owner : Student? = Student()  
+var iphone : Phone? = Phone()
+
+iphone!.owner = owner  
+owner!.phone = iphone
+
+owner = nil  // Student 객체가 메모리에서 해제"  
+iphone = nil // Phone 객체가 메모리에서 해제  
+</code></pre>
+
+<ul>
+<li>unowned
+<ul><li>참조하던 객체가 해제되도 nil로 변하지 않음</li>
+<li>옵셔널로 선언하지 않음 -> 에러 조심!</li>
+<li>완전히 종속적인 경우에 사용
+<ul><li>ex) 신용카드와 사용자, 국가와 도시</li></ul></li></ul></li>
+</ul>
+
+<pre><code class="language-swift"> class Person {
+    var card : CreditCard?
+    deinit {
+        println("Person 객체 해제")
+    }
+}
+
+class CreditCard {  
+    unowned var owner : Person
+    init(owner : Person){
+        self.owner = owner
+    }
+    deinit {
+        println("CreditCard 객체 해제")
+    }
+}
+
+var person : Person? = Person()  
+var card : CreditCard? = CreditCard(owner : person!)  
+person = nil  
+card = nil  
+</code></pre>
+
+<hr />
+
+<h6 id="">콜렉션과 소유권</h6>
+
+<ul>
+<li>콜렉션에 객체 저장
+<ul><li>콜렉션이 객체 소유</li></ul></li>
+<li>콜렉션에서 객체 삭제
+<ul><li>소유권 해제</li></ul></li>
+<li>콜렉션 객체 해제
+<ul><li>소유권 해제</li></ul></li>
+</ul>
+
+<pre><code class="language-swift">var owner2 : Student? = Student()  
+var owner3 : Student? = Student()  
+var array = [owner2, owner3]
+
+owner2 = nil // 객체가 해제되지 않는다.  
+array.removeAtIndex(0) // Student 객체가 메모리에서 해제"  
+</code></pre>
+            
+            
+            
+              
+            
+            
+            
+        </section>
+
+        <footer class="post-footer">
+
+
+            <figure class="author-image">
+                <a class="img" href="http://localhost:2368/author/tak/" style="background-image: url(../../../../content/images/2015/03/tumblr_mjm5ksBtYP1r9164to1_500.jpg)"><span class="hidden">njir's Picture</span></a>
+            </figure>
+
+            <section class="author">
+                <h4><a href="http://localhost:2368/author/tak/">njir</a></h4>
+
+                    <p>Read <a href="http://localhost:2368/author/tak/">more posts</a> by this author.</p>
+                <div class="author-meta">
+                    
+                    
+                </div>
+            </section>
+
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="https://twitter.com/share?text=Swift%20-%20%EB%A9%94%EB%AA%A8%EB%A6%AC%20%EA%B4%80%EB%A6%AC(ARC)&amp;url=http://localhost:2368/2015/03/19/memori-gwanriarc/"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:2368/2015/03/19/memori-gwanriarc/"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://localhost:2368/2015/03/19/memori-gwanriarc/"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+
+
+
+
+                <div id="disqus_thread"></div>
+                  <script type="text/javascript">
+                  /* * * CONFIGURATION VARIABLES * * */
+                           var disqus_shortname = 'njir';
+    
+                              /* * * DON'T EDIT BELOW THIS LINE * * */
+                 (function() {
+                       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                       })();
+                       </script>
+                    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+            
+
+
+
+
+
+
+
+        </footer>
+
+    </article>
+</main>
+
+
+
+        <footer class="site-footer clearfix">
+            <section class="copyright"><a href="../../../../index.html">Pythonic</a> &copy; 2016</section>
+            <section class="poweredby">Proudly published with <a href="https://ghost.org">Ghost</a></section>
+        </footer>
+
+    </div>
+
+    <script src="../../../../public/jquery.js?v=44185cf282"></script>
+
+    <script type="text/javascript" src="../../../../assets/js/jquery.fitvids.js?v=44185cf282"></script>
+    <script type="text/javascript" src="../../../../assets/js/index.js?v=44185cf282"></script>
+    <script type="text/javascript" src="../../../../assets/js/prism.js?v=44185cf282"></script>
+    <script type='text/javascript' src="../../../../assets/js/knockout-3.3.0.js?v=44185cf282"></script>
+  
+
+</body>
+</html>

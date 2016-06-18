@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Swift - 클래스</title>
+    <meta name="description" content="" />
+    
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="../../../../assets/images/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="../../../../assets/css/screen.css?v=44185cf282" />
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <link rel="stylesheet" type="text/css" href="../../../../assets/css/prism.css?v=44185cf282" />
+    
+    
+   
+
+
+    <link rel="canonical" href="index.html" />
+    
+    <meta property="og:site_name" content="Pythonic" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Swift - 클래스" />
+    <meta property="og:description" content="클래스 프로젝트에서 클래스는 하나의 swift 파일에 다수의 클래스 작성 클래스마다 swift 파일 작성 템플릿 Cocoa Class(클래스를 만듦, 부모클래스 정할 수 있음) Swift File(부모 클래스 없이 파일만) main.swift : 처음 동작 코드 객체 생성 var obj = Rectangle()  // new 사용..." />
+    <meta property="og:url" content="http://localhost:2368/2015/03/19/keulraeseu/" />
+    <meta property="article:published_time" content="2015-03-19T04:06:57.252Z" />
+    <meta property="article:modified_time" content="2015-03-19T04:13:42.604Z" />
+    <meta property="article:tag" content="Swift" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Swift - 클래스" />
+    <meta name="twitter:description" content="클래스 프로젝트에서 클래스는 하나의 swift 파일에 다수의 클래스 작성 클래스마다 swift 파일 작성 템플릿 Cocoa Class(클래스를 만듦, 부모클래스 정할 수 있음) Swift File(부모 클래스 없이 파일만) main.swift : 처음 동작 코드 객체 생성 var obj = Rectangle()  // new 사용..." />
+    <meta name="twitter:url" content="http://localhost:2368/2015/03/19/keulraeseu/" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Pythonic",
+    "author": {
+        "@type": "Person",
+        "name": "njir",
+        "image": "http://localhost:2368/content/images/2015/03/tumblr_mjm5ksBtYP1r9164to1_500.jpg",
+        "url": "http://localhost:2368/author/tak",
+        "sameAs": null
+    },
+    "headline": "Swift - 클래스",
+    "url": "http://localhost:2368/2015/03/19/keulraeseu/",
+    "datePublished": "2015-03-19T04:06:57.252Z",
+    "dateModified": "2015-03-19T04:13:42.604Z",
+    "keywords": "Swift",
+    "description": "클래스 프로젝트에서 클래스는 하나의 swift 파일에 다수의 클래스 작성 클래스마다 swift 파일 작성 템플릿 Cocoa Class(클래스를 만듦, 부모클래스 정할 수 있음) Swift File(부모 클래스 없이 파일만) main.swift : 처음 동작 코드 객체 생성 var obj = Rectangle()  // new 사용..."
+}
+    </script>
+
+    <meta name="generator" content="Ghost 0.5" />
+    <link rel="alternate" type="application/rss+xml" title="Pythonic" href="../../../../rss/index.html" />
+    <script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+ 	 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+ 	 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+ 		 })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ 		 ga('create', 'UA-46214266-2', 'auto');
+ ga('send', 'pageview');
+	
+		</script>
+    
+    <script>
+			window.techno = {
+				baseUrl: 'http://localhost:2368',
+				hbData: {
+					pagination:{
+						pages: ''
+					}
+				}
+			};
+			
+		window.techno.config = { 
+	
+		logo: '[YOUR LOGO]',
+		author: {			
+				social: [
+					{ 
+					   href: 'https://github.com/njir',
+					   icon: 'fa-github',
+					   title: 'Github'
+                    },
+                    {
+                        href: 'https://www.linkedin.com/in/hyungtak',
+                        icon: 'fa-linkedin',
+                        title: 'LinkedIn'
+                    },
+                    {
+                        href: 'https://www.facebook.com/jinpcbang',
+                        icon: 'fa-facebook',
+                        title: 'Facebook'
+                    },
+                    {
+                        href: 'mailto:njirtak@gmail.com',
+                        icon: 'fa-envelope',
+                        title: 'Email'
+                    },
+                ]
+        },
+		disqus: {
+				shortname: '[YOUR DISQUS SHORTNAME]'
+		},
+		google: {
+				analytics: function(ga) {
+					var account ='[YOUR GA ACCOUNT]';
+					var domain = '[YOUR GA DOMAIN]';
+
+					ga('create', account, domain);
+					//ga('require', 'displayfeatures');
+					ga('send', 'pageview');
+				}
+		},
+};
+			
+			
+			
+	</script>
+     
+    
+    
+</head>
+<body class="post-template tag-swift nav-closed">
+
+    <div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="index.html#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+            <li class="nav-ohmygithub" role="presentation"><a href="http://njir.github.io/oh-my-github/">oh-my-github</a></li>
+            <li class="nav-swift" role="presentation"><a href="http://njir.github.io/tag/swift/">Swift</a></li>
+            <li class="nav-embedded-software" role="presentation"><a href="http://njir.github.io/tag/embedded-software/">Embedded Software</a></li>
+            <li class="nav-advanced-java" role="presentation"><a href="http://njir.github.io/tag/advanced-java/">Advanced Java</a></li>
+    </ul>
+    <a class="subscribe-button icon-feed" href="../../../../rss/index.html">Subscribe</a>
+</div>
+<span class="nav-cover"></span>
+
+
+    <div class="site-wrapper">
+
+        
+
+
+<header class="main-header tag-head " style="background-image: url(../../../../content/images/2015/03/camera-581126_1920.jpg)">
+    <nav class="main-nav overlay clearfix">
+        <a class="blog-logo" href="../../../../index.html"><img src="../../../../content/images/2015/03/ghost-2.png" alt="Blog Logo" /></a>
+            <a class="menu-button" href="index.html#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
+    </nav>
+    
+    <div class="vertical">
+        <div class="main-header-content inner">
+            <h1 class="page-title">Swift</h1>
+            <h2 class="page-description">
+                Swift - 클래스
+            </h2>
+        </div>
+    </div>
+
+</header>
+
+
+
+<main class="content" role="main">
+    <article class="post tag-swift">
+
+        <header class="post-header">
+            <h2 class="post-title">Swift - 클래스</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2015-03-19">19 March 2015</time>  on <a href="http://localhost:2368/tag/swift/">Swift</a>
+            </section>
+        </header>
+
+
+        <section class="post-content">
+        
+            <h4 id="">클래스</h4>
+
+<ul>
+<li>프로젝트에서 클래스는
+<ul><li>하나의 swift 파일에 다수의 클래스 작성</li>
+<li>클래스마다 swift 파일 작성</li></ul></li>
+<li>템플릿
+<ul><li>Cocoa Class(클래스를 만듦, 부모클래스 정할 수 있음)</li>
+<li>Swift File(부모 클래스 없이 파일만)</li></ul></li>
+<li>main.swift : 처음 동작 코드</li>
+<li>객체 생성</li>
+</ul>
+
+<pre><code class="language-swift">var obj = Rectangle()  // new 사용 안함  
+let obj2 = Rectangle()  
+</code></pre>
+
+<blockquote>
+  <ul>
+  <li>var 새로운 객체 대입 가능</li>
+  <li>let : 대입 불가능</li>
+  </ul>
+</blockquote>
+
+<ul>
+<li>객체 생성 - 주소</li>
+<li>객체 비교 : 같은 주소 vs 같은 데이터</li>
+<li>객체 주소 비교 : '==='</li>
+</ul>
+
+<pre><code class="language-swift">var obj1 = Rectangle()  
+var obj2 = obj1  
+var obj3 = Rectangle()
+
+obj1 === obj2 //true  
+obj1 === obj3 //false  
+</code></pre>
+
+<hr />
+
+<h6 id="">프로퍼티 : 클래스나 구조체 값 다루기</h6>
+
+<ul>
+<li>종류 : 저장 프로퍼티, 계산 프로퍼티</li>
+<li>저장 프로퍼티(stored property)
+<ul><li>값을 저장하고 얻어오는 용도</li>
+<li>클래스 내 변수, 상수 정의
+<ul><li>초기값, 옵셔널 </li></ul></li></ul></li>
+<li>계산 프로퍼티(compucated property)
+<ul><li>값 저장하지 않음</li>
+<li>계산된 값을 얻어오거나, 계산하도록 제공</li>
+<li>메소드가 아님</li>
+<li>읽고 쓰기 가능 : get/set 모두 작성</li>
+<li>읽기 전용: get만 작성, get 선언 생략가능</li>
+<li>사용 방법</li></ul></li>
+</ul>
+
+<pre><code>var [프로퍼티 이름] : [type] {  
+    get {
+        return [계산 결과]
+    }
+    set(newValue){
+        }
+    }
+</code></pre>
+
+<hr />
+
+<h6 id="">메소드 : 클래스 내에 작성하는 함수</h6>
+
+<ul>
+<li>첫번째 파라메터 : 외부 파라미터 이름 사용 안함</li>
+<li>두번째 파라메터부터 : 외부 파타미터 이름 사용</li>
+<li><p>내부 파라미터 이름으로 자동 사용</p></li>
+<li><p>외부파라미터 이름 설정</p></li>
+<li>두번째 파라미터 외부 파라미터 이름은 내부 파라미터 이름 그대로</li>
+<li><p>첫번째 파라미터도 외부 파라미터로 설정하려면 # 주거나, 수동으로 지정</p>
+
+<blockquote>
+  <p><strong>함수와 클래스함수의 차이점:</strong></p>
+  
+  <ul><li>클래스 함수는 두번째 파라미터부터 외부 파라미터 이름 사용해야함</li></ul>
+</blockquote></li>
+<li><p>외부 파라미터 이름을 사용하지 않으려면 _(언더스코어) 기호를 붙인다.->두번째 파라미터부터 적용가능</p></li>
+</ul>
+
+<pre><code class="language-swift">// counter.swift
+class Counter{  
+    var count = 0
+    func increment(){
+        count++
+    }
+    func incrementBy(amount : Int, numberOfTimes : Int){
+        count += amount * numberOfTimes
+    }
+    func reset(){
+        count = 0
+    }
+    func test(amount : Int, time number : Int){
+        count += amount * number
+    }
+    func notUsingExternal(amount : Int, _ number : Int){
+        count += amount * number
+    }
+    func selfCount(count : Int){
+        self.count = count
+    }
+}
+
+// main.swift
+let counter = Counter()  
+counter.increment()         // 1  
+counter.incrementBy(5, numberOfTimes : 5)   // 6  
+counter.reset()                  // 0  
+counter.test(4, time : 6)  
+counter.notUsingExternal(3, 5)
+</code></pre>
+
+<hr />
+
+<h6 id="">초기화</h6>
+
+<ul>
+<li>클래스 초기화</li>
+<li>모든 프로퍼티(옵셔널 제외)는 객체 생성시 초기화
+<ul><li>초기값</li>
+<li>초기화 메소드</li></ul></li>
+<li>객체 준비 과정
+<ul><li>메모리 공간 준비</li>
+<li>객체 사용 준비</li>
+<li>초기값이 설정된 프로퍼티 - 초기값 설정</li>
+<li>옵셔널의 초기값 - nil</li>
+<li>그외 초기화 과정 필요</li></ul></li>
+</ul>
+
+<h6 id="init">초기화 메소드 init()</h6>
+
+<ul>
+<li>클래스의 프로퍼티가 옵셔널이 아니고 초기값ㅇ르 설정하지 않으면, 객체를 생성하면서 이 프로퍼티 초기값을 설정하는 메소드가 필요 -> Initializer</li>
+<li>초기화 메소드는 func 지시자가 없고 반환값이 없는 init 메소드</li>
+</ul>
+
+<pre><code class="language-swift">class Rectangle(){  
+    var width : Int
+    var height : Int
+    let edges = 0
+    // 초기화
+    init(){
+        width = 0
+        height = 0
+        edged = 4     // 초기화메소드에서 상수값을 설정할 수 있다.
+    }
+}
+</code></pre>
+
+<blockquote>
+  <p><strong>tips:</strong></p>
+  
+  <p>init 메소드는 다른 메소드와는 다르게 첫 번째 파라미터부터 외부 파라미터 이름을 사용한다. 외부 파라미터를 사용하지 않으려면 _(언더스코어) 기호 사용하거나 수동으로 지정하여야 한다.</p>
+</blockquote>
+
+<h6 id="designatedinitializer">Designated Initializer : 모든 값 초기화</h6>
+
+<ul>
+<li>클래스에 초기화가 안된 프로퍼티가 있다면 반드시 1개 이상의 Designated Initializer가 있어야 한다.</li>
+<li>초기화가 필요한 <strong>모든 프로퍼티</strong>의 초기값을 설정</li>
+</ul>
+
+<pre><code class="language-swift">class MyClass {  
+    var a : Int
+    var b : Int  
+    func otherprepare() {
+        //다른 초기화 동작
+    }
+    init(a : Int, b : Int){
+        self.a = a
+        self.b = b
+        otherprepare()    // 프로퍼티 초기화 후에는 허용
+    }
+}
+</code></pre>
+
+<pre><code class="language-swift">// 단, 초기화 과정이 끝나기 전에 다른 메소드 호출은 에러 발생
+init(a : Int, b : Int){  
+      self.a = a
+    otherprepare()    // Error
+    self.b = b
+}
+</code></pre>
+
+<h6 id="convenienceinitializer">Convenience Initializer</h6>
+
+<p><ul>
+<li>초기화가 필요한 모든 프로퍼티의 초기값을 설정하지 않는다.</li>
+<li>단독으로 객체의 초기화 과정 완료 불가</li>
+<li>다른 초기화 메소드를 이용해서 초기화 과정 수행</p>
+
+<blockquote>
+  Initialize Delegation : 다른 초기화 메소드에게 나모지 초기화를 위임하는 것</li>
+  </ul>
+<pre><code class="language-swift">// Music.swift
+class Music {  
+    var title : String
+    var artist : String
+
+    init(title : String, artist : String){
+        self.title = title
+        self.artist = artist
+    }
+    convenience init(artist : String){
+        self.init(title : "", artist : artist)
+    }
+}
+
+// main.swift
+let music3 = Music(artist: "다이나믹듀오")  
+music3.title = "고백"  
+</code></pre>
+</blockquote>
+            
+            
+            
+              
+            
+            
+            
+        </section>
+
+        <footer class="post-footer">
+
+
+            <figure class="author-image">
+                <a class="img" href="http://localhost:2368/author/tak/" style="background-image: url(../../../../content/images/2015/03/tumblr_mjm5ksBtYP1r9164to1_500.jpg)"><span class="hidden">njir's Picture</span></a>
+            </figure>
+
+            <section class="author">
+                <h4><a href="http://localhost:2368/author/tak/">njir</a></h4>
+
+                    <p>Read <a href="http://localhost:2368/author/tak/">more posts</a> by this author.</p>
+                <div class="author-meta">
+                    
+                    
+                </div>
+            </section>
+
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="https://twitter.com/share?text=Swift%20-%20%ED%81%B4%EB%9E%98%EC%8A%A4&amp;url=http://localhost:2368/2015/03/19/keulraeseu/"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:2368/2015/03/19/keulraeseu/"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://localhost:2368/2015/03/19/keulraeseu/"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+
+
+
+
+                <div id="disqus_thread"></div>
+                  <script type="text/javascript">
+                  /* * * CONFIGURATION VARIABLES * * */
+                           var disqus_shortname = 'njir';
+    
+                              /* * * DON'T EDIT BELOW THIS LINE * * */
+                 (function() {
+                       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                       })();
+                       </script>
+                    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+            
+
+
+
+
+
+
+
+        </footer>
+
+    </article>
+</main>
+
+
+
+        <footer class="site-footer clearfix">
+            <section class="copyright"><a href="../../../../index.html">Pythonic</a> &copy; 2016</section>
+            <section class="poweredby">Proudly published with <a href="https://ghost.org">Ghost</a></section>
+        </footer>
+
+    </div>
+
+    <script src="../../../../public/jquery.js?v=44185cf282"></script>
+
+    <script type="text/javascript" src="../../../../assets/js/jquery.fitvids.js?v=44185cf282"></script>
+    <script type="text/javascript" src="../../../../assets/js/index.js?v=44185cf282"></script>
+    <script type="text/javascript" src="../../../../assets/js/prism.js?v=44185cf282"></script>
+    <script type='text/javascript' src="../../../../assets/js/knockout-3.3.0.js?v=44185cf282"></script>
+  
+
+</body>
+</html>

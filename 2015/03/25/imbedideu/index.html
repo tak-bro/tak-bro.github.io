@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>임베디드 소프트웨어 - IEEE 802.15.4e, Scheduling</title>
+    <meta name="description" content="" />
+    
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="../../../../assets/images/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="../../../../assets/css/screen.css?v=44185cf282" />
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <link rel="stylesheet" type="text/css" href="../../../../assets/css/prism.css?v=44185cf282" />
+    
+    
+   
+
+
+    <link rel="canonical" href="index.html" />
+    
+    <meta property="og:site_name" content="Pythonic" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="임베디드 소프트웨어 - IEEE 802.15.4e, Scheduling" />
+    <meta property="og:description" content="IEEE 802.15.4 2.4GHz대역의 16개 채널을 갖고 있음 하나당 2MHz(중심 frequnecy로부터 5MHz) 패킷 전송 절차 : Preamble -&gt; SFD -&gt; LEN 1) Preamble : 패킷을 전송하려고 할 때(시작 할때), 모든 무선 MAC(wifi 등)은 0101010...로 떤다(..." />
+    <meta property="og:url" content="http://localhost:2368/2015/03/25/imbedideu/" />
+    <meta property="article:published_time" content="2015-03-25T11:38:57.256Z" />
+    <meta property="article:modified_time" content="2016-06-09T13:29:04.869Z" />
+    <meta property="article:tag" content="Embedded Software" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="임베디드 소프트웨어 - IEEE 802.15.4e, Scheduling" />
+    <meta name="twitter:description" content="IEEE 802.15.4 2.4GHz대역의 16개 채널을 갖고 있음 하나당 2MHz(중심 frequnecy로부터 5MHz) 패킷 전송 절차 : Preamble -&gt; SFD -&gt; LEN 1) Preamble : 패킷을 전송하려고 할 때(시작 할때), 모든 무선 MAC(wifi 등)은 0101010...로 떤다(..." />
+    <meta name="twitter:url" content="http://localhost:2368/2015/03/25/imbedideu/" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Pythonic",
+    "author": {
+        "@type": "Person",
+        "name": "njir",
+        "image": "http://localhost:2368/content/images/2015/03/tumblr_mjm5ksBtYP1r9164to1_500.jpg",
+        "url": "http://localhost:2368/author/tak",
+        "sameAs": null
+    },
+    "headline": "임베디드 소프트웨어 - IEEE 802.15.4e, Scheduling",
+    "url": "http://localhost:2368/2015/03/25/imbedideu/",
+    "datePublished": "2015-03-25T11:38:57.256Z",
+    "dateModified": "2016-06-09T13:29:04.869Z",
+    "keywords": "Embedded Software",
+    "description": "IEEE 802.15.4 2.4GHz대역의 16개 채널을 갖고 있음 하나당 2MHz(중심 frequnecy로부터 5MHz) 패킷 전송 절차 : Preamble -&gt; SFD -&gt; LEN 1) Preamble : 패킷을 전송하려고 할 때(시작 할때), 모든 무선 MAC(wifi 등)은 0101010...로 떤다(..."
+}
+    </script>
+
+    <meta name="generator" content="Ghost 0.5" />
+    <link rel="alternate" type="application/rss+xml" title="Pythonic" href="../../../../rss/index.html" />
+    <script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+ 	 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+ 	 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+ 		 })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ 		 ga('create', 'UA-46214266-2', 'auto');
+ ga('send', 'pageview');
+	
+		</script>
+    
+    <script>
+			window.techno = {
+				baseUrl: 'http://localhost:2368',
+				hbData: {
+					pagination:{
+						pages: ''
+					}
+				}
+			};
+			
+		window.techno.config = { 
+	
+		logo: '[YOUR LOGO]',
+		author: {			
+				social: [
+					{ 
+					   href: 'https://github.com/njir',
+					   icon: 'fa-github',
+					   title: 'Github'
+                    },
+                    {
+                        href: 'https://www.linkedin.com/in/hyungtak',
+                        icon: 'fa-linkedin',
+                        title: 'LinkedIn'
+                    },
+                    {
+                        href: 'https://www.facebook.com/jinpcbang',
+                        icon: 'fa-facebook',
+                        title: 'Facebook'
+                    },
+                    {
+                        href: 'mailto:njirtak@gmail.com',
+                        icon: 'fa-envelope',
+                        title: 'Email'
+                    },
+                ]
+        },
+		disqus: {
+				shortname: '[YOUR DISQUS SHORTNAME]'
+		},
+		google: {
+				analytics: function(ga) {
+					var account ='[YOUR GA ACCOUNT]';
+					var domain = '[YOUR GA DOMAIN]';
+
+					ga('create', account, domain);
+					//ga('require', 'displayfeatures');
+					ga('send', 'pageview');
+				}
+		},
+};
+			
+			
+			
+	</script>
+     
+    
+    
+</head>
+<body class="post-template tag-embedded-software nav-closed">
+
+    <div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="index.html#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+            <li class="nav-ohmygithub" role="presentation"><a href="http://njir.github.io/oh-my-github/">oh-my-github</a></li>
+            <li class="nav-swift" role="presentation"><a href="http://njir.github.io/tag/swift/">Swift</a></li>
+            <li class="nav-embedded-software" role="presentation"><a href="http://njir.github.io/tag/embedded-software/">Embedded Software</a></li>
+            <li class="nav-advanced-java" role="presentation"><a href="http://njir.github.io/tag/advanced-java/">Advanced Java</a></li>
+    </ul>
+    <a class="subscribe-button icon-feed" href="../../../../rss/index.html">Subscribe</a>
+</div>
+<span class="nav-cover"></span>
+
+
+    <div class="site-wrapper">
+
+        
+
+
+<header class="main-header tag-head " style="background-image: url(../../../../content/images/2015/03/camera-581126_1920.jpg)">
+    <nav class="main-nav overlay clearfix">
+        <a class="blog-logo" href="../../../../index.html"><img src="../../../../content/images/2015/03/ghost-2.png" alt="Blog Logo" /></a>
+            <a class="menu-button" href="index.html#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
+    </nav>
+    
+    <div class="vertical">
+        <div class="main-header-content inner">
+            <h1 class="page-title">Embedded Software</h1>
+            <h2 class="page-description">
+                임베디드 소프트웨어 - IEEE 802.15.4e, Scheduling
+            </h2>
+        </div>
+    </div>
+
+</header>
+
+
+
+<main class="content" role="main">
+    <article class="post tag-embedded-software">
+
+        <header class="post-header">
+            <h2 class="post-title">임베디드 소프트웨어 - IEEE 802.15.4e, Scheduling</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2015-03-25">25 March 2015</time>  on <a href="http://localhost:2368/tag/embedded-software/">Embedded Software</a>
+            </section>
+        </header>
+
+
+        <section class="post-content">
+        
+            <h6 id="ieee802154">IEEE 802.15.4</h6>
+
+<ul>
+<li>2.4GHz대역의 16개 채널을 갖고 있음</li>
+<li>하나당 2MHz(중심 frequnecy로부터 5MHz)</li>
+<li>패킷 전송 절차 : Preamble -> SFD -> LEN</li>
+<li>1) Preamble : 패킷을 전송하려고 할 때(시작 할때), 모든 무선 MAC(wifi 등)은 0101010...로 떤다(128us(마이크로sec)동안)
+<ul><li>Locking하기 위해서</li></ul></li>
+<li>2) SFD(Start of Frame Delimiter)
+<ul><li>Start of Frame을 구분하는 구분자(특정 ID)</li>
+<li>패킷이 오는 것을 알 수 있다.</li>
+<li>패킷이 아님. 패킷의 시작임</li>
+<li>ex) 01001 ...</li></ul></li>
+<li>3) LEN(Length)
+<ul><li>8bit</li>
+<li>패킷의 최대 길이는 <strong>128Bytes</strong></li>
+<li>Receiver 입장에서 LEN을 읽은 후, 데이터가 어디서부터 언제까지 오는지 알 수 있다.
+
+
+<blockquote>
+  총 128Bytes 중 <strong>실제 데이터는 127Bytes(LEN까지 포함해서 128bytes)</strong></li></ul></li>
+  <li><strong><em>Once lockedoon, the receiver waits for the SFD, then for the length byte.</em></strong></li>
+  </ul>
+  <hr />
+</blockquote>
+
+<h4 id="powersavinglinklayerieee802154e">Power-Saving Link Layer - IEEE 802.15.4e</h4>
+
+<ul>
+<li>Star Topology에서는 IoT의 모든 사물들을 커버하려면 빽빽히 AP가 있어야 한다. -> 너무 많이 있어야함</li>
+<li>실제로 IoT는 AP에서 이어진 host들이 서로 연결되는 Mesh Network를 이루어야 한다.</li>
+<li>Wifi(AP) 입장에서는 Host가 두개의 Wifi를 붙이는 것을 허용안한다.</li>
+<li>초기에는 패킷을 전달해주기 위해 연결다리에 있는 호스트는 무조건 켜져 있어야 했다.(<strong>100% duty cycle</strong>이어야만 한다.) -> Duty Cycle Management가 어렵다. -> 해결방법 : Time Slicing, Beconning(이전 포스트 내용)</li>
+<li>TSCH(Time Synchronized Channel Hopping)
+<ul><li>TSMP : 이미 표준으로 등록되어 있다.(WirelessHART standard)</li></ul></li>
+</ul>
+
+<h6 id="slotframestructure">Slotframe Structure</h6>
+
+<ul>
+<li>Slotframe is a group of slots which repeat over time.</li>
+<li>Slotframe당 slot 4개</li>
+<li>보내는 주기가 정해짐
+<ul><li>ex1) Host A가 5초에 한번, Host B가 10초에 한번, Host C가 20초에 한번씩 <strong>주기적으로</strong> 패킷을 전송할 때, 하나당 time slot을 20초로 잡아야 한다.(가장 긴 시간)</li>
+<li>ex2) 1초에 한번 보내면 timeslot 100개</li></ul></li>
+<li>time slot 중 ACK의 시간 10ms(앞 포스트 Fig1.(b))</li>
+<li>sleeping slot에서는 라디오를 아예 보내지 않는다.</li>
+<li>실제로는 time slot 굉장히 크다.</li>
+<li>Single slot은 충분히 길어야 한다. 10ms정도</li>
+<li>When an upper layer generates a packet, is sends it to the MAC Layer
+<ul><li>전송 큐(transmist queue)에 넣고 보낸다.</li>
+<li>MAC Layer는 큐에 패킷이 있는지 검사한다.
+<ul><li>있으면 패킷 보냄 -> ACK 기다림(ACK을 못받으면 dummy slot을 만들고 다시 전송)</li>
+<li>없으면 다시 sleep</li></ul></li></ul></li>
+<li>reception slot은 radio를 키고 받고 끈다.
+
+
+<blockquote>
+  이 패러그래프 주제는 100% duty cycle 문제를 해결(duty cycle을 낮추기 위해)하기 위해 Multichannel hopping (Time Slotted Channel Hopping) -> 같이 깨고 같이 잘 수 있다.</li>
+  </ul>
+  <h6 id="scheduling">Scheduling</h6>
+</blockquote>
+
+<ul>
+<li>두 가지 접근 방법 (centralized approach, distributed)</li>
+<li>Centralized approach : 혼자서 
+<ul><li>효율적인 스케쥴링이 가능하다.</li>
+<li>topology가 변하는 경우 re-form을 해줘야 함.-> distributed approach
+<ul><li>This type of approach has been commercially available since TSMP</li></ul></li></ul></li>
+<li>Distributed approach : 자기가 각각 결정함. 문제 발생 가능</li>
+</ul>
+
+<h6 id="synchronization">Synchronization</h6>
+
+<ul>
+<li>802.15.4e에는 beacon이 없다.</li>
+<li>두가지 방법
+<ul><li>Acknowledgement-Based synchronization : 보내는 host의 시간과 싱크 조절</li>
+<li>Frame-Based synchronization</li></ul></li>
+</ul>
+
+<h6 id="channelhopping">Channel Hopping</h6>
+
+<ul>
+<li>interference, multipath fading 완화시킨다</li>
+</ul>
+
+<h6 id="networkformation">Network Formation</h6>
+
+<p><img src="../../../../content/images/fig3.png" alt="fig3" />
+<img src="../../../../content/images/fig4.png" alt="fig4" />
+채널 A가 스케쥴링 관리(super, AP, Centralized)</p>
+
+<p>0번 slot은 advertising(default provisioning channel)</p>
+
+<blockquote>
+  <ul>
+  <li>A가 AP라고 advertise(Cycle 0번. (Fig.3))</li>
+  <li>Fig.3의 k는 Cycle 횟수를 뜻함</li>
+  </ul>
+</blockquote>
+
+<ol>
+<li>Cycle 0일 때(k=0) <br />
+<ul><li>1) time slot=0 (ASN=0)
+<ul><li>A가 Advertise</li></ul></li>
+<li>2) time slot=1 (ASN=1)
+<ul><li>B가 기다리고 있다 Join Request</li></ul></li></ul></li>
+<li>Cycle 1일때(k=1) : time slot 한바퀴 돌고 다시 처음으로 돌아온다. <br />
+<ul><li>1) time slot=0 (ASN=7)
+<ul><li>A가 B에게 Join Response</li></ul></li></ul></li>
+<li>Cycle 2일때(k=2) <br />
+<ul><li>1) time slot=0 (ASN=14) : Set Link
+<ul><li>t=2, chO=0, Adv : time slot=2, 0번 채널에 Advertise 설정</li>
+<li>t=3, chO=1 RX : time slot=3, 1번 채널에서 B RX 설정</li></ul></li></ul></li>
+<li>Cycle 3일때(k=3) <br />
+<ul><li>1) time slot=0 (ASN=21) : Set Link
+<ul><li>t=4, chO=2, B->A : time slot=4, 2번 채널에 B->A 설정</li></ul></li>
+<li>2) time slot=2 (ASN=23)
+<ul><li>B가 Advertising</li></ul></li>
+<li>3) time slot=3 (ASN=24) 
+<ul><li>B의 Advertising을 받고 C가 B에게 Join Request</li></ul></li>
+<li>4) time slot=4 (ASN=25)
+<ul><li>B가 C의 Request를 A에게 전달(<strong><em>B가 Centralized가 아니라서</em></strong>)</li></ul></li></ul></li>
+<li>Cycle 4일때(k=4) <br />
+<ul><li>1) time slot=0 (ASN=28)
+<ul><li>A가 B에게 C의 Join Request에 대하여 Response 전달</li></ul></li>
+<li>2) time slot=2 (ASN=30)
+<ul><li>B가 C에게 Response 전달</li></ul></li></ul></li>
+<li>Cycle 5일때(k=5) <br />
+<ul><li>1) time slot=0 (ASN=35) : A가 B에게 전달
+<ul><li>t=5, chO=3, C->B : time slot=5, 3번 채널에 C->B 전달</li></ul></li>
+<li>2) time slot=2 (ASN=37) : B가 C를 세팅
+<ul><li>t=5, chO=3, C->B : time slot=5, 3번 채널에 C->B 세팅</li></ul></li>
+<li><strong><em>이 order는 B,C둘다 전달 되어야함</em></strong></li></ul></li>
+<li>Cycle 6일때(k=6) <br />
+<ul><li>1) time slot=0 (ASN=42) : Set Link
+<ul><li>t=6, chO=4, B->A : time slot=6, 4번 채널에 B->A 설정</li></ul></li></ul></li>
+</ol>
+            
+            
+            
+              
+            
+            
+            
+        </section>
+
+        <footer class="post-footer">
+
+
+            <figure class="author-image">
+                <a class="img" href="http://localhost:2368/author/tak/" style="background-image: url(../../../../content/images/2015/03/tumblr_mjm5ksBtYP1r9164to1_500.jpg)"><span class="hidden">njir's Picture</span></a>
+            </figure>
+
+            <section class="author">
+                <h4><a href="http://localhost:2368/author/tak/">njir</a></h4>
+
+                    <p>Read <a href="http://localhost:2368/author/tak/">more posts</a> by this author.</p>
+                <div class="author-meta">
+                    
+                    
+                </div>
+            </section>
+
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="https://twitter.com/share?text=%EC%9E%84%EB%B2%A0%EB%94%94%EB%93%9C%20%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4%20-%20IEEE%20802.15.4e%2C%20Scheduling&amp;url=http://localhost:2368/2015/03/25/imbedideu/"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:2368/2015/03/25/imbedideu/"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://localhost:2368/2015/03/25/imbedideu/"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+
+
+
+
+                <div id="disqus_thread"></div>
+                  <script type="text/javascript">
+                  /* * * CONFIGURATION VARIABLES * * */
+                           var disqus_shortname = 'njir';
+    
+                              /* * * DON'T EDIT BELOW THIS LINE * * */
+                 (function() {
+                       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                       })();
+                       </script>
+                    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+            
+
+
+
+
+
+
+
+        </footer>
+
+    </article>
+</main>
+
+
+
+        <footer class="site-footer clearfix">
+            <section class="copyright"><a href="../../../../index.html">Pythonic</a> &copy; 2016</section>
+            <section class="poweredby">Proudly published with <a href="https://ghost.org">Ghost</a></section>
+        </footer>
+
+    </div>
+
+    <script src="../../../../public/jquery.js?v=44185cf282"></script>
+
+    <script type="text/javascript" src="../../../../assets/js/jquery.fitvids.js?v=44185cf282"></script>
+    <script type="text/javascript" src="../../../../assets/js/index.js?v=44185cf282"></script>
+    <script type="text/javascript" src="../../../../assets/js/prism.js?v=44185cf282"></script>
+    <script type='text/javascript' src="../../../../assets/js/knockout-3.3.0.js?v=44185cf282"></script>
+  
+
+</body>
+</html>
