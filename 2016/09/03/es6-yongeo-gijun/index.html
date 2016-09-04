@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>ES6 - 기본 문법 01</title>
+    <meta name="description" content="" />
+    
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="../../../../assets/images/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="../../../../assets/css/screen.css?v=4716f960aa" />
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+    <link rel="stylesheet" type="text/css" href="../../../../assets/css/prism.css?v=4716f960aa" />
+    
+    
+   
+
+
+    <link rel="canonical" href="index.html" />
+    
+    <meta property="og:site_name" content="Pythonic" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="ES6 - 기본 문법 01" />
+    <meta property="og:description" content="용어 기준 Built-in 오브젝트 function, object, arrray 등 object 빌트인 오브젝트로 생성한 오브젝트 ex: function 키워드 인스턴스 new 생성자 함수() property key 와 name 차이 property key: String value + Symbol value property name: String value ES7 Spec: property key value..." />
+    <meta property="og:url" content="http://localhost:2368/2016/09/03/es6-yongeo-gijun/" />
+    <meta property="article:published_time" content="2016-09-03T04:09:39.696Z" />
+    <meta property="article:modified_time" content="2016-09-04T07:49:18.767Z" />
+    <meta property="article:tag" content="ES6" />
+    <meta property="article:tag" content="Javascript" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="ES6 - 기본 문법 01" />
+    <meta name="twitter:description" content="용어 기준 Built-in 오브젝트 function, object, arrray 등 object 빌트인 오브젝트로 생성한 오브젝트 ex: function 키워드 인스턴스 new 생성자 함수() property key 와 name 차이 property key: String value + Symbol value property name: String value ES7 Spec: property key value..." />
+    <meta name="twitter:url" content="http://localhost:2368/2016/09/03/es6-yongeo-gijun/" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Pythonic",
+    "author": {
+        "@type": "Person",
+        "name": "njir",
+        "image": "http://localhost:2368/content/images/2015/03/tumblr_mjm5ksBtYP1r9164to1_500.jpg",
+        "url": "http://localhost:2368/author/tak",
+        "sameAs": null
+    },
+    "headline": "ES6 - 기본 문법 01",
+    "url": "http://localhost:2368/2016/09/03/es6-yongeo-gijun/",
+    "datePublished": "2016-09-03T04:09:39.696Z",
+    "dateModified": "2016-09-04T07:49:18.767Z",
+    "keywords": "ES6, Javascript",
+    "description": "용어 기준 Built-in 오브젝트 function, object, arrray 등 object 빌트인 오브젝트로 생성한 오브젝트 ex: function 키워드 인스턴스 new 생성자 함수() property key 와 name 차이 property key: String value + Symbol value property name: String value ES7 Spec: property key value..."
+}
+    </script>
+
+    <meta name="generator" content="Ghost 0.5" />
+    <link rel="alternate" type="application/rss+xml" title="Pythonic" href="../../../../rss/index.html" />
+    <script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+ 	 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+ 	 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+ 		 })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ 		 ga('create', 'UA-46214266-2', 'auto');
+ ga('send', 'pageview');
+	
+		</script>
+    
+    <script>
+			window.techno = {
+				baseUrl: 'http://localhost:2368',
+				hbData: {
+					pagination:{
+						pages: ''
+					}
+				}
+			};
+			
+		window.techno.config = { 
+	
+		logo: '[YOUR LOGO]',
+		author: {			
+				social: [
+					{ 
+					   href: 'https://github.com/njir',
+					   icon: 'fa-github',
+					   title: 'Github'
+                    },
+                    {
+                        href: 'https://www.linkedin.com/in/hyungtak',
+                        icon: 'fa-linkedin',
+                        title: 'LinkedIn'
+                    },
+                    {
+                        href: 'https://www.facebook.com/jinpcbang',
+                        icon: 'fa-facebook',
+                        title: 'Facebook'
+                    },
+                    {
+                        href: 'mailto:njirtak@gmail.com',
+                        icon: 'fa-envelope',
+                        title: 'Email'
+                    },
+                ]
+        },
+		disqus: {
+				shortname: '[YOUR DISQUS SHORTNAME]'
+		},
+		google: {
+				analytics: function(ga) {
+					var account ='[YOUR GA ACCOUNT]';
+					var domain = '[YOUR GA DOMAIN]';
+
+					ga('create', account, domain);
+					//ga('require', 'displayfeatures');
+					ga('send', 'pageview');
+				}
+		},
+};
+			
+			
+			
+	</script>
+     
+    
+    
+</head>
+<body class="post-template tag-es6 tag-javascript nav-closed">
+
+    <div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="index.html#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+            <li class="nav-ohmygithub" role="presentation"><a href="http://njir.github.io/oh-my-github/">oh-my-github</a></li>
+            <li class="nav-swift" role="presentation"><a href="http://njir.github.io/tag/swift/">Swift</a></li>
+            <li class="nav-embedded-software" role="presentation"><a href="http://njir.github.io/tag/embedded-software/">Embedded Software</a></li>
+            <li class="nav-advanced-java" role="presentation"><a href="http://njir.github.io/tag/advanced-java/">Advanced Java</a></li>
+            <li class="nav-javascript" role="presentation"><a href="http://njir.github.io/tag/javascript/">Javascript</a></li>
+    </ul>
+    <a class="subscribe-button icon-feed" href="../../../../rss/index.html">Subscribe</a>
+</div>
+<span class="nav-cover"></span>
+
+
+    <div class="site-wrapper">
+
+        
+
+
+<header class="main-header tag-head " style="background-image: url(../../../../content/images/2015/03/camera-581126_1920.jpg)">
+    <nav class="main-nav overlay clearfix">
+        <a class="blog-logo" href="../../../../index.html"><img src="../../../../content/images/2015/03/ghost-2.png" alt="Blog Logo" /></a>
+            <a class="menu-button" href="index.html#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
+    </nav>
+    
+    <div class="vertical">
+        <div class="main-header-content inner">
+            <h1 class="page-title">ES6, Javascript</h1>
+            <h2 class="page-description">
+                ES6 - 기본 문법 01
+            </h2>
+        </div>
+    </div>
+
+</header>
+
+
+
+<main class="content" role="main">
+    <article class="post tag-es6 tag-javascript">
+
+        <header class="post-header">
+            <h2 class="post-title">ES6 - 기본 문법 01</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2016-09-03">03 September 2016</time>  on <a href="../../../../tag/es6/index.html">ES6</a>, <a href="../../../../tag/javascript/index.html">Javascript</a>
+            </section>
+        </header>
+
+
+        <section class="post-content">
+        
+            <h5 id="">용어 기준</h5>
+
+<ul>
+<li>Built-in 오브젝트
+<ul><li>function, object, arrray 등</li></ul></li>
+<li>object
+<ul><li>빌트인 오브젝트로 생성한 오브젝트</li>
+<li>ex: function 키워드</li></ul></li>
+<li>인스턴스
+<ul><li>new 생성자 함수()</li></ul></li>
+<li>property key 와 name 차이
+<ul><li>property key: String value + Symbol value</li>
+<li>property name: String value</li>
+<li>ES7 Spec:
+property key value : string + symbol
+property name value : only string</li></ul></li>
+<li>함수 메소드
+<ul><li>Array.isArray()</li>
+<li>Array.prototype.forEach()
+<ul><li>function: 기능 설명</li>
+<li>method: 인스턴스 만들고 현재 실행하는 단계임</li></ul></li>
+<li>ES5: 이 기준으로 구분</li>
+<li>ES6: function, method 구분하지 않는 경향</li>
+<li>구분의 뉘앙스는 있음</li>
+<li>function을 static method로 사용</li></ul></li>
+</ul>
+
+<h6 id="var">var 키워드</h6>
+
+<ul>
+<li>변수 선언 및 구분</li>
+<li>글로벌(전역 변수)</li>
+<li>구분 목적
+<ul><li>스코프
+<ul><li>자신 영역에서만 사용</li>
+<li>공용에 따른 문제 방지</li></ul></li></ul></li>
+<li>글로벌 변수 오해
+<ul><li>글로벌 오브젝트도 스코프를 가짐</li>
+<li>var one: var 키워드로 변수 선언이 정상</li>
+<li>var을 작성하지 않으면 글로벌 변수로 간주
+<ul><li>장점이기도 하지만</li>
+<li>객체지향 관점에서 보면 단점</li></ul></li>
+<li>function은 독립된 오브젝트
+<ul><li>function 안이 스코프</li>
+<li>function 밖은 다른 스코프</li></ul></li></ul></li>
+</ul>
+
+<h6 id="usestrict">use strict 사용</h6>
+
+<ul>
+<li>ES5에서 도입    </li>
+<li>함수 안에서 글로벌 변수 선언 방지
+<ul><li>근본적인 접근은 아님</li></ul></li>
+<li>ES6: "use strict"가 디폴트 환경
+<ul><li>전체는 아님</li></ul></li>
+<li>node.js에서 ES6 사용: "use script" 작성</li>
+</ul>
+
+<h6 id="let">let 변수</h6>
+
+<ul>
+<li>var 처리 문제 해결</li>
+<li>let variable: 스코프를 가진 변수 선언</li>
+<li>스코프 범위: 블록{}, 문장, 표현식</li>
+<li>블록{} 안의 블록 {}도 스코프
+<ul><li>블록 밖의 변수는 스코프가 다름</li>
+<li>값이 대체되지 않음</li></ul></li>
+<li>let 변수는 호이스팅(Hoisting)이 되지 않음</li>
+<li>temporal dead zone: 같은 스코프에 같은 이름 선언 불가</li>
+<li>블록 스코프
+<ul><li>let 사용의 가장 큰 목적</li>
+<li>블록 기준
+<ul><li>function(){ 코드 }</li>
+<li>if () { 코드 } </li></ul></li></ul></li>
+</ul>
+
+<pre><code class="language-javascript">let sports = 'soccer'  
+if(sports){  
+    let sports = 'baseball'
+    console.log('block: ', sports)    // block: soccer
+}
+console.log('global: ', sports)    // global: baseball  
+</code></pre>
+
+<ul>
+<li>let과 this
+<ul><li>글로벌 오프젝트에서 let 변수를 this로 참조 불가</li>
+<li>글로벌 오브젝트로 들어가지 않음 (ex) Script에 -> sports)</li></ul></li>
+</ul>
+
+<pre><code class="language-javascript">var music = 'music'  
+console.log(this.music)        //music
+
+let sports = 'soccer'  
+console.log(sports)             // soccer  
+console.log(this.sports)     // undefined  
+</code></pre>
+
+<ul>
+<li>function
+<ul><li>function({}도 블록 스코프</li>
+<li>function 안과 밖에
+<ul><li>같은 이름의 let 변수 선언 가능</li>
+<li>스코프가 다르기 때문에</li></ul></li>
+<li>functon 밖의 let변수를
+<ul><li>function 안에서 사용 가능</li></ul></li></ul></li>
+</ul>
+
+<pre><code class="language-javascript">  let sports = 'soccer'
+  let music = 'jazz'
+  function get() {
+      let music = 'classic'
+    console.log('music: ', music)
+    console.log('sports: ', sports)
+    js.log('this: ', this.msuic)    
+    // window.get() call : this가 window 참조, music 변수가 window에 존재하지 않음 -&gt; undefined 출력
+ }
+ window.get()
+ get()
+</code></pre>
+
+<ul>
+<li>try-catch도 블록 스코프</li>
+<li>switch 블록{}이 블록 스코프
+<ul><li>case 문은 해당되지 않음</li>
+<li>case에 이름이 같은 let 변수 작성 불가</li></ul></li>
+<li>Hoisting
+<ul><li>let 변수는 <strong>호이스팅 되지 않음</strong></li>
+<li>즉, let 변수 앞에서 변수 사용 불가</li></ul></li>
+</ul>
+
+<pre><code class="language-javascript">window.onload = function(){  
+    console.log(sports)       // undefined -&gt; 변수는 찾았지만 값은 모름(호이스팅)
+    var sports = 'sports'
+
+    console.log(music)        // ReferenceError 발생 -&gt; let은 호이스팅 불가. 값을 설정한 후에 music 사용 가능 
+    let musinc = 'music'    
+}
+</code></pre>
+
+<ul>
+<li>for() 문에서 반복할 때마다
+<ul><li>let 변수는 <strong>따로 스코프를 가짐</strong></li>
+<li>var 변수는 스코프를 갖지 않음</li></ul></li>
+</ul>
+
+<hr />
+
+<h6 id="const">const</h6>
+
+<ul>
+<li>name1에 변수 이름 작성, 식별자로 사용</li>
+<li>value1에 초기값 작성
+<ul><li>반드시 값 할당, 변수 선언만 불가</li>
+<li>표현식 작성 가능, 평가 결과 사용</li></ul></li>
+<li>값을 바꿀 수 없는 변수 선언</li>
+<li>스코프에 같은 이름 선언 불가</li>
+</ul>
+
+<pre><code class="language-javascript">const obj = { language : 'Korea' }  
+try {  
+    obj = {}
+} catch (e) {
+    console.log('error')        // error
+}
+obj.language = 'English'  
+console.log(obj.language) // English  
+// const variable의 프로퍼티는 const가 아님. 값 할당 가능
+</code></pre>
+
+<hr />
+
+<h6 id="arrowfunction">Arrow Function</h6>
+
+<ul>
+<li>코드 형태
+<ul><li>(param) => { code }</li></ul></li>
+<li>function(){} 의 축약 형태</li>
+<li>Lambda function
+<ul><li>함수 이름이 없는 익명/무명 함수 지칭</li>
+<li>functon(){} 형태</li></ul></li>
+<li>Lisp 언어가 원조, 1958년</li>
+<li>대부분 언어에서 지원</li>
+<li>Syntax
+<ul><li>(param) => { code }  or param => { code }
+<ul><li>파라메터가 하나일 때</li></ul></li>
+<li>() => { code }</li>
+<li>(param) => 표현식
+<ul><li>표현식 결과 return 함</li>
+<li>ex) (param) => { {key: value} </li></ul></li>
+<li>(param1, param2, ...rest) => {}
+<ul><li>rest 파라메터</li></ul></li>
+<li>(param1, param2 = 123) => {}
+<ul><li>default 파라메터</li></ul></li>
+<li>( [one, two] = [10, 20] ) => {}
+<ul><li>Array 디스트척쳐링</li></ul></li>
+<li>( {key: sum} = {key: 10 + 20} ) => {}
+<ul><li>Object 디스트럭쳐링</li></ul></li></ul></li>
+<li>new 연산자로 인스턴스 생성 불가
+<ul><li>new 연산자를 사용하려면 prototype 과 constructor 필요 -> Arrow function은 없음</li></ul></li>
+<li>Arguments 사용 제한 있음</li>
+</ul>
+
+<pre><code class="language-javascript">let sports = (param) =&gt; {  
+    try {
+        let args = arguments
+    } catch (e) {
+        console.log('Cannot use arguments')
+        // arrow function에서 arguments 사용 불가-&gt; Reference Error 발생
+    }
+}
+</code></pre>
+
+<ul>
+<li>Arrow 와 this
+<ul><li>인스턴스와 오브젝트에서 this 참조가 다름</li>
+<li>사용 환경에 따라 arrow 함수 선택 사용
+<ul><li>Arrow에서는 사용된 인스턴스의 this를 참조</li>
+<li><strong>Prototype에는 Arrow 사용하지 말것</strong></li></ul></li></ul></li>
+</ul>
+
+<pre><code class="language-javascript">let sports = new Sports()  
+Sports.prototype = {  
+    minus: () =&gt; {
+        this.count -= 1
+        // window에 count가 설정되고 값이 NaN이 됨
+    }
+}
+</code></pre>
+
+<h6 id="iteration">Iteration</h6>
+
+<ul>
+<li>이터레이션 구성
+<ul><li>iterable 프로토콜</li>
+<li>iterator 프로토콜</li></ul></li>
+<li>배열을 반복하기 위해서는
+<ul><li>배열을 반복할 수 있는 오브젝트이어야 하고</li>
+<li>반복을 위한 메소드를 갖고 있어야 함</li>
+<li>=> iteration protocol</li></ul></li>
+<li>iterable protocol
+<ul><li>오브젝트의 반복 동작을 정의</li>
+<li>built-in 오브젝트는
+<ul><li>default로 이터러블 프로토콜을 갖고 있음</li>
+<li>String, Array, TypedArray, Map, Set</li>
+<li>Arguments, DOM NodeList</li></ul></li>
+<li>iterable 오브젝트
+<ul><li>iterable 프로토콜이 설정된 오브젝트</li>
+<li>iterable 오브젝트 조건
+<ul><li>Symbol.iterator()가 있어야 함</li>
+<li>빌트인 이터러블 오브젝트에는 디폴트로 설정됨</li>
+<li>자체 오브젝트에는 없지만 상속 받은 prototype chain에 있어도 됨</li>
+<li>즉, Array를 상속 받으면 iterable object가 됨</li></ul></li>
+<li>개발자 코드로 iterable protocol 정의 가능</li></ul></li></ul></li>
+</ul>
+
+<pre><code class="language-javascript">let arrayObj = []  
+let result = arrayObj[Symbol.iteratior]  
+console.log(result)     // function values() {native code}
+
+let objectObj = {};  
+result = objectObj[Symbol.iterator]  
+console.log(result)     // undefined  
+</code></pre>
+
+<ul>
+<li>iterator protocol은
+<ul><li>오브젝트의 값을 순서로 처리할 수 있는 방법</li>
+<li>오브젝트에 있는 next()로 구현</li>
+<li>next()가 오브젝트에 있으면 iterator protocol이 적용된 것  </li>
+<li>Symbol.iterator()를 호출하면 이터레이터 오브젝트를 생성하여 반환</li></ul></li>
+<li>즉, iteration을 하려면 iterator object가 필요</li>
+</ul>
+
+<hr />
+
+<h6 id="spread">Spread</h6>
+
+<ul>
+<li>iterable oject를 하나씩 전개 </li>
+<li>[...iterable]
+<ul><li>[...] 처럼 []안에 점(.) 3개를 연속 작성</li>
+<li>let values = [10, 20, 30];</li>
+<li>[...values]</li></ul></li>
+<li>spec에서는 spread operator로 표기하지 않음</li>
+<li>Array spread, String Spread, Object Spread(property 단위로 전개)
+<ul><li>[] 안에 spread 대상 배열 작성</li>
+<li>작성한 위치에 element를 <strong>분리(전개)</strong>   </li></ul></li>
+<li>예제 코드</li>
+</ul>
+
+<pre><code class="language-javascript">//Array spread
+let two = [21, 22]  
+let five = [51, 52]  
+let one = [11, ...two, 12, ...five]        
+
+//String spread
+let str = 'music'  
+let chars = [...str];  
+console.log(chars)     // 'm', 'u', 's', 'i', 'c'  
+</code></pre>
+
+<pre><code class="language-javascript">let two = [21, 22]  
+let five = [51, 52]  
+two.push(...five)  
+let str = 'music'  
+two.push(...str)  
+console.log(two)    // [21, 22, 51, 52, 'm', 'u', 's', 'i', 'c']  
+</code></pre>
+
+<ul>
+<li>Function Spread
+<ul><li>호출하는 함수의 파라미터에 spread 작성</li>
+<li>함수를 호출하기 전에 엘리먼트 단위로 전개</li>
+<li>각 엘리먼트 값을 파라미터로 넘겨 줌</li>
+<li>호출 받는 함수의 파라미터 이름에 매핑</li></ul></li>
+</ul>
+
+<pre><code class="language-javascript">function get(one, two, three){ ... }  
+const values = [10, 20, 30]  
+get(...values)
+
+const test = {name: 123}  
+get(...test)  
+// Error code below
+// test 가 iterable object가 아니르모 TypeError 발생
+</code></pre>
+
+<hr />
+
+<h6 id="rest">Rest 파라미터</h6>
+
+<ul>
+<li>호출 받는 function() 파라미터에 ...과 같이 점(.) 3개를 연속 작성하고</li>
+<li>...에 이어서 파라미터 이름 작성
+<ul><li>function(one, ...rest)</li></ul></li>
+<li>하나 이상의 파라미터를 배열로 묶음</li>
+</ul>
+
+<h6 id="arraylike">Array-like</h6>
+
+<ul>
+<li>배열처럼 iterable 가능한 오브젝트
+<ul><li>let one = {0: value, 1: value, length: 2}</li></ul></li>
+<li>오브젝트에 length 라는 프로퍼티가 있으면 array-like</li>
+</ul>
+
+<h6 id="restarguments">rest, arguments 차이</h6>
+
+<ul>
+<li>arguments 오브젝트
+<ul><li>파라미터 작성에 관계없이 전체 설정</li>
+<li>Array-like이므로 배열 메소드 사용 불가</li></ul></li>
+<li>rest
+<ul><li>Array object</li></ul></li>
+</ul>
+
+<h6 id="destructuring">Destructuring</h6>
+
+<ul>
+<li>Destructuring Assignment</li>
+</ul>
+
+<pre><code class="language-javascript">//Array
+let one, two, three  
+[one, two, three] = [1, 2, 3]
+
+//Object
+let four, five  
+{four, five} = {four: 4, five: 5}
+
+//Function 
+total({  
+    one: 1, plus: {two: 2, five: 5}
+})
+
+function total({one, plus: {two, five}}){  
+    console.log(one+two+five)   // 8
+}
+</code></pre>
+
+<h6 id="objectorientation">Object Orientation</h6>
+
+<ul>
+<li>같은 프로퍼티 key 사용</li>
+</ul>
+
+<pre><code class="language-javascript">let sameKey = {key: 1, key: 2}  
+console.log(sameKey)  
+// ES5 strict 모드에서는 error 발생
+// ES6에서는 strict모드 관계 없이 에러 발생 X, 뒤에 작성된 프로퍼티 값으로 대체
+
+let one = 1, two = 2  
+let values = {one, two}  
+console.log(values) // {one: 1} {two: 2}  
+                              //  MDN에서 Shorthand property name 이라고 표기
+
+let obj = {  
+    getTotal(param){
+        return param + 123
+    } // 왠만하면 arrow function은 사용하지 말것(scope, this 문제)
+}
+</code></pre>
+
+<h6 id="descriptor">Descriptor</h6>
+
+<ul>
+<li><strong>ES5 문법임</strong></li>
+<li>여기에서만 property 대신 attribute 용어 사용</li>
+<li>프로퍼티 디스크립터 타입
+<ul><li>속성 이름과 속성 값으로 구성</li>
+<li>프로퍼티 속성의 처리 기준 정의</li></ul></li>
+<li>프로퍼티 디스크립터 타입 분류
+<ul><li>데이터 프로퍼티 디스크립터 </li>
+<li>Access 프로퍼티 디스크립터</li></ul></li>
+<li>프로퍼티 디스크립터 타입
+<ul><li>데이터
+<ul><li>value: 자바스크립트 데이터 타입, undefined(default), 프로퍼티 값으로 사용</li>
+<li>writable: true, false, false(default)</li></ul></li>
+<li>Access
+<ul><li>get: Function Object, undefined(default), 프로퍼티 getter 함수</li>
+<li>set: Function Object, undefined(default), 프로퍼티 setter 함수</li></ul></li>
+<li>공용
+<ul><li>enumerable: true, false(for-in으로 열거 불가)</li>
+<li>configurable: true, false(프로퍼티 삭제 불가)</li></ul></li></ul></li>
+<li>프로퍼티 디스크립터 인식 기준
+<ul><li>먼저 value와 writable 작성 여부 체크</li>
+<li>작성하면 데이터 프로퍼티 디스크립터로 인식 or Access 프로퍼티 디스크립터</li>
+<li>value와 get을 같이 작성하면 에러</li></ul></li>
+<li>value 속성(필드)
+<ul><li>Object의 프로퍼티 값</li></ul></li>
+<li>get 속성</li>
+</ul>
+
+<pre><code class="language-javascript">var obj  
+Object.defineProperty(obj, 'book', {  
+    get: function(){ return 'read' }
+}
+var result = obj.book  
+/* getter
+        obj.book 코드를 만나면
+        obj.book의 get()을 자동으로 호출
+        obj.book.get()으로 호출하면 에러
+*/
+
+var obj = {sports: 'soccer'}  
+Object.defineProperty(obj, 'item', {  
+    set: function(param){
+        this.sports = param
+    }
+}
+</code></pre>
+
+<pre><code class="language-javascript">//es6 getter, setter 작성 형태
+var obj = {  
+    value: 123,
+    get getTotal(){                // getTotal 앞에 get 작성
+        return this.value
+    }
+    set setTotal(value){        // setTotal 앞에 get 작성
+        this.total = value
+    }
+}
+obj.getTotal  
+obj.setTotal = 123  
+</code></pre>
+
+<h6 id="computedpropertyname">Computed property name</h6>
+
+<ul>
+<li>문자열을 조합하여 프로퍼티, 함수 이름으로 사용</li>
+</ul>
+
+<pre><code class="language-javascript">let item = {  
+    ['one' + 'two']: 12
+}
+console.log(onetwo) // 12  
+</code></pre>
+
+<h6 id="defaultvalue">Default value</h6>
+
+<ul>
+<li>값을 할당하지 않으면 default 값 할당</li>
+<li>적용 순서는 왼쪽에서 오른쪽으로 순서대로 적용</li>
+</ul>
+
+<pre><code class="language-javascript">let [one, two, five = 5] = [1, 2, 77]             // one=1, two=2, five=77  
+let [one, two = one+1, five= two+3] = [1]     //one=1, two=2, five=5  
+</code></pre>
+
+<hr />
+
+<h6 id="forof">for-of</h6>
+
+<ul>
+<li>for(variable of iterable){}</li>
+<li>iterable object에 대해 반응 루프 생성</li>
+<li>variable
+<ul><li>반복할때 마다 오브젝트의 프로퍼티를 구분할 수 있는 변수</li>
+<li>프로퍼티 값이 설정 됨</li></ul></li>
+<li>iterable
+<ul><li>iterable object</li>
+<li>표현식 지정 가능, 표현식 평가 결과 사용</li></ul></li>
+</ul>
+
+<pre><code class="language-javascript">//Array
+for(let value of [10, 20, 30]){  
+    console.log(value)      
+}
+//String
+for(let value of 'abc'){  
+    console.log(value)      
+}
+//Node List
+let nodes = document.querySelectorAll("li")  
+for(let node of nodes){  
+    console.log(node.textContent)
+}
+</code></pre>
+
+<ul>
+<li>for-in, for-of 차이
+<ul><li>배열의 엘리먼트를 하나씩 반복하여 전개</li>
+<li>for-in
+<ul><li>오프젝트에서 열거가능한 프로퍼티가 대상</li></ul></li>
+<li>for-of
+<ul><li>이터러블 오브젝트가 대상</li>
+<li>prototype에 연결된 프로퍼티는 대상이 아님</li></ul></li></ul></li>
+<li>Object
+<ul><li>이터러블 오브젝트가 아니므로 for-of 사용 불가</li>
+<li>Object.Keys()로 프로퍼티 이름을 배열로 생성</li></ul></li>
+</ul>
+
+<h6 id="is">is</h6>
+
+<ul>
+<li>자바스크립트 값 비교 방법
+<ul><li>값과 값 타입 모두 비교: = = =</li>
+<li>undefined와 null비교: false</li>
+<li>Object.is()로 비교</li></ul></li>
+<li>Object.is()와 = = = 비교 차이
+<ul><li>+0, -0 비교: = = =는 true, Object.is()는 false</li>
+<li>Nan과 NaN 비교: = = =는 false, Object.is()는 true</li></ul></li>
+<li>두 개의 파라미터 값과 값 타입을 비교</li>
+<li>오브젝트 비교가 아님</li>
+</ul>
+
+<pre><code class="language-javascript">let count = {  
+    current: 1,
+    get getCount(){ return ++this,current }
+}
+let mergeObj = {}  
+Object,assign(mergeObj, count)  
+</code></pre>
+
+<h6 id="setprototypeof">setPrototypeOf()</h6>
+
+<ul>
+<li>첫번째 파라미터의 _ _ proto _ _ 에  두 번째 파라미터 설정</li>
+<li>첫번째 파라미터에 오브젝트 또는 인스턴스 지정
+<ul><li>Object.isExtensible()결과가 false이면 TypeError</li>
+<li>Boolean, Number, String, Symbol이면 인스턴스 생성</li>
+<li>두번째 파라미터를 반영하지 않고 생성한 인스턴스 반환</li></ul></li>
+<li>두 번째 파라미터에 오브젝트 또는 null 지정</li>
+<li>ES5에 getPrototypeOf() 있음</li>
+<li>_ _ proto _ _에 설정하는 목적
+<ul><li>첫 번째 오브젝트.method() 형태로 호출</li></ul></li>
+<li>두 번째 파라미터에 오브젝트의 prototype 지정
+<ul><li>function, 인스턴스도 가능하지만 함수 목적에 완전하게 적합하지는 않음 </li></ul></li>
+</ul>
+
+<pre><code class="language-javascript">let Sports = function(){  
+    this.count = 123
+}
+Sports.prototype.getCount = function(){  
+    return this.count
+}
+let protoObj = Object.setPrototypeOf({], Sports.prototype)  
+console.log(typeof protoObj.__proto__) //object
+
+let result = protoObj.getCount()  
+console.log(result)    //undefined  
+</code></pre>
+
+<h6 id="__proto__">_ _ proto_ _</h6>
+
+<ul>
+<li>Object.prototype._ _ proto _ _는 Access 프로퍼티
+<ul><li>get Object.prototype. _ _ proto _ _ 와</li>
+<li>set Object.prototype. _ _ proto _ _ 있음</li></ul></li>
+<li>prototype 과 _ _ proto_ _ 의 차이
+<ul><li>_ _ _ proto _ _ 에 첨부된 메소드는 직접 호출 가능</li>
+<li>Object,prototype.toString.call(obj)형태로 호출</li></ul></li>
+</ul>
+
+<pre><code class="language-javascript">let Sports = function(){  
+    this.member = 11
+}
+Sports.prototype.getMember = function(){}  
+let sportsObj = new Sports()  
+// 1. new Sports로 인스턴스를 생성하여 sportsObj에 할당
+// 2. Sports.prototype에 연결된 프로퍼티로 인스턴스를 생성하여 sportsObj.__proto__에 첨부
+Sports.prototype['add'] = function(param){  
+    this.member+=param
+}
+sportsObj.add(10) // sharing 개념 때문에 바로 적용  
+</code></pre>
+
+<ul>
+<li>function 추가
+<ul><li>인스턴스 메소드가 되며 인스턴스.method() 형태로 직접 호출</li></ul></li>
+</ul>
+
+<h6 id="number">Number</h6>
+
+<ul>
+<li>safe integer란
+<ul><li>지수(e)를 사용하지 않고 나타낼 수 있는 값</li>
+<li>2의 53승(2의 64승 아님)</li></ul></li>
+<li>Number.MAX<em>SAFE</em>INTEGER</li>
+<li>Number.EPSILON</li>
+<li>Literal
+<ul><li>Binary, Octal 값 표현</li>
+<li>Binary
+<ul><li>0b0101, 0B0101 형태로 작성</li>
+<li>ES6에서 추가</li></ul></li>
+<li>Octal
+<ul><li>0O0105, 0o0101 형태로 작성</li></ul></li></ul></li>
+<li>isNaN
+<ul><li>파라미터 값이 NaN이면 true, 아니면 false 반환</li>
+<li>Number.isNaN()</li></ul></li>
+<li>isInteger()</li>
+<li>isSafeInteger()</li>
+<li>isFinite()</li>
+</ul>
+
+<blockquote>
+  <h6 id="emscripten">Emscripten 프로젝트</h6>
+  
+  <ul>
+  <li>source to source 컴파일러</li>
+  <li>LLVM 컴파일러를 사용하여 자바스크립트 코드 생성</li>
+  </ul>
+</blockquote>
+            
+            
+            
+              
+            
+            
+            
+        </section>
+
+        <footer class="post-footer">
+
+
+            <figure class="author-image">
+                <a class="img" href="http://localhost:2368/author/tak/" style="background-image: url(../../../../content/images/2015/03/tumblr_mjm5ksBtYP1r9164to1_500.jpg)"><span class="hidden">njir's Picture</span></a>
+            </figure>
+
+            <section class="author">
+                <h4><a href="http://localhost:2368/author/tak/">njir</a></h4>
+
+                    <p>Read <a href="http://localhost:2368/author/tak/">more posts</a> by this author.</p>
+                <div class="author-meta">
+                    
+                    
+                </div>
+            </section>
+
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="https://twitter.com/share?text=ES6%20-%20%EA%B8%B0%EB%B3%B8%20%EB%AC%B8%EB%B2%95%2001&amp;url=http://localhost:2368/2016/09/03/es6-yongeo-gijun/"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:2368/2016/09/03/es6-yongeo-gijun/"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://localhost:2368/2016/09/03/es6-yongeo-gijun/"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+
+
+
+
+                <div id="disqus_thread"></div>
+                  <script type="text/javascript">
+                  /* * * CONFIGURATION VARIABLES * * */
+                           var disqus_shortname = 'njir';
+    
+                              /* * * DON'T EDIT BELOW THIS LINE * * */
+                 (function() {
+                       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                       })();
+                       </script>
+                    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+            
+
+
+
+
+
+
+
+        </footer>
+
+    </article>
+</main>
+
+
+
+        <footer class="site-footer clearfix">
+            <section class="copyright"><a href="../../../../index.html">Pythonic</a> &copy; 2016</section>
+            <section class="poweredby">Proudly published with <a href="https://ghost.org">Ghost</a></section>
+        </footer>
+
+    </div>
+
+    <script src="../../../../public/jquery.js?v=4716f960aa"></script>
+
+    <script type="text/javascript" src="../../../../assets/js/jquery.fitvids.js?v=4716f960aa"></script>
+    <script type="text/javascript" src="../../../../assets/js/index.js?v=4716f960aa"></script>
+    <script type="text/javascript" src="../../../../assets/js/prism.js?v=4716f960aa"></script>
+    <script type='text/javascript' src="../../../../assets/js/knockout-3.3.0.js?v=4716f960aa"></script>
+  
+
+</body>
+</html>
