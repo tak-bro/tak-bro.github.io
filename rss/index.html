@@ -1,5 +1,298 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Tak's Notes]]></title><description><![CDATA[Thoughts, stories and ideas.]]></description><link>http://localhost:2368/</link><generator>Ghost 0.5</generator><lastBuildDate>Sat, 10 Sep 2016 01:13:36 GMT</lastBuildDate><atom:link href="http://localhost:2368/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[ES6 - 기본 문법 02]]></title><description><![CDATA[<h6 id="taggedtemplate">Tagged template</h6>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Tak's Notes]]></title><description><![CDATA[Thoughts, stories and ideas.]]></description><link>http://localhost:2368/</link><generator>Ghost 0.5</generator><lastBuildDate>Wed, 14 Sep 2016 07:50:11 GMT</lastBuildDate><atom:link href="http://localhost:2368/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[ES6 - 기본 문법 03]]></title><description><![CDATA[<h6 id="this">this</h6>
+
+<ul><li>static 메소드에서 this는
+<ul><li>메소드가 속한 class 오브젝트 참조</li></ul></li>
+<li>constructor에서
+<ul><li>this.constructor.name() 형태로</li>
+<li>static 메소드 호출 가능</li>
+<li>static 메소드가 Function 오브젝트이기 때문</li></ul></li></ul>
+
+<pre><code class="language-javascript">class Sports {  
+  static getNumber(){
+    return '1234'
+  }
+  static setGround(ground){
+    this.ground = ground
+  }
+  static getGround(){
+    return this.ground + this.getNumber()
+  }
+}
+Sports.setGround('test')  
+let result = Sports.getGround()  
+console.log(result) //test1234  
+</code></pre>
+
+<h6 id="generator">generator</h6>
+
+<ul><li>class 안에 제너레이터 함수 작성 가능
+<ul><li>prototype 에 제너레이터 함수가 연결됨</li></ul></li>
+<li>new.target
+<ul><li>meta 프로퍼티로 모든 function에 존재</li>
+<li>constructor와 관련된 프로퍼티</li>
+<li>new 연산자로 호출된 함수/class에서 constructor 참조</li>
+<li>인스턴스를 생성하지않으면 new.target은 undefined</li></ul></li></ul>
+
+<pre><code class="language-javascript">let sports = function(){  
+    console.log(new.target)
+    let target = new.target ? new.target.name : undefined
+    console.log(target)
+}
+sports()  
+let object = new sports()
+
+// undefined
+// undefined
+// frunction() { js.log(new.target); let target = new.target ? new.target.name : undefined; js.log(target);}
+// sports
+</code></pre>
+
+<blockquote>
+  <p>class, function 경우에 따라서 사용하자. 단, <strong>설계는 하고</strong></p>
+</blockquote>
+
+<h5 id="symbol">Symbol</h5>
+
+<h6 id="primitivedata">primitive data</h6>
+
+<ul><li>오브젝트가 아닌 데이터</li>
+<li>메소드를 갖고있지 않음</li></ul>
+
+<pre><code class="language-javascript">let num = 123 // num에 123만 할당되고 아무것도 첨부되지 않음  
+// 123은 number data로 primitive
+</code></pre>
+
+<ul><li>ES5의 primitive data
+<ul><li>string, number, boolean, null, undefined</li></ul></li>
+<li>ES6에서 symbol이 추가됨</li>
+<li>primitive는 wrapper 오브젝트가 있음
+<ul><li>string: string</li>
+<li>number: number</li>
+<li>boolean: boolean</li>
+<li>ES6에서 추가된 symbol은 Symbol</li></ul></li>
+<li>undefined, null은 wrapper 오브젝트가 없음</li>
+<li>wrapper 오브젝트에는 메소드가 있음</li></ul>
+
+<h6 id="symbol">Symbol</h6>
+
+<ul><li>Symbol은 프로그램 전체를 통해 유일(unique)한 값 제공</li></ul>
+
+<pre><code class="language-javascript">let sym = Symbol(`test`)  
+</code></pre>
+
+<ul><li>new Symbol()과 같이 new 연산자 사용 불가
+<ul><li>Symbol()은 값을 반환하므로 값을 생성한다는 표현이 적합</li></ul></li>
+<li>생성한 Symbol 값 변경 불가</li>
+<li>생성한 Symbol에 프로퍼티 설정 불가
+<ul><li>strict mode에서 에러</li></ul></li></ul>
+
+<pre><code class="language-javascript">const sym = Symbol()  
+console.log(sym)  // Symbol()  
+console.log(typeof sym) // Symbol  
+const symRemark = Symbol('comment')  
+console.log(symRemark)  //Symbol('comment')  
+</code></pre>
+
+<ul><li>Object(123)-> Number 인스턴스 반환</li>
+<li>Symbol 인스턴스 생성
+<ul><li>Object()파라미터에 Symbol()을 지정하거나</li>
+<li>Symbol()로 할당한 변수 이름 지정</li></ul></li>
+<li>Symbol 인스턴스 구조
+<ul><li>Object가 wrapper 오브젝트가 되어 Symbol함수 prototype에 연결된 함수가 생성됨</li></ul></li></ul>
+
+<h6 id="symbol">Symbol 사용 형태</h6>
+
+<ul><li>Object 프로퍼티 이름으로 사용
+<ul><li>값이 유일하므로 중복되지 않음</li>
+<li>symbol-keyed property 라고 부름</li></ul></li>
+<li>for-in 에서 사용
+<ul><li>프로퍼티 이름으로 Symbol이 열거되지 않음</li>
+<li>Symbol은 [{Enumerable}]: false</li>
+<li>Object.getOwnPropertySymbols()로 열거</li></ul></li>
+<li>메소드 이름으로 사용</li>
+<li>JSON.stringify()에서 사용
+<ul><li>Symbol 값이 문자열로 반환되지 않음</li></ul></li></ul>
+
+<h5 id="symbolproperty">Symbol.property</h5>
+
+<h6 id="wellknownsymbols">Well-Known Symbols</h6>
+
+<ul><li>스펙에서 @@iterator 형태를 볼 수 있음</li>
+<li>ES7 스펙: Well-Known Symbol</li>
+<li>11개의 Well-Known Symbol</li>
+<li>스펙에서 알고리즘에 이름을 부여하고
+<ul><li>이름으로 참조하기 위한 빌트인 Symbol값</li></ul></li>
+<li>개발자 코드에 Well-Known Symbol 작성
+<ul><li>개발자 코드를 먼저 실행</li>
+<li>따라서 Default @@iterator 기능을</li>
+<li>개발자 코드로 오버라이딩 가능</li></ul></li></ul>
+
+<h6 id="tostringtag">toStringTag</h6>
+
+<ul><li>Object.prototype.toString()과 비슷</li>
+<li>toString()으로 인스턴스를 변환하면
+<ul><li>[object Object] 형태로 변환</li>
+<li>인스턴스 타입을 명확하게 알 수 없음</li></ul></li>
+<li>Symbol.toStringTag으로 구분 가능
+<ul><li>[object Object]에서 두 번째의 문자열 지정</li>
+<li>ex) 'ABC' 지정 -> [object 'ABC'] 로 변환</li></ul></li></ul>
+
+<h6 id="isconcatspreadable">isConcatSpreadable</h6>
+
+<ul><li>Array.prototype.concat()에서 배열의 펼침 여부 정의</li>
+<li>Array.prototype.concat()
+<ul><li>다수의 배열 엘리먼트를 연결하여 반환</li></ul></li>
+<li>배열 이름[Symbol.isConcatSpreadable] = false
+<ul><li>one.concat(two) 형태에서</li>
+<li>two 배열의 엘리먼트가 아닌 two 배열 자체를 연결</li></ul></li>
+<li>배열 이름[Symbol.isConcatSpreadable] = true
+<ul><li>one 배열 끝에 two 배열의 엘리먼트를 하나씩 연결</li>
+<li>[Symbol.isConcatSpreadable] 작성하지 않아도 같음</li></ul></li>
+<li>프로퍼티로만 사용, 함수 사용 불가</li></ul>
+
+<h6 id="species">species</h6>
+
+<ul><li>Symbol.species는 constructor 함수 반환
+<ul><li>constructor를 실행하면 인스턴스를 반환하므로</li>
+<li>결국 인스턴스를 반환하게 됨</li></ul></li>
+<li>Symbol.species를 오버라이드하면
+<ul><li>다른 인스턴스를 반환할 수 있다는 의미</li></ul></li></ul>
+
+<pre><code class="language-javascript">class ExtendOne extends Array{  
+  showOne(){
+    console.log('ExtendOne')
+  }
+}
+
+class ExtendTwo extends Array{  
+  static get [Symbol.species](){
+    return ExtendOne
+  }
+  showTwo(){
+    console.log('ExtendTwo')
+  }
+}
+
+let twoInst = new ExtendTwo(10, 20, 30)  
+twoInst = twoInst.filter(value =&gt; value &gt; 10)  
+console.log(twoInst)  
+twoInst.showOne()  
+console.log(twoInst.showTwo)
+
+// [20, 30]
+// ExtendOne
+// undefined
+</code></pre>
+
+<h6 id="generator">Generator</h6>
+
+<ul><li>빌트인 Object에 Symbol.iterator를 연결</li></ul>
+
+<h6 id="for">for()</h6>
+
+<ul><li>글로벌 Symbol 레지스트리는 공유 영역
+<ul><li>다른 오브젝트에서도 사용 가능</li>
+<li>같은 key가 존재하면 등로된 값 반환</li></ul></li>
+<li>key 값이 같으면 같은 값을 사용할 가능성 있음
+<ul><li>파라미터 key 값을 유일하게 할 때 유용</li></ul></li></ul>
+
+<pre><code class="language-javascript">let sym = Symbol.for('sports')  
+sym = Symbol.for('sports')
+
+let result = Symbol.for('abc') === Symbol.for('abc')    // true  
+result = Symbol.for('def') === Symbol('def)    //false  
+result = Symbol('456') === Symbol('456) // false  
+</code></pre>
+
+<h6 id="keyfor">keyFor()</h6>
+
+<ul><li>글로벌 Symbol 레지스트리 검색
+<ul><li>파라미터에 Symbol.for()로 등록한 Symbol 지정</li>
+<li>Symbol 타입이 아니면 TypeError, 문자열 지정 불가</li>
+<li>Symbold의 key값('123')이 존재하면 key 값('123') 반환</li>
+<li>존재하지 않으면 undefined</li></ul></li></ul>
+
+<pre><code class="language-javascript">let sym123 = Symbol.for('123')  
+let result = Symbol.keyFor(sym123)  
+</code></pre>
+
+<h6 id="tostring">toString()</h6>
+
+<ul><li>Symbol을 문자열로 변환하여 반환
+<ul><li>Symbol 값이 반환되는 것은 아님</li>
+<li>Well-known symbol, 글로벌 Symbol도 변환</li></ul></li></ul>
+
+<h6 id="valueof">valueOf()</h6>
+
+<ul><li>new Number(123).valueOf()는 123 반환</li>
+<li>Symbol('123').valoueOf()는 Symbol('123') 반환</li>
+<li>Symbol 값을 반화하지는 않음</li></ul>
+
+<pre><code class="language-javascript">let sym = Symbol('123')  
+let result = sym.valueOf()  
+console.log(result)    // Symbol('123')  
+</code></pre>
+
+<h6 id="getownpropertysymbols">getOwnPropertySymbols()</h6>
+
+<ul><li>파라미터의 오브젝트에서 Symbol만 배열로 반환
+<ul><li>다른 프로퍼티는 반환되지 않음</li></ul></li>
+<li>Object에 속하는 함수이지만
+<ul><li>Symbol이 대상</li></ul></li></ul>
+
+<pre><code class="language-javascript">let keyValue = {}  
+for (var sym of symbolList){  
+    let key = Symbol.keyFor(sym)
+    if(key)    {
+        keyValue[key] = bookObj[sym]
+    } else {
+        let result = /^Symbol[
+</code></pre>
+
+<h6 id="proxy">Proxy</h6>
+
+<ul><li>기본적인 오퍼레이션의
+<ul><li>동작, 행위를 가로채어 재정의</li></ul></li>
+<li>getter, setter</li></ul>
+
+<pre><code class="language-javascript">let target = {food: 'rice'}  
+let middel = new Proxy(target, {})  
+let left = middle.food  // middle.food로 Proxy의 getter가 호출됨  
+</code></pre>
+
+<h6 id="trap">Trap</h6>
+
+<ul><li>OS에서 사용하는 용어
+<ul><li>실행 중인 프로그램에 이상이 발생했을 때 실행을 중단하고 자동으로 사전에 정의된 제어로 이동하는 동작</li></ul></li>
+<li>ES6는 기본적인 오퍼레이션을 위한 13개의 내부 메소드 제공
+<ul><li>모든 빌트인 오브젝트에 13개 메소드가 설정되어 있음</li>
+<li>따라사 모든 오브젝트에서 기본적인 오퍼레이션을 수행할 수 있음</li>
+<li>Proxy를 사용하여 개발자 코드를 추가할 수 있음</li></ul></li></ul>
+
+<pre><code class="language-javascript">let target = {food: 'rice'}  
+let middle = new Proxy(target, {  
+  get(target, key){
+    return target[key] + '1234'
+  }
+})
+</code></pre>
+
+<h6 id="set">set()</h6>
+
+<ul><li>target 오브젝트에 프로퍼티 키와 값 설정</li>
+<li>파라미터에 파라미터 이름 작성, 값은 엔진이 설정
+<ul><li>외부에서 Proxy 인스터스의 set() 트랩이 호출되면 엔진이 호출된 곳의 환경을 분석하여 파라미터 값 설정</li>
+<li>첫 번째: 프로퍼티 키와 값이 설정할 target 오브젝트</li>
+<li>두 번째: 프로퍼티 키</li>
+<li>세 번째: 프로퍼티 값</li>
+<li>네 번째: 일반적으로 첫 번째 target이 설정됨</li></ul></li>
+<li>set() 트랩에 return을 작성하지 않으면 TypeError
+<ul><li>처리 성공을 나타내려면 true 반환</li>
+<li>실패를 나타내려면 false</li>
+<li>다른 값을 반환해도 에러가 발생하지 않지만 strict mode에서 false를 반환하면 TypeError</li></ul></li>
+<li>set 준수 사항(Invariant), 지키지 않으면 에러
+<ul><li>target의 프로퍼티가 data 디스크립터일때</li></ul></li></ul>]]></description><link>http://localhost:2368/2016/09/14/es6-gibon-munbeob-03/</link><guid isPermaLink="false">e12df537-dbac-4575-a9b7-eecede57e15f</guid><category><![CDATA[ES6]]></category><category><![CDATA[Javascript]]></category><dc:creator><![CDATA[njir]]></dc:creator><pubDate>Wed, 14 Sep 2016 07:49:55 GMT</pubDate></item><item><title><![CDATA[ES6 - 기본 문법 02]]></title><description><![CDATA[<h6 id="taggedtemplate">Tagged template</h6>
 
 <pre><code class="language-javascript">let one = 1, two = 2  
 function restParam(text, ...values){  
@@ -3602,196 +3895,4 @@ obj2.width = 20
 obj2.height = 10
 
 var obj3 = Triangle(a: 3, b: 4, c: 5)  
-</code></pre>]]></description><link>http://localhost:2368/2015/03/19/sangsog/</link><guid isPermaLink="false">039b749d-84ce-4035-a003-391ddfd6401a</guid><category><![CDATA[Swift]]></category><dc:creator><![CDATA[njir]]></dc:creator><pubDate>Thu, 19 Mar 2015 04:08:02 GMT</pubDate></item><item><title><![CDATA[Swift - 메모리 관리(ARC)]]></title><description><![CDATA[<h6 id="">메모리 관리</h6>
-
-<ul>
-<li>객체 생성 -> 메모리 차지</li>
-<li>메모리 공간의 제약 -> 메모리 관리</li>
-<li>메모리 관리
-<ul><li>필요한 객체 유지</li>
-<li>필요없는 객체 해제</li></ul></li>
-<li>사용 중이라는 표시 - own(소유하기)</li>
-<li>객체 소유하는 방법 : 강한 참조(Strong pointer)</li>
-</ul>
-
-<h6 id="">객체 소유 관리</h6>
-
-<ul>
-<li>레퍼런스 카운트 - 강항 참조의 갯수 
-<ul><li>객체 사용 -> 레퍼런스 카운트 늘리기</li>
-<li>객체 사용 끝 -> 레퍼런스 카운트 감소</li>
-<li>레퍼런스 카운트가 0이면 사용 끝</li></ul></li>
-</ul>
-
-<h6 id="arc">ARC</h6>
-
-<ul>
-<li>객체 사용/사용 완료 - 레퍼런스 카운트 증가와 감소
-<ul><li>수동 관리</li>
-<li>자동 관리</li></ul></li>
-<li>Automatic Reference Counting : 자동 레퍼런스 카운트 관리
-<ul><li>객체의 레퍼런스 관리 코드 자동 생성(컴파일)</li>
-<li>클래스에만 적용</li>
-<li>밸류 타입(구조체, enum)에는 미적용</li></ul></li>
-</ul>
-
-<h6 id="">객체 소유와 해체</h6>
-
-<ul>
-<li>객체 생성 - 객체 소유</li>
-</ul>
-
-<pre><code class="language-swift">var ptr : MyClass? = MyClass() //레퍼런스 카운트가 1 증가  
-</code></pre>
-
-<ul>
-<li>소유 해제 : 옵셔널로 선언</li>
-</ul>
-
-<pre><code class="language-swift">ptr = nil //레퍼런스 카운트 1 감소  
-</code></pre>
-
-<ul>
-<li>해제 확인하기 : deinit</li>
-</ul>
-
-<pre><code class="language-swift">class test{  
-    deinit{
-        println("객체가 메모리에서 해제")
-    }
-}
-
-var testObj : test? = test()  
-testObj = nil   //객체가 메모리에서 해제  
-</code></pre>
-
-<hr>
-
-<h6 id="">객체를 소유하는 포인터 - 강한 참조</h6>
-
-<ul>
-<li>소유권 해제가 객체의 해제는 아니다</li>
-</ul>
-
-<pre><code class="language-swift">var anotherPointer = obj  
-</code></pre>
-
-<ul>
-<li>강한 참조의 문제
-<ul><li>두 클래스에서 상호 참조(두개 이상의 관계에서도 가능)</li>
-<li>서로 소유하므로 해제되지 않음(메모리 누수)</li>
-<li>수동으로 해제되도록 작성해야 함</li></ul></li>
-</ul>
-
-<pre><code class="language-swift">class MyClass {  
-    var ptr : MyClass2?
-    deinit {
-        println("My Class 객체 해제")
-    }
-}
-
-class MyClass2 {  
-    var ptr : MyClass?
-    deinit {
-        println("MyClass2 객체 해제")
-    }
-}
-
-var obj : MyClass? = MyClass()  
-var obj2 : MyClass2? = MyClass2()  
-obj?.ptr = obj2  
-obj2?.ptr = obj
-
-obj = nil    // 객체가 해제되지 않음  
-obj2 = nil  // 객체가 해제되지 않음  
-</code></pre>
-
-<hr>
-
-<h6 id="">소유하지 않는 포인터</h6>
-
-<ul>
-<li>강한 참조 : 객체를 소유하는 포인터</li>
-<li>약한 참조 : 객체를 소유하지 않는 포인터
-<ul><li>weak
-<ul><li>참조하던 객체가 해제되면 자동으로 nil</li>
-<li>nil이 되므로 옵셔널</li>
-<li>상호 독립적으로 사용 가능
-<ul><li>ex) 사용자와 스마트폰, 운전자와 자동차</li></ul></li></ul></li></ul></li>
-</ul>
-
-<pre><code class="language-swift">class Student {  
-    var phone : Phone?
-    deinit{
-        println("Student 객체가 메모리에서 해제")
-    }
-}
-
-class Phone {  
-    weak var owner : Student?
-    deinit{
-        println("Phone 객체가 메모리에서 해제")
-    }
-}
-
-var owner : Student? = Student()  
-var iphone : Phone? = Phone()
-
-iphone!.owner = owner  
-owner!.phone = iphone
-
-owner = nil  // Student 객체가 메모리에서 해제"  
-iphone = nil // Phone 객체가 메모리에서 해제  
-</code></pre>
-
-<ul>
-<li>unowned
-<ul><li>참조하던 객체가 해제되도 nil로 변하지 않음</li>
-<li>옵셔널로 선언하지 않음 -> 에러 조심!</li>
-<li>완전히 종속적인 경우에 사용
-<ul><li>ex) 신용카드와 사용자, 국가와 도시</li></ul></li></ul></li>
-</ul>
-
-<pre><code class="language-swift"> class Person {
-    var card : CreditCard?
-    deinit {
-        println("Person 객체 해제")
-    }
-}
-
-class CreditCard {  
-    unowned var owner : Person
-    init(owner : Person){
-        self.owner = owner
-    }
-    deinit {
-        println("CreditCard 객체 해제")
-    }
-}
-
-var person : Person? = Person()  
-var card : CreditCard? = CreditCard(owner : person!)  
-person = nil  
-card = nil  
-</code></pre>
-
-<hr>
-
-<h6 id="">콜렉션과 소유권</h6>
-
-<ul>
-<li>콜렉션에 객체 저장
-<ul><li>콜렉션이 객체 소유</li></ul></li>
-<li>콜렉션에서 객체 삭제
-<ul><li>소유권 해제</li></ul></li>
-<li>콜렉션 객체 해제
-<ul><li>소유권 해제</li></ul></li>
-</ul>
-
-<pre><code class="language-swift">var owner2 : Student? = Student()  
-var owner3 : Student? = Student()  
-var array = [owner2, owner3]
-
-owner2 = nil // 객체가 해제되지 않는다.  
-array.removeAtIndex(0) // Student 객체가 메모리에서 해제"  
-</code></pre>]]></description><link>http://localhost:2368/2015/03/19/memori-gwanriarc/</link><guid isPermaLink="false">c86285f4-cbf9-4108-a1b7-13ce3148aa9c</guid><category><![CDATA[Swift]]></category><dc:creator><![CDATA[njir]]></dc:creator><pubDate>Thu, 19 Mar 2015 04:07:43 GMT</pubDate></item></channel></rss>
+</code></pre>]]></description><link>http://localhost:2368/2015/03/19/sangsog/</link><guid isPermaLink="false">039b749d-84ce-4035-a003-391ddfd6401a</guid><category><![CDATA[Swift]]></category><dc:creator><![CDATA[njir]]></dc:creator><pubDate>Thu, 19 Mar 2015 04:08:02 GMT</pubDate></item></channel></rss>
