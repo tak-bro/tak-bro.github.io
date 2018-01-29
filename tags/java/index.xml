@@ -6,10 +6,19 @@
     <description>Recent content in Java on DevNote</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 27 Mar 2015 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 29 Mar 2015 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://njir.github.io/tags/java/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Advanced Java - 오브젝트, 예외처리, 제너릭</title>
+      <link>https://njir.github.io/posts/advanced-java02/</link>
+      <pubDate>Sun, 29 Mar 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://njir.github.io/posts/advanced-java02/</guid>
+      <description>Java Object Interface class 정의시 &amp;ldquo;어떤 정보가 어떻게 되면 외부에 알려준다.&amp;ldquo;와 같은 경우에 사용 예를 들어 함수 정의시 변수가 10의 배수가 되면 외부에</description>
+    </item>
     
     <item>
       <title>Advanced Java - 객체지향, 기본 구조, Keyword</title>
