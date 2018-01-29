@@ -20,5 +20,14 @@
       <description>Docker에서 EOS 실행하기 요약: 2018-01-29일 현재, eos 프로젝트 그대로 clone하면 Docker에서 빌드 에러 발생 PR #1184, PR #1218 참고하여 DockerFile 및 config.ini</description>
     </item>
     
+    <item>
+      <title>Advanced Java - 객체지향, 기본 구조, Keyword</title>
+      <link>https://njir.github.io/posts/advanced-java01/</link>
+      <pubDate>Fri, 27 Mar 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://njir.github.io/posts/advanced-java01/</guid>
+      <description>객체지향 컴퓨터 프로그래밍 하나 이상의 관련된 추상 알고리즘을 특정한 프로그래밍 언어를 이용해 구체적인 컴퓨터 프로그램으로 구현하는 기술 추상화 복잡한 자료, 모</description>
+    </item>
+    
   </channel>
 </rss>
