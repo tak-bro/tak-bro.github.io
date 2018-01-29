@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		 
+			
+  
+    <meta name="twitter:card" content="summary"/>
+    
+      <meta name="twitter:image" content="http://njir.github.io/images/avatar.png" />
+    
+  
+  
+  <meta name="twitter:title" content="Docker에서 EOS 실행하기"/>
+  <meta name="twitter:description" content="2018-01-29일 기준 Docker에서 eos 실행해보기"/>
+  
+  
+  
+  
+    <meta name="twitter:creator" content="@Tak"/>
+  
+
+
+
+		
+		<meta name="author" content="Tak">
+		<meta name="description" content="DevNote">
+		<meta name="generator" content="Hugo 0.32.3" />
+		<title>Docker에서 EOS 실행하기 &middot; DevNote</title>
+		<link rel="shortcut icon" href="http://njir.github.io/images/favicon.ico">
+		<link rel="stylesheet" href="http://njir.github.io/css/style.css">
+		<link rel="stylesheet" href="http://njir.github.io/css/highlight.css">
+
+		
+		<link rel="stylesheet" href="http://njir.github.io/css/font-awesome.min.css">
+		
+
+		
+		<link href="http://njir.github.io/index.xml" rel="alternate" type="application/rss+xml" title="DevNote" />
+		
+
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='http://njir.github.io/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='http://njir.github.io/posts'>Archive</a>
+	<a href='http://njir.github.io/tags'>Tags</a>
+	<a href='http://njir.github.io/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="http://njir.github.io/index.xml">Subscribe</a>
+	
+</nav>
+
+
+        <section id="wrapper" class="post">
+            <article>
+                <header>
+                    <h1>
+                        Docker에서 EOS 실행하기
+                    </h1>
+                    <h2 class="headline">
+                    Jan 29, 2018 00:00
+                    · 2035 words
+                    · 5 minute read
+                      <span class="tags">
+                      
+                      
+                          
+                              <a href="http://njir.github.io/tags/eos">eos</a>
+                          
+                              <a href="http://njir.github.io/tags/blockchain">blockchain</a>
+                          
+                      
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                  
+                    <div id="toc">
+                      <nav id="TableOfContents">
+<ul>
+<li><a href="#docker에서-eos-실행하기">Docker에서 EOS 실행하기</a>
+<ul>
+<li><a href="#eos-image-빌드">EOS Image 빌드</a></li>
+<li><a href="#dockerfile-config-ini-수정">DockerFile, config.ini 수정</a></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                  
+                
+                <section id="post-body">
+                    
+
+<h1 id="docker에서-eos-실행하기">Docker에서 EOS 실행하기</h1>
+
+<blockquote>
+<p><strong>요약:</strong> 2018-01-29일 현재, eos 프로젝트 그대로 clone하면 Docker에서 <a href="https://github.com/EOSIO/eos/issues/1146">빌드 에러</a> 발생
+<br>
+<a href="https://github.com/EOSIO/eos/pull/1184">PR #1184</a>, <a href="https://github.com/EOSIO/eos/pull/1218">PR #1218</a> 참고하여 DockerFile 및 config.ini 수정해야 함</p>
+</blockquote>
+
+<p><a href="https://github.com/EOSIO/eos">EOS</a>를 Docker 환경에서 실행해보기 위헤 <a href="https://github.com/EOSIO/eos/tree/master/Docker">eos/Docker</a> 페이지를 보며 따라하고 있다. 우선 eos를 실행하기 위한 기본 Docker setting은 17.05 버전 이상, 8GB 이상의 메모리로 설정해야 한다.</p>
+
+<ul>
+<li>Docker setting
+<a href="https://user-images.githubusercontent.com/7614353/35480584-9b6fce84-0454-11e8-8a2c-00f3a47791b2.png"><img src="https://user-images.githubusercontent.com/7614353/35480584-9b6fce84-0454-11e8-8a2c-00f3a47791b2.png" alt="Docker Memory" /></a></li>
+</ul>
+
+<h2 id="eos-image-빌드">EOS Image 빌드</h2>
+
+<p>Docker를 업데이트하고 기본 셋팅을 바꿨으면 eos Docker 이미지를 받아보자.</p>
+
+<pre><code>git clone https://github.com/EOSIO/eos.git --recursive
+cd eos/Docker
+docker build . -t eosio/eos
+</code></pre>
+
+<p>위 스크립트를 실행하면 Docker 관련 에러가 나온다. eos docker 이미지를 받으려면 커맨드 상에서 로그인한 상태여야 한다. Docker에 로그인해주자.</p>
+
+<pre><code>$ docker login
+Login with your Docker ID to push and pull images from Docker Hub. If you don't have a Docker ID, head over to https://hub.docker.com to create one.
+</code></pre>
+
+<p>로그인 후, <code>docker build . -t eosio/eos</code>를 다시 실행했다.
+참고로 eos의 경우, Docker 이미지를 받고 세팅하는 데 오래 걸린다(약 50분). 긴 시간이 흐른 뒤에 다시 에러 메세지가 나타났다.</p>
+
+<pre><code>Step 20/27 : COPY --from=builder /opt/eos/bin /opt/eos/bin COPY failed: stat /var/lib/docker/overlay2/d66370d8a0140a0596ce407855eb13790db1a051570b4771bad485381c8853be/merged/opt/eos/bin: no such file or directory
+</code></pre>
+
+<p>Docker 설정을 하면서 뭔가 파일을 못찾아서 나온 에러였다. 아마 경로가 잘못되어 있었나? eos github를 보니 이미 issue에 올라온 <a href="https://github.com/EOSIO/eos/issues/1146">에러</a>였다. 해결책은 DockerFile을 수정하는 것. Docker 폴더 내에 DockFile을 열고 아래와 같이 수정했다.</p>
+
+<pre><code class="language-diff">// DockerFile
+
+RUN git clone -b master --depth 1 https://github.com/EOSIO/eos.git --recursive \
+    &amp;&amp; cd eos \
+    &amp;&amp; cmake -H. -B&quot;/tmp/build&quot; -GNinja -DCMAKE_BUILD_TYPE=Release -DWASM_LLVM_CONFIG=/opt/wasm/bin/llvm-config -DCMAKE_CXX_COMPILER=clang++ \
+       -DCMAKE_C_COMPILER=clang -DCMAKE_INSTALL_PREFIX=/opt/eos  -DSecp256k1_ROOT_DIR=/usr/local \
+-    &amp;&amp; cmake --build /tmp/build --target install
+-    
++    &amp;&amp; cmake --build /tmp/build --target install \
++    &amp;&amp; cd /tmp/build &amp;&amp; cmake -DCMAKE_INSTALL_PREFIX=/opt/eos -P cmake_install.cmake
+
+
+FROM ubuntu:16.04
+</code></pre>
+
+<p>다시 eos docker 이미지를 받아보자. <code>docker build . -t eosio/eos</code>를 실행하자.
+<a href="https://user-images.githubusercontent.com/7614353/35480858-31c4235c-045b-11e8-91ec-576f60aa0701.png"><img src="https://user-images.githubusercontent.com/7614353/35480858-31c4235c-045b-11e8-91ec-576f60aa0701.png" alt="image-success" /></a></p>
+
+<p>됐다. 드디어 image가 받아졌다. 이제 다운 받은 eos image를 실행해보자.
+해당 커맨드는 eos에서 소개되어 있는 커맨드다.</p>
+
+<pre><code>$ docker run --name eosiod -p 8888:8888 -p 9876:9876 -t eosio/eos start_eosiod.sh arg1 arg2
+</code></pre>
+
+<p>위 커맨드를 실행하면 다음과 같은 에러가 나온다.
+역시나 에러가 안나오면 이상하지. 이 세상엔 쉬운게 없다. 한번에 되길 바라는 것은 큰 욕심이다.
+<a href="https://user-images.githubusercontent.com/7614353/35480856-291282a8-045b-11e8-9fc7-a5624d6c9da9.png"><img src="https://user-images.githubusercontent.com/7614353/35480856-291282a8-045b-11e8-9fc7-a5624d6c9da9.png" alt="error" /></a></p>
+
+<p>Docker 이미지에서 <code>/opt/eos/bin/data-dir/genesis.json</code> 파일이 없다는 에러다. 실제로 eos Docker 컨테이너로 접속하여 확인해보니 폴더 내에 아무 파일도 없었다.</p>
+
+<pre><code class="language-bash">$ docker run -i -t eosio/eos /bin/bash
+root@e1a820beab12:/#
+root@e1a820beab12:/# ls
+bin   config.ini  dev  genesis.json  lib    media  opt   root  sbin  sys  usr
+boot  contracts   etc  home          lib64  mnt    proc  run   srv   tmp  var
+root@e1a820beab12:/# cd opt/eos/bin/data-dir/
+root@e1a820beab12:/opt/eos/bin/data-dir# ls
+root@e1a820beab12:/opt/eos/bin/data-dir#
+</code></pre>
+
+<p>eos github에서 Docker 관련 에러를 찾아보니 비슷한 <a href="https://github.com/EOSIO/eos/issues/1219">issue</a>와 <a href="https://github.com/EOSIO/eos/pull/1218">PR #1218</a>이 올라와있었다. 해당 PR대로 DockerFile과 config.ini 파일을 수정했다.</p>
+
+<pre><code class="language-diff">// config.ini
+
+# File to read Genesis State from
+# genesis-json =
+- genesis-json = &quot;/opt/eos/bin/data-dir/genesis.json&quot;
++ genesis-json = &quot;/opt/eosio/bin/data-dir/genesis.json&quot;
+
+// DockerFile
+
+FROM ubuntu:16.04
+RUN apt-get update &amp;&amp; DEBIAN_FRONTEND=noninteractive apt-get -y install openssl &amp;&amp; rm -rf /var/lib/apt/lists/*
+COPY --from=builder /usr/local/lib/* /usr/local/lib/
+- COPY --from=builder /opt/eosio/bin /opt/eosio/bin
++ COPY --from=builder /tmp/build/install/bin /opt/eosio/bin
+COPY --from=builder /tmp/build/contracts /contracts
+</code></pre>
+
+<p>해당 PR대로 수정하고, 다시 docker build 시도했더니 이젠 docker가 난리다. 방금 받은 docker image의 container가 실행 중이란다. docker container부터 삭제해주고, 이미 받은 image도 삭제해버렸다.</p>
+
+<pre><code>// 현재 실행 중인 docker container 확인
+$ docker ps -a
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS                      PORTS               NAMES
+941ec0585029        eosio/eos           &quot;start_eosiod.sh arg…&quot;   21 seconds ago      Exited (0) 23 seconds ago                       eosiod
+
+// container 삭제
+$ docker rm 941ec0585029
+
+// docker 이미지 확인
+$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED              SIZE
+eosio/eos           latest              b23b51a35625        About a minute ago   241MB
+&lt;none&gt;              &lt;none&gt;              d1794d48d291        About a minute ago   2.92GB
+ubuntu              16.04               0458a4468cbc        2 days ago           112MB
+
+// docker image 삭제
+$ docker rmi b23b51a35625 d1794d48d291
+</code></pre>
+
+<p>이제 실행 중인 eos container도 없고 image도 없다. 해야할 일은 <a href="https://github.com/EOSIO/eos/pull/1218">PR #1218</a>처럼 수정하여 다시 eos docker 이미지를 받는 것.</p>
+
+<pre><code>// 여러번 다운 받아보는 eos docker image
+$ docker build . -t eosio/eos
+
+// 이미지를 받은 후 다시 docker container 실행
+$ docker run --name eosiod -p 8888:8888 -p 9876:9876 -t eosio/eos start_eosiod.sh arg1 arg2
+</code></pre>
+
+<p>역시나 같은 에러다. 그놈의 genesis.json 파일이 뭔지 계속 못찾는다. README 대로 arg도 바꿔보고 별짓 다해봤지만 안된다.</p>
+
+<pre><code>$ docker run --name eosiod -p 8888:8888 -p 9876:9876 -t eosio/eos start_eosiod.sh --genesis-json /opt/eosio/bin/data-dir/genesis.json
+$ docker run --name eosiod -p 8888:8888 -p 9876:9876 -t eosio/eos start_eosiod.sh --genesis-json /opt/eos/bin/data-dir/genesis.json
+</code></pre>
+
+<h2 id="dockerfile-config-ini-수정">DockerFile, config.ini 수정</h2>
+
+<p>대충 보니까 /opt/eos를 /opt/eosio로 네이밍하면서 실제 코드랑 docker 쪽이 싱크가 안맞나보다. DockerFile은 자세히 모르지만 <a href="https://github.com/EOSIO/eos/pull/1184">PR #1184</a>의 코드에서 INSTALL_PREFIX 경로를 살짝 바꿔보고,  <a href="https://github.com/EOSIO/eos/pull/1218">PR #1218</a>처럼 config.ini도 바꿔보았다.</p>
+
+<pre><code class="language-diff">diff --git a/Docker/Dockerfile b/Docker/Dockerfile
+index 89ea2b22..d2f0973e 100644
+--- a/Docker/Dockerfile
++++ b/Docker/Dockerfile
+@@ -73,9 +73,9 @@ RUN git clone --depth 1 -b releases/stable git://github.com/mongodb/mongo-cxx-dr
+ RUN git clone -b master --depth 1 https://github.com/EOSIO/eos.git --recursive \
+     &amp;&amp; cd eos \
+     &amp;&amp; cmake -H. -B&quot;/tmp/build&quot; -GNinja -DCMAKE_BUILD_TYPE=Release -DWASM_LLVM_CONFIG=/opt/wasm/bin/llvm-config -DCMAKE_CXX_COMPILER=clang++ \
+-       -DCMAKE_C_COMPILER=clang -DCMAKE_INSTALL_PREFIX=/opt/eos  -DSecp256k1_ROOT_DIR=/usr/local \
+-    &amp;&amp; cmake --build /tmp/build --target install
+-
++       -DCMAKE_C_COMPILER=clang -DCMAKE_INSTALL_PREFIX=/opt/eosio  -DSecp256k1_ROOT_DIR=/usr/local \
++    &amp;&amp; cmake --build /tmp/build --target install \
++       &amp;&amp; cd /tmp/build &amp;&amp; cmake -DCMAKE_INSTALL_PREFIX=/opt/eosio -P cmake_install.cmake
+
+
+ FROM ubuntu:16.04
+diff --git a/Docker/config.ini b/Docker/config.ini
+index 6401c549..11e51c14 100644
+--- a/Docker/config.ini
++++ b/Docker/config.ini
+@@ -1,6 +1,6 @@
+ # File to read Genesis State from
+ # genesis-json =
+-genesis-json = &quot;/opt/eos/bin/data-dir/genesis.json&quot;
++genesis-json = &quot;/opt/eosio/bin/data-dir/genesis.json&quot;
+
+ # the location of the block log (absolute path or relative to application data dir)
+ block-log-dir = &quot;blocks&quot;
+(END)
+</code></pre>
+
+<p>모든 eos docker 컨테이너 지우고 image도 지운 후, 위 설정대로 docker 빌드했더니 빌드는 잘된다. 이제 eos에 소개된 커맨드로 실행해보니 역시나 안된다. config.ini를 수정해서 /opt/eosio/ 폴더를 바라볼 줄 알았는데, 여전히 /opt/eos 폴더만 가리킨다.</p>
+
+<pre><code>$ docker run --name eosiod -p 8888:8888 -p 9876:9876 -t eosio/eos start_eosiod.sh arg1 arg2
+1584162ms thread-0   chain_plugin.cpp:109          plugin_initialize    ] initializing chain plugin
+1584163ms thread-0   http_plugin.cpp:141           plugin_initialize    ] host: 0.0.0.0 port: 8888
+1584163ms thread-0   http_plugin.cpp:144           plugin_initialize    ] configured http to listen on 0.0.0.0:8888
+1584163ms thread-0   net_plugin.cpp:2376           plugin_initialize    ] Initialize net plugin
+1584163ms thread-0   net_plugin.cpp:2396           plugin_initialize    ] Setting net_plugin logging level to info
+1584163ms thread-0   net_plugin.cpp:2422           plugin_initialize    ] host: 0.0.0.0 port: 9876
+1584164ms thread-0   net_plugin.cpp:2498           plugin_initialize    ] my node_id is efe7237ad945ddd96a8d73b93d1a3eedc9d33b88e42496a8bc4bfde9a7cd66a9
+1584164ms thread-0   main.cpp:85                   main                 ] eosiod version 37312a4b
+1584164ms thread-0   main.cpp:89                   main                 ] 10 assert_exception: Assert Exception
+fc::exists( my-&gt;genesis_file ): unable to find genesis file '/opt/eos/bin/data-dir/genesis.json', check --genesis-json argument
+    {&quot;f&quot;:&quot;/opt/eos/bin/data-dir/genesis.json&quot;}
+    thread-0  chain_plugin.cpp:189 plugin_startup
+
+    {&quot;my-&gt;genesis_file.generic_string()&quot;:&quot;/opt/eos/bin/data-dir/genesis.json&quot;}
+    thread-0  chain_plugin.cpp:210 plugin_startup
+</code></pre>
+
+<p><code>--genesis-json</code> 옵션에 <code>/opt/eosio/bin/data-dir</code> 주고 다시 해보자</p>
+
+<pre><code>$ docker run --name eosiod -p 8888:8888 -p 9876:9876 -t eosio/eos start_eosiod.sh --genesis-json /opt/eosio/bin/data-dir/genesis.json
+
+1771061ms thread-0   chain_plugin.cpp:109          plugin_initialize    ] initializing chain plugin
+1771061ms thread-0   http_plugin.cpp:141           plugin_initialize    ] host: 0.0.0.0 port: 8888
+1771062ms thread-0   http_plugin.cpp:144           plugin_initialize    ] configured http to listen on 0.0.0.0:8888
+1771062ms thread-0   net_plugin.cpp:2376           plugin_initialize    ] Initialize net plugin
+1771062ms thread-0   net_plugin.cpp:2396           plugin_initialize    ] Setting net_plugin logging level to info
+1771062ms thread-0   net_plugin.cpp:2422           plugin_initialize    ] host: 0.0.0.0 port: 9876
+1771063ms thread-0   net_plugin.cpp:2498           plugin_initialize    ] my node_id is f1d610309ae23a08ae333ca7b560aefa29043c5b900bb2b9799236ee941d9558
+1771063ms thread-0   main.cpp:85                   main                 ] eosiod version 37312a4b
+1771066ms thread-0   block_log.cpp:92              open                 ] Opening block log at /opt/eosio/bin/data-dir/blocks/blocks.log
+1771095ms thread-0   chain_controller.cpp:1087     operator()           ] applying genesis transaction
+1771096ms thread-0   chain_controller.cpp:1100     operator()           ] done applying genesis transaction
+1771096ms thread-0   chain_plugin.cpp:201          plugin_startup       ] starting chain in read/write mode
+1771096ms thread-0   chain_plugin.cpp:206          plugin_startup       ] Blockchain started; head block is #0, genesis timestamp is 2017-03-30T12:00:00.000
+1771096ms thread-0   producer_plugin.cpp:152       plugin_startup       ] producer plugin:  plugin_startup() begin
+1771096ms thread-0   producer_plugin.cpp:157       plugin_startup       ] Launching block production for 21 producers.
+
+*******************************
+*                             *
+*   ------ NEW CHAIN ------   *
+*   -  Welcome to EOSIO!  -   *
+*   -----------------------   *
+*                             *
+*******************************
+</code></pre>
+
+<p>드디어 성공. 거의 이틀 삽질해서 Docker에 eos를 실행했다.
+이제 로컬 환경에서 아래 커맨드를 입력하면 실행중인 eos 체인 정보를 볼 수 있다.</p>
+
+<pre><code>$ curl http://127.0.0.1:8888/v1/chain/get_info
+{&quot;server_version&quot;:&quot;37312a4b&quot;,&quot;head_block_num&quot;:337,&quot;last_irreversible_block_num&quot;:257,&quot;head_block_id&quot;:&quot;00000151edbabd1fdcd7e09cdc5c9c7198f76b59df1213b359fc5eeb8e44c6c8&quot;,&quot;head_block_time&quot;:&quot;2018-01-29T08:32:19&quot;,&quot;head_block_producer&quot;:&quot;inito&quot;,&quot;recent_slots&quot;:&quot;1111111111111111111111111111111111111111111111111111111111111111&quot;,&quot;participation_rate&quot;:&quot;1.00000000000000000&quot;}
+</code></pre>
+
+                </section>
+            </article>
+
+            
+                <a class="twitter" href="https://twitter.com/intent/tweet?text=http%3a%2f%2fnjir.github.io%2fposts%2feos-on-docker%2f - Docker%ec%97%90%ec%84%9c%20EOS%20%ec%8b%a4%ed%96%89%ed%95%98%ea%b8%b0 "><span class="icon-twitter"> tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+
+            
+
+            
+                <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'tak90'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.facebook.com/jinpcbang">
+        <i class="fa fa-facebook-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.github.com/njir">
+        <i class="fa fa-github-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://linkedin.com/in/hyungtak">
+        <i class="fa fa-linkedin-square"></i>
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2018 <i class="fa fa-heart" aria-hidden="true"></i> Tak
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="http://njir.github.io/js/jquery-2.2.4.min.js"></script>
+<script src="http://njir.github.io/js/main.js"></script>
+<script src="http://njir.github.io/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-46214266-2', 'auto');
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+    </body>
+</html>
