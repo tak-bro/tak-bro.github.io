@@ -3,46 +3,46 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>http://njir.github.io/about/</loc>
+    <loc>https://njir.github.io/about/</loc>
     <lastmod>2018-01-29T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://njir.github.io/posts/eos-on-docker/</loc>
+    <loc>https://njir.github.io/posts/eos-on-docker/</loc>
     <lastmod>2018-01-29T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://njir.github.io/tags/blockchain/</loc>
-    <lastmod>2018-01-29T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://njir.github.io/categories/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://njir.github.io/</loc>
+    <loc>https://njir.github.io/tags/blockchain/</loc>
     <lastmod>2018-01-29T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://njir.github.io/tags/eos/</loc>
+    <loc>https://njir.github.io/categories/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://njir.github.io/</loc>
     <lastmod>2018-01-29T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://njir.github.io/posts/</loc>
+    <loc>https://njir.github.io/tags/eos/</loc>
     <lastmod>2018-01-29T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://njir.github.io/tags/</loc>
+    <loc>https://njir.github.io/posts/</loc>
+    <lastmod>2018-01-29T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://njir.github.io/tags/</loc>
     <lastmod>2018-01-29T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
