@@ -14,7 +14,7 @@
   
   
   <meta name="twitter:title" content="Docker에서 EOS 실행하기"/>
-  <meta name="twitter:description" content="2018-01-29일 기준 Docker에서 eos 실행해보기"/>
+  <meta name="twitter:description" content="2018-01-29일을 기준으로 Docker에서 eos 실행해보기"/>
   
   
   
@@ -70,8 +70,8 @@
                     </h1>
                     <h2 class="headline">
                     Jan 29, 2018 00:00
-                    · 2035 words
-                    · 5 minute read
+                    · 2667 words
+                    · 6 minute read
                       <span class="tags">
                       
                       
@@ -94,6 +94,7 @@
 <ul>
 <li><a href="#eos-image-빌드">EOS Image 빌드</a></li>
 <li><a href="#dockerfile-config-ini-수정">DockerFile, config.ini 수정</a></li>
+<li><a href="#docker-compose-사용하기">Docker Compose 사용하기</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -160,7 +161,7 @@ FROM ubuntu:16.04
 <a href="https://user-images.githubusercontent.com/7614353/35480858-31c4235c-045b-11e8-91ec-576f60aa0701.png"><img src="https://user-images.githubusercontent.com/7614353/35480858-31c4235c-045b-11e8-91ec-576f60aa0701.png" alt="image-success" /></a></p>
 
 <p>됐다. 드디어 image가 받아졌다. 이제 다운 받은 eos image를 실행해보자.
-해당 커맨드는 eos에서 소개되어 있는 커맨드다.</p>
+해당 커맨드는 eos에 소개되어 있는 커맨드다.</p>
 
 <pre><code>$ docker run --name eosiod -p 8888:8888 -p 9876:9876 -t eosio/eos start_eosiod.sh arg1 arg2
 </code></pre>
@@ -169,7 +170,7 @@ FROM ubuntu:16.04
 역시나 에러가 안나오면 이상하지. 이 세상엔 쉬운게 없다. 한번에 되길 바라는 것은 큰 욕심이다.
 <a href="https://user-images.githubusercontent.com/7614353/35480856-291282a8-045b-11e8-9fc7-a5624d6c9da9.png"><img src="https://user-images.githubusercontent.com/7614353/35480856-291282a8-045b-11e8-9fc7-a5624d6c9da9.png" alt="error" /></a></p>
 
-<p>Docker 이미지에서 <code>/opt/eos/bin/data-dir/genesis.json</code> 파일이 없다는 에러다. 실제로 eos Docker 컨테이너로 접속하여 확인해보니 폴더 내에 아무 파일도 없었다.</p>
+<p>Docker 이미지에서 <code>/opt/eos/bin/data-dir/genesis.json</code> 파일이 없다는 에러다. 실제로 eos Docker 컨테이너로 접속하여 확인해보니 해당 폴더 내에 아무 파일도 없었다. <code>/</code> 경로에 관련 파일들이 다 있긴 했는데 뭔가 직접 옮기고 싶지 않고, 스크립트로 해결하고 싶어서 무시했다.</p>
 
 <pre><code class="language-bash">$ docker run -i -t eosio/eos /bin/bash
 root@e1a820beab12:/#
@@ -272,7 +273,7 @@ index 6401c549..11e51c14 100644
 (END)
 </code></pre>
 
-<p>모든 eos docker 컨테이너 지우고 image도 지운 후, 위 설정대로 docker 빌드했더니 빌드는 잘된다. 이제 eos에 소개된 커맨드로 실행해보니 역시나 안된다. config.ini를 수정해서 /opt/eosio/ 폴더를 바라볼 줄 알았는데, 여전히 /opt/eos 폴더만 가리킨다.</p>
+<p>모든 eos docker 컨테이너 지우고 image도 지운 후, 위 설정대로 docker 빌드했더니 빌드는 잘된다. 이제 eos에 소개된 커맨드로 실행해보니 역시나 안된다.</p>
 
 <pre><code>$ docker run --name eosiod -p 8888:8888 -p 9876:9876 -t eosio/eos start_eosiod.sh arg1 arg2
 1584162ms thread-0   chain_plugin.cpp:109          plugin_initialize    ] initializing chain plugin
@@ -322,11 +323,97 @@ fc::exists( my-&gt;genesis_file ): unable to find genesis file '/opt/eos/bin/dat
 </code></pre>
 
 <p>드디어 성공. 거의 이틀 삽질해서 Docker에 eos를 실행했다.
-이제 로컬 환경에서 아래 커맨드를 입력하면 실행중인 eos 체인 정보를 볼 수 있다.</p>
+<br>이제 로컬 환경에서 아래 커맨드를 입력하면 실행중인 eos 체인 정보를 볼 수 있다.</p>
 
 <pre><code>$ curl http://127.0.0.1:8888/v1/chain/get_info
 {&quot;server_version&quot;:&quot;37312a4b&quot;,&quot;head_block_num&quot;:337,&quot;last_irreversible_block_num&quot;:257,&quot;head_block_id&quot;:&quot;00000151edbabd1fdcd7e09cdc5c9c7198f76b59df1213b359fc5eeb8e44c6c8&quot;,&quot;head_block_time&quot;:&quot;2018-01-29T08:32:19&quot;,&quot;head_block_producer&quot;:&quot;inito&quot;,&quot;recent_slots&quot;:&quot;1111111111111111111111111111111111111111111111111111111111111111&quot;,&quot;participation_rate&quot;:&quot;1.00000000000000000&quot;}
 </code></pre>
+
+<h2 id="docker-compose-사용하기">Docker Compose 사용하기</h2>
+
+<p>이제 거의 다 온거 같다. 문서에 소개되어 있는 스크립트를 실행해봤다.</p>
+
+<pre><code>$ docker-compose up
+  Recreating docker_eosiod_1 ... done
+  
+  ...
+  
+  eosiod_1   | 1208309ms thread-0   net_plugin.cpp:2376           plugin_initialize    ] Initialize net plugin
+  walletd_1  | 1209367ms thread-0   http_plugin.cpp:144           plugin_initialize    ] configured http to listen on 127.0.0.1:8888
+  eosiod_1   | 1208309ms thread-0   net_plugin.cpp:2396           plugin_initialize    ] Setting net_plugin logging level to info
+  eosiod_1   | 1208309ms thread-0   net_plugin.cpp:2422           plugin_initialize    ] host: 0.0.0.0 port: 9876
+  walletd_1  | 1209368ms thread-0   http_plugin.cpp:156           plugin_startup       ] start processing http thread
+  eosiod_1   | 1208311ms thread-0   net_plugin.cpp:2498           plugin_initialize    ] my node_id is a352950487baa060934d82d5d61dd8d1d22b4de20be4c01f39738774214123fb
+  walletd_1  | 1209368ms thread-0   http_plugin.cpp:213           plugin_startup       ] start listening for http requests
+  eosiod_1   | 1208311ms thread-0   main.cpp:85                   main                 ] eosiod version 37312a4b
+  walletd_1  | 1209368ms thread-0   http_plugin.cpp:218           plugin_startup       ] http io service exit
+  eosiod_1   | 1208312ms thread-0   main.cpp:89                   main                 ] 10 assert_exception: Assert Exception
+  eosiod_1   | fc::exists( my-&gt;genesis_file ): unable to find genesis file '/opt/eos/bin/data-dir/genesis.json', check --genesis-json argument
+  eosiod_1   |     {&quot;f&quot;:&quot;/opt/eos/bin/data-dir/genesis.json&quot;}
+  eosiod_1   |     thread-0  chain_plugin.cpp:189 plugin_startup
+  walletd_1  | 1209368ms thread-0   wallet_api_plugin.cpp:70      plugin_startup       ] starting wallet_api_plugin
+  eosiod_1   |
+  walletd_1  | 1209368ms thread-0   http_plugin.cpp:242           add_handler          ] add api url: /v1/wallet/create
+  eosiod_1   |     {&quot;my-&gt;genesis_file.generic_string()&quot;:&quot;/opt/eos/bin/data-dir/genesis.json&quot;}
+  walletd_1  | 1209368ms thread-0   http_plugin.cpp:242           add_handler          ] add api url: /v1/wallet/get_public_keys
+  eosiod_1   |     thread-0  chain_plugin.cpp:210 plugin_startup
+</code></pre>
+
+<p>또 없단다. 결론적으로 Docker 내부의 config.ini가 수정이 안되어서 계속 <code>/opt/eos/bin/</code> 폴더를 바라보는 것 같다.
+<br> docker-compose.yml 파일을 수정해서 현재 로컬에 있는 config.ini로 컨피규레이션을 바꿔버렸다. <br> 로컬의 <code>config.ini</code>는 경로가 <code>/opt/eosio/bin</code>으로 설정되어 있어서 잘 될듯 싶다.</p>
+
+<pre><code class="language-diff">diff --git a/Docker/docker-compose.yml b/Docker/docker-compose.yml
+index 38116beb..326746e4 100755
+--- a/Docker/docker-compose.yml
++++ b/Docker/docker-compose.yml
+@@ -13,6 +13,7 @@ services:
+       - &quot;8888&quot;
+     volumes:
+       - eosiod-data-volume:/opt/eosio/bin/data-dir
++      - ./config.ini:/opt/eosio/bin/data-dir/config.ini
+
+   walletd:
+     image: eosio/eos
+@@ -24,4 +25,4 @@ services:
+</code></pre>
+
+<p>다시 <code>docker-compose up</code> 커맨드를 실행해보자.</p>
+
+<pre><code>$ docker-compose up
+Recreating docker_eosiod_1 ... done
+Recreating docker_walletd_1 ... done
+Attaching to docker_eosiod_1, docker_walletd_1
+
+...
+
+eosiod_1   | 1608044ms thread-0   producer_plugin.cpp:157       plugin_startup       ] Launching block production for 21 producers.
+walletd_1  | 1608678ms thread-0   http_plugin.cpp:242           add_handler          ] add api url: /v1/wallet/unlock
+eosiod_1   |
+eosiod_1   | *******************************
+eosiod_1   | *                             *
+eosiod_1   | *   ------ NEW CHAIN ------   *
+eosiod_1   | *   -  Welcome to EOSIO!  -   *
+eosiod_1   | *   -----------------------   *
+eosiod_1   | *                             *
+eosiod_1   | *******************************
+eosiod_1   |
+eosiod_1   | Your genesis seems to have an old timestamp
+eosiod_1   | Please consider using the --genesis-timestamp option to give your genesis a recent timestamp
+eosiod_1   |
+eosiod_1   | 1608045ms thread-0   producer_plugin.cpp:167       plugin_startup       ] producer plugin:  plugin_startup() end
+eosiod_1   | 1608045ms thread-0   http_plugin.cpp:156           plugin_startup       ] start processing http thread
+
+...
+
+inita generated block 1f2ae552... #4 @ 2018-01-30T08:26:50.000 with 0 trxsuction_loo ]
+inita generated block 34e9bfef... #5 @ 2018-01-30T08:26:50.500 with 0 trxsuction_loo ]
+initb generated block e55b0ece... #6 @ 2018-01-30T08:26:51.000 with 0 trxsuction_loo ]
+initb generated block 2a6e2354... #7 @ 2018-01-30T08:26:51.500 with 0 trxsuction_loo ]
+</code></pre>
+
+<p>이제 docker로 eos의 eosioc와 wallet를 실행했다.
+<br>
+드디어 eos의 <a href="https://github.com/EOSIO/eos/wiki/Tutorials">tutorial</a>를 진행할 수 있다.</p>
 
                 </section>
             </article>
