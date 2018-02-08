@@ -6,10 +6,19 @@
     <description>Recent content in Posts on DevNote</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 29 Jan 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 07 Feb 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://njir.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>EOS에 Smart Contract 생성하기</title>
+      <link>https://njir.github.io/posts/eos-tutorial/</link>
+      <pubDate>Wed, 07 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://njir.github.io/posts/eos-tutorial/</guid>
+      <description>EOS tutorial for mac 2018년 02월 7일 기준으로 eos의 master 브랜치가 많은 업데이트를 하고 있다. master에서는 제대로 진행할 수 없기 때문에 dawn-2.x 브랜치로 변경해서 진</description>
+    </item>
     
     <item>
       <title>Docker에서 EOS 실행하기</title>

@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		 
+			
+  
+    <meta name="twitter:card" content="summary"/>
+    
+      <meta name="twitter:image" content="https://njir.github.io/images/avatar.png" />
+    
+  
+  
+  <meta name="twitter:title" content="EOS에 Smart Contract 생성하기"/>
+  <meta name="twitter:description" content="eos 소스코드 다운부터 로컬넷에 Smart Contract 띄우기까지"/>
+  
+  
+  
+  
+    <meta name="twitter:creator" content="@Tak"/>
+  
+
+
+
+		
+		<meta name="author" content="Tak">
+		<meta name="description" content="DevNote">
+		<meta name="generator" content="Hugo 0.32.3" />
+		<title>EOS에 Smart Contract 생성하기 &middot; DevNote</title>
+		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
+		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
+		<link rel="stylesheet" href="https://njir.github.io/css/highlight.css">
+
+		
+		<link rel="stylesheet" href="https://njir.github.io/css/font-awesome.min.css">
+		
+
+		
+		<link href="https://njir.github.io/index.xml" rel="alternate" type="application/rss+xml" title="DevNote" />
+		
+
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://njir.github.io/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://njir.github.io/posts'>Archive</a>
+	<a href='https://njir.github.io/tags'>Tags</a>
+	<a href='https://njir.github.io/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://njir.github.io/index.xml">Subscribe</a>
+	
+</nav>
+
+
+        <section id="wrapper" class="post">
+            <article>
+                <header>
+                    <h1>
+                        EOS에 Smart Contract 생성하기
+                    </h1>
+                    <h2 class="headline">
+                    Feb 7, 2018 00:00
+                    · 3017 words
+                    · 7 minute read
+                      <span class="tags">
+                      
+                      
+                          
+                              <a href="https://njir.github.io/tags/eos">eos</a>
+                          
+                              <a href="https://njir.github.io/tags/blockchain">blockchain</a>
+                          
+                      
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                  
+                    <div id="toc">
+                      <nav id="TableOfContents">
+<ul>
+<li><a href="#eos-tutorial-for-mac">EOS tutorial for mac</a>
+<ul>
+<li><a href="#download-source-code">Download source code</a></li>
+<li><a href="#run-eosd">Run eosd</a></li>
+<li><a href="#create-wallet">Create wallet</a></li>
+<li><a href="#create-eos-key">Create EOS key</a></li>
+<li><a href="#create-eos-account">Create EOS Account</a></li>
+<li><a href="#smart-contract-hello-world">Smart Contract &ldquo;Hello world&rdquo;</a></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                  
+                
+                <section id="post-body">
+                    
+
+<h1 id="eos-tutorial-for-mac">EOS tutorial for mac</h1>
+
+<p>2018년 02월 7일 기준으로 <a href="https://github.com/EOSIO/eos">eos</a>의 <code>master</code> 브랜치가 많은 업데이트를 하고 있다. master에서는 제대로 진행할 수 없기 때문에 <code>dawn-2.x</code> 브랜치로 변경해서 진행했다. <br><br>참고로 지금 eos testnet에 <code>dawn-2.x</code> 브랜치에서 빌드한 smart contract만 올라간다. master 브랜치에서 작업해서는 testnet에 붙일 수 없다.</p>
+
+<h2 id="download-source-code">Download source code</h2>
+
+<p>eos는 c++ 기반이고 mac에서는 llvm 컴파일러를 사용하니까 우선 xcode를 업데이트 해주자</p>
+
+<pre><code class="language-bash">$ xcode-select --install
+$ ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;
+</code></pre>
+
+<p>이제 소스코드를 받자. git clone 후에 branch를 변경해준다. 그리고 build 스크립트를 실행하자.</p>
+
+<pre><code class="language-bash">$ git clone https://github.com/eosio/eos --recursive
+
+$ cd eos
+$ git checkout dawn-2.x
+$ ./build.sh darwin
+</code></pre>
+
+<p>build 스크립트 실행 후에 <code>eos/build/programs</code>에 <code>eosd, eosc, eos-walletd</code> 폴더 등을 볼 수 있다. 폴더 안에는 각 프로그램의 executable이 있다. eos의 대표적인 프로그램은 다음과 같다.</p>
+
+<ul>
+<li>eosd: server-side blockchain node component</li>
+<li>eosc: command line interface to interact with the blockchain</li>
+<li>eoswd: EOS wallet</li>
+<li>eosio-launcher: application for nodes network composing and deployment; more on eosio-launcher</li>
+</ul>
+
+<h2 id="run-eosd">Run eosd</h2>
+
+<p>이제 <code>eosd</code>를 실행해보자.</p>
+
+<pre><code class="language-bash">$ cd build/programs/eosd
+$ ./eosd
+
+2725247ms            main.cpp:65                   main                 ] Throw location unknown (consider using BOOST_THROW_EXCEPTION)
+Dynamic exception type: boost::exception_detail::clone_impl&lt;boost::exception_detail::error_info_injector&lt;boost::program_options::invalid_option_value&gt; &gt;
+std::exception::what: the argument for option 'genesis-json' is invalid
+</code></pre>
+
+<p>아마 genesis-json 파일이 없다며 실행이 안될 것이다. genesis-json 파일 경로를 <code>--genesis-json</code> arg로 넣을 수 있다. 우선 genesis.json 파일을 <code>data-dir</code> 폴더로 옮기자. genesis.json 파일은 /eos/build 폴더에 있다.(안옮겨도 된다)</p>
+
+<pre><code class="language-bash">$ cp ../../genesis.json data-dir
+$ vi data-dir/config.ini
+</code></pre>
+
+<p>파일 복사 후 <code>config.ini</code> 파일을 아래와 같이 수정하자. <code>enable-stale-production</code>은 기존 config.ini에 있으므로 수정하고 나머지는 추가해준다.</p>
+
+<pre><code># Enable production on a stale chain, since a single-node test chain is pretty much always stale
+enable-stale-production = true
+# Enable block production with the testnet producers
+producer-name = inita
+producer-name = initb
+producer-name = initc
+producer-name = initd
+producer-name = inite
+producer-name = initf
+producer-name = initg
+producer-name = inith
+producer-name = initi
+producer-name = initj
+producer-name = initk
+producer-name = initl
+producer-name = initm
+producer-name = initn
+producer-name = inito
+producer-name = initp
+producer-name = initq
+producer-name = initr
+producer-name = inits
+producer-name = initt
+producer-name = initu
+# Load the block producer plugin, so you can produce blocks
+plugin = eosio::producer_plugin
+# Wallet plugin
+plugin = eosio::wallet_api_plugin
+# As well as API and HTTP plugins
+plugin = eosio::chain_api_plugin
+plugin = eosio::http_plugin
+</code></pre>
+
+<p>이제 <code>eosd</code>를 <code>--genesis-json</code> 옵션과 함께 다시 실행해보자.</p>
+
+<pre><code class="language-bash">$ ./eosd --genesis-json data-dir/genesis.json
+
+...
+
+******************************
+*                             *
+*   ------ NEW CHAIN ------   *
+*   -   Welcome to EOS!   -   *
+*   -----------------------   *
+*                             *
+*******************************
+
+Your genesis seems to have an old timestamp
+Please consider using the --genesis-timestamp option to give your genesis a recent timestamp
+
+3348334ms            producer_plugin.cpp:196       plugin_startup       ] producer plugin:  plugin_startup() end
+3348334ms            http_plugin.cpp:153           plugin_startup       ] start processing http thread
+...
+
+3349006ms            chain_controller.cpp:208      _push_block          ] initt #1 @2018-02-07T09:55:49  | 0 trx, 0 pending, exectime_ms=0
+3349006ms            producer_plugin.cpp:246       block_production_loo ] initt generated block #1 @ 2018-02-07T09:55:49 with 0 trxs  0 pending
+3350006ms            chain_controller.cpp:208      _push_block          ] initc #2 @2018-02-07T09:55:50  | 0 trx, 0 pending, exectime_ms=0
+3350006ms            producer_plugin.cpp:246       block_production_loo ] initc generated block #2 @ 2018-02-07T09:55:50 with 0 trxs  0 pending
+</code></pre>
+
+<p>잘 진행했다면 에러 없이 genesis.json에 정의된 블럭들이 생성될 것이다. 참고로 이 후에 진행되는 모든 프로세스는 이 <code>eosd</code>를 실행한 상태여야 한다.</p>
+
+<hr />
+
+<h2 id="create-wallet">Create wallet</h2>
+
+<p>이제 wallet을 만들어보자. <code>eosc</code> 폴더로 이동 후 아래 명령어를 입력한다.</p>
+
+<pre><code class="language-bash">$ cd ../eosc 
+$ ./eosc wallet create
+Creating wallet: default
+Save password to use in the future to unlock this wallet.
+Without password imported keys will not be retrievable.
+&quot;PW5K....58Cq&quot;
+</code></pre>
+
+<p>default wallet이 생성되고 private key가 나온다. 이 key는 잃어버리지 말자.
+<br> <code>-n</code> 옵션과 함께 wallet 이름도 설정할 수 있다.</p>
+
+<pre><code class="language-bash">$ ./eosc wallet create -n tak
+Creating wallet: tak
+Save password to use in the future to unlock this wallet.
+Without password imported keys will not be retrievable.
+&quot;PW5J....ttSA&quot;
+</code></pre>
+
+<p><code>eosc wallet list</code> 명령어로 현재 갖고 있는 지갑을 확인할 수 있다.</p>
+
+<pre><code class="language-bash">$ ./eosc wallet list
+Wallets:
+[
+  &quot;default *&quot;,
+  &quot;tak *&quot;
+]
+</code></pre>
+
+<p>여기서 중요한 점은 각 지갑들이 asterisk(*)로 표시되고 있다는 점이다. 처음으로 지갑을 만들 경우에는 기본적으로 <strong>unlock</strong>된 상태이다. 지갑들은 보안을 위해 lock, unlock 상태가 될 수 있다. 자세한 내용은 <a href="https://github.com/EOSIO/eos/wiki/Tutorials#11-creating-and-managing-wallets">creating-and-managing-wallets</a>을 참고하자.</p>
+
+<h2 id="create-eos-key">Create EOS key</h2>
+
+<p>wallet을 만들었으니 eos key도 생성해보자. 두 개의 키쌍을 만든다.</p>
+
+<pre><code class="language-bash">$ ./eosc create key
+Private key: 5KGJ....zQKJ
+Public key: EOS6....tfEm
+
+$ ./eosc create key
+Private key: 5Ki7....Bydk
+Public key: EOS5....Jbpb
+</code></pre>
+
+<p>위에서 만든 두 키쌍을 <code>default</code> wallet에 import해보자. private key를 임포트해야한다.</p>
+
+<pre><code class="language-bash">$ ./eosc wallet import 5KGJ....zQKJ
+$ ./eosc wallet import 5Ki7....Bydk
+
+# import된 key 확인
+$ ./eosc wallet keys
+[[
+    &quot;EOS5....Jbpb&quot;,
+    &quot;5Ki7....Bydk&quot;
+  ],[
+    &quot;EOS6....tfEm&quot;,
+    &quot;5KGJ....zQKJ&quot;
+  ]
+]
+
+</code></pre>
+
+<h2 id="create-eos-account">Create EOS Account</h2>
+
+<p><code>create account</code>의 기본 인자는 다음과 같다.</p>
+
+<pre><code class="language-bash">$ eosc create account inita ${desired_account_name} ${public_key_1} ${public_key_2}
+</code></pre>
+
+<p>eos wiki에는 다음과 같이 소개되어 있다.</p>
+
+<ul>
+<li><code>inita</code> is the name of the account name that will fund the account creation, and subsequently the new account.</li>
+<li><code>desired_account_name</code> is the name of the account you would like to create</li>
+<li><code>public_key_1</code> and <code>public_key_2</code> are public keys, the first one will be permissioned as the owner authority of your account, and the second one will be permissioned for the active authority of your account.</li>
+</ul>
+
+<p>두 개의 키 쌍을 만들고 import 했으므로 이 키 쌍들을 쓰자.</p>
+
+<pre><code class="language-bash">$ eosc create account inita tak EOS5....Jbpb EOS6....tfEm
+
+1623671ms            main.cpp:1195                 main                 ] Failed with error: Assert Exception (10)
+status_code == 200: Error code 401
+: {&quot;code&quot;:401,&quot;message&quot;:&quot;UnAuthorized&quot;,&quot;details&quot;:&quot;signatures do not satisfy declared authorizations (3030002)\nTransaction declares authority '{\&quot;account\&quot;:\&quot;inita\&quot;,\&quot;permission\&quot;:\&quot;active\&quot;}', but does not have signatures for it.\n&quot;}
+</code></pre>
+
+<p>아마 안될 것이다. 구글 검색해서 해결했다. 우선 <code>eosd</code>에 <code>--skip-transaction-signatures</code> 옵션을 주고 실행하자.</p>
+
+<pre><code class="language-bash">$ ./eosd --skip-transaction-signatures --genesis-json data-dir/genesis.json
+</code></pre>
+
+<p><code>eosd</code>를 끈다면 wallet이 lock 상태가 된다. 이 wallet 들을 다시 open 후에 unlock 시켜줘야 한다.</p>
+
+<pre><code class="language-bash">$ ./eosc wallet list
+Wallets:
+[]
+
+# open wallet
+$ ./eosc wallet open -n tak
+$ ./eosc wallet open
+
+# unlock wallet
+$ ./eosc wallet unlock -n tak
+password:
+$ ./eosc wallet unlock
+password:
+</code></pre>
+
+<p>이제 준비가 되었으므로 다시 <code>account</code>를 만들어보자. account를 만들 때도 <code>--skip-signature</code> 또는 <code>-s</code> 옵션을 주자.</p>
+
+<pre><code class="language-bash">$ ./eosc create account inita tak EOS5....Jbpb EOS6....tfEm -s
+{
+  &quot;transaction_id&quot;: &quot;5bc1f32e836623f3cc5aaaca39d58f7fb78919f4bf3573207e4dbdba53b2f6d8&quot;,
+  &quot;processed&quot;: {
+    &quot;ref_block_num&quot;: 2116,
+    &quot;ref_block_prefix&quot;: 4126678765,
+    &quot;expiration&quot;: &quot;2018-02-07T10:34:01&quot;,
+    &quot;scope&quot;: [
+      &quot;eos&quot;,
+      &quot;inita&quot;
+    ],
+    &quot;signatures&quot;: [],
+    &quot;messages&quot;: [{
+        &quot;code&quot;: &quot;eos&quot;,
+        &quot;type&quot;: &quot;newaccount&quot;,
+        &quot;authorization&quot;: [{
+            &quot;account&quot;: &quot;inita&quot;,
+            &quot;permission&quot;: &quot;active&quot;
+          }
+        ],
+        &quot;data&quot;: {
+          &quot;creator&quot;: &quot;inita&quot;,
+          &quot;name&quot;: &quot;tak&quot;,
+          &quot;owner&quot;: {
+            &quot;threshold&quot;: 1,
+            &quot;keys&quot;: [{
+                &quot;key&quot;: &quot;EOS5....Jbpb&quot;,
+                &quot;weight&quot;: 1
+              }
+            ],
+            &quot;accounts&quot;: []
+          },
+          &quot;active&quot;: {
+            &quot;threshold&quot;: 1,
+            &quot;keys&quot;: [{
+                &quot;key&quot;: &quot;EOS6....tfEm&quot;,
+                &quot;weight&quot;: 1
+              }
+            ],
+            &quot;accounts&quot;: []
+          },
+          &quot;recovery&quot;: {
+            &quot;threshold&quot;: 1,
+            &quot;keys&quot;: [],
+            &quot;accounts&quot;: [{
+                &quot;permission&quot;: {
+                  &quot;account&quot;: &quot;inita&quot;,
+                  &quot;permission&quot;: &quot;active&quot;
+                },
+                &quot;weight&quot;: 1
+              }
+            ]
+          },
+          &quot;deposit&quot;: &quot;0.0001 EOS&quot;
+        },
+        &quot;hex_data&quot;: &quot;000000000093dd74000000000000a0c9010000000102477616a2b613e08f032714bdcb086bc8e1970699180a84719800c53a484e173801000001000000010305085e00ce3f5fda0c27ad8d67978e7a1eb0c6c65288ffc5dd0f827daa2e48d0010000010000000001000000000093dd7400000000a8ed32320100010000000000000004454f5300000000&quot;
+      }
+    ],
+    &quot;output&quot;: [{
+        &quot;notify&quot;: [],
+        &quot;deferred_trxs&quot;: []
+      }
+    ]
+  }
+}
+</code></pre>
+
+<p>됐다. 계정이 만들어졌다.<br>
+이제 계정에 대한 정보를 확인할 수 있다.</p>
+
+<pre><code class="language-bash">$ ./eosc get account tak
+{
+  &quot;account_name&quot;: &quot;tak&quot;,
+  &quot;eos_balance&quot;: &quot;0.0000 EOS&quot;,
+  &quot;staked_balance&quot;: &quot;0.0001 EOS&quot;,
+  &quot;unstaking_balance&quot;: &quot;0.0000 EOS&quot;,
+  &quot;last_unstaking_time&quot;: &quot;2106-02-07T06:28:15&quot;,
+  &quot;permissions&quot;: [{
+      &quot;perm_name&quot;: &quot;active&quot;,
+      &quot;parent&quot;: &quot;owner&quot;,
+      &quot;required_auth&quot;: {
+        &quot;threshold&quot;: 1,
+        &quot;keys&quot;: [{
+            &quot;key&quot;: &quot;EOS6....tfEm&quot;,
+            &quot;weight&quot;: 1
+          }
+        ],
+        &quot;accounts&quot;: []
+      }
+    },{
+      &quot;perm_name&quot;: &quot;owner&quot;,
+      &quot;parent&quot;: &quot;&quot;,
+      &quot;required_auth&quot;: {
+        &quot;threshold&quot;: 1,
+        &quot;keys&quot;: [{
+            &quot;key&quot;: &quot;EOS5....Jbpb&quot;,
+            &quot;weight&quot;: 1
+          }
+        ],
+        &quot;accounts&quot;: []
+      }
+    }
+  ]
+}
+</code></pre>
+
+<p>아래처럼 계정에 대한 code를 확인할 수 있는데, hash 값이 0이라는 건 해당 계정에 아무런 contract가 없다는 뜻이다. 아마 <code>./eosc set contract tak some.wast some.abi</code> 명령어로 contract를 올리게 되면 hash 값이 바뀔 것 같다.</p>
+
+<pre><code class="language-bash">$ ./eosc get code tak
+code hash: 0000000000000000000000000000000000000000000000000000000000000000
+</code></pre>
+
+<h2 id="smart-contract-hello-world">Smart Contract &ldquo;Hello world&rdquo;</h2>
+
+<p>이제 hello world를 찍는 contract를 작성해보자. eos는 <code>eoscpp</code>라는 일종의 부트스트랩 툴을 만들어놨다. eoscpp의 실행파일은 <code>eos/build/tools</code>에 있다.</p>
+
+<pre><code class="language-bash">$ cd ~/workspace/eos/build/tools
+$ ./eoscpp -n helloworld
+cp: /Users/tak/workspace/eos/build/install/share/skeleton/.: No such file or directory
+</code></pre>
+
+<p>또 파일이 없단다. skeleton 폴더는 <code>eos/contracts/skeleton</code>에 있다. eoscpp 파일을 수정하자.</p>
+
+<pre><code class="language-bash">$ vi eoscpp
+
+09 # cp -r ${EOSIO_INSTALL_DIR}/share/skeleton/. $newname
+10   cp -r ~/workspace/eos/contracts/skeleton/. $newname
+</code></pre>
+
+<p>09 라인에 있는 <code>cp -r ${EOSIO_INSTALL_DIR}/share/skeleton/. $newname</code>을 주석처리하고 실제로 <code>skeleton</code> 폴더가 있는 경로로 바꾼다.</p>
+
+<p>다시 <code>./eoscpp -n helloworld</code>를 실행하면 helloworld 폴더와 함께 아래 파일들이 생성된다.</p>
+
+<pre><code class="language-bash">helloworld.abi helloworld.cpp helloworld.hpp
+</code></pre>
+
+<p>helloworld.cpp 파일을 까보면 <code>init()</code>과 <code>apply()</code>를 호출하는데, eos 블록체인 상에서 이 두 함수를 가지고 지지고 볶는다. 자세한 내용은 eos wiki를 참고하자.<br>
+<br>
+이제 단순히 hello world를 프린트하는 cpp 파일을 웹어셈블리 텍스트로 컴파일해보자.</p>
+
+<pre><code class="language-bash">$ ./eoscpp -o helloworld/helloworld.wast helloworld/helloworld.cpp
+
+/usr/local/wasm/bin/clang -emit-llvm -O3 --std=c++14 --target=wasm32 -ffreestanding -nostdlib -fno-threadsafe-statics -fno-rtti -fno-exceptions -I /Users/tak/workspace/eos/build/install/include -I helloworld -c helloworld/helloworld.cpp -o /var/folders/v1/dm24cvvs4kb8lxxg6fqhgd440000gn/T/tmp.PwaMVFV7/built/helloworld.cpp
+In file included from helloworld/helloworld.cpp:5:
+helloworld/helloworld.hpp:5:10: fatal error: 'eoslib/eos.hpp' file not found
+#include &lt;eoslib/eos.hpp&gt;
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+</code></pre>
+
+<p>한번에 안된다. eos 문서는 참 불친절하다. 간단히 말해서 다시 make 해줘야 한다. 그 전에 빌드할때 필요한 binaryen 등등을 설치해줘야 한다. <strong>꼭 <a href="https://github.com/EOSIO/eos/wiki/Local-Environment#223-macos-sierra-10126">이 페이지</a>에 들어가서 dependency 프로그램을 설치하자.</strong>
+<br></p>
+
+<p>위의 dependency 프로그램 설치 후, 아래 명령어를 입력하자</p>
+
+<pre><code class="language-bash">$ cd ~/workspace/eos/build &amp;&amp; cmake -DBINARYEN_BIN=~/binaryen/bin -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl -DOPENSSL_LIBRARIES=/usr/local/opt/openssl/lib .. &amp;&amp; make -j2
+
+...
+[100%] Building CXX object tests/CMakeFiles/chain_test.dir/common/main.cpp.o
+[100%] Linking CXX executable chain_test
+[100%] Built target chain_test
+</code></pre>
+
+<p>아마 프로그램들이 제대로 설치되었다면 무리 없이 진행되었을 것이다. <br></p>
+
+<p>그리고 깜빡했는데 한 가지 더 해야하는 작업이 있다. <strong><code>build</code> 폴더에 들어가서 <code>sudo make install</code>을 해줘야 한다.</strong> 이 내용이 eos 문서에 없어서 삽질 많이 했다. 아마 이걸 안해서 위의 <code>eoscpp</code>도 안된 것 같다.</p>
+
+<pre><code class="language-bash">$ cd eos/build
+$ sudo make install
+</code></pre>
+
+<p>이제 위에서 진행하려 했던 helloworld.cpp를 wast로 compile 해보자. 아마 잘될 것이다. 참고로 블록체인 상에는 cpp 파일이 아니라 wast 파일을 contract에 붙인다.</p>
+
+<pre><code class="language-bash">$ cd eos/build/tools
+$ ./eoscpp -o helloworld/helloworld.wast helloworld/helloworld.cpp
+
+/usr/local/wasm/bin/clang -emit-llvm -O3 --std=c++14 --target=wasm32 -ffreestanding -nostdlib -fno-threadsafe-statics -fno-rtti -fno-exceptions -I /Users/tak/workspace/eos/build/install/include -I helloworld -c helloworld/helloworld.cpp -o /var/folders/v1/dm24cvvs4kb8lxxg6fqhgd440000gn/T/tmp.JW08GyZX/built/helloworld.cpp
+</code></pre>
+
+<p>이제 helloworld.wast 파일이 생겼을 거고, 이게 smart contract다. 이 파일과 abi 파일을 아까 생성한 tak 계정에 올리자. abi 파일은 액션, 타입 등이 정의된 파일인데 이 파일도 공부해야 한다. 할게 많다.
+<code>eosc set contract {your-account} /path/helloworld.wast /path/helloworld.abi</code> 을 실행하자.</p>
+
+<pre><code class="language-bash">$ ./eosc set contract tak /Users/tak/workspace/eos/build/tools/helloworld/helloworld.wast /Users/tak/workspace/eos/build/tools/helloworld/helloworld.abi
+Reading WAST...
+Assembling WASM...
+Publishing contract...
+{
+  &quot;transaction_id&quot;: &quot;ed4a03bc0c68c84f7076059e5afd1d9e3d9e37d4951f7f0aaaa4a00764b4190b&quot;,
+  &quot;processed&quot;: {
+    &quot;ref_block_num&quot;: 18596,
+    &quot;ref_block_prefix&quot;: 323934510,
+    &quot;expiration&quot;: &quot;2018-02-08T05:38:25&quot;,
+    &quot;scope&quot;: [
+      &quot;eos&quot;,
+      &quot;tak&quot;
+    ],
+    &quot;signatures&quot;: [
+      &quot;1f0d41d84673c899a7a974ed1e26f8e2be5edbe08d90295d5d15447834e32438a64d7d46b438702a19971ec7f08fc5ae75ce171ec455f83cb586ac844041776e9e&quot;
+    ],
+    &quot;messages&quot;: [{
+        &quot;code&quot;: &quot;eos&quot;,
+        &quot;type&quot;: &quot;setcode&quot;,
+        &quot;authorization&quot;: [{
+            &quot;account&quot;: &quot;tak&quot;,
+            &quot;permission&quot;: &quot;active&quot;
+          }
+        ],
+        &quot;data&quot;: {
+          &quot;account&quot;: &quot;tak&quot;,
+          &quot;vm_type&quot;: 0,
+          &quot;vm_version&quot;: 0,
+          &quot;code&quot;: &quot;0061736d0100000001110460017f0060017e0060000060027e7e00021b0203656e76067072696e746e000103656e76067072696e7473000003030202030404017000000503010001071903066d656d6f7279020004696e69740002056170706c7900030a20020600411010010b17004120100120001000413010012001100041c00010010b0b3f050041040b04504000000041100b0d496e697420576f726c64210a000041200b0e48656c6c6f20576f726c643a20000041300b032d3e000041c0000b020a000029046e616d6504067072696e746e0100067072696e7473010004696e697400056170706c790201300131&quot;,
+          &quot;code_abi&quot;: {
+            &quot;types&quot;: [{
+                &quot;new_type_name&quot;: &quot;account_name&quot;,
+                &quot;type&quot;: &quot;name&quot;
+              }
+            ],
+            &quot;structs&quot;: [{
+                &quot;name&quot;: &quot;transfer&quot;,
+                &quot;base&quot;: &quot;&quot;,
+                &quot;fields&quot;: {
+                  &quot;from&quot;: &quot;account_name&quot;,
+                  &quot;to&quot;: &quot;account_name&quot;,
+                  &quot;amount&quot;: &quot;uint64&quot;
+                }
+              },{
+                &quot;name&quot;: &quot;account&quot;,
+                &quot;base&quot;: &quot;&quot;,
+                &quot;fields&quot;: {
+                  &quot;account&quot;: &quot;name&quot;,
+                  &quot;balance&quot;: &quot;uint64&quot;
+                }
+              }
+            ],
+            &quot;actions&quot;: [{
+                &quot;action_name&quot;: &quot;transfer&quot;,
+                &quot;type&quot;: &quot;transfer&quot;
+              }
+            ],
+            &quot;tables&quot;: [{
+                &quot;table_name&quot;: &quot;account&quot;,
+                &quot;index_type&quot;: &quot;i64&quot;,
+                &quot;key_names&quot;: [
+                  &quot;account&quot;
+                ],
+                &quot;key_types&quot;: [
+                  &quot;name&quot;
+                ],
+                &quot;type&quot;: &quot;account&quot;
+              }
+            ]
+          }
+        },
+        &quot;hex_data&quot;: &quot;000000000000a0c90000f1010061736d0100000001110460017f0060017e0060000060027e7e00021b0203656e76067072696e746e000103656e76067072696e7473000003030202030404017000000503010001071903066d656d6f7279020004696e69740002056170706c7900030a20020600411010010b17004120100120001000413010012001100041c00010010b0b3f050041040b04504000000041100b0d496e697420576f726c64210a000041200b0e48656c6c6f20576f726c643a20000041300b032d3e000041c0000b020a000029046e616d6504067072696e746e0100067072696e7473010004696e697400056170706c790201300131010c6163636f756e745f6e616d65046e616d6502087472616e7366657200030466726f6d0c6163636f756e745f6e616d6502746f0c6163636f756e745f6e616d6506616d6f756e740675696e743634076163636f756e740002076163636f756e74046e616d650762616c616e63650675696e74363401000000572d3ccdcd087472616e7366657201000000204f4d11320369363401076163636f756e7401046e616d65076163636f756e74&quot;
+      }
+    ],
+    &quot;output&quot;: [{
+        &quot;notify&quot;: [],
+        &quot;deferred_trxs&quot;: []
+      }
+    ]
+  }
+}
+</code></pre>
+
+<p>위 contract를 올리면 <code>eosd</code>가 실행된 터미널에서 <code>Init world!</code>가 세번 프린트되는 것을 확인할 수 있다.</p>
+
+<p><img src="/images/helloworld.png" alt="helloworld" /></p>
+
+<p>이제 위에서 확인한 계정 코드 값이 변해 있을 것이다.</p>
+
+<pre><code class="language-bash">$ ./eosc get code tak
+code hash: 3d535c4f132928023f9e3ffc761e51cec2ea37720d0e002e6b52fe3c3ad9b936
+</code></pre>
+
+<p>쉽지 않다.</p>
+
+                </section>
+            </article>
+
+            
+                <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fnjir.github.io%2fposts%2feos-tutorial%2f - EOS%ec%97%90%20Smart%20Contract%20%ec%83%9d%ec%84%b1%ed%95%98%ea%b8%b0 "><span class="icon-twitter"> tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+
+            
+
+            
+                <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'tak90'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.facebook.com/jinpcbang">
+        <i class="fa fa-facebook-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.github.com/njir">
+        <i class="fa fa-github-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://linkedin.com/in/hyungtak">
+        <i class="fa fa-linkedin-square"></i>
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2018 <i class="fa fa-heart" aria-hidden="true"></i> Tak
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://njir.github.io/js/jquery-2.2.4.min.js"></script>
+<script src="https://njir.github.io/js/main.js"></script>
+<script src="https://njir.github.io/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-46214266-2', 'auto');
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+    </body>
+</html>
