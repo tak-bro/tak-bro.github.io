@@ -13,8 +13,8 @@
     
   
   
-  <meta name="twitter:title" content="EOS에 Smart Contract 생성하기"/>
-  <meta name="twitter:description" content="eos 소스코드 다운부터 로컬넷에 Smart Contract 띄우기까지"/>
+  <meta name="twitter:title" content="EOS에 Smart Contract 생성해보기"/>
+  <meta name="twitter:description" content="eos 소스코드 다운부터 로컬넷에 Smart Contract 띄우기까지 삽질기"/>
   
   
   
@@ -28,7 +28,7 @@
 		<meta name="author" content="Tak">
 		<meta name="description" content="DevNote">
 		<meta name="generator" content="Hugo 0.32.3" />
-		<title>EOS에 Smart Contract 생성하기 &middot; DevNote</title>
+		<title>EOS에 Smart Contract 생성해보기 &middot; DevNote</title>
 		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
 		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
 		<link rel="stylesheet" href="https://njir.github.io/css/highlight.css">
@@ -66,11 +66,11 @@
             <article>
                 <header>
                     <h1>
-                        EOS에 Smart Contract 생성하기
+                        EOS에 Smart Contract 생성해보기
                     </h1>
                     <h2 class="headline">
                     Feb 7, 2018 00:00
-                    · 3017 words
+                    · 3027 words
                     · 7 minute read
                       <span class="tags">
                       
@@ -310,7 +310,7 @@ status_code == 200: Error code 401
 : {&quot;code&quot;:401,&quot;message&quot;:&quot;UnAuthorized&quot;,&quot;details&quot;:&quot;signatures do not satisfy declared authorizations (3030002)\nTransaction declares authority '{\&quot;account\&quot;:\&quot;inita\&quot;,\&quot;permission\&quot;:\&quot;active\&quot;}', but does not have signatures for it.\n&quot;}
 </code></pre>
 
-<p>아마 안될 것이다. 구글 검색해서 해결했다. 우선 <code>eosd</code>에 <code>--skip-transaction-signatures</code> 옵션을 주고 실행하자.</p>
+<p>아마 안될 것이다. 우선 <code>eosd</code>에 <code>--skip-transaction-signatures</code> 옵션을 주고 실행하자.</p>
 
 <pre><code class="language-bash">$ ./eosd --skip-transaction-signatures --genesis-json data-dir/genesis.json
 </code></pre>
@@ -455,7 +455,8 @@ $ ./eoscpp -n helloworld
 cp: /Users/tak/workspace/eos/build/install/share/skeleton/.: No such file or directory
 </code></pre>
 
-<p>또 파일이 없단다. skeleton 폴더는 <code>eos/contracts/skeleton</code>에 있다. eoscpp 파일을 수정하자.</p>
+<p>또 파일이 없단다. skeleton 폴더는 <code>eos/contracts/skeleton</code>에 있다. eoscpp 파일을 수정하자.
+<br> 근본적으로 수정하는 방법은 build 폴더를 다시 make, build 해야 한다.</p>
 
 <pre><code class="language-bash">$ vi eoscpp
 
@@ -499,7 +500,8 @@ helloworld/helloworld.hpp:5:10: fatal error: 'eoslib/eos.hpp' file not found
 
 <p>아마 프로그램들이 제대로 설치되었다면 무리 없이 진행되었을 것이다. <br></p>
 
-<p>그리고 깜빡했는데 한 가지 더 해야하는 작업이 있다. <strong><code>build</code> 폴더에 들어가서 <code>sudo make install</code>을 해줘야 한다.</strong> 이 내용이 eos 문서에 없어서 삽질 많이 했다. 아마 이걸 안해서 위의 <code>eoscpp</code>도 안된 것 같다.</p>
+<p>그리고 추가적으로 한 가지 더 해야하는 작업이 있다. <br>
+<strong><code>build</code> 폴더에 들어가서 <code>sudo make install</code>을 해줘야 한다.</strong> 이 내용이 eos 문서에 없어서 삽질 많이 했다. 이걸 안해서 위의 <code>eoscpp</code> skeleton 관련 에러가 나왔다.</p>
 
 <pre><code class="language-bash">$ cd eos/build
 $ sudo make install
@@ -513,8 +515,9 @@ $ ./eoscpp -o helloworld/helloworld.wast helloworld/helloworld.cpp
 /usr/local/wasm/bin/clang -emit-llvm -O3 --std=c++14 --target=wasm32 -ffreestanding -nostdlib -fno-threadsafe-statics -fno-rtti -fno-exceptions -I /Users/tak/workspace/eos/build/install/include -I helloworld -c helloworld/helloworld.cpp -o /var/folders/v1/dm24cvvs4kb8lxxg6fqhgd440000gn/T/tmp.JW08GyZX/built/helloworld.cpp
 </code></pre>
 
-<p>이제 helloworld.wast 파일이 생겼을 거고, 이게 smart contract다. 이 파일과 abi 파일을 아까 생성한 tak 계정에 올리자. abi 파일은 액션, 타입 등이 정의된 파일인데 이 파일도 공부해야 한다. 할게 많다.
-<code>eosc set contract {your-account} /path/helloworld.wast /path/helloworld.abi</code> 을 실행하자.</p>
+<p>이제 helloworld.wast 파일이 생겼을 거고, 이게 smart contract다. 이 파일과 abi 파일을 아까 생성한 tak 계정에 올리자. <br>
+abi 파일은 액션, 타입 등이 정의된 파일인데 이 파일도 공부해야 한다. 할게 많다.
+<br><code>eosc set contract {your-account} /path/helloworld.wast /path/helloworld.abi</code> 을 실행하자.</p>
 
 <pre><code class="language-bash">$ ./eosc set contract tak /Users/tak/workspace/eos/build/tools/helloworld/helloworld.wast /Users/tak/workspace/eos/build/tools/helloworld/helloworld.abi
 Reading WAST...
@@ -616,7 +619,7 @@ code hash: 3d535c4f132928023f9e3ffc761e51cec2ea37720d0e002e6b52fe3c3ad9b936
             </article>
 
             
-                <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fnjir.github.io%2fposts%2feos-tutorial%2f - EOS%ec%97%90%20Smart%20Contract%20%ec%83%9d%ec%84%b1%ed%95%98%ea%b8%b0 "><span class="icon-twitter"> tweet</span></a>
+                <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fnjir.github.io%2fposts%2feos-tutorial%2f - EOS%ec%97%90%20Smart%20Contract%20%ec%83%9d%ec%84%b1%ed%95%b4%eb%b3%b4%ea%b8%b0 "><span class="icon-twitter"> tweet</span></a>
 
 <a class="facebook" href="#" onclick="
     window.open(
