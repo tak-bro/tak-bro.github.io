@@ -70,7 +70,7 @@
                     </h1>
                     <h2 class="headline">
                     Feb 7, 2018 00:00
-                    · 3027 words
+                    · 3272 words
                     · 7 minute read
                       <span class="tags">
                       
@@ -128,7 +128,7 @@ $ git checkout dawn-2.x
 $ ./build.sh darwin
 </code></pre>
 
-<p>build 스크립트 실행 후에 <code>eos/build/programs</code>에 <code>eosd, eosc, eos-walletd</code> 폴더 등을 볼 수 있다. 폴더 안에는 각 프로그램의 executable이 있다. eos의 대표적인 프로그램은 다음과 같다.</p>
+<p>build 스크립트 실행 후에 <code>eos/build/programs</code>에 <code>eosd, eosc, eos-walletd</code> 폴더 등을 볼 수 있다. 폴더 안에는 각 프로그램의 executable이 있다. eos에서 사용가능한 프로그램은 다음과 같다.</p>
 
 <ul>
 <li>eosd: server-side blockchain node component</li>
@@ -283,8 +283,9 @@ $ ./eosc wallet keys
     &quot;5KGJ....zQKJ&quot;
   ]
 ]
-
 </code></pre>
+
+<hr />
 
 <h2 id="create-eos-account">Create EOS Account</h2>
 
@@ -310,12 +311,12 @@ status_code == 200: Error code 401
 : {&quot;code&quot;:401,&quot;message&quot;:&quot;UnAuthorized&quot;,&quot;details&quot;:&quot;signatures do not satisfy declared authorizations (3030002)\nTransaction declares authority '{\&quot;account\&quot;:\&quot;inita\&quot;,\&quot;permission\&quot;:\&quot;active\&quot;}', but does not have signatures for it.\n&quot;}
 </code></pre>
 
-<p>아마 안될 것이다. 우선 <code>eosd</code>에 <code>--skip-transaction-signatures</code> 옵션을 주고 실행하자.</p>
+<p>한번에 되면 이상하다. 우선 <code>eosd</code>를 <code>--skip-transaction-signatures</code> 옵션을 주고 실행해보자.</p>
 
 <pre><code class="language-bash">$ ./eosd --skip-transaction-signatures --genesis-json data-dir/genesis.json
 </code></pre>
 
-<p><code>eosd</code>를 끈다면 wallet이 lock 상태가 된다. 이 wallet 들을 다시 open 후에 unlock 시켜줘야 한다.</p>
+<p><code>eosd</code>를 다시 시작하면 wallet이 lock 상태가 된다. 이 wallet 들을 다시 open 후에 unlock 시켜줘야 한다.</p>
 
 <pre><code class="language-bash">$ ./eosc wallet list
 Wallets:
@@ -446,6 +447,8 @@ password:
 code hash: 0000000000000000000000000000000000000000000000000000000000000000
 </code></pre>
 
+<hr />
+
 <h2 id="smart-contract-hello-world">Smart Contract &ldquo;Hello world&rdquo;</h2>
 
 <p>이제 hello world를 찍는 contract를 작성해보자. eos는 <code>eoscpp</code>라는 일종의 부트스트랩 툴을 만들어놨다. eoscpp의 실행파일은 <code>eos/build/tools</code>에 있다.</p>
@@ -455,8 +458,8 @@ $ ./eoscpp -n helloworld
 cp: /Users/tak/workspace/eos/build/install/share/skeleton/.: No such file or directory
 </code></pre>
 
-<p>또 파일이 없단다. skeleton 폴더는 <code>eos/contracts/skeleton</code>에 있다. eoscpp 파일을 수정하자.
-<br> 근본적으로 수정하는 방법은 build 폴더를 다시 make, build 해야 한다.</p>
+<p>또 파일이 없단다. skeleton 폴더는 <code>eos/contracts/skeleton</code>에 있다.
+<br> 근본적으로 수정하는 방법은 build 폴더를 다시 make, build 해야 한다. 빨리 만들고 싶으니 그냥 eoscpp 파일 내의 path를 수정하자.</p>
 
 <pre><code class="language-bash">$ vi eoscpp
 
@@ -519,7 +522,7 @@ $ ./eoscpp -o helloworld/helloworld.wast helloworld/helloworld.cpp
 abi 파일은 액션, 타입 등이 정의된 파일인데 이 파일도 공부해야 한다. 할게 많다.
 <br><code>eosc set contract {your-account} /path/helloworld.wast /path/helloworld.abi</code> 을 실행하자.</p>
 
-<pre><code class="language-bash">$ ./eosc set contract tak /Users/tak/workspace/eos/build/tools/helloworld/helloworld.wast /Users/tak/workspace/eos/build/tools/helloworld/helloworld.abi
+<pre><code class="language-bash">$ ./eosc set contract tak ~/workspace/eos/build/tools/helloworld/helloworld.wast ~/workspace/eos/build/tools/helloworld/helloworld.abi
 Reading WAST...
 Assembling WASM...
 Publishing contract...
@@ -603,17 +606,36 @@ Publishing contract...
 }
 </code></pre>
 
-<p>위 contract를 올리면 <code>eosd</code>가 실행된 터미널에서 <code>Init world!</code>가 세번 프린트되는 것을 확인할 수 있다.</p>
+<p>위 contract를 올리면 <code>eosd</code>가 실행된 터미널에서 <code>Init world!</code>가 세 번 프린트되는 것을 확인할 수 있다.</p>
 
 <p><img src="/images/helloworld.png" alt="helloworld" /></p>
 
-<p>이제 위에서 확인한 계정 코드 값이 변해 있을 것이다.</p>
+<p>이 세 번의 프린트는 에러가 아니다. eos에서는 아래처럼 설명하고 있다. 자세한 내용은 <a href="https://github.com/EOSIO/eos/wiki/Smart-Contract#5-writing-your-first-eos-smart-contract">여기</a>에서 확인 가능하다.</p>
+
+<blockquote>
+<p>You will notice the lines &ldquo;Init World!&rdquo; are executed 3 times. This isn&rsquo;t a mistake. When the blockchain is processing transactions the following happens:
+<br><br> 1st : eosd receives a new transaction (validating transaction)
+<br>&nbsp;&nbsp;- creates a temporary session
+<br>&nbsp;&nbsp;- attempts to apply the transaction
+<br>&nbsp;&nbsp;- succeeds and prints &ldquo;Init World!&rdquo; or fails undoes the changes (potentially failing after printing &ldquo;Init World!&rdquo;)<br>
+<br> 2nd : eosd starts to produce a block
+<br>&nbsp;&nbsp;- undoes all pending state
+<br>&nbsp;&nbsp;- pushes all transactions as it builds the block
+<br>&nbsp;&nbsp;- prints &ldquo;Init World!&rdquo; a second time
+<br>&nbsp;&nbsp;- finishes building the block
+<br>&nbsp;&nbsp;- undoes all of the temporary changes while creating block<br>
+<br> 3rd : eosd pushes the generated block as if it is received it from the network
+<br>&nbsp;&nbsp;- prints &ldquo;Init World!&rdquo; a third time</p>
+</blockquote>
+
+<p>이제 아까 확인한 계정 코드 값이 변해 있을 것이다.</p>
 
 <pre><code class="language-bash">$ ./eosc get code tak
 code hash: 3d535c4f132928023f9e3ffc761e51cec2ea37720d0e002e6b52fe3c3ad9b936
 </code></pre>
 
-<p>쉽지 않다.</p>
+<p>여기까지가 eos 체인 내에서 &lsquo;hello world&rsquo;를 찍는 smart contract를 올리는 방법이다.<br>
+쉽지 않다.</p>
 
                 </section>
             </article>
