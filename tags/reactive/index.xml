@@ -6,15 +6,24 @@
     <description>Recent content in Reactive on DevNote</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 16 Feb 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 17 Feb 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://njir.github.io/tags/reactive/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>RxJS 개발 참고자료</title>
+      <link>https://njir.github.io/posts/rxjs-resources/</link>
+      <pubDate>Sat, 17 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://njir.github.io/posts/rxjs-resources/</guid>
+      <description>RxJS 개발 참고 자료 Doc 문서 RxJS 라이브러리의 latest 코드는 ReactiveX/rxjs에 올라오고 있다. 이 사이트의 문서를 봐도 되지만, 예제 코드가 많이 없어서 개발할</description>
+    </item>
+    
+    <item>
       <title>RxJS Observable 간단정리</title>
       <link>https://njir.github.io/posts/rxjs-observable-snippet/</link>
-      <pubDate>Fri, 16 Feb 2018 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 15 Feb 2018 00:00:00 +0000</pubDate>
       
       <guid>https://njir.github.io/posts/rxjs-observable-snippet/</guid>
       <description>시작하기 전에, Reactive Programming은 내가 원하는 데이터는 어디에서 오는가를 항상 생각해야 한다고 한다. Glossary Observables 계속해서 data를 생성(emit, pr</description>

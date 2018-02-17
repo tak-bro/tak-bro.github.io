@@ -69,7 +69,7 @@
                         RxJS Observable 간단정리
                     </h1>
                     <h2 class="headline">
-                    Feb 16, 2018 00:00
+                    Feb 15, 2018 00:00
                     · 2437 words
                     · 5 minute read
                       <span class="tags">
@@ -123,9 +123,9 @@
 <ul>
 <li><a href="#subject의-종류">Subject의 종류</a>
 <ul>
-<li><a href="#replaysubject">ReplaySubject</a></li>
-<li><a href="#asyncsubject">Asyncsubject</a></li>
 <li><a href="#behaviorsubject">BehaviorSubject</a></li>
+<li><a href="#asyncsubject">AsyncSubject</a></li>
+<li><a href="#replaysubject">ReplaySubject</a></li>
 </ul></li>
 </ul></li>
 </ul>
@@ -136,7 +136,7 @@
                 <section id="post-body">
                     
 
-<p><strong>시작하기 전에, Reactive Programming은 <code>내가 원하는 데이터는 어디에서 오는가</code>를 항상 생각해야 한다고 한다.</strong></p>
+<p>시작하기 전에, Reactive Programming은 <strong>내가 원하는 데이터는 어디에서 오는가</strong>를 항상 생각해야 한다고 한다.</p>
 
 <h1 id="glossary">Glossary</h1>
 
@@ -557,6 +557,14 @@ setTimeout(() =&gt; {
 
 <h2 id="subject의-종류">Subject의 종류</h2>
 
+<h3 id="behaviorsubject">BehaviorSubject</h3>
+
+<p>Observable의 마지막 data만을 받는다.</p>
+
+<h3 id="asyncsubject">AsyncSubject</h3>
+
+<p>Asyncsubject는 오직 complete이 발생한 후에 emit 된다. 그리고 Observable로부터 배출된 마지막 data를 배출한다.</p>
+
 <h3 id="replaysubject">ReplaySubject</h3>
 
 <p><code>replay subject</code>는 opserver가 구독을 시작한 시점과 관계 없이, observable들이 emit한 모든 항목들을 모든 observer에게 배출한다.<br></p>
@@ -587,14 +595,6 @@ replay$.next(6);
 // one.next 6
 // two.next 6
 </code></pre>
-
-<h3 id="asyncsubject">Asyncsubject</h3>
-
-<p>Asyncsubject는 오직 complete이 발생한 후에 emit 된다. 그리고 Observable로부터 배출된 마지막 data를 배출한다.</p>
-
-<h3 id="behaviorsubject">BehaviorSubject</h3>
-
-<p>Observable의 마지막 data만을 받는다.</p>
 
                 </section>
             </article>

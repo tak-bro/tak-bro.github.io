@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		 
+			
+  
+    <meta name="twitter:card" content="summary"/>
+    
+      <meta name="twitter:image" content="https://njir.github.io/images/avatar.png" />
+    
+  
+  
+  <meta name="twitter:title" content="RxJS 개발 참고자료"/>
+  <meta name="twitter:description" content="Udemy 강의에서 소개한 RxJS 개발 참고자료 소개"/>
+  
+  
+  
+  
+    <meta name="twitter:creator" content="@Tak"/>
+  
+
+
+
+		
+		<meta name="author" content="Tak">
+		<meta name="description" content="DevNote">
+		<meta name="generator" content="Hugo 0.32.3" />
+		<title>RxJS 개발 참고자료 &middot; DevNote</title>
+		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
+		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
+		<link rel="stylesheet" href="https://njir.github.io/css/highlight.css">
+
+		
+		<link rel="stylesheet" href="https://njir.github.io/css/font-awesome.min.css">
+		
+
+		
+		<link href="https://njir.github.io/index.xml" rel="alternate" type="application/rss+xml" title="DevNote" />
+		
+
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://njir.github.io/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://njir.github.io/posts'>Archive</a>
+	<a href='https://njir.github.io/tags'>Tags</a>
+	<a href='https://njir.github.io/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://njir.github.io/index.xml">Subscribe</a>
+	
+</nav>
+
+
+        <section id="wrapper" class="post">
+            <article>
+                <header>
+                    <h1>
+                        RxJS 개발 참고자료
+                    </h1>
+                    <h2 class="headline">
+                    Feb 17, 2018 00:00
+                    · 454 words
+                    · 1 minute read
+                      <span class="tags">
+                      
+                      
+                          
+                              <a href="https://njir.github.io/tags/rxjs">rxjs</a>
+                          
+                              <a href="https://njir.github.io/tags/reactive">Reactive</a>
+                          
+                              <a href="https://njir.github.io/tags/javascript">javascript</a>
+                          
+                      
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                  
+                    <div id="toc">
+                      <nav id="TableOfContents">
+<ul>
+<li><a href="#rxjs-개발-참고-자료">RxJS 개발 참고 자료</a>
+<ul>
+<li><a href="#doc-문서">Doc 문서</a></li>
+<li><a href="#rxmarbles">RxMarbles</a></li>
+<li><a href="#rxvision">RxVision</a></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                  
+                
+                <section id="post-body">
+                    
+
+<h1 id="rxjs-개발-참고-자료">RxJS 개발 참고 자료</h1>
+
+<h2 id="doc-문서">Doc 문서</h2>
+
+<p>RxJS 라이브러리의 latest 코드는 <a href="https://github.com/ReactiveX/rxjs">ReactiveX/rxjs</a>에 올라오고 있다. 이 사이트의 문서를 봐도 되지만, 예제 코드가 많이 없어서 개발할 때 참고하긴 어렵다. <br>
+여기 대신에 <a href="https://github.com/Reactive-Extensions/RxJS">Reactive-Extensions/RxJS</a>의 <a href="https://github.com/Reactive-Extensions/RxJS/blob/master/doc/api">api 문서</a>를 참고하는게 훨씬 낫다.</p>
+
+<p><img src="/images/reactivex.png" alt="reactivex" /></p>
+
+<p>api 문서에 예제 많아 개발하기 좋지만, 문제는 version 4를 기준으로 작성되어 있다. 그래서 이름이 바뀌거나 deprecated된 operator들이 있을 수 있다.
+<br> 친절하게도 이 사이트에서 Migration 가이드를 제공해준다. <a href="https://github.com/ReactiveX/rxjs/blob/master/MIGRATION.md">이 페이지</a>에서 RxJS ver5와 ver4의 달라진 점을 소개해주고 있어, 읽어보기 좋다.</p>
+
+<ul>
+<li><a href="https://github.com/Reactive-Extensions/RxJS/tree/master/doc/api/core/operators">operators</a></li>
+<li><a href="https://github.com/ReactiveX/rxjs/blob/master/MIGRATION.md">migration</a></li>
+</ul>
+
+<h2 id="rxmarbles">RxMarbles</h2>
+
+<p>이 사이트는 Rx Observable의 데이터 흐름을 다이어그램으로 표현해주는 사이트다. 모든 operator들이 있는 건 아니지만 주요 operator들은 소개되어 있다.
+<br> 다이어그램 상에서 직접 데이터를 움직여볼 수 있어 나같은 초보자가 개념 익히기 좋다.</p>
+
+<ul>
+<li><a href="http://rxmarbles.com/">RxMarbles</a></li>
+<li><a href="https://github.com/staltz/rxmarbles">Github</a></li>
+</ul>
+
+<p><img src="/images/rxmarbles.png" alt="rxmables" /></p>
+
+<h2 id="rxvision">RxVision</h2>
+
+<p>RxJS를 테스트해 볼 수 있는 playground를 제공한다. 그리고 RxMarbles과 비슷하나 좀 더 visual하게 observable 스트림을 보여준다. 역시나 개념 익히기 좋은 사이트</p>
+
+<p><img src="/images/rxvision.png" alt="rxvision" /></p>
+
+<ul>
+<li><a href="https://jaredforsyth.com/rxvision/examples/playground/">RxVision playground</a></li>
+<li><a href="https://github.com/staltz/rxmarbles">Github</a></li>
+</ul>
+
+                </section>
+            </article>
+
+            
+                <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fnjir.github.io%2fposts%2frxjs-resources%2f - RxJS%20%ea%b0%9c%eb%b0%9c%20%ec%b0%b8%ea%b3%a0%ec%9e%90%eb%a3%8c "><span class="icon-twitter"> tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+
+            
+
+            
+                <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'tak90'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.facebook.com/jinpcbang">
+        <i class="fa fa-facebook-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.github.com/njir">
+        <i class="fa fa-github-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://linkedin.com/in/hyungtak">
+        <i class="fa fa-linkedin-square"></i>
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2018 <i class="fa fa-heart" aria-hidden="true"></i> Tak
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://njir.github.io/js/jquery-2.2.4.min.js"></script>
+<script src="https://njir.github.io/js/main.js"></script>
+<script src="https://njir.github.io/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-46214266-2', 'auto');
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+    </body>
+</html>
