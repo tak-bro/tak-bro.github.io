@@ -6,10 +6,19 @@
     <description>Recent content in Reactive on DevNote</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 17 Feb 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 22 Mar 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://njir.github.io/tags/reactive/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>RxJS Operators</title>
+      <link>https://njir.github.io/posts/rxjs-operators/</link>
+      <pubDate>Thu, 22 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://njir.github.io/posts/rxjs-operators/</guid>
+      <description>Operators of RxJS 참고로 모든 operator는 새로운 Observable을 리턴하게 된다. Utility do do는 새로운 데이터가 emit 될 때마다 매번 실행된다. output처럼</description>
+    </item>
     
     <item>
       <title>RxJS 개발 참고자료</title>
