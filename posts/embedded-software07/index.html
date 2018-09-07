@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		 
+			
+  
+    <meta name="twitter:card" content="summary"/>
+    
+      <meta name="twitter:image" content="https://njir.github.io/images/avatar.png" />
+    
+  
+  
+  <meta name="twitter:title" content="임베디드 소프트웨어 - 6Lowpan Layer"/>
+  <meta name="twitter:description" content="아주대학교 임베디드 소프트웨어 수업 정리"/>
+  
+  
+  
+  
+    <meta name="twitter:creator" content="@Tak"/>
+  
+
+
+
+		
+		<meta name="author" content="Tak">
+		<meta name="description" content="DevNote">
+		<meta name="generator" content="Hugo 0.48" />
+		<title>임베디드 소프트웨어 - 6Lowpan Layer &middot; DevNote</title>
+		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
+		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
+		<link rel="stylesheet" href="https://njir.github.io/css/highlight.css">
+
+		
+		<link rel="stylesheet" href="https://njir.github.io/css/font-awesome.min.css">
+		
+
+		
+		<link href="https://njir.github.io/index.xml" rel="alternate" type="application/rss+xml" title="DevNote" />
+		
+
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://njir.github.io/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://njir.github.io/posts'>Archive</a>
+	<a href='https://njir.github.io/tags'>Tags</a>
+	<a href='https://njir.github.io/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://njir.github.io/index.xml">Subscribe</a>
+	
+</nav>
+
+
+        <section id="wrapper" class="post">
+            <article>
+                <header>
+                    <h1>
+                        임베디드 소프트웨어 - 6Lowpan Layer
+                    </h1>
+                    <h2 class="headline">
+                    Apr 16, 2015 14:12
+                    · 697 words
+                    · 2 minute read
+                      <span class="tags">
+                      
+                      
+                          
+                              <a href="https://njir.github.io/tags/embedded">embedded</a>
+                          
+                      
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                  
+                    <div id="toc">
+                      <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#6lowapn">6lowapn</a></li>
+<li><a href="#ipv6-neighbor-discovery">IPv6 Neighbor Discovery</a></li>
+<li><a href="#dhcp">DHCP</a></li>
+<li><a href="#6lowpan-nd">6lowpan ND</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                  
+                
+                <section id="post-body">
+                    
+
+<h5 id="6lowapn">6lowapn</h5>
+
+<ul>
+<li><p>6lowpan layer(= Adapation layer) 기능</p>
+
+<ul>
+<li>MTU F&amp;R
+
+<ul>
+<li>1.2K -&gt; 128 bytes</li>
+</ul></li>
+<li>Header Compression
+
+<ul>
+<li>IPv6 Header : 40 bytes(16src+16dst+8)</li>
+<li>UDP : 8 bytes</li>
+</ul></li>
+</ul></li>
+
+<li><p>A(origin)-&gt;B-&gt;C-&gt;D(final dst)</p></li>
+</ul>
+
+<blockquote>
+<ul>
+<li>A &lt;-&gt; B : NetworkA</li>
+<li>B &lt;-&gt; C : NetworkB</li>
+
+<li><p><strong><em>실제 네트워크 주소는 MAC 주소이다.</em></strong></p>
+
+<ul>
+<li>따라서 MAC 헤더는 매번 바뀐다.</li>
+</ul></li>
+</ul>
+</blockquote>
+
+<ul>
+<li>IPv6 128bits
+
+<ul>
+<li>[   64   ][   64   ]</li>
+<li>64 : Network ~ Prefix</li>
+<li>64 : Host ID &lt;= MAC &lt;- EUI 64</li>
+</ul></li>
+
+<li><p>IPv4 : A,B,C 클래스 형태 -&gt; CIDR(Classless Inter Domain Router)</p>
+
+<ul>
+<li>현재 우리가 쓰고 있는 형태</li>
+</ul></li>
+
+<li><p>3가지 경우</p></li>
+
+<li><p>1) A-&gt;B</p>
+
+<ul>
+<li>[IP][10bytes]</li>
+<li>IPv4 : [MAC][IP][DAta]</li>
+<li>[A-&gt;B]이 없음(mac, ip사이에) 32bit가 없어짐</li>
+<li>[IP] : 8bytes</li>
+<li>MAC : B&lt;-A</li>
+<li>IP : 8</li>
+<li>data : 10</li>
+</ul></li>
+
+<li><p>2) A-&gt;B</p>
+
+<ul>
+<li>100bytes</li>
+<li>[ip][0 ~    50][51 ~~ 100]</li>
+<li>fragmentation
+
+<ul>
+<li>각각의 패킷에 ID와 변위(offset)정보가 들어간다.</li>
+<li>여기서 ID는 서로 같다</li>
+</ul></li>
+</ul></li>
+
+<li><p>[MAC][A-&gt;B][id][8byte | ~~~~    ]</p>
+
+<ul>
+<li>ID가 같다. offset 0~50</li>
+</ul></li>
+
+<li><p>[MAC][A-&gt;B][id][8 |  ~~   ]</p>
+
+<ul>
+<li>ID가 같다. offset 50 ~00
+** 여기서도 [A-&gt;B] 없어도 된다. 압축 가능</li>
+</ul></li>
+
+<li><p>3) A-&gt;B-&gt;C : 여기서는 Header가 있어야 한다.</p></li>
+
+<li><p>위 패킷에서 8byte 정보를 1bytes로 줄이는거</p></li>
+</ul>
+
+<hr />
+
+<p><strong>중요 시험문제</strong></p>
+
+<h5 id="ipv6-neighbor-discovery">IPv6 Neighbor Discovery</h5>
+
+<blockquote>
+<p>ARP : IP주소 -&gt; MAC주소로 변환
+IPv6에서는 ARP가 존재하지 않음(ARP가 ND와 합쳐짐)</p>
+</blockquote>
+
+<ul>
+<li>Host의 전원이 켜졌을 때
+
+<ul>
+<li>1) RS(Router Solicitation) : Host가 Router가 어딨냐고 물어봄</li>
+<li>2) RA(Router Advertisement) : 라우터가 응답함
+
+<ul>
+<li>Host는 Netowrk Prefix를 얻어옴(주소)</li>
+</ul></li>
+<li>3) DAD(Duplicate Address Detection)</li>
+<li>4) NS(Neighbor Solicitaion) : My address. 네트워크에 내 주소를 뿌림(내 주소를 누가 쓰고있는지 확인하기위해)
+
+<ul>
+<li>주소가 중복된다면 NA(Neighbor Address)를 받음(없어야 정상임)</li>
+</ul></li>
+</ul></li>
+<li><strong>4가지의 ICMP 메세지 : RS, RA, NS, NA</strong></li>
+<li>Stateless AA</li>
+</ul>
+
+<h5 id="dhcp">DHCP</h5>
+
+<ul>
+<li>가장 많이 쓰임</li>
+<li>1) RS</li>
+<li>2) RA</li>
+<li>3) DHCP Requeset 라우터가 DHCP Server에 Request</li>
+<li>4) DHCP Reply : 서버로부터 IP를 받아옴</li>
+<li>DHCP는 <strong>Stateful AA(Stateful Address Auto Configuration)</strong>
+
+<ul>
+<li>IPv6 ND는 중복을 각자가 감지하지만 DHCP는 서버가 중복을 처리함</li>
+</ul></li>
+</ul>
+
+<p>DBM, SNR, Channel Scheduling, Mesh Header, ND 용어 무엇인지</p>
+
+<h5 id="6lowpan-nd">6lowpan ND</h5>
+
+<ul>
+<li>IPv6 ND는 DHCP를 커버하기 어려움</li>
+<li>A -&gt; B -&gt; C -&gt; D(Router)
+
+<ul>
+<li>1)A -&gt; B : RS RA 과정을 거침</li>
+<li>2) A -&gt; B : NS</li>
+<li>3) B -&gt; Router : Soft Cache (DB에 아이피를 저장하는 형태, 하지만 시간이 지나면 expire)</li>
+<li>4) Router -&gt; B : Unicast(IP정보를 B에게 Unicast로 전달)</li>
+<li>5) B-&gt;A : NA</li>
+</ul></li>
+</ul>
+
+                </section>
+            </article>
+
+            
+                <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fnjir.github.io%2fposts%2fembedded-software07%2f - %ec%9e%84%eb%b2%a0%eb%94%94%eb%93%9c%20%ec%86%8c%ed%94%84%ed%8a%b8%ec%9b%a8%ec%96%b4%20-%206Lowpan%20Layer "><span class="icon-twitter"> tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+
+            
+
+            
+                <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'tak90'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.facebook.com/jinpcbang">
+        <i class="fa fa-facebook-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.github.com/njir">
+        <i class="fa fa-github-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://linkedin.com/in/hyungtak">
+        <i class="fa fa-linkedin-square"></i>
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2018 <i class="fa fa-heart" aria-hidden="true"></i> Tak
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://njir.github.io/js/jquery-3.3.1.min.js"></script>
+<script src="https://njir.github.io/js/main.js"></script>
+<script src="https://njir.github.io/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-46214266-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
+    </body>
+</html>

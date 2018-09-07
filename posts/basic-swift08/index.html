@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		 
+			
+  
+    <meta name="twitter:card" content="summary"/>
+    
+      <meta name="twitter:image" content="https://njir.github.io/images/avatar.png" />
+    
+  
+  
+  <meta name="twitter:title" content="Swift08 - 구조체"/>
+  <meta name="twitter:description" content="T아카데미 Swift1.2 강좌 정리"/>
+  
+  
+  
+  
+    <meta name="twitter:creator" content="@Tak"/>
+  
+
+
+
+		
+		<meta name="author" content="Tak">
+		<meta name="description" content="DevNote">
+		<meta name="generator" content="Hugo 0.48" />
+		<title>Swift08 - 구조체 &middot; DevNote</title>
+		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
+		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
+		<link rel="stylesheet" href="https://njir.github.io/css/highlight.css">
+
+		
+		<link rel="stylesheet" href="https://njir.github.io/css/font-awesome.min.css">
+		
+
+		
+		<link href="https://njir.github.io/index.xml" rel="alternate" type="application/rss+xml" title="DevNote" />
+		
+
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://njir.github.io/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://njir.github.io/posts'>Archive</a>
+	<a href='https://njir.github.io/tags'>Tags</a>
+	<a href='https://njir.github.io/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://njir.github.io/index.xml">Subscribe</a>
+	
+</nav>
+
+
+        <section id="wrapper" class="post">
+            <article>
+                <header>
+                    <h1>
+                        Swift08 - 구조체
+                    </h1>
+                    <h2 class="headline">
+                    Mar 19, 2015 20:50
+                    · 760 words
+                    · 2 minute read
+                      <span class="tags">
+                      
+                      
+                          
+                              <a href="https://njir.github.io/tags/swift">swift</a>
+                          
+                      
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                  
+                    <div id="toc">
+                      <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#구조체">구조체</a></li>
+<li><a href="#enum">Enum</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                  
+                
+                <section id="post-body">
+                    
+
+<h5 id="구조체">구조체</h5>
+
+<ul>
+<li>클래스처럼 프로퍼티와 함수를 선언</li>
+<li>클래스와 구조체
+
+<ul>
+<li>같은점 : 데이터, 행위</li>
+<li>다른점 : 상속, 레퍼런스vs밸류, ARC(레퍼런스 타입만)</li>
+</ul></li>
+<li>구조체 정의</li>
+</ul>
+
+<pre><code class="language-swift">////// 1
+struct Point {
+    var x = 0
+    var y = 0
+    
+    func description() -&gt; String {
+        return &quot;point : \(x), \(y)&quot;
+    }
+}
+
+var p1 = Point()
+p1.x = 10
+p1.y = 20
+var p2 = Point(x : 3, y : 5)
+
+//// 2
+struct MyStruct {
+    var var1 : Int = 0
+}
+class MyClass {
+    var var1 : Int = 0
+}
+var struct1 = MyStruct()
+var struct2 = MyStruct(var1 : 10)
+var obj = MyClass()
+</code></pre>
+
+<ul>
+<li>구조체도 객체 생성되면 - 초기화 필요</li>
+<li>초기화 메소드 작성
+
+<ul>
+<li>구조체도 클래스와 마찬가지로 초기화 과정 필요</li>
+<li>상속 없으므로 부모 클래스의 초기화 위임 없음</li>
+<li>convenience initializer : convenience 생략</li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift"> struct Point {
+    var x = 0
+    var y = 0
+    
+    init(){
+        self.x = 0
+        self.y = 0
+    }
+    
+    func description() -&gt; String {
+        return &quot;point : \(x), \(y)&quot;
+    }
+}
+</code></pre>
+
+<ul>
+<li>정적 메소드와 프로퍼티 : static
+
+<ul>
+<li>객체를 생성하지 않고 사용하는 메소드</li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">struct Point {
+    var x = 0
+    var y = 0
+    
+    static func newPoint(x : Int, y : Int) -&gt; Point {
+        var newObj = Point(x: x, y: y)
+        return newObj
+    }
+  }
+</code></pre>
+
+<ul>
+<li>구조체의 데이터
+
+<ul>
+<li>초기화 메소드에서 설정 가능</li>
+<li>구조체 외부에서 설정 가능</li>
+<li><strong>구초제 내부에서 설정 불가</strong>
+
+<ul>
+<li>mutating 으로 내부에서 데이터 설정
+<br /></li>
+</ul></li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">struct MyStruct {
+    var var1 : Int = 0
+    var var2 : String
+    init() {
+        self.init(str : &quot;Hello&quot;)
+    }
+    init(str : String){
+        var2 = str
+    }
+    static var var3 = &quot;Struct&quot;
+    mutating func increase(){
+        var1++
+    }
+}
+
+class MyClass {
+    var var1 : Int = 0
+    var var2 : String
+    convenience  init() {
+        self.init(str : &quot;Hello&quot;)
+    }
+    init(str : String){
+        var2 = str
+    }
+}
+
+var struct1 = MyStruct()
+var struct3 = struct1
+struct1.var1 = 10   //var1 : 10, var2 : &quot;Hello&quot;
+struct3 //var1 : 0, var2 : &quot;Hello&quot;
+
+var obj = MyClass()
+</code></pre>
+
+<ul>
+<li>struct, array, dictionary .. 밸류 타입</li>
+</ul>
+
+<pre><code class="language-swift">var array = [1,2,3]
+var array2 = array
+array += [4] //[1, 2, 3, 4]
+array2          // [1,2,3]
+</code></pre>
+
+<h5 id="enum">Enum</h5>
+
+<ul>
+<li>열거형(Enumeration Type)</li>
+<li>옵션 중 하나의 값</li>
+<li>타입이 있는 Enum은 case로 할당된 값으로 다룰 수 있다</li>
+<li>범위 벗어나면 nil -&gt; 옵셔널</li>
+</ul>
+
+<pre><code class="language-swift">var ael = Pet(rawValue : 0)!
+ael.rawValue
+</code></pre>
+
+<ul>
+<li>계산프로퍼티, 메소드 사용 가능
+
+<ul>
+<li>저장 프로퍼티는 불가능</li>
+</ul></li>
+<li>Association</li>
+</ul>
+
+<pre><code class="language-swift">enum Day : Int {
+    case AM
+    case PM
+    func desc() -&gt; String{
+        switch self{
+        case .AM :
+            return &quot;오전&quot;
+        case .PM :
+            return &quot;오후&quot;
+        }
+    }
+}
+
+Day.AM
+Day.PM
+let e1 = Day(rawValue : 0)
+Day.AM.rawValue
+Day.AM.desc()   //&quot;오전&quot;
+</code></pre>
+
+<ul>
+<li>프로퍼티와 메소드</li>
+</ul>
+
+<pre><code class="language-swift">enum Pet : Int {
+    case Cat = 0
+    case Dog
+    case Other
+    
+    var name : String{
+        switch self {
+        case .Cat:
+            return &quot;고양이&quot;
+        case .Dog :
+            return &quot;개&quot;
+        default:
+            return &quot;기타&quot;
+        }
+    }
+    
+    func description() -&gt; String {
+        return self.name
+    }
+}
+
+var raz = Pet.Cat
+raz.name    //고양이
+raz.description()  //고양이
+</code></pre>
+
+                </section>
+            </article>
+
+            
+                <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fnjir.github.io%2fposts%2fbasic-swift08%2f - Swift08%20-%20%ea%b5%ac%ec%a1%b0%ec%b2%b4 "><span class="icon-twitter"> tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+
+            
+
+            
+                <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'tak90'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.facebook.com/jinpcbang">
+        <i class="fa fa-facebook-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.github.com/njir">
+        <i class="fa fa-github-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://linkedin.com/in/hyungtak">
+        <i class="fa fa-linkedin-square"></i>
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2018 <i class="fa fa-heart" aria-hidden="true"></i> Tak
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://njir.github.io/js/jquery-3.3.1.min.js"></script>
+<script src="https://njir.github.io/js/main.js"></script>
+<script src="https://njir.github.io/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-46214266-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
+    </body>
+</html>

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		 
+			
+  
+    <meta name="twitter:card" content="summary"/>
+    
+      <meta name="twitter:image" content="https://njir.github.io/images/avatar.png" />
+    
+  
+  
+  <meta name="twitter:title" content="Swift12 - 옵셔널 체인"/>
+  <meta name="twitter:description" content="T아카데미 Swift1.2 강좌 정리"/>
+  
+  
+  
+  
+    <meta name="twitter:creator" content="@Tak"/>
+  
+
+
+
+		
+		<meta name="author" content="Tak">
+		<meta name="description" content="DevNote">
+		<meta name="generator" content="Hugo 0.48" />
+		<title>Swift12 - 옵셔널 체인 &middot; DevNote</title>
+		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
+		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
+		<link rel="stylesheet" href="https://njir.github.io/css/highlight.css">
+
+		
+		<link rel="stylesheet" href="https://njir.github.io/css/font-awesome.min.css">
+		
+
+		
+		<link href="https://njir.github.io/index.xml" rel="alternate" type="application/rss+xml" title="DevNote" />
+		
+
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://njir.github.io/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://njir.github.io/posts'>Archive</a>
+	<a href='https://njir.github.io/tags'>Tags</a>
+	<a href='https://njir.github.io/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://njir.github.io/index.xml">Subscribe</a>
+	
+</nav>
+
+
+        <section id="wrapper" class="post">
+            <article>
+                <header>
+                    <h1>
+                        Swift12 - 옵셔널 체인
+                    </h1>
+                    <h2 class="headline">
+                    Mar 19, 2015 22:02
+                    · 544 words
+                    · 2 minute read
+                      <span class="tags">
+                      
+                      
+                          
+                              <a href="https://njir.github.io/tags/swift">swift</a>
+                          
+                      
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                  
+                    <div id="toc">
+                      <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#옵셔널-체인">옵셔널 체인</a></li>
+<li><a href="#타입-체크와-변환">타입 체크와 변환</a></li>
+<li><a href="#타입-알리아스">타입 알리아스</a></li>
+<li><a href="#제네릭">제네릭</a></li>
+<li><a href="#접근-조절">접근 조절</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                  
+                
+                <section id="post-body">
+                    
+
+<h5 id="옵셔널-체인">옵셔널 체인</h5>
+
+<ul>
+<li>옵셔널로 선언된 변수나 프로퍼티에 접근하려면 if let을 이용한 옵셔널 바인딩을 이용하거나 강제 어래핑을 한다.</li>
+<li>옵셔널 채인은 nil로 인한 에러 없이 옵셔널 타입 사용 가능</li>
+<li>옵셔널 프로퍼티에 ?를 이용해서 접근하는 방식</li>
+</ul>
+
+<pre><code class="language-swift">let number3 = john.phone?.number
+</code></pre>
+
+<h5 id="타입-체크와-변환">타입 체크와 변환</h5>
+
+<ul>
+<li>타입 체크 : is</li>
+<li>타입 변환 : as</li>
+</ul>
+
+<pre><code class="language-swift">let pets : [Animal] = [Dog(&quot;스누피&quot;), Cat(&quot;이엘&quot;), Cat(&quot;라즈&quot;)]
+pets[0] is Cat
+pets[1] is Cat
+//
+let myDog : Dog = pets[0] as Dog
+</code></pre>
+
+<ul>
+<li>타입 체크가 필요한 상황
+
+<ul>
+<li>상속</li>
+<li>AnyObject : 모든 오브젝트</li>
+<li>Any : 모든 타입
+
+<ul>
+<li>타입별 메소드, 프로퍼티 사용 불가 -&gt; 타입 캐스팅 필요
+<br /></li>
+</ul></li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">for one in anyArray{
+	if one is String{
+    	println(&quot;문자열 \(one)&quot;)
+    }
+    else if one is Int {
+    	var i = one as Int
+        println(&quot;다음 숫자 \(i+1)&quot;)
+    }
+}
+</code></pre>
+
+<h5 id="타입-알리아스">타입 알리아스</h5>
+
+<ul>
+<li>타입에 이름주기</li>
+</ul>
+
+<pre><code class="language-swift"> typealias Century = Int
+ var thisEra : Century
+ thisEra = 21
+</code></pre>
+
+<ul>
+<li>클로저는 타입 알리아스</li>
+</ul>
+
+<pre><code class="language-swift">typealias ResultHandler = (Int)-&gt;Void
+</code></pre>
+
+<h5 id="제네릭">제네릭</h5>
+
+<ul>
+<li>타입에 대한 엄격함</li>
+<li>타입별로 같은 기능</li>
+<li>제네릭 프로그래밍
+
+<ul>
+<li>데이터의 타입에 의존하지 않고 작성하는 프로그래밍 방식</li>
+</ul></li>
+<li>두 종류의 타입을 사용하는 예 : 딕셔너리</li>
+</ul>
+
+<pre><code class="language-swift"> struct Array&lt;T&gt; {
+ 	subscript (index : Int) -&gt; T
+    
+    var first : T? { get}
+    var last : T? { get }
+    mutating func append(newElement : T)
+}
+</code></pre>
+
+<h5 id="접근-조절">접근 조절</h5>
+
+<ul>
+<li>클래스 기본 값 : internal</li>
+<li>프로퍼티, 메소드 기본값
+
+<ul>
+<li>public 클래스 : internal 프로퍼티, 메소드</li>
+<li>internal 클래스 : internal 프로퍼티, 메소드</li>
+<li>private 클래스 : private 프로퍼티, 메소드</li>
+</ul></li>
+<li>클래스의 제어 레벨을 넘지 못함</li>
+</ul>
+
+<pre><code class="language-swift"> public class PublicClass{
+ 	public func publicMethod(){
+    	println(&quot;public&quot;)
+    }
+    internal func internalMethod(){
+    	println(&quot;internal&quot;)
+    }
+    private func privateMethod(){
+    	println(&quot;private&quot;)
+    }
+}
+</code></pre>
+
+                </section>
+            </article>
+
+            
+                <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fnjir.github.io%2fposts%2fbasic-swift12%2f - Swift12%20-%20%ec%98%b5%ec%85%94%eb%84%90%20%ec%b2%b4%ec%9d%b8 "><span class="icon-twitter"> tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+
+            
+
+            
+                <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'tak90'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.facebook.com/jinpcbang">
+        <i class="fa fa-facebook-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.github.com/njir">
+        <i class="fa fa-github-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://linkedin.com/in/hyungtak">
+        <i class="fa fa-linkedin-square"></i>
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2018 <i class="fa fa-heart" aria-hidden="true"></i> Tak
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://njir.github.io/js/jquery-3.3.1.min.js"></script>
+<script src="https://njir.github.io/js/main.js"></script>
+<script src="https://njir.github.io/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-46214266-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
+    </body>
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		 
+			
+  
+    <meta name="twitter:card" content="summary"/>
+    
+      <meta name="twitter:image" content="https://njir.github.io/images/avatar.png" />
+    
+  
+  
+  <meta name="twitter:title" content="Advanced Java05 - Exceptions"/>
+  <meta name="twitter:description" content="온라인 T아카데미 강의 Advanced Java 정리"/>
+  
+  
+  
+  
+    <meta name="twitter:creator" content="@Tak"/>
+  
+
+
+
+		
+		<meta name="author" content="Tak">
+		<meta name="description" content="DevNote">
+		<meta name="generator" content="Hugo 0.48" />
+		<title>Advanced Java05 - Exceptions &middot; DevNote</title>
+		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
+		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
+		<link rel="stylesheet" href="https://njir.github.io/css/highlight.css">
+
+		
+		<link rel="stylesheet" href="https://njir.github.io/css/font-awesome.min.css">
+		
+
+		
+		<link href="https://njir.github.io/index.xml" rel="alternate" type="application/rss+xml" title="DevNote" />
+		
+
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://njir.github.io/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://njir.github.io/posts'>Archive</a>
+	<a href='https://njir.github.io/tags'>Tags</a>
+	<a href='https://njir.github.io/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://njir.github.io/index.xml">Subscribe</a>
+	
+</nav>
+
+
+        <section id="wrapper" class="post">
+            <article>
+                <header>
+                    <h1>
+                        Advanced Java05 - Exceptions
+                    </h1>
+                    <h2 class="headline">
+                    Mar 7, 2015 00:00
+                    · 616 words
+                    · 2 minute read
+                      <span class="tags">
+                      
+                      
+                          
+                              <a href="https://njir.github.io/tags/java">java</a>
+                          
+                      
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                  
+                    <div id="toc">
+                      <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#java의-error-처리">Java의 Error 처리</a></li>
+<li><a href="#the-try-and-catch-statements">The try and catch Statements</a></li>
+<li><a href="#call-stack-mechanism">Call Stack Mechanism</a></li>
+<li><a href="#runtime-exception">Runtime Exception</a></li>
+<li><a href="#method-overriding-exception">Method Overriding Exception</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                  
+                
+                <section id="post-body">
+                    
+
+<h4 id="java의-error-처리">Java의 Error 처리</h4>
+
+<ul>
+<li>자바는 Error 또는 Exception 상황에 Throwable이라는 객체를 생성해서 던짐</li>
+<li>Throwable : Exception, Error로 구성</li>
+<li>Exception은 개발자가 처리할 수 있는, recoverable한 에러</li>
+<li>Runtime Exception, IOException, Null Point 등 다양한 Exception이 있음</li>
+<li>Error : 코드상에서 처리할 방법이 없는 Error</li>
+<li>Throwable은 Error와 RuntimeException을 제외하고 명시적으로 throws하거나 try catch 해줘야함</li>
+</ul>
+
+<h4 id="the-try-and-catch-statements">The try and catch Statements</h4>
+
+<pre><code class="language-java">try{
+	//Exception이 발생
+}
+catch(MyExceptionType myExcept){
+	// MyExceptionType의 exception이 발생하면 실행
+	// 위쪽에 있는 익셉션이 더 작은 sub exception 이어야함
+}	
+catch(Exception otherExpect){
+	//상위 클래스로서 일반적인 Exception의 경우 처리되는 부분
+}finally{
+	//정리할 리소스들 처리 등
+	//try, catch 어디를 가든 finally 코드블럭 처리해줌
+}
+</code></pre>
+
+<h4 id="call-stack-mechanism">Call Stack Mechanism</h4>
+
+<ul>
+<li>예외가 발생하고 처리하는 블록이 없을 경우 해당 코드를 호출한 메소드로 거슬러 올라간다.</li>
+<li>main()까지 올라가서도 없으면 프로그램 종료</li>
+</ul>
+
+<h4 id="runtime-exception">Runtime Exception</h4>
+
+<ul>
+<li>ArithmeticException : 0으로 나누는 경우 등</li>
+<li>NullPointerException : 객체를 할당하지 않고 그 변수에 접근</li>
+<li>ArrayIndexOutOfBoundsExceptio : 배열 잘못 접근</li>
+<li>NegativeArraySizeException</li>
+<li>SecurityException : Applet에서 많이 발생
+&gt; <strong>Tips:</strong><br />
+Error, RuntimeException은 명시적으로 try~catch 처리하지 않는다.</li>
+</ul>
+
+<h4 id="method-overriding-exception">Method Overriding Exception</h4>
+
+<ul>
+<li>오버라이딩한 메소드에서는 상위 메소드에서 던져진 예외나 또는 그 예외의 하위 클래스 예외만을 던질 수 있다.</li>
+</ul>
+
+<pre><code class="language-java">public class MyException extends IOException{
+	public MyException(){
+		super();
+	}
+	public MYException(..){..}
+	public MYException(..){..}
+	public MYException(..){..}
+	..
+}
+</code></pre>
+
+<pre><code class="language-java">public class MyCalClass{
+	public int add(int a, int b)) throws MyException{
+	if(a&lt;0 || b &lt;0){
+		throw new MyException(&quot;negative value a or b&quot;);
+		}
+		return (a+b);
+	}
+	public void onCreate(){
+		try {
+			int v = add(10,-5);
+		} catch(MyException e){
+			e.printStackTrace();
+		}
+	}
+}
+</code></pre>
+
+<blockquote>
+<p><strong>Tips:</strong><br />
+자바에서는 에러처리를 할 때, 코드상에서 발생하는 에러 같은 경우 리턴값으로 처리하지 말 것</p>
+</blockquote>
+
+                </section>
+            </article>
+
+            
+                <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fnjir.github.io%2fposts%2fadvanced-java05%2f - Advanced%20Java05%20-%20Exceptions "><span class="icon-twitter"> tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+
+            
+
+            
+                <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'tak90'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.facebook.com/jinpcbang">
+        <i class="fa fa-facebook-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.github.com/njir">
+        <i class="fa fa-github-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://linkedin.com/in/hyungtak">
+        <i class="fa fa-linkedin-square"></i>
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2018 <i class="fa fa-heart" aria-hidden="true"></i> Tak
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://njir.github.io/js/jquery-3.3.1.min.js"></script>
+<script src="https://njir.github.io/js/main.js"></script>
+<script src="https://njir.github.io/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-46214266-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
+    </body>
+</html>

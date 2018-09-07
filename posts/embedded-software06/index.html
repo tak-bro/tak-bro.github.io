@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		 
+			
+  
+    <meta name="twitter:card" content="summary"/>
+    
+      <meta name="twitter:image" content="https://njir.github.io/images/avatar.png" />
+    
+  
+  
+  <meta name="twitter:title" content="임베디드 소프트웨어 - Connecting to the Internet 02"/>
+  <meta name="twitter:description" content="아주대학교 임베디드 소프트웨어 수업 정리"/>
+  
+  
+  
+  
+    <meta name="twitter:creator" content="@Tak"/>
+  
+
+
+
+		
+		<meta name="author" content="Tak">
+		<meta name="description" content="DevNote">
+		<meta name="generator" content="Hugo 0.48" />
+		<title>임베디드 소프트웨어 - Connecting to the Internet 02 &middot; DevNote</title>
+		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
+		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
+		<link rel="stylesheet" href="https://njir.github.io/css/highlight.css">
+
+		
+		<link rel="stylesheet" href="https://njir.github.io/css/font-awesome.min.css">
+		
+
+		
+		<link href="https://njir.github.io/index.xml" rel="alternate" type="application/rss+xml" title="DevNote" />
+		
+
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://njir.github.io/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://njir.github.io/posts'>Archive</a>
+	<a href='https://njir.github.io/tags'>Tags</a>
+	<a href='https://njir.github.io/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://njir.github.io/index.xml">Subscribe</a>
+	
+</nav>
+
+
+        <section id="wrapper" class="post">
+            <article>
+                <header>
+                    <h1>
+                        임베디드 소프트웨어 - Connecting to the Internet 02
+                    </h1>
+                    <h2 class="headline">
+                    Apr 7, 2015 17:12
+                    · 846 words
+                    · 2 minute read
+                      <span class="tags">
+                      
+                      
+                          
+                              <a href="https://njir.github.io/tags/embedded">embedded</a>
+                          
+                      
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                  
+                    <div id="toc">
+                      <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#path-mtu-discovery">Path MTU Discovery</a></li>
+<li><a href="#6lowpan-adaptation-layer-2-5계층-shim-layer">6LoWPAN = Adaptation Layer(2.5계층, Shim Layer)</a></li>
+<li><a href="#router-over-ip">Router Over IP</a></li>
+<li><a href="#mesh-under-ip">Mesh Under IP</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                  
+                
+                <section id="post-body">
+                    
+
+<h5 id="path-mtu-discovery">Path MTU Discovery</h5>
+
+<ul>
+<li>Path MTU는 전체 구간의 <strong>최소값</strong>임</li>
+<li>IPv6는 중간에 짜르는게 안됨(Fragmentation X)</li>
+<li>IPv6 : 128bit = 16byte(주소) -&gt; 40byte(16byte SRC + 16byte DST + 8byte)</li>
+</ul>
+
+<blockquote>
+<p><strong><em>why?</em></strong>
+- Packet header가 4배나 늘어남 -&gt; 속도 느려짐
+- 라우터의 유연한 기능은 버리자</p>
+</blockquote>
+
+<ul>
+<li>IPv6는 전송을 못하면 ICMP Error를 전송(B-&gt;A)
+
+<ul>
+<li>A -&gt; B -&gt; <strong>(IoT구간 MTU=128byte) C -&gt; D</strong>
+
+<ul>
+<li>A: MTU=100k</li>
+<li>B: MTU=50k</li>
+<li>C: MTU=128byte(실제로)</li>
+</ul></li>
+<li>ICMP Error(PTM)</li>
+<li>B-&gt;C로 보낼 때 <strong>C는 MTU를 1.2K라고 보냄(프로토콜 상)</strong></li>
+<li>결국 C는 1.2K 패킷을 받게 됨</li>
+<li>이 패킷을 1/10로 나눠야함 -&gt; 6LoWPAN</li>
+</ul></li>
+</ul>
+
+<h5 id="6lowpan-adaptation-layer-2-5계층-shim-layer">6LoWPAN = Adaptation Layer(2.5계층, Shim Layer)</h5>
+
+<ul>
+<li>Error가 크고, 속도가 느리고, <strong>Low Power Consumption</strong>(<strong><em>원인</em></strong>)-&gt; MTU가 128byte로 작아짐(<strong><em>결과</em></strong>)</li>
+</ul>
+
+<blockquote>
+<p><strong>Adaptation Layer가 필요한 이유:</strong></p>
+</blockquote>
+
+<ul>
+<li><strong>Fragmentation &amp; Reassemble</strong>(필수)</li>
+<li>Header Compression
+
+<ul>
+<li>IPv6의 헤더 크기를 줄임(꼭 안해도 됨)</li>
+</ul></li>
+</ul>
+
+<p><img src="/images/packet.png" alt="" /></p>
+
+<ul>
+<li>FCF부터 FChk까지가 127bytes</li>
+<li>Len(1bytes)까지 포함해서 128bytes</li>
+<li>SFD : 패킷 관련 내용 시작</li>
+<li>Dst16, Src16 : 맥주소 (Dst가 중요함. 내가 듣고 있다가 DST가 ‘나’이면 그 이후부터 들으면 됨)
+
+<ul>
+<li>그 이후부터 데이터임
+&gt; <strong>Mac주소의 사이즈</strong> : EUI 48, 64bit(대세는 64bit가 되어감)
+&gt;</li>
+</ul></li>
+</ul>
+
+<h5 id="router-over-ip">Router Over IP</h5>
+
+<p><img src="/images/routeoverip.png" alt="Router Over IP" /></p>
+
+<ul>
+<li>IP계층의 헤더를 보고 라우팅함.</li>
+<li>중간 라우터 오버헤드 높음</li>
+<li>속도 느림(중간에 매번 합쳐지고 다시 쪼개고 그러니까)</li>
+<li>메모리 많이 있어야함</li>
+<li>미국의 IETF의 표준</li>
+<li>ex) 첫번째 그림에서 파란색 부분을 쪼개야 할 때(A-&gt;B)
+
+<ul>
+<li>1) B&lt;-A [  A-&gt;D | Data1  ]</li>
+<li>2) B&lt;-A [ &mdash;-  Data2 &mdash;-    ]</li>
+<li>3) B&lt;-A [ &mdash;-  Data3 &mdash;-    ]
+
+<ul>
+<li>2), 3)은 어디로 보낼지 헤더 정보가 없다.</li>
+<li>해결방법 : 쪼개진 패킷은 각각의 ID가 있는데, 중간 라우터마다 다시 합치고 쪼갠다(Fragmentation &amp; Reassemble)
+<br />
+<br /></li>
+</ul></li>
+</ul></li>
+</ul>
+
+<h5 id="mesh-under-ip">Mesh Under IP</h5>
+
+<ul>
+<li>중간 라우터에서 합쳐지지 않고 따로따로 감</li>
+<li>도착지에서 합쳐지기 때문에 중간에 유실되면 확인방법 없음</li>
+<li>속도 빠름, 중간 라우터에서 메모리 필요 없음</li>
+<li>유럽의 ISO, IEC 는 Mesh Under로 표준</li>
+<li>ex) A-&gt;B로 보낼 때 쪼개긴 하지만 A-&gt;D 정보를 쪼개진 패킷의 Adaptation Layer에 각각 넣음
+
+<ul>
+<li>[A-&gt;D][Data1]</li>
+<li>[A-&gt;D][Data2]</li>
+<li>[A-&gt;D][Data3]
+
+<ul>
+<li>경로 정보가 각각의 패킷에 담겨있다.</li>
+<li><strong>앞으로 뺀 헤더([A-&gt;B])를 Mesh Header =  MultiHop Header 라 부른다.</strong></li>
+<li>각각의 독립적인 패킷이 되버림</li>
+</ul></li>
+</ul></li>
+</ul>
+
+                </section>
+            </article>
+
+            
+                <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fnjir.github.io%2fposts%2fembedded-software06%2f - %ec%9e%84%eb%b2%a0%eb%94%94%eb%93%9c%20%ec%86%8c%ed%94%84%ed%8a%b8%ec%9b%a8%ec%96%b4%20-%20Connecting%20to%20the%20Internet%2002 "><span class="icon-twitter"> tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+
+            
+
+            
+                <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'tak90'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.facebook.com/jinpcbang">
+        <i class="fa fa-facebook-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.github.com/njir">
+        <i class="fa fa-github-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://linkedin.com/in/hyungtak">
+        <i class="fa fa-linkedin-square"></i>
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2018 <i class="fa fa-heart" aria-hidden="true"></i> Tak
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://njir.github.io/js/jquery-3.3.1.min.js"></script>
+<script src="https://njir.github.io/js/main.js"></script>
+<script src="https://njir.github.io/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-46214266-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
+    </body>
+</html>

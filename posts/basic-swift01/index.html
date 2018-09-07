@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		 
+			
+  
+    <meta name="twitter:card" content="summary"/>
+    
+      <meta name="twitter:image" content="https://njir.github.io/images/avatar.png" />
+    
+  
+  
+  <meta name="twitter:title" content="Swift01 - 기본 문법과 타입"/>
+  <meta name="twitter:description" content="T아카데미 Swift1.2 강좌 정리"/>
+  
+  
+  
+  
+    <meta name="twitter:creator" content="@Tak"/>
+  
+
+
+
+		
+		<meta name="author" content="Tak">
+		<meta name="description" content="DevNote">
+		<meta name="generator" content="Hugo 0.48" />
+		<title>Swift01 - 기본 문법과 타입 &middot; DevNote</title>
+		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
+		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
+		<link rel="stylesheet" href="https://njir.github.io/css/highlight.css">
+
+		
+		<link rel="stylesheet" href="https://njir.github.io/css/font-awesome.min.css">
+		
+
+		
+		<link href="https://njir.github.io/index.xml" rel="alternate" type="application/rss+xml" title="DevNote" />
+		
+
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://njir.github.io/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://njir.github.io/posts'>Archive</a>
+	<a href='https://njir.github.io/tags'>Tags</a>
+	<a href='https://njir.github.io/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://njir.github.io/index.xml">Subscribe</a>
+	
+</nav>
+
+
+        <section id="wrapper" class="post">
+            <article>
+                <header>
+                    <h1>
+                        Swift01 - 기본 문법과 타입
+                    </h1>
+                    <h2 class="headline">
+                    Mar 19, 2015 00:00
+                    · 1661 words
+                    · 4 minute read
+                      <span class="tags">
+                      
+                      
+                          
+                              <a href="https://njir.github.io/tags/swift">swift</a>
+                          
+                      
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                  
+                    <div id="toc">
+                      <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#기본문법">기본문법</a>
+<ul>
+<li><a href="#튜플">튜플</a></li>
+<li><a href="#배열">배열</a></li>
+<li><a href="#딕셔너리">딕셔너리</a></li>
+<li><a href="#if문">if문</a></li>
+<li><a href="#switch문">switch문</a></li>
+<li><a href="#반복">반복</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                  
+                
+                <section id="post-body">
+                    
+
+<h4 id="기본문법">기본문법</h4>
+
+<ul>
+<li>별도의 main함수를 작성하지 않는다.</li>
+<li>main 소스 코드의 글로벌 영역의 코드에서 시작한다.</li>
+<li>main이 아닌 다른 소스 파일에는 함수나 타입을 선언하는 코드만 작성한다.</li>
+<li>세미콜론 생략 가능</li>
+<li>변수의 값을 출력하려면 역슬래쉬()와 괄호 이용</li>
+</ul>
+
+<pre><code class="language-swift">var str = &quot;hello&quot;
+println(&quot;\(str)&quot;)
+</code></pre>
+
+<ul>
+<li>연산자
+
+<ul>
+<li>다른 언어와 달리 나머지 연산은 실수에서 사용가능하다.</li>
+<li>3.5 % 2 // = 1.5</li>
+</ul></li>
+<li>범위 연산자
+
+<ul>
+<li>Closed Range(1&hellip;10) : 시작과 끝 모두 포함</li>
+<li>Half Closed Range(1..&lt;9) : 시작 포함, 종료값 포함X</li>
+</ul></li>
+<li>변수 선언
+
+<ul>
+<li>변수의 타입은 변수 이름 뒤에 콜론(:)을 이용</li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">var i = 1
+var f : Float = 1.1
+</code></pre>
+
+<ul>
+<li>변수의 타입이 정해지면 그 타입에 맞는 값을 입력해야함</li>
+<li>정수형으로 선언된 변수에 실수 값 대입하면 컴파일 에러</li>
+</ul>
+
+<pre><code class="language-swift">var i = 1
+i = 3.14 //Error
+</code></pre>
+
+<ul>
+<li>상수는 let을 이용해 선언</li>
+</ul>
+
+<pre><code class="language-swift">let constant = 234
+</code></pre>
+
+<ul>
+<li>데이터 타입
+
+<ul>
+<li>정수형 타입에 Int8, Int16, Int32, Int64 사용</li>
+<li>이들 모두는 서로 다른 타입임(섞어서 사용X)</li>
+<li>변환 함수 사용</li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">let var3 : Int16 = Int16(var1)
+</code></pre>
+
+<ul>
+<li>문자열
+
+<ul>
+<li>문자열(String)에 문자(Character)를 덧붙이는 연산자는 타입 에러 발생</li>
+</ul></li>
+</ul>
+
+<blockquote>
+<p>현재 버전에서 문자열 덧불일 때 6개 이상은 에러 발생</p>
+</blockquote>
+
+<pre><code class="language-swift">var str1 = &quot;\(1)&quot;+&quot;\(2)&quot;+&quot;\(3)&quot;+&quot;\(4)&quot;+&quot;\(5)&quot;
+var str2 = &quot;\(1)&quot;+&quot;\(2)&quot;+&quot;\(3)&quot;+&quot;\(4)&quot;+&quot;\(5)&quot;+&quot;\(6)&quot; // Error
+</code></pre>
+
+<ul>
+<li>문자열 길이
+
+<ul>
+<li>countElements(str)이라는 전역 함수</li>
+<li>버전에 따라 해당 함수명이 달라지고 있다.</li>
+</ul></li>
+</ul>
+
+<h5 id="튜플">튜플</h5>
+
+<ul>
+<li>괄호를 이용해서 여러 값을 하나로 묶은 것으로 다양한 타입의 값을 다룰 수 있다</li>
+</ul>
+
+<pre><code class="language-swift">var one = (1, &quot;asd&quot;, &quot;가나다&quot;)
+</code></pre>
+
+<ul>
+<li>튜플을 구성하는 각 항목마다 이름을 선언할 수 있다</li>
+</ul>
+
+<pre><code class="language-swift">let two = (num : 2, eng : &quot;two&quot;, kor : &quot;둘&quot;)
+// 이름으로 다음과 같이 접근 가능
+two.num // 2
+two.kor // &quot;둘&quot;
+</code></pre>
+
+<ul>
+<li>_(언더스코어)를 이용하면 값을 얻어오지 않음</li>
+</ul>
+
+<pre><code class="language-swift">let (num, _, _) = two
+num // 2
+</code></pre>
+
+<h5 id="배열">배열</h5>
+
+<ul>
+<li>다수의 데이터를 인덱스로 다루는 타입</li>
+<li>var로 선언된 배열 변수는 배열의 내용 변경 가능</li>
+<li>let으로 선언하면 내용 변경 불가(Immutable)</li>
+</ul>
+
+<pre><code class="language-swift">var intArray : [Int] = [1, 2, 3, 4, 5]
+let strArray = [&quot;A&quot;, &quot;B&quot;, &quot;c&quot;]
+</code></pre>
+
+<ul>
+<li><strong>아무 원소도 포함하지 않는 공백 배열을 만드려면 다음과 같이 선언해야함</strong></li>
+</ul>
+
+<pre><code class="language-swift">var emptyArray = [Int]()
+var emptyArray2 = [String]()
+</code></pre>
+
+<ul>
+<li>배열에 원소를 추가하려면 +연산자나 append 메소드 이용(마지막 인덱스에 추가)</li>
+</ul>
+
+<pre><code class="language-swift">var intArray : [Int] = [1,2,3]
+intArray += [4]
+intArray.append(5)
+
+// 특정 위치에 추가하려면 or 삭제
+func insert(newElement: T, atIndex : Int)
+func removeAtIndex(index : Int) -&gt; T
+</code></pre>
+
+<h5 id="딕셔너리">딕셔너리</h5>
+
+<ul>
+<li>Key-Value 방식으로 데이터 다루는 콜렉션 타입</li>
+<li>딕셔너리에 저장된 키는 유일해야 함</li>
+</ul>
+
+<pre><code class="language-swift">var dic1 : [String:Int] = [&quot;1월&quot; : 1, &quot;2월&quot; : 2, &quot;3월&quot; : 3]
+var dic2 = [&quot;1월&quot; : &quot;January&quot;, &quot;2월&quot; : &quot;February&quot;, &quot;3월&quot; : &quot;March&quot;]
+// 접근
+dic1[&quot;2월&quot;] // 2
+</code></pre>
+
+<ul>
+<li>항목을 추가하려면 저장되지 않은 키를 이용해서 값 설정</li>
+</ul>
+
+<pre><code class="language-swift">dic1[&quot;4월&quot;] = &quot;april&quot;
+</code></pre>
+
+<ul>
+<li>기존에 저장된 값을 이용해서 값을 입력하거나 updateValue 메소드를 이용하여 값 변경 가능</li>
+</ul>
+
+<pre><code class="language-swift">dic1[&quot;4월&quot;] = &quot;중간고사&quot;
+dic1.updateValue(&quot;계절의 여왕&quot;, forKey : &quot;5월&quot;)
+</code></pre>
+
+<ul>
+<li>삭제하려면 다음과 같이 사용</li>
+</ul>
+
+<pre><code class="language-swift">dic1.removeValueForKey(&quot;4월&quot;)
+dic1[&quot;3월&quot;] = nil
+</code></pre>
+
+<h5 id="if문">if문</h5>
+
+<ul>
+<li>if조건문에서 조건에는 반드시 부울 형태의 결과가 나타나도록 조건을 작성해야 한다.</li>
+<li>조건을 감싸는 괄호는 생략 가능</li>
+<li>바디의 중괄호는 생략 불가(한 줄이라도 괄호 써야함)</li>
+</ul>
+
+<pre><code class="language-swift">if 3 &gt; 3 {
+	println(&quot;3이 2보다 크다&quot;)
+}
+</code></pre>
+
+<h5 id="switch문">switch문</h5>
+
+<ul>
+<li>다른 언어와 좀 다르다</li>
+<li>정수 타입 외에도 다양한 타입의 값을 제어식으로 사용 가능</li>
+<li>제어식 조건에 맞는 첫 case를 하나만 실행하므로 break문장을 별도로 작성하지 않는다.</li>
+<li>switch에는 제어식의 모든 범위를 비교해야하므로 default를 작성해야한다.</li>
+<li>fallthrough는 조건에 맞는 case 실행 이후의 case도 비교</li>
+</ul>
+
+<pre><code class="language-swift">var someValue = 3
+switch soemValue {
+	case 1:
+		prinln(&quot;1&quot;)
+        fallthrough // 이후 case 도 비교
+    default:
+    	println(&quot;other&quot;)
+}
+</code></pre>
+
+<ul>
+<li>case에 문자열이나 튜플 등이 들어간 조건식을 작성할 수 있다.</li>
+<li>where를 이용해서 바인딩 조건을 추가로 작성 가능</li>
+</ul>
+
+<pre><code class="language-swift">var someValue = (3, 5)
+switch someValue {
+	case (1, 5) :
+    	println(&quot;1&quot;)
+    case (1...3 , 6..&lt;8):
+    	println(&quot;1~3, 6~7&quot;)
+    case (5, let y):
+    	println(&quot;5, \(y)&quot;)
+    case let(x,y) where x==y:
+    	println(&quot;x, y 동일한 값&quot;)
+    default:
+    	println(&quot;other&quot;)
+}
+</code></pre>
+
+<h5 id="반복">반복</h5>
+
+<ul>
+<li>for, while문 사용</li>
+<li>배열과 같은 콜렉션 타입인 경우 for-in 사용 가능</li>
+</ul>
+
+<pre><code class="language-swift">var str = &quot;hello&quot;
+for c in str {
+	println(&quot;\(c)&quot;)
+}
+</code></pre>
+
+<ul>
+<li>딕셔너리의 모든 원소를 순회하려면 튜플을 이용해서 for-in 이용</li>
+</ul>
+
+<pre><code class="language-swift">for (kor, eng) in dic1 {
+	println(&quot;Key : \(kor), Value : \(eng)&quot;)
+}
+</code></pre>
+
+                </section>
+            </article>
+
+            
+                <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fnjir.github.io%2fposts%2fbasic-swift01%2f - Swift01%20-%20%ea%b8%b0%eb%b3%b8%20%eb%ac%b8%eb%b2%95%ea%b3%bc%20%ed%83%80%ec%9e%85 "><span class="icon-twitter"> tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+
+            
+
+            
+                <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'tak90'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.facebook.com/jinpcbang">
+        <i class="fa fa-facebook-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.github.com/njir">
+        <i class="fa fa-github-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://linkedin.com/in/hyungtak">
+        <i class="fa fa-linkedin-square"></i>
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2018 <i class="fa fa-heart" aria-hidden="true"></i> Tak
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://njir.github.io/js/jquery-3.3.1.min.js"></script>
+<script src="https://njir.github.io/js/main.js"></script>
+<script src="https://njir.github.io/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-46214266-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
+    </body>
+</html>

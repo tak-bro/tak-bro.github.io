@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		 
+			
+  
+    <meta name="twitter:card" content="summary"/>
+    
+      <meta name="twitter:image" content="https://njir.github.io/images/avatar.png" />
+    
+  
+  
+  <meta name="twitter:title" content="Advanced Java 08 - Java API를 활용한 객체 활용 및 데이터 처리 기법"/>
+  <meta name="twitter:description" content="온라인 T아카데미 강의 Advanced Java 정리"/>
+  
+  
+  
+  
+    <meta name="twitter:creator" content="@Tak"/>
+  
+
+
+
+		
+		<meta name="author" content="Tak">
+		<meta name="description" content="DevNote">
+		<meta name="generator" content="Hugo 0.48" />
+		<title>Advanced Java 08 - Java API를 활용한 객체 활용 및 데이터 처리 기법 &middot; DevNote</title>
+		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
+		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
+		<link rel="stylesheet" href="https://njir.github.io/css/highlight.css">
+
+		
+		<link rel="stylesheet" href="https://njir.github.io/css/font-awesome.min.css">
+		
+
+		
+		<link href="https://njir.github.io/index.xml" rel="alternate" type="application/rss+xml" title="DevNote" />
+		
+
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://njir.github.io/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://njir.github.io/posts'>Archive</a>
+	<a href='https://njir.github.io/tags'>Tags</a>
+	<a href='https://njir.github.io/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://njir.github.io/index.xml">Subscribe</a>
+	
+</nav>
+
+
+        <section id="wrapper" class="post">
+            <article>
+                <header>
+                    <h1>
+                        Advanced Java 08 - Java API를 활용한 객체 활용 및 데이터 처리 기법
+                    </h1>
+                    <h2 class="headline">
+                    Mar 12, 2015 00:00
+                    · 617 words
+                    · 2 minute read
+                      <span class="tags">
+                      
+                      
+                          
+                              <a href="https://njir.github.io/tags/java">java</a>
+                          
+                      
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                  
+                    <div id="toc">
+                      <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#java-array">Java Array</a></li>
+<li><a href="#java-array-연산-java-util-arrays">Java Array 연산(java.util.Arrays)</a></li>
+<li><a href="#java-collection-framework">Java Collection Framework</a></li>
+<li><a href="#data-structure-algorithm">Data Structure/Algorithm</a></li>
+<li><a href="#java-collection-framework-구조">Java Collection Framework 구조</a></li>
+<li><a href="#java-util-colletion">java.util.Colletion</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                  
+                
+                <section id="post-body">
+                    
+
+<h4 id="java-array">Java Array</h4>
+
+<ul>
+<li>동일한 Type의 데이터를 여러 개 가질 때 사용하는 자료구조</li>
+<li>String [] stringArray; 변수</li>
+<li>Array의 객체 생성은 new String[size] 생성</li>
+<li>Array가 생성되었다고 Array에 들어가는 객체가 생성된 것은 아님(초기 null값)</li>
+</ul>
+
+<h4 id="java-array-연산-java-util-arrays">Java Array 연산(java.util.Arrays)</h4>
+
+<ul>
+<li>Array로부터 List 생성
+
+<ul>
+<li>asList(T&hellip; array)</li>
+</ul></li>
+<li>Array에서 검색, 정렬
+
+<ul>
+<li>binarySearch, sort</li>
+</ul></li>
+<li>Array 복사
+
+<ul>
+<li>copyOf, copyOfRange</li>
+</ul></li>
+<li>Array의 값 비교
+
+<ul>
+<li>deepEquals, equals</li>
+</ul></li>
+<li>Array에 값 채우기
+
+<ul>
+<li>fill</li>
+</ul></li>
+</ul>
+
+<pre><code class="language-java">public class MyData{
+	String name;
+    int age;
+    public MyData(String name, int age){
+    	this.name = name;
+    	this.age = age;
+    }
+}
+
+public class ArrayTest{
+	String[] dataArray;
+	String[] dataArray2 = {&quot;a&quot;, &quot;b&quot;, &quot;c&quot;};
+    String[] dataArray3;
+    
+    public void makeArray(){
+    	int size = 3;
+        dataArray = new String[size];
+        dataArray[0] = &quot;a&quot;;
+        dataArray[1] = &quot;b&quot;;
+        dataArray[2] = &quot;c&quot;;
+        int length = dataArray.length;
+        
+        dataArray3 = new String[]{&quot;a&quot;, &quot;b&quot;, &quot;c&quot;};
+        List&lt;String&gt; list = Array.asList(dataArray);
+        setString(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;);
+        Array.sort(dataArray, new Comparator&lt;String&gt;(){
+        	@Override
+            public int compare(String str1, String str2){
+            	return str1.compareTo(str2);
+            }
+        });
+    }
+    public void setString(String... strings){	//파라메터로 동일한 type의 array가 가변적으로 들어올때
+    	int length = strings.length;
+        for (int i=0; i&lt;length; i++){
+        	System.out.println(&quot;i : &quot; + i + &quot;, value : &quot; + strings[i]);
+        }
+    
+    }
+    
+    MyData[] myDataArray = {new MyData(&quot;a&quot;, 1), new MyData(&quot;b&quot;, 2), new MyData(&quot;c&quot;, 3)};
+}
+</code></pre>
+
+<h4 id="java-collection-framework">Java Collection Framework</h4>
+
+<ul>
+<li>자료의 집합 형태에 대한 표준적인 Framework을 정의한 인터페이스/유틸리티의 목록(데이터들의 묶음)
+
+<ul>
+<li>Collection : 데이터들을 하나씩 모은 것</li>
+<li>map : key, value 형식으로 key를 갖고 처리할 수 있는 데이터들의 집합</li>
+</ul></li>
+</ul>
+
+<h4 id="data-structure-algorithm">Data Structure/Algorithm</h4>
+
+<ul>
+<li>스택</li>
+<li>큐</li>
+<li>링크드 리스트</li>
+<li>해쉬 : key값을 이용해 해쉬테이블로 다이렉트 매핑 가능, 성능 때문에 사용</li>
+</ul>
+
+<h4 id="java-collection-framework-구조">Java Collection Framework 구조</h4>
+
+<ul>
+<li>Collection Interface</li>
+<li>Map Interface</li>
+<li>Iterator
+
+<ul>
+<li>콜렉션의 데이터들을 하나씩 반복적으로 참조할 때</li>
+</ul></li>
+</ul>
+
+<h4 id="java-util-colletion">java.util.Colletion</h4>
+
+<ul>
+<li>콜렉션 내에 adding, clearing, comparing, retaining와 같은 동작을 포함</li>
+<li>메소드 종류
+
+<ul>
+<li>add, addAll : 객체 더하기</li>
+<li>contains, containsAll, isEmpty, size : 내용 조사</li>
+<li>clear, remove, removeAll : 객체 제거</li>
+<li>toArry : 배열로 전환</li>
+<li>iterator : 반복자로 전환</li>
+</ul></li>
+<li>Collection의 연산(java.util.Colletions)
+
+<ul>
+<li>addAll(Collection&lt;? super T&gt; c, T&hellip; a)</li>
+<li>binarySearch, indexOfSubList, lastIndexOfSubList, sort, copy, nCopies</li>
+<li>max, min, frequency, reverse, rotate, shuffle, singleton, replaceAll, swap</li>
+<li>enumeration, list(Enumeration<T> enumeration)</li>
+</ul></li>
+</ul>
+
+                </section>
+            </article>
+
+            
+                <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fnjir.github.io%2fposts%2fadvanced-java07%2f - Advanced%20Java%2008%20-%20Java%20API%eb%a5%bc%20%ed%99%9c%ec%9a%a9%ed%95%9c%20%ea%b0%9d%ec%b2%b4%20%ed%99%9c%ec%9a%a9%20%eb%b0%8f%20%eb%8d%b0%ec%9d%b4%ed%84%b0%20%ec%b2%98%eb%a6%ac%20%ea%b8%b0%eb%b2%95 "><span class="icon-twitter"> tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+
+            
+
+            
+                <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'tak90'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.facebook.com/jinpcbang">
+        <i class="fa fa-facebook-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.github.com/njir">
+        <i class="fa fa-github-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://linkedin.com/in/hyungtak">
+        <i class="fa fa-linkedin-square"></i>
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2018 <i class="fa fa-heart" aria-hidden="true"></i> Tak
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://njir.github.io/js/jquery-3.3.1.min.js"></script>
+<script src="https://njir.github.io/js/main.js"></script>
+<script src="https://njir.github.io/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-46214266-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
+    </body>
+</html>

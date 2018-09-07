@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		 
+			
+  
+    <meta name="twitter:card" content="summary"/>
+    
+      <meta name="twitter:image" content="https://njir.github.io/images/avatar.png" />
+    
+  
+  
+  <meta name="twitter:title" content="Swift10 - 클로저"/>
+  <meta name="twitter:description" content="T아카데미 Swift1.2 강좌 정리"/>
+  
+  
+  
+  
+    <meta name="twitter:creator" content="@Tak"/>
+  
+
+
+
+		
+		<meta name="author" content="Tak">
+		<meta name="description" content="DevNote">
+		<meta name="generator" content="Hugo 0.48" />
+		<title>Swift10 - 클로저 &middot; DevNote</title>
+		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
+		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
+		<link rel="stylesheet" href="https://njir.github.io/css/highlight.css">
+
+		
+		<link rel="stylesheet" href="https://njir.github.io/css/font-awesome.min.css">
+		
+
+		
+		<link href="https://njir.github.io/index.xml" rel="alternate" type="application/rss+xml" title="DevNote" />
+		
+
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://njir.github.io/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://njir.github.io/posts'>Archive</a>
+	<a href='https://njir.github.io/tags'>Tags</a>
+	<a href='https://njir.github.io/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://njir.github.io/index.xml">Subscribe</a>
+	
+</nav>
+
+
+        <section id="wrapper" class="post">
+            <article>
+                <header>
+                    <h1>
+                        Swift10 - 클로저
+                    </h1>
+                    <h2 class="headline">
+                    Mar 19, 2015 21:55
+                    · 485 words
+                    · 1 minute read
+                      <span class="tags">
+                      
+                      
+                          
+                              <a href="https://njir.github.io/tags/swift">swift</a>
+                          
+                      
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                  
+                    <div id="toc">
+                      <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#클로저">클로저</a>
+<ul>
+<li><a href="#클로저-사용하기">클로저 사용하기</a></li>
+<li><a href="#클로저-사용">클로저 사용</a></li>
+<li><a href="#클로저-정의하기">클로저 정의하기</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                  
+                
+                <section id="post-body">
+                    
+
+<h4 id="클로저">클로저</h4>
+
+<ul>
+<li>메소드이자 객체</li>
+<li>Object C에서는 블록</li>
+<li>클로저를 파라미터로 사용하는 것은 파라미터의 타입이 파라미터 -&gt; 번환타입 형태</li>
+</ul>
+
+<pre><code class="language-swift">func sayHello() -&gt; String {
+	return &quot;Hello&quot;
+}
+var v1 = sayHello()
+var v2 = sayHello	// v1 과 차이점이 무엇?
+println(v1)
+println(v2())
+</code></pre>
+
+<ul>
+<li>반환값으로</li>
+</ul>
+
+<pre><code class="language-swift">func sayHello() -&gt; String {
+	return &quot;Hello&quot;
+}
+func hello1() -&gt; String {
+	return sayHello()
+}
+func hello2() -&gt; ???? {	//void-&gt;String or ()-&gt;String
+	retrn sayHello
+}
+</code></pre>
+
+<ul>
+<li>파라미터로</li>
+</ul>
+
+<pre><code class="language-swift">func sayHello() -&gt; String {
+	return &quot;Hello&quot;
+}
+func hello3(arg : String) {}
+func hello4(arg : ????) {}	//void-&gt;String or ()-&gt;String
+	
+hello3(sayHello())
+hello4(sayHello)
+</code></pre>
+
+<h5 id="클로저-사용하기">클로저 사용하기</h5>
+
+<ul>
+<li>클로저를 사용하는 API</li>
+<li>Array의 sort메소드</li>
+</ul>
+
+<pre><code class="language-swift">func sort(isOrderedBefore : (T, T) -&gt; Bool)
+</code></pre>
+
+<ul>
+<li>클로저 정의</li>
+</ul>
+
+<pre><code class="language-swift">{ (Parameters) -&gt; RETURN_TYPE in
+	// 클로저 동작 코드
+}
+</code></pre>
+
+<pre><code class="language-swift">(Int, Int) -&gt; Int
+func add(i : Int, b : Int) -&gt; Int {
+	return i + b
+}
+</code></pre>
+
+<h5 id="클로저-사용">클로저 사용</h5>
+
+<ul>
+<li>타입 : (T, T) -&gt; Bool</li>
+<li>파라미터 타입 정의 생략 가능</li>
+<li>1줄 return인 경우 -&gt; return 생략&rsquo;</li>
+<li>파라미터 선언 생략
+
+<ul>
+<li>$0, $1, $2로 파라미터 사용</li>
+</ul></li>
+<li>Tailing Closure</li>
+</ul>
+
+<pre><code class="language-swift">array.sort({(a: Int, b: Int} -&gt; Bool in return a&lt;b})
+array.sort({(a, b} -&gt; Bool in return a&lt;b})
+array.sort({(a, b} -&gt; Bool in a&lt;b})
+array.sort({$0 &lt; $1})
+array.sort{$0 &lt; $1}
+</code></pre>
+
+<h5 id="클로저-정의하기">클로저 정의하기</h5>
+
+<ul>
+<li>두 값을 더하는 함수</li>
+</ul>
+
+<pre><code class="language-swift">func add(i : Int, j : Int) -&gt; Int{
+	let sum = i + j
+    return sum
+}
+let ret = add(1,2)
+println(&quot;1+2 = \(ret)&quot;)
+</code></pre>
+
+<ul>
+<li>이 함수에 클로저를 파라미터로 추가</li>
+<li>결과를 처리하는 클로저 추가</li>
+<li>비동기 방식으로 api를 만들때 handler 이용</li>
+</ul>
+
+<pre><code class="language-swift">func add(i : Int, j : Int, handler: (Int) -&gt; Void){
+	let sum = i + j
+    handler(sum)
+}
+//사용
+add(3,4 {(return : Int) -&gt; Void in
+	println(&quot;3+4 = \(result)&quot;)
+})
+//trailing closure
+add(5,6) {(result)-&gt; Void in
+	println(&quot;5+6 = \(result)&quot;)
+}
+</code></pre>
+
+<ul>
+<li>클로저 자체가 옵셔널</li>
+<li>클로저가 반환타입인 함수
+
+<ul>
+<li>함수 내 함수 정의 가능</li>
+<li>함수는 클로저의 한 형태</li>
+<li>inline방식 가능</li>
+</ul></li>
+</ul>
+
+                </section>
+            </article>
+
+            
+                <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fnjir.github.io%2fposts%2fbasic-swift10%2f - Swift10%20-%20%ed%81%b4%eb%a1%9c%ec%a0%80 "><span class="icon-twitter"> tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+
+            
+
+            
+                <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'tak90'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.facebook.com/jinpcbang">
+        <i class="fa fa-facebook-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.github.com/njir">
+        <i class="fa fa-github-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://linkedin.com/in/hyungtak">
+        <i class="fa fa-linkedin-square"></i>
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2018 <i class="fa fa-heart" aria-hidden="true"></i> Tak
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://njir.github.io/js/jquery-3.3.1.min.js"></script>
+<script src="https://njir.github.io/js/main.js"></script>
+<script src="https://njir.github.io/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-46214266-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
+    </body>
+</html>

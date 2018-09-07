@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		 
+			
+  
+    <meta name="twitter:card" content="summary"/>
+    
+      <meta name="twitter:image" content="https://njir.github.io/images/avatar.png" />
+    
+  
+  
+  <meta name="twitter:title" content="Swift06 - 메모리 관리(ARC)"/>
+  <meta name="twitter:description" content="T아카데미 Swift1.2 강좌 정리"/>
+  
+  
+  
+  
+    <meta name="twitter:creator" content="@Tak"/>
+  
+
+
+
+		
+		<meta name="author" content="Tak">
+		<meta name="description" content="DevNote">
+		<meta name="generator" content="Hugo 0.48" />
+		<title>Swift06 - 메모리 관리(ARC) &middot; DevNote</title>
+		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
+		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
+		<link rel="stylesheet" href="https://njir.github.io/css/highlight.css">
+
+		
+		<link rel="stylesheet" href="https://njir.github.io/css/font-awesome.min.css">
+		
+
+		
+		<link href="https://njir.github.io/index.xml" rel="alternate" type="application/rss+xml" title="DevNote" />
+		
+
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://njir.github.io/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://njir.github.io/posts'>Archive</a>
+	<a href='https://njir.github.io/tags'>Tags</a>
+	<a href='https://njir.github.io/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://njir.github.io/index.xml">Subscribe</a>
+	
+</nav>
+
+
+        <section id="wrapper" class="post">
+            <article>
+                <header>
+                    <h1>
+                        Swift06 - 메모리 관리(ARC)
+                    </h1>
+                    <h2 class="headline">
+                    Mar 19, 2015 18:50
+                    · 1009 words
+                    · 3 minute read
+                      <span class="tags">
+                      
+                      
+                          
+                              <a href="https://njir.github.io/tags/swift">swift</a>
+                          
+                      
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                  
+                    <div id="toc">
+                      <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#메모리">메모리</a>
+<ul>
+<li><a href="#메모리-관리">메모리 관리</a></li>
+<li><a href="#객체-소유-관리">객체 소유 관리</a></li>
+<li><a href="#arc">ARC</a></li>
+<li><a href="#객체-소유와-해체">객체 소유와 해체</a></li>
+<li><a href="#객체를-소유하는-포인터-강한-참조">객체를 소유하는 포인터 - 강한 참조</a></li>
+<li><a href="#소유하지-않는-포인터">소유하지 않는 포인터</a></li>
+<li><a href="#콜렉션과-소유권">콜렉션과 소유권</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                  
+                
+                <section id="post-body">
+                    
+
+<h4 id="메모리">메모리</h4>
+
+<h5 id="메모리-관리">메모리 관리</h5>
+
+<ul>
+<li>객체 생성 -&gt; 메모리 차지</li>
+<li>메모리 공간의 제약 -&gt; 메모리 관리</li>
+<li>메모리 관리
+
+<ul>
+<li>필요한 객체 유지</li>
+<li>필요없는 객체 해제</li>
+</ul></li>
+<li>사용 중이라는 표시 - own(소유하기)</li>
+<li>객체 소유하는 방법 : 강한 참조(Strong pointer)</li>
+</ul>
+
+<h5 id="객체-소유-관리">객체 소유 관리</h5>
+
+<ul>
+<li>레퍼런스 카운트 - 강항 참조의 갯수
+
+<ul>
+<li>객체 사용 -&gt; 레퍼런스 카운트 늘리기</li>
+<li>객체 사용 끝 -&gt; 레퍼런스 카운트 감소</li>
+<li>레퍼런스 카운트가 0이면 사용 끝</li>
+</ul></li>
+</ul>
+
+<h5 id="arc">ARC</h5>
+
+<ul>
+<li>객체 사용/사용 완료 - 레퍼런스 카운트 증가와 감소
+
+<ul>
+<li>수동 관리</li>
+<li>자동 관리</li>
+</ul></li>
+<li>Automatic Reference Counting : 자동 레퍼런스 카운트 관리
+
+<ul>
+<li>객체의 레퍼런스 관리 코드 자동 생성(컴파일)</li>
+<li>클래스에만 적용</li>
+<li>밸류 타입(구조체, enum)에는 미적용</li>
+</ul></li>
+</ul>
+
+<h5 id="객체-소유와-해체">객체 소유와 해체</h5>
+
+<ul>
+<li>객체 생성 - 객체 소유</li>
+</ul>
+
+<pre><code class="language-swift">var ptr : MyClass? = MyClass() //레퍼런스 카운트가 1 증가
+</code></pre>
+
+<ul>
+<li>소유 해제 : 옵셔널로 선언</li>
+</ul>
+
+<pre><code class="language-swift">ptr = nil //레퍼런스 카운트 1 감소
+</code></pre>
+
+<ul>
+<li>해제 확인하기 : deinit</li>
+</ul>
+
+<pre><code class="language-swift">class test{
+    deinit{
+        println(&quot;객체가 메모리에서 해제&quot;)
+    }
+}
+
+var testObj : test? = test()
+testObj = nil   //객체가 메모리에서 해제
+</code></pre>
+
+<h5 id="객체를-소유하는-포인터-강한-참조">객체를 소유하는 포인터 - 강한 참조</h5>
+
+<ul>
+<li>소유권 해제가 객체의 해제는 아니다</li>
+</ul>
+
+<pre><code class="language-swift">var anotherPointer = obj
+</code></pre>
+
+<ul>
+<li>강한 참조의 문제
+
+<ul>
+<li>두 클래스에서 상호 참조(두개 이상의 관계에서도 가능)</li>
+<li>서로 소유하므로 해제되지 않음(메모리 누수)</li>
+<li>수동으로 해제되도록 작성해야 함</li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">class MyClass {
+    var ptr : MyClass2?
+    deinit {
+        println(&quot;My Class 객체 해제&quot;)
+    }
+}
+
+class MyClass2 {
+    var ptr : MyClass?
+    deinit {
+        println(&quot;MyClass2 객체 해제&quot;)
+    }
+}
+
+var obj : MyClass? = MyClass()
+var obj2 : MyClass2? = MyClass2()
+obj?.ptr = obj2
+obj2?.ptr = obj
+
+obj = nil	// 객체가 해제되지 않음
+obj2 = nil  // 객체가 해제되지 않음
+</code></pre>
+
+<h5 id="소유하지-않는-포인터">소유하지 않는 포인터</h5>
+
+<ul>
+<li>강한 참조 : 객체를 소유하는 포인터</li>
+<li>약한 참조 : 객체를 소유하지 않는 포인터</li>
+<li>weak
+
+<ul>
+<li>참조하던 객체가 해제되면 자동으로 nil</li>
+<li>nil이 되므로 옵셔널</li>
+<li>상호 독립적으로 사용 가능
+
+<ul>
+<li>ex) 사용자와 스마트폰, 운전자와 자동차
+<br /></li>
+</ul></li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">class Student {
+    var phone : Phone?
+    deinit{
+        println(&quot;Student 객체가 메모리에서 해제&quot;)
+    }
+}
+
+class Phone {
+    weak var owner : Student?
+    deinit{
+        println(&quot;Phone 객체가 메모리에서 해제&quot;)
+    }
+}
+
+var owner : Student? = Student()
+var iphone : Phone? = Phone()
+
+iphone!.owner = owner
+owner!.phone = iphone
+
+owner = nil  // Student 객체가 메모리에서 해제&quot;
+iphone = nil // Phone 객체가 메모리에서 해제
+</code></pre>
+
+<ul>
+<li>unowned
+
+<ul>
+<li>참조하던 객체가 해제되도 nil로 변하지 않음</li>
+<li>옵셔널로 선언하지 않음 -&gt; 에러 조심!</li>
+<li>완전히 종속적인 경우에 사용
+
+<ul>
+<li>ex) 신용카드와 사용자, 국가와 도시
+<br /></li>
+</ul></li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift"> class Person {
+    var card : CreditCard?
+    deinit {
+        println(&quot;Person 객체 해제&quot;)
+    }
+}
+
+class CreditCard {
+    unowned var owner : Person
+    init(owner : Person){
+        self.owner = owner
+    }
+    deinit {
+        println(&quot;CreditCard 객체 해제&quot;)
+    }
+}
+
+var person : Person? = Person()
+var card : CreditCard? = CreditCard(owner : person!)
+person = nil
+card = nil
+</code></pre>
+
+<h5 id="콜렉션과-소유권">콜렉션과 소유권</h5>
+
+<ul>
+<li>콜렉션에 객체 저장
+
+<ul>
+<li>콜렉션이 객체 소유</li>
+</ul></li>
+<li>콜렉션에서 객체 삭제
+
+<ul>
+<li>소유권 해제</li>
+</ul></li>
+<li>콜렉션 객체 해제
+
+<ul>
+<li>소유권 해제</li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">var owner2 : Student? = Student()
+var owner3 : Student? = Student()
+var array = [owner2, owner3]
+
+owner2 = nil // 객체가 해제되지 않는다.
+array.removeAtIndex(0) // Student 객체가 메모리에서 해제&quot;
+</code></pre>
+
+                </section>
+            </article>
+
+            
+                <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fnjir.github.io%2fposts%2fbasic-swift06%2f - Swift06%20-%20%eb%a9%94%eb%aa%a8%eb%a6%ac%20%ea%b4%80%eb%a6%ac%28ARC%29 "><span class="icon-twitter"> tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+
+            
+
+            
+                <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'tak90'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.facebook.com/jinpcbang">
+        <i class="fa fa-facebook-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.github.com/njir">
+        <i class="fa fa-github-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://linkedin.com/in/hyungtak">
+        <i class="fa fa-linkedin-square"></i>
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2018 <i class="fa fa-heart" aria-hidden="true"></i> Tak
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://njir.github.io/js/jquery-3.3.1.min.js"></script>
+<script src="https://njir.github.io/js/main.js"></script>
+<script src="https://njir.github.io/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-46214266-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
+    </body>
+</html>

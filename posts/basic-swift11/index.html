@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		 
+			
+  
+    <meta name="twitter:card" content="summary"/>
+    
+      <meta name="twitter:image" content="https://njir.github.io/images/avatar.png" />
+    
+  
+  
+  <meta name="twitter:title" content="Swift11 - Extension, 연산자, 비교"/>
+  <meta name="twitter:description" content="T아카데미 Swift1.2 강좌 정리"/>
+  
+  
+  
+  
+    <meta name="twitter:creator" content="@Tak"/>
+  
+
+
+
+		
+		<meta name="author" content="Tak">
+		<meta name="description" content="DevNote">
+		<meta name="generator" content="Hugo 0.48" />
+		<title>Swift11 - Extension, 연산자, 비교 &middot; DevNote</title>
+		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
+		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
+		<link rel="stylesheet" href="https://njir.github.io/css/highlight.css">
+
+		
+		<link rel="stylesheet" href="https://njir.github.io/css/font-awesome.min.css">
+		
+
+		
+		<link href="https://njir.github.io/index.xml" rel="alternate" type="application/rss+xml" title="DevNote" />
+		
+
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://njir.github.io/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://njir.github.io/posts'>Archive</a>
+	<a href='https://njir.github.io/tags'>Tags</a>
+	<a href='https://njir.github.io/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://njir.github.io/index.xml">Subscribe</a>
+	
+</nav>
+
+
+        <section id="wrapper" class="post">
+            <article>
+                <header>
+                    <h1>
+                        Swift11 - Extension, 연산자, 비교
+                    </h1>
+                    <h2 class="headline">
+                    Mar 19, 2015 21:58
+                    · 669 words
+                    · 2 minute read
+                      <span class="tags">
+                      
+                      
+                          
+                              <a href="https://njir.github.io/tags/swift">swift</a>
+                          
+                      
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                  
+                    <div id="toc">
+                      <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#확장">확장</a></li>
+<li><a href="#subscript">Subscript</a></li>
+<li><a href="#타입-내-타입">타입 내 타입</a></li>
+<li><a href="#싱글턴-패턴">싱글턴 패턴</a></li>
+<li><a href="#연산자">연산자</a></li>
+<li><a href="#새로운-연산자">새로운 연산자</a></li>
+<li><a href="#비교">비교</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                  
+                
+                <section id="post-body">
+                    
+
+<h5 id="확장">확장</h5>
+
+<ul>
+<li>첨자 표기</li>
+<li>타입 내 타입</li>
+<li>연산자 정의</li>
+<li>리터럴 호환</li>
+<li>클래스(구조체, enum) 확장
+
+<ul>
+<li>프로퍼티, 메소드, 프로토콜, 서브스크립트, nested type</li>
+</ul></li>
+<li>ObjectiveC의 카테고리(Category)</li>
+<li>계산 프로퍼티만 가능(저장 X)</li>
+<li>프로토콜 채택</li>
+<li>Subscript 작성 가능</li>
+</ul>
+
+<pre><code class="language-swift">extension Dog {
+	func bike() {
+    	println(&quot;dfdfdf&quot;)
+    }
+}
+</code></pre>
+
+<h5 id="subscript">Subscript</h5>
+
+<ul>
+<li>subscript: 첨자 표기[n]
+
+<ul>
+<li>인덱스(숫자), 키, 범위</li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">extension String {
+	subscript(index: Int) -&gt; String {
+    	return self[index..&lt;index]
+    }
+    subscript(range:Range&lt;Int&gt;) -&gt; String {
+    	let start = advance(startIndex, range.startIndex, endIndex)
+        let end = advance(startIndex, range.endIndex, endIndex)
+        return self[start...end]
+    }
+}
+</code></pre>
+
+<h5 id="타입-내-타입">타입 내 타입</h5>
+
+<ul>
+<li>클래스나 구조체, Enum 타입 내부에 다른 타입 작성 가능</li>
+</ul>
+
+<h5 id="싱글턴-패턴">싱글턴 패턴</h5>
+
+<ul>
+<li>어떤 클래스의 인스턴스는 오직 하나임을 보장하며, 이 인스턴스에 접근할 수 있는 전역적인 접촉점을 제공하는 패턴</li>
+<li>다른 객체가 아니라 같은 객체를 생성하도록</li>
+</ul>
+
+<pre><code class="language-swift">class MyClass {
+    class var sharedInstance: MyClass {
+        // 클래스에 타입 계산 프로퍼티(class stored property)지원이 안돼서 struct 사용
+        struct Static{
+            static var instance: MyClass! = nil
+        }
+        // static 프로퍼티가 nil일 때만 객체 생성(한 번만 생성)
+        if Static.instance == nil {
+            Static.instance = MyClass()
+        }
+        return Static.instance
+    }
+}
+
+let obj1 = MyClass.sharedInstance
+let obj2 = MyClass.sharedInstance
+obj1 === obj2 // true - 같은 객체
+</code></pre>
+
+<h5 id="연산자">연산자</h5>
+
+<ul>
+<li>기능 작성: 메소드</li>
+<li>할당, 반환타입, 주석, 메소드 or 프로퍼티 접근용 점. 불가</li>
+<li>기존의 or 새로운 연산자 정의</li>
+<li>단일 연산자 vs 이진 연산자</li>
+<li>연산자 위치(단일 연산자) - 전위, 후위</li>
+<li>이진 연산자: 결합 순서</li>
+<li>연산자는 타입 외부에 작성</li>
+</ul>
+
+<pre><code class="language-swift">class Point {
+    var x: Int
+    var y: Int
+    init(x: Int, y: Int){
+        self.x = x
+        self.y = y
+    }
+}
+
+func +(left: Point, right: Int) -&gt; Point {
+    return Point(x: left.x + right, y: left.y + right)
+}
+
+func +(left: Point, right:(Int, Int) )-&gt;Point{
+    return Point(x: left.x + right.0, y: left.y + right.1)
+}
+
+var p1 = Point(x:1, y:1)
+p1 + 2 // x:3, y:3
+p1 + (3, 5) // x: 4, y: 6
+</code></pre>
+
+<ul>
+<li>전위연산자
+
+<ul>
+<li>prefix operator</li>
+</ul></li>
+<li>후위연산자
+
+<ul>
+<li>postfix operator</li>
+</ul></li>
+</ul>
+
+<h5 id="새로운-연산자">새로운 연산자</h5>
+
+<ul>
+<li>새로운 연산자 선언: operator</li>
+<li>연산자 위치: prefix, infix, postfix</li>
+<li>연산자 우선 순위: precedence</li>
+</ul>
+
+<pre><code class="language-swift">infix operator **{associativity left precedence 145}
+</code></pre>
+
+<ul>
+<li>다른 연산자와 precedence를 같게 만들면 결합 순서도 신경써야 함</li>
+</ul>
+
+<h5 id="비교">비교</h5>
+
+<ul>
+<li>같음 비교
+
+<ul>
+<li>객체 주소 비교: ===, 레퍼런스 타입에만 사용</li>
+<li>객체 내용 비교: = =연산자</li>
+</ul></li>
+</ul>
+
+                </section>
+            </article>
+
+            
+                <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fnjir.github.io%2fposts%2fbasic-swift11%2f - Swift11%20-%20Extension%2c%20%ec%97%b0%ec%82%b0%ec%9e%90%2c%20%eb%b9%84%ea%b5%90 "><span class="icon-twitter"> tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+
+            
+
+            
+                <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'tak90'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.facebook.com/jinpcbang">
+        <i class="fa fa-facebook-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.github.com/njir">
+        <i class="fa fa-github-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://linkedin.com/in/hyungtak">
+        <i class="fa fa-linkedin-square"></i>
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2018 <i class="fa fa-heart" aria-hidden="true"></i> Tak
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://njir.github.io/js/jquery-3.3.1.min.js"></script>
+<script src="https://njir.github.io/js/main.js"></script>
+<script src="https://njir.github.io/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-46214266-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
+    </body>
+</html>

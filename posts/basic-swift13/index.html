@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		 
+			
+  
+    <meta name="twitter:card" content="summary"/>
+    
+      <meta name="twitter:image" content="https://njir.github.io/images/avatar.png" />
+    
+  
+  
+  <meta name="twitter:title" content="Swift13 - Foundation Framework 01"/>
+  <meta name="twitter:description" content="T아카데미 Swift1.2 강좌 정리"/>
+  
+  
+  
+  
+    <meta name="twitter:creator" content="@Tak"/>
+  
+
+
+
+		
+		<meta name="author" content="Tak">
+		<meta name="description" content="DevNote">
+		<meta name="generator" content="Hugo 0.48" />
+		<title>Swift13 - Foundation Framework 01 &middot; DevNote</title>
+		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
+		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
+		<link rel="stylesheet" href="https://njir.github.io/css/highlight.css">
+
+		
+		<link rel="stylesheet" href="https://njir.github.io/css/font-awesome.min.css">
+		
+
+		
+		<link href="https://njir.github.io/index.xml" rel="alternate" type="application/rss+xml" title="DevNote" />
+		
+
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://njir.github.io/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://njir.github.io/posts'>Archive</a>
+	<a href='https://njir.github.io/tags'>Tags</a>
+	<a href='https://njir.github.io/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://njir.github.io/index.xml">Subscribe</a>
+	
+</nav>
+
+
+        <section id="wrapper" class="post">
+            <article>
+                <header>
+                    <h1>
+                        Swift13 - Foundation Framework 01
+                    </h1>
+                    <h2 class="headline">
+                    Mar 20, 2015 12:02
+                    · 1974 words
+                    · 4 minute read
+                      <span class="tags">
+                      
+                      
+                          
+                              <a href="https://njir.github.io/tags/swift">swift</a>
+                          
+                      
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                  
+                    <div id="toc">
+                      <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#프레임워크와-클래스">프레임워크와 클래스</a>
+<ul>
+<li><a href="#nsobject">NSObject</a></li>
+<li><a href="#nslog">NSLog</a></li>
+<li><a href="#데이터-다루기">데이터 다루기</a></li>
+<li><a href="#nsstring">NSString</a></li>
+<li><a href="#배열">배열</a></li>
+<li><a href="#딕셔너리">딕셔너리</a></li>
+<li><a href="#날짜와-시간">날짜와 시간</a></li>
+<li><a href="#파일-다루기">파일 다루기</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                  
+                
+                <section id="post-body">
+                    
+
+<h4 id="프레임워크와-클래스">프레임워크와 클래스</h4>
+
+<ul>
+<li>OS X, iOS용 어플리케이션의 기본 프레임워크</li>
+<li>클래스 접두어 NS~
+
+<ul>
+<li>데이터 다루기</li>
+<li>네트워크</li>
+<li>파일처리</li>
+</ul></li>
+</ul>
+
+<blockquote>
+<p>Object C와 프레임워크</p>
+
+<ul>
+<li>Swift 언어 발표 이전 개발 언어로 Object C</li>
+<li>많은 프레임워크가 Object C 형태로 제공</li>
+<li>API 특징
+
+<ul>
+<li>Failable Initializer</li>
+<li>AnyObject 타입</li>
+</ul></li>
+</ul>
+</blockquote>
+
+<h5 id="nsobject">NSObject</h5>
+
+<ul>
+<li>파운데이션 프레임워크 중 가장 기본 클래스</li>
+<li>메모리 관리</li>
+<li>타입 체크 : AnyObject 타입 사용하면 검사 필요</li>
+<li>객체 비교 : isEqual
+
+<ul>
+<li>func isEqual(object : AnyObject?) -&gt; Bool</li>
+<li>파운데이션의 기능 구현 -&gt; Swift의 기능에도 동작</li>
+<li>isEquals 메소드 작성하면 ==로도 사용
+<br /></li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">// 객체 비교
+class Rectangle : NSObject {
+    var width : Int
+    var height : Int
+    
+    init(width : Int, height : Int){
+        self.width = width
+        self.height = height
+    }
+    
+    override func isEqual(object: AnyObject?) -&gt; Bool {
+        if let another = object as? Rectangle{
+            return self.width == another.width &amp;&amp; self.height == another.height
+        }
+        return false
+    }
+}
+
+var obj1 = Rectangle(width : 10, height : 20)
+var obj2 = Rectangle(width : 10, height : 20)
+var obj3 = Rectangle(width : 30, height : 30)
+
+obj1 == obj2    //isEqual 호출, true
+obj1.isEqual(obj3) //isEqual, false
+</code></pre>
+
+<ul>
+<li>셀렉터 : 메소드 식별 정보
+
+<ul>
+<li>사용자 이벤트에 반응하는 메소드</li>
+<li>타이머의 시간 간격에 호출하는 메소드</li>
+<li>알림이 발생하면 동작하는 메소드</li>
+<li>자주 사용</li>
+<li>Select 구조체 사용</li>
+<li>메소드 식별 문자열을 집어넣음</li>
+<li>메소드 식별방법 : 메소드 이름과 파라미터 정보
+
+<ul>
+<li>식별 문자열
+
+<ul>
+<li>파라미터 유무에 따라 콜론으로 구별 //Selector(&ldquo;greeting:&ldquo;)</li>
+<li>파라미터 2개 이상시, 콜론과 외부 파라미터 이름으로 구별 //Selector(&ldquo;greeting:with:&ldquo;)</li>
+</ul></li>
+<li>메소드 호출 가능 여부 검사
+
+<ul>
+<li>func respondsToSelector(aSelector : Selector) -&gt; Bool</li>
+</ul></li>
+</ul></li>
+<li>Initializer의 셀렉터
+
+<ul>
+<li>파라미터가 있는 경우
+
+<ul>
+<li>init<strong>With</strong> + 첫번째 외부 파라미터</li>
+<li>Selector(&ldquo;initWithWho:emotion:&ldquo;)
+<br /></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">class Rectangle : NSObject {
+    var width : Int
+    var height : Int
+    
+    init(width : Int, height : Int){
+        self.width = width
+        self.height = height
+    }
+    
+    override func isEqual(object: AnyObject?) -&gt; Bool {
+        if let another = object as? Rectangle{
+            return self.width == another.width &amp;&amp; self.height == another.height
+        }
+        return false
+    }
+    
+    func size() -&gt; Int{
+        return width * height
+    }
+    
+    func setWidth(w : Int, height h : Int) {
+        self.width = w
+        self.height = h
+    }
+}
+
+var obj1 = Rectangle(width : 10, height : 20)
+
+let sizeSelector = Selector(&quot;size&quot;)
+obj1.respondsToSelector(sizeSelector)
+obj1.respondsToSelector(&quot;setWidth:height:&quot;)     // true
+obj1.respondsToSelector(&quot;initWithWidth:height:&quot;)    //true
+</code></pre>
+
+<blockquote>
+<p><strong>Selector()는 컴파일하고 나서야 에러 찾을 수 있음. 파라미터가 없는데 : 붙였다던지 등등</strong></p>
+</blockquote>
+
+<h5 id="nslog">NSLog</h5>
+
+<ul>
+<li>콘솔에 정보 출력</li>
+<li>포맷 문자 : %a(객체 타입), %d(정수), %f(실수)</li>
+</ul>
+
+<pre><code class="language-swift">class Rectangle : NSObject {
+    var width : Int = 0
+    var height : Int = 0
+   
+    override var description : String {
+        return &quot;Rectangle \(width), \(height)&quot;
+    }
+}
+
+var obj1 = Rectangle()
+NSLog(&quot;%@&quot;, obj2)   //Rectangle 0, 0
+</code></pre>
+
+<h5 id="데이터-다루기">데이터 다루기</h5>
+
+<ul>
+<li>문자열, 배열, 딕셔너리와 같이 데이터를 다루는 클래스 제공
+
+<ul>
+<li>문자열 : NSString</li>
+<li>배열 : NSArray</li>
+<li>딕셔너리 : NSDictionary</li>
+</ul></li>
+<li>데이터 변경 가능한(Mutable)클래스와 변경 불가능한 클래스(Immutable)
+
+<ul>
+<li>파운데이션은 별도의 클래스</li>
+</ul></li>
+<li>Swift에서 제공되는 데이터 타입 : 밸류 타입</li>
+<li>파운데이션 프레임워크가 제공하는 클래스 : 레퍼런스 타입</li>
+<li>호환되는 부분이 많음</li>
+</ul>
+
+<h5 id="nsstring">NSString</h5>
+
+<ul>
+<li>NSString 클래스의 메소드 같이 사용</li>
+<li>문자열 비교 : isEqualToString:
+
+<ul>
+<li>Swift 문자열과 호환됨</li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">let switfStr = &quot;string&quot;
+let nsSTr : NSString = &quot;string&quot;
+swiftStr == nsStr //true
+</code></pre>
+
+<ul>
+<li>문자열 길이 : length
+
+<ul>
+<li>Swift 문자열 사용 불가
+<br /></li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">str.length // NSString만 사용
+countElements(swiftStr) // Swift 문자열 길이
+</code></pre>
+
+<pre><code class="language-swift">var str : String = &quot;Hello Swift&quot;
+var str2 : NSString = &quot;HI&quot;
+var str3 : String = str2    // String타입, &quot;Hi&quot;
+
+str2.length
+str3.length //Error
+countElements(str3)
+</code></pre>
+
+<ul>
+<li>찾기
+
+<ul>
+<li>NSRange 객체가 반환</li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">// 함수
+func rangeOfString(aString : String) -&gt; NSRange
+func rangeOfString(aString : String, options mask : NSStringCompareOptions) -&gt; NSRange
+
+var nsStr : NSString = &quot;Hello Swift&quot;
+let range = nsStr.rangeOfString(&quot;ell&quot;)
+if range.location != NSNotFound {
+	println(&quot;found&quot;)
+else {
+	println(&quot;not found&quot;)
+}
+</code></pre>
+
+<ul>
+<li>문자열 가공
+
+<ul>
+<li>문자열 자르기(substring)
+
+<ul>
+<li>NSString, String이 조금 다르게 동작(타입)</li>
+</ul></li>
+<li>문자열 덧붙이기
+
+<ul>
+<li>트리밍</li>
+<li>문자열을 덧붙인 문자열
+<br /></li>
+</ul></li>
+</ul></li>
+</ul>
+
+<blockquote>
+<p>문자열 가공 부분은 API나 책 참고할 것</p>
+</blockquote>
+
+<ul>
+<li>변환
+
+<ul>
+<li>원시 타입 변환 (String 타입은 사용 불가)</li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">let boolStr : NSString = &quot;true&quot;
+let boolRet = boolStr.boolValue
+
+let intStr : NSString = &quot;123&quot;
+let intRet = intStr.intValue
+</code></pre>
+
+<ul>
+<li>대소문자 변환</li>
+</ul>
+
+<pre><code class="language-swift">var uppercaseString : String { get}
+</code></pre>
+
+<ul>
+<li>저장
+
+<ul>
+<li>파일 저장</li>
+<li>에러 다루기 : NSErrorPointer
+
+<ul>
+<li>NSError 옵셔널 변수 생성</li>
+<li>&amp; 연산자와 사용
+<br /></li>
+</ul></li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">let filePath = &quot;/Users/sdt5/Deskop/test.txt&quot;
+var error : NSError?
+let ret = str3.writeToFile(filePath, atomically: true, encoding: NSUTF8StringEncoding, error: &amp;error)
+
+if ret {
+    println(&quot;success&quot;)
+}
+else {
+    println(&quot;fail. \(error?.localizedDescription)&quot;)
+}
+</code></pre>
+
+<ul>
+<li>가변 문자열
+
+<ul>
+<li>NSMutableString 클래스</li>
+<li>문자열 수정하는 메소드, 변환타입 void</li>
+<li>NSString : 불가변형</li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">// 추가
+func insertString(aString : String, atIndex loc : Int)
+func appendString(aString : String)
+// 삭제
+func deleteCharactersInRange(range : NSRange)
+// 새로운 문자열로 저장
+func setString(aString : String)
+</code></pre>
+
+<ul>
+<li>레퍼런스 타입
+
+<ul>
+<li><strong>스위프트 문자열 String과 NSString의 가장 큰 차이 : 밸류 타입 vs 레퍼런스 타입</strong></li>
+<li>NSMutableString으로 문자열 하나를 수정했을 때, 레퍼런스 타입이라 둘 다 바뀜</li>
+<li>String은 바뀌지 않음</li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">
+//NSMutableString
+var mStr1 = NSMutableString(string: &quot;Hello&quot;)
+var mStr2 = mStr1
+
+mStr1.appendString(&quot; Foundation&quot;)
+mStr1 // Hello Foundation
+mStr2 // Hello Foundation
+
+// String
+var str1 = &quot;Hello&quot;
+var str2 = str1
+
+str1.append(&quot;c&quot;)
+
+str1 // Helloc
+str2 // Hello
+</code></pre>
+
+<h5 id="배열">배열</h5>
+
+<ul>
+<li>파운데이션 : NSArray, NSMutableArray
+
+<ul>
+<li>다양한 타입 다루기, AnyObject</li>
+<li><code>let array2 : NSArray = [&quot;sdsd&quot;, &quot;sds&quot;, da&quot;]</code></li>
+</ul></li>
+<li>Swift : [Type]
+
+<ul>
+<li>한 종류의 타입으로 사용</li>
+<li><code>let swiftArray = [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]</code></li>
+</ul></li>
+<li>파일 저장(XML형태로 저장. plist)과 복원</li>
+<li>복원 - Failable Initializer</li>
+<li>가변형 배열 NSMutableArray</li>
+</ul>
+
+<pre><code class="language-swift">var array = [1,2,3] //swift
+var array2 : NSArray = [1,2,3] //NSArray
+
+array.count
+array.count
+countElements(array)
+//countElements(array2) //Error
+
+var array3 : [AnyObject] = array2
+var array4 = array2 as [Int]
+
+//array.objectAtIndex(0) //Error
+array2.objectAtIndex(1)
+
+array2.writeToFile(&quot;/Users/sdt5/Desktop/array.plist&quot;, atomically: true)  // array.plist 파일 생성됨
+</code></pre>
+
+<h5 id="딕셔너리">딕셔너리</h5>
+
+<ul>
+<li>파운테이션 : NSDictionary, NSMutableDictionary</li>
+<li>딕셔너리 항목 접근
+
+<ul>
+<li>첨자 표기</li>
+<li>objectForKey:</li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">var dic1 : [Int : NSObject] = [1: &quot;a&quot;, 2 : &quot;b&quot;, 3: &quot;c&quot;]
+dic1[4] = 123
+var dic2 : NSMutableDictionary = [1:&quot;a&quot;, 2:&quot;b&quot;, 3:&quot;c&quot;]
+dic2[4] = 123
+
+//dic1.objectForKey(1) //Error
+dic2.objectForKey(4)
+</code></pre>
+
+<h5 id="날짜와-시간">날짜와 시간</h5>
+
+<ul>
+<li>NSDateFormatter : 포맷에 맞는 날짜 표시</li>
+<li>날짜와 시간 포맷</li>
+</ul>
+
+<pre><code class="language-swift">var now = NSDate()
+var yester = NSDate(timeIntervalSinceNow: -3600*24) //어제 날짜
+
+var formatter = NSDateFormatter()
+formatter.dateStyle = NSDateFormatterStyle.MediumStyle
+formatter.timeStyle = NSDateFormatterStyle.LongStyle
+
+formatter.stringFromDate(now)
+
+formatter.dateFormat = &quot;yy/MM/dd&quot;
+</code></pre>
+
+<ul>
+<li>로케일
+
+<ul>
+<li>NSLocale : 지역 고유의 표기법</li>
+<li>지역, 언어권, 언어코드 (US, ko_KR)</li>
+</ul></li>
+<li>켈린더, 날짜 컴포넌트
+
+<ul>
+<li>NSCalendar, NSDateComponent</li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">var calendar = NSCalendar.currentCalendar()
+calendar.component(NSCalendarUnit.CalendarUnitWeekOfYear, fromDate: now)
+</code></pre>
+
+<h5 id="파일-다루기">파일 다루기</h5>
+
+<ul>
+<li>NSFileManager : 파일 시스템을 다루는 기능
+
+<ul>
+<li>폴더 내 파일 목록</li>
+<li>파일 존애 여부 확인</li>
+<li>파일 복사, 이동 삭제</li>
+</ul></li>
+<li>파일 매니저 객체는 싱글톤 메소드를 이용해서 생성</li>
+</ul>
+
+<pre><code class="language-swift">class func defaultManager() -&gt; NSFileManager
+</code></pre>
+
+<ul>
+<li>폴더 내 파일 목록 : func contentsOfDirectoryAtPath(..)</li>
+</ul>
+
+<pre><code class="language-swift">let dirPath = &quot;/Users/sdt5/Desktop&quot;
+var error : NSError?
+let fm = NSFileManager.defaultManager()
+let contentsOfDir = fm.contentsOfDirectoryAtPath(dirPath, error: &amp;error)
+
+if let fileList = contentsOfDir {
+    println(&quot;file list in \(dirPath)&quot;)
+    for file in fileList {
+        println(&quot;\(file)&quot;)
+    }
+}
+else{
+    println(&quot;Error : \(error)&quot;)
+}
+</code></pre>
+
+<ul>
+<li>파일 복사, 이동, 삭제
+
+<ul>
+<li>복사 : copyItemAtPath</li>
+<li>이동 : moveItemAtPath</li>
+<li>삭제 : removeItemAtPath</li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">let fm = NSFileManager.defaultManager()
+var error : NSError?
+
+let originPath = &quot;/Users/sdt5/Desktop/array.plist&quot;
+if fm.fileExistsAtPath(originPath){
+    println(&quot;파일 존재&quot;)
+    let copyPath = &quot;/Users/sdt5/Desktop/copy&quot;
+    
+    // 파일 복사
+    var ret = fm.copyItemAtPath(originPath, toPath : copyPath, error: &amp;error)
+    if !ret {
+        println(&quot;복사 실패 \(error)&quot;)
+    }
+    
+    // 파일 삭제
+    ret = fm.removeItemAtPath(copyPath, error: &amp;error)
+    if !ret {
+        println(&quot;삭제 실패 \(error)&quot;)
+    }
+}
+else{
+    println(&quot;파일 없음&quot;)
+}
+</code></pre>
+
+<ul>
+<li>파일 내용 읽기/쓰기
+
+<ul>
+<li>NSFileHandler 사용</li>
+</ul></li>
+</ul>
+
+<blockquote>
+<p><strong><em>나머지는 API문서 참고</em></strong></p>
+</blockquote>
+
+                </section>
+            </article>
+
+            
+                <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fnjir.github.io%2fposts%2fbasic-swift13%2f - Swift13%20-%20Foundation%20Framework%2001 "><span class="icon-twitter"> tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+
+            
+
+            
+                <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'tak90'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.facebook.com/jinpcbang">
+        <i class="fa fa-facebook-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.github.com/njir">
+        <i class="fa fa-github-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://linkedin.com/in/hyungtak">
+        <i class="fa fa-linkedin-square"></i>
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2018 <i class="fa fa-heart" aria-hidden="true"></i> Tak
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://njir.github.io/js/jquery-3.3.1.min.js"></script>
+<script src="https://njir.github.io/js/main.js"></script>
+<script src="https://njir.github.io/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-46214266-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
+    </body>
+</html>

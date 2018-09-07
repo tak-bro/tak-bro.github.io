@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		 
+			
+  
+    <meta name="twitter:card" content="summary"/>
+    
+      <meta name="twitter:image" content="https://njir.github.io/images/avatar.png" />
+    
+  
+  
+  <meta name="twitter:title" content="Swift03 - 함수"/>
+  <meta name="twitter:description" content="T아카데미 Swift1.2 강좌 정리"/>
+  
+  
+  
+  
+    <meta name="twitter:creator" content="@Tak"/>
+  
+
+
+
+		
+		<meta name="author" content="Tak">
+		<meta name="description" content="DevNote">
+		<meta name="generator" content="Hugo 0.48" />
+		<title>Swift03 - 함수 &middot; DevNote</title>
+		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
+		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
+		<link rel="stylesheet" href="https://njir.github.io/css/highlight.css">
+
+		
+		<link rel="stylesheet" href="https://njir.github.io/css/font-awesome.min.css">
+		
+
+		
+		<link href="https://njir.github.io/index.xml" rel="alternate" type="application/rss+xml" title="DevNote" />
+		
+
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://njir.github.io/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://njir.github.io/posts'>Archive</a>
+	<a href='https://njir.github.io/tags'>Tags</a>
+	<a href='https://njir.github.io/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://njir.github.io/index.xml">Subscribe</a>
+	
+</nav>
+
+
+        <section id="wrapper" class="post">
+            <article>
+                <header>
+                    <h1>
+                        Swift03 - 함수
+                    </h1>
+                    <h2 class="headline">
+                    Mar 19, 2015 14:35
+                    · 823 words
+                    · 2 minute read
+                      <span class="tags">
+                      
+                      
+                          
+                              <a href="https://njir.github.io/tags/swift">swift</a>
+                          
+                      
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                  
+                    <div id="toc">
+                      <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#함수">함수</a>
+<ul>
+<li><a href="#파라미터">파라미터</a></li>
+<li><a href="#다수의-파라미터">다수의 파라미터</a></li>
+<li><a href="#파라미터-변수와-상수">파라미터 변수와 상수</a></li>
+<li><a href="#inout-파라미터-레퍼런스">inout 파라미터(레퍼런스)</a></li>
+<li><a href="#옵셔널-반환-타입과-파라미터">옵셔널 반환 타입과 파라미터</a></li>
+<li><a href="#함수-다른-예제">함수 다른 예제</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                  
+                
+                <section id="post-body">
+                    
+
+<h4 id="함수">함수</h4>
+
+<ul>
+<li>-&gt; 로 결과 타입 반환</li>
+</ul>
+
+<pre><code class="language-swift">// Bool 반환
+func areYouOK() -&gt; Bool {
+    return true
+}
+// String
+func favorite() -&gt; String{
+    return &quot;Coffee&quot;
+}
+</code></pre>
+
+<ul>
+<li>다수의 값 반환 : 튜플 사용</li>
+</ul>
+
+<pre><code class="language-swift">func random3() -&gt; (Int, Int, Int){
+    let r1 = Int(arc4random() % 10)
+    let r2 = Int(arc4random() % 10)
+    let r3 = Int(arc4random() % 10)
+    return (r1, r2, r3)
+}
+// 다음과 같이 튜플로 얻어서 사용
+var (num1, num2,  num3) = random3()
+println(&quot;Random numbers : \(num1), \(num2), \(num3)&quot;)
+var nums = random3()
+println(&quot;Random numbers : \(nums.0), \(nums.1), \(nums.2)&quot;)
+</code></pre>
+
+<h5 id="파라미터">파라미터</h5>
+
+<ul>
+<li>내부 파라미터</li>
+</ul>
+
+<pre><code class="language-swift">func greeting(person : String, emotion : String){
+    println(&quot;person : \(person), emotion : \(emotion)&quot;)
+}
+greeting(&quot;zzzz&quot;, &quot;kkk&quot;)
+</code></pre>
+
+<ul>
+<li>외부 파라미터 이름</li>
+</ul>
+
+<pre><code class="language-swift">func greeting(whom person : String){
+    println(&quot;\(person)&quot;)
+}
+greeting(whom : &quot;My Friend&quot;)
+
+
+func externalParamFunc(whom person : String, with emotion : String){
+    println(&quot;Hello &quot; + person + &quot;with &quot; + emotion)
+}
+// 외부 파라미터 있는 함수를 호출할 때 해당 파라미터 호출
+externalParamFunc(whom : &quot;myfiend&quot;, with :&quot;smile&quot;)
+</code></pre>
+
+<ul>
+<li>내부 파라미터 이름을 외부 파라미터 이름으로 : # 사용</li>
+</ul>
+
+<pre><code class="language-swift">func greeting(# person : String, # emotion : String){
+    println(&quot;person : \(person), emotion : \(emotion)&quot;)
+}
+greeting(person : &quot;aaaa&quot;, emotion : &quot;bbb&quot;)
+</code></pre>
+
+<ul>
+<li>파라미터 기본값</li>
+</ul>
+
+<pre><code class="language-swift">func externalParamFunc2(whom person : String, emotion : String = &quot;Happy&quot;){
+    println(&quot;Hello &quot; + person + &quot;with &quot; + emotion)
+}
+externalParamFunc2(whom : &quot;myfiend&quot;)
+</code></pre>
+
+<blockquote>
+<p><strong>혼동 주의</strong></p>
+
+<pre><code class="language-swift">func greeting(whom person : String, emotion : String = &quot;Happy&quot;){}
+func greeting(whom persoon : String){}
+greeting(whom : &quot;World&quot;)	// 어떤 함수 호출?
+</code></pre>
+</blockquote>
+
+<ul>
+<li>외부 파라미터 이름
+
+<ul>
+<li>자동으로 내부 파라미터 이름</li>
+<li>수동으로 외부파라미터 설정하기</li>
+<li>_ (언더스코어) 사용
+<br />
+<br /></li>
+</ul></li>
+</ul>
+
+<h5 id="다수의-파라미터">다수의 파라미터</h5>
+
+<ul>
+<li>하나의 파라미터로 다수의 값 설정</li>
+<li>&hellip; 이용해서 선언</li>
+<li>함수의 파라미터 중 마지막에 위치</li>
+</ul>
+
+<pre><code class="language-swift">func addAll(values : Int...) -&gt; Int {
+    if values.count == 0 {
+        return 0
+    }
+    else {
+        var result = 0
+        for v in values {
+            result += v
+        }
+        return result
+    }
+}
+
+addAll(1,2,3)
+</code></pre>
+
+<h5 id="파라미터-변수와-상수">파라미터 변수와 상수</h5>
+
+<ul>
+<li>평소에는 let으로 간주</li>
+<li>var 키워드로 함수 안에서 변수로 사용 가능</li>
+<li>값이 복사가 됨</li>
+</ul>
+
+<pre><code class="language-swift">func countTo(var value : Int) -&gt; Int {
+    var result = 0
+    while value &gt; 0 {
+        result += value
+        value--
+    }
+    return result
+}
+
+var count = 10
+countTo(count)  // 55
+count 			//10
+</code></pre>
+
+<h5 id="inout-파라미터-레퍼런스">inout 파라미터(레퍼런스)</h5>
+
+<ul>
+<li>함수 내에서 변경한 내용을 함수 외부에 반영되도록 하기 위해</li>
+<li>c에서의 레퍼런스</li>
+</ul>
+
+<pre><code class="language-swift">func swapTwoValue(inout var1 : Int, inout var2 : Int){
+    var temp = var1
+    var1 = var2
+    var2 = temp
+}
+var value1 = 10
+var value2 = 20
+swapTwoValue(&amp;value1, &amp;value2)
+value1      // 20
+value2      // 10
+
+</code></pre>
+
+<h5 id="옵셔널-반환-타입과-파라미터">옵셔널 반환 타입과 파라미터</h5>
+
+<ul>
+<li>파라미터 : 옵셔널 가능</li>
+<li>반환값 : 옵셔널 가능</li>
+</ul>
+
+<pre><code class="language-swift">func toInt() -&gt; Int? 
+</code></pre>
+
+<ul>
+<li>파라미터로 전달된 값을 숫자로 변경할 수 엇으면 실패의 의마로 nil을 반환</li>
+<li>nil 반환이 가능하므로 반환 타입은 옵셔널</li>
+<li>? 이나 ! 사용</li>
+<li>아래는 if-let을 이용한 코드</li>
+</ul>
+
+<pre><code class="language-swift">func convertInt(str : String) -&gt; Int? {
+    if let result = str.toInt() {
+        return result
+    }
+    else {
+        return nilHandleErr
+    }
+}
+
+if let num = convertInt(&quot;abc&quot;){
+    num * 3
+}
+else {
+    println(&quot;숫자 아님&quot;)
+}
+
+let nu = convertInt(&quot;123&quot;)
+println(nu * 10)
+</code></pre>
+
+<h5 id="함수-다른-예제">함수 다른 예제</h5>
+
+<pre><code class="language-swift">func adds(values : Int...) -&gt; Int {
+    var count = values[0]
+    var sum = 0
+    for var i = 0; i &lt; count ; i++ {
+         sum += values[i]
+    }
+    return sum
+}
+
+adds(1,1, 2,3)  //1
+adds(3,1,2,3,4) //6
+adds(4,1,2,3,4,5,6)//10
+
+
+
+func add(var1 : Int, var2 : Int, inout ret : Int){
+    ret = var1 + var2
+}
+var ret = 0
+add(1,2, &amp;ret)
+println(ret)
+</code></pre>
+
+                </section>
+            </article>
+
+            
+                <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fnjir.github.io%2fposts%2fbasic-swift03%2f - Swift03%20-%20%ed%95%a8%ec%88%98 "><span class="icon-twitter"> tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+
+            
+
+            
+                <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'tak90'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.facebook.com/jinpcbang">
+        <i class="fa fa-facebook-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.github.com/njir">
+        <i class="fa fa-github-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://linkedin.com/in/hyungtak">
+        <i class="fa fa-linkedin-square"></i>
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2018 <i class="fa fa-heart" aria-hidden="true"></i> Tak
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://njir.github.io/js/jquery-3.3.1.min.js"></script>
+<script src="https://njir.github.io/js/main.js"></script>
+<script src="https://njir.github.io/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-46214266-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
+    </body>
+</html>

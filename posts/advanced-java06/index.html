@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		 
+			
+  
+    <meta name="twitter:card" content="summary"/>
+    
+      <meta name="twitter:image" content="https://njir.github.io/images/avatar.png" />
+    
+  
+  
+  <meta name="twitter:title" content="Advanced Java06, 07 - RTTI, Java annotation 및 Generic"/>
+  <meta name="twitter:description" content="온라인 T아카데미 강의 Advanced Java 정리"/>
+  
+  
+  
+  
+    <meta name="twitter:creator" content="@Tak"/>
+  
+
+
+
+		
+		<meta name="author" content="Tak">
+		<meta name="description" content="DevNote">
+		<meta name="generator" content="Hugo 0.48" />
+		<title>Advanced Java06, 07 - RTTI, Java annotation 및 Generic &middot; DevNote</title>
+		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
+		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
+		<link rel="stylesheet" href="https://njir.github.io/css/highlight.css">
+
+		
+		<link rel="stylesheet" href="https://njir.github.io/css/font-awesome.min.css">
+		
+
+		
+		<link href="https://njir.github.io/index.xml" rel="alternate" type="application/rss+xml" title="DevNote" />
+		
+
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://njir.github.io/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://njir.github.io/posts'>Archive</a>
+	<a href='https://njir.github.io/tags'>Tags</a>
+	<a href='https://njir.github.io/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://njir.github.io/index.xml">Subscribe</a>
+	
+</nav>
+
+
+        <section id="wrapper" class="post">
+            <article>
+                <header>
+                    <h1>
+                        Advanced Java06, 07 - RTTI, Java annotation 및 Generic
+                    </h1>
+                    <h2 class="headline">
+                    Mar 10, 2015 00:00
+                    · 1040 words
+                    · 3 minute read
+                      <span class="tags">
+                      
+                      
+                          
+                              <a href="https://njir.github.io/tags/java">java</a>
+                          
+                      
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                  
+                    <div id="toc">
+                      <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#rtti-run-time-type-information">RTTI(Run-Time Type Information)</a></li>
+<li><a href="#rtti의-필요성">RTTI의 필요성</a></li>
+<li><a href="#reflect">Reflect</a></li>
+<li><a href="#java-generic">Java Generic</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                  
+                
+                <section id="post-body">
+                    
+
+<h4 id="rtti-run-time-type-information">RTTI(Run-Time Type Information)</h4>
+
+<ul>
+<li>일반적으로 자바는 동적 resolving이 가능하다.</li>
+<li>자바 프로그램의 실행 중에 타입 정보를 알아낼 수 있으며 사용 가능</li>
+<li>라이브러리를 만들 때 RTTI를 사용하는 경우가 종종 있음</li>
+<li>C에서는 .o 파일들을 서로 linking해 실행파일 생성 : Linking
+
+<ul>
+<li>이 실행파일을 RAM에 올릴 때 주소를 재배치하는 과정 : relocation</li>
+<li>(C에서는 컴파일 때 미리 다 해놓음)</li>
+</ul></li>
+<li>자바에서는
+
+<ul>
+<li>b.java -&gt; b.class로, a.java -&gt; a.class로 컴파일</li>
+<li>jar 파일 생성 -&gt; jar파일이 VM 상에서 a.class가 실행됨(메모리 로딩)</li>
+<li>a.class가 실행되고 b의 class를 참조하는 시점에 b.class를 가져와서 메모리에 로딩(사용하려는 그 시점에 relocation, 이거때문에 자바가 느림)</li>
+<li>즉, 자바는 실행 중에 필요한게 있으면 그 때 메모리에 로딩하고, 관련 주소를 재배치하고 호출</li>
+</ul></li>
+</ul>
+
+<h4 id="rtti의-필요성">RTTI의 필요성</h4>
+
+<p>구조화된 프로그래밍을 위해서</p>
+
+<ul>
+<li>annotation: Java class파일에 meta 데이터를 기술하는 방식</li>
+<li>annotation이 어디까지 정보를 가져갈꺼냐 -&gt; @Retention</li>
+</ul>
+
+<pre><code class="language-java">@Target({ElementType.TYPE, ElementType.METHOD})
+@Retention(RetetionPolicy.RUNTIMe)
+public @interface MyAnnotation{
+	int num();
+    String name() default &quot;MyName&quot;;
+    String id();
+}
+
+@MyAnnotation(num=1, name=&quot;MainActivity&quot;, id=&quot;1&quot;)
+public class MainActivity extends Activity{
+	@Override
+    @MyAnnotation(num=1, name=&quot;onCreate&quot;, id=&quot;2&quot;)
+    public void onCreate(Bundle savedInstanceState){..}
+}
+</code></pre>
+
+<h4 id="reflect">Reflect</h4>
+
+<ul>
+<li>java reflect : 이름으로 동적으로 java class를 다루는 방법
+
+<ul>
+<li>자바에서는 자바 클래스의 이름을 갖고 메모리에 로딩</li>
+<li>class의 method나 field를 이름과 오버로딩한 함수들의 파라메터(signature)를 이용하여 함수 호출 또는 값 설정</li>
+</ul></li>
+</ul>
+
+<pre><code class="language-java">//Class 획득
+Class clazz = Class.forName(&quot;org.tacademy.basic.MyClass&quot;);
+Class clazz = MyClass.class;
+
+//객체의 생성
+Object obj = clazz.newInstance();
+Constructor c = clazz.getConstructor(String.class, Integer.class);
+Object obj = c.newInstance(&quot;test&quot;, 1);
+
+//Method 획득
+Method method = clazz.getMethod(&quot;myMethod&quot;.String.class, Integer.class);
+Method method = clazz.getDeclaredMethod(&quot;myPrivateMethod&quot;.String.class, Integer.class);
+
+//Method 호출
+method.invoke(myClassObject, &quot;param1&quot;, 10); //instance method
+method.invoke(null, &quot;parapm1&quot;, 10); //static method
+
+//Field의 획득
+Field field = clazz.getField(&quot;myField&quot;);
+
+</code></pre>
+
+<ul>
+<li>ClassLoader
+
+<ul>
+<li>Class를 메모리에 로딩하기 위해 사용하는 class</li>
+<li>이미 코딩된 Class의 경우 getClassLoader()로 얻어올 수 있음</li>
+</ul></li>
+<li>Proxy Class
+
+<ul>
+<li>인터페이스를 implements한 class나 객체를 동적으로 생성해 주기 위한 class</li>
+<li>reflect를 이용할 때 reflect로 생성한 object에 등록할 interface를 implements한 객체를 동적으로 생성</li>
+</ul></li>
+<li>Invocation Handler
+
+<ul>
+<li>내부에 invoke 함수를 통해서 method의 이름을 얻어와서 해당 method에 대한 처리 결과를 return</li>
+</ul></li>
+</ul>
+
+<h4 id="java-generic">Java Generic</h4>
+
+<ul>
+<li>클래스에 사용할 타입을 사용자가 지정할 수 있도록 임의의 타입을 지정하는 것</li>
+<li>다양한 타입을 사용하기 위해서 + <strong>컴파일 타임의 type safety를 보장하기 위해(특정한 타입으로 확정되도록)</strong>
+
+<ul>
+<li>ArrayList에 들어가는 타입을 마음대로 바꿀 수 있다.</li>
+<li>ArrayList<String> list : <strong>오직 String만 다루는 ArrayList</strong></li>
+</ul></li>
+<li>Collection 등에 많이 사용</li>
+</ul>
+
+<pre><code class="language-java">//정의
+public class MyClass&lt;E,T&gt;{
+	E data;
+    T operator;
+    public void setData(E data){
+    	this.data = data;
+    }
+    public void setOperator(T operator){
+    	this.operator = operator;
+    }
+    public E getData(){
+    	return data;
+    }
+    public T getOperator(){
+    	return operator;
+    }
+}
+// 사용
+MyClass&lt;Integer, String&gt; mData = new MyClass&lt;Interger, String&gt;();
+mData.setData((Integer)100);
+mData.setOperator(&quot;add&quot;);
+</code></pre>
+
+<ul>
+<li>Java Generic Type의 제한</li>
+</ul>
+
+<pre><code class="language-java">// 얘를 상속받은 애들만 사용 가능
+public class MyClass&lt;T extends String&gt;{..} 
+</code></pre>
+
+<ul>
+<li>Java Generic Method</li>
+</ul>
+
+<pre><code class="language-java">public&lt;T&gt; void putData(T data){..}
+public static&lt;T&gt; void printObject(T data){..}
+</code></pre>
+
+<ul>
+<li>Java Generic Type을 확정할 수 없는 경우</li>
+</ul>
+
+<pre><code class="language-java">public printLog(MyClass&lt;?&gt; p){..}
+</code></pre>
+
+                </section>
+            </article>
+
+            
+                <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fnjir.github.io%2fposts%2fadvanced-java06%2f - Advanced%20Java06%2c%2007%20-%20RTTI%2c%20Java%20annotation%20%eb%b0%8f%20Generic "><span class="icon-twitter"> tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+
+            
+
+            
+                <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'tak90'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.facebook.com/jinpcbang">
+        <i class="fa fa-facebook-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.github.com/njir">
+        <i class="fa fa-github-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://linkedin.com/in/hyungtak">
+        <i class="fa fa-linkedin-square"></i>
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2018 <i class="fa fa-heart" aria-hidden="true"></i> Tak
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://njir.github.io/js/jquery-3.3.1.min.js"></script>
+<script src="https://njir.github.io/js/main.js"></script>
+<script src="https://njir.github.io/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-46214266-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
+    </body>
+</html>

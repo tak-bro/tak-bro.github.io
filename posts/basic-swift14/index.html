@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		 
+			
+  
+    <meta name="twitter:card" content="summary"/>
+    
+      <meta name="twitter:image" content="https://njir.github.io/images/avatar.png" />
+    
+  
+  
+  <meta name="twitter:title" content="Swift13 - Foundation Framework 02"/>
+  <meta name="twitter:description" content="T아카데미 Swift1.2 강좌 정리"/>
+  
+  
+  
+  
+    <meta name="twitter:creator" content="@Tak"/>
+  
+
+
+
+		
+		<meta name="author" content="Tak">
+		<meta name="description" content="DevNote">
+		<meta name="generator" content="Hugo 0.48" />
+		<title>Swift13 - Foundation Framework 02 &middot; DevNote</title>
+		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
+		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
+		<link rel="stylesheet" href="https://njir.github.io/css/highlight.css">
+
+		
+		<link rel="stylesheet" href="https://njir.github.io/css/font-awesome.min.css">
+		
+
+		
+		<link href="https://njir.github.io/index.xml" rel="alternate" type="application/rss+xml" title="DevNote" />
+		
+
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://njir.github.io/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://njir.github.io/posts'>Archive</a>
+	<a href='https://njir.github.io/tags'>Tags</a>
+	<a href='https://njir.github.io/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://njir.github.io/index.xml">Subscribe</a>
+	
+</nav>
+
+
+        <section id="wrapper" class="post">
+            <article>
+                <header>
+                    <h1>
+                        Swift13 - Foundation Framework 02
+                    </h1>
+                    <h2 class="headline">
+                    Mar 20, 2015 12:22
+                    · 910 words
+                    · 2 minute read
+                      <span class="tags">
+                      
+                      
+                          
+                              <a href="https://njir.github.io/tags/swift">swift</a>
+                          
+                      
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                  
+                    <div id="toc">
+                      <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#직렬화">직렬화</a></li>
+<li><a href="#타이머">타이머</a></li>
+<li><a href="#알림">알림</a></li>
+<li><a href="#멀티쓰레드">멀티쓰레드</a></li>
+<li><a href="#네트워크">네트워크</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                  
+                
+                <section id="post-body">
+                    
+
+<h5 id="직렬화">직렬화</h5>
+
+<ul>
+<li>바이너리 형태로 변환</li>
+<li>바이너리 데이터 다루기 : NSData
+
+<ul>
+<li>직렬화된 데이터를 읽고, 파일로 쓰기</li>
+</ul></li>
+<li>직렬화 담당 : 아카이버/언아카이버
+
+<ul>
+<li>직렬화 : NSKeyedArchiver</li>
+<li>역직렬화 : NSKeyedUnarchiver</li>
+</ul></li>
+<li>직렬화 프로토콜 : NSCoding</li>
+</ul>
+
+<pre><code class="language-swift">//파일로 저장
+let filePath = &quot;/Users/sdt5/Desktop/array.plist&quot;
+let ret = NSKeyedArchiver.archiveRootObject(&quot;String Data&quot;, toFile: filePath)
+
+//파일에서 읽어오기
+let str = NSKeyedUnarchiver.unarchiveObjectWithFile(filePath) as String
+println(&quot;파일에서 복원 : \(str)&quot;)
+
+//NSData 로 직렬화
+let data = NSKeyedArchiver.archivedDataWithRootObject(&quot;String Data&quot;)
+
+//NSData 에서 읽어오기
+let str2 = NSKeyedUnarchiver.unarchiveObjectWithData(data) as String
+println(&quot;NSData 에서 복원 : \(str2)&quot;)
+</code></pre>
+
+<ul>
+<li>Key-Value 방식으로 직렬화</li>
+<li><strong>커스텀 클래스 직렬화</strong>
+
+<ul>
+<li>NSCoding 프로토콜</li>
+<li>클래스에 프로토콜 채택</li>
+<li>인코딩/디코딩(init) 메소드 작성</li>
+<li>프로토콜 + init -&gt; required</li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">//저장
+var obj = Person(name : &quot;태연&quot;, birthyear : 1989)
+
+let filePath = &quot;/Users/sdt5/Desktop/array.plist&quot;
+let ret = NSKeyedArchiver.archiveRootObject(obj, toFile: filePath)
+// 복원
+let obj2 = NSKeyedUnarchiver.unarchiveObjectWithFile(filePath) as Person
+println(&quot;name : \(obj2.name) - birthyear : \(obj2.birthyear)&quot;)
+</code></pre>
+
+<ul>
+<li>상속과 직렬화
+
+<ul>
+<li>부모 클래스도 직렬화, 자식 클래스에서 super 호출</li>
+<li>인코딩/디코딩하는 코드에서 부모 클래스의 인코딩/디코딩 코드 호출해야 함</li>
+</ul></li>
+</ul>
+
+<h5 id="타이머">타이머</h5>
+
+<ul>
+<li>NSTimer</li>
+<li>타이머 중지</li>
+</ul>
+
+<pre><code class="language-swift">func invalidate()
+</code></pre>
+
+<pre><code class="language-swift">class Alarm : NSObject {
+    func ring(){
+        println(&quot;Wake up!&quot;)
+    }
+}
+
+var obj = Alarm()
+obj.ring()
+
+let timer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: obj, selector: Selector(&quot;ring&quot;), userInfo: nil, repeats: true) //1초 뒤에 ring method 실행 . 콘솔 기반은 테스트 힘듦
+// 커맨드 라인툴의 환경상 바로 동작작
+timer.fire()
+</code></pre>
+
+<h5 id="알림">알림</h5>
+
+<ul>
+<li>NSNotification</li>
+<li>알림 센터(NSNotificationCenter)를 이용, 알림 방송(notifier)</li>
+<li>알림 센터에 알림 청취(receive) - 알림 감시자 등록</li>
+</ul>
+
+<pre><code class="language-swift">//알림 센터와 알림 이름
+let notiCenter = NSNotificationCenter.defaultCenter()
+let NotiName = &quot;CustomNotification&quot;
+
+//알림 감시용 클래스 생성. NSObject 상속 필요
+class MyClass : NSObject {
+    func handleNoti(noti : NSNotification){
+        println(&quot;알림 발생!&quot;)
+    }
+}
+
+//알림 센터에 알림에 대한 감시자 객체 등록
+let obj = MyClass()
+notiCenter.addObserver(obj, selector: Selector(&quot;handleNoti:&quot;), name: NotiName, object: nil)
+
+//알림 발송
+notiCenter.postNotificationName(NotiName, object: nil)
+//알림 발송(알림 객체로)
+let noti = NSNotification(name: NotiName, object: obj)
+notiCenter.postNotification(noti)
+</code></pre>
+
+<h5 id="멀티쓰레드">멀티쓰레드</h5>
+
+<ul>
+<li>사용자의 경험자 경험</li>
+<li>기다리면 -&gt; 홈버튼</li>
+<li>NSThread
+
+<ul>
+<li>멀티쓰레드에서 셀렉터 실행</li>
+<li>현재 동작 중인 쓰레드 정보</li>
+<li>메인 혹은 쓰레드 확인</li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">class MyThread : NSThread {
+    override func main(){
+        for var i = 0 ; i &lt; 10 ; i++ {
+            println(&quot;\(name) - \(i)&quot;)
+        }
+    }
+}
+
+var thread1 = MyThread()
+thread1.name = &quot;thread1&quot;
+var thread2 = MyThread()
+thread2.name = &quot;thread2&quot;
+
+thread1.start()
+thread2.start()
+
+while(true){}
+</code></pre>
+
+<ul>
+<li>NSOperation, NSOperationQueue
+
+<ul>
+<li>쓰레드 큐</li>
+<li>동시 동작 쓰래드 갯수 조절</li>
+<li>쓰레드 대기/동작</li>
+<li>큐를 이용한 쓰레드 관리</li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">class MyThread : NSOperation {
+    var title : String!
+    override func main(){
+        for var i = 0 ; i &lt; 10 ; i++ {
+            println(&quot;\(title) - \(i)&quot;)
+        }
+    }
+}
+
+var thread1 = MyThread()
+thread1.title = &quot;thread1&quot;
+var thread2 = MyThread()
+thread2.title = &quot;thread2&quot;
+var thread3 = MyThread()
+thread3.title = &quot;thread3&quot;
+
+var queue = NSOperationQueue()
+queue.maxConcurrentOperationCount = 2
+queue.addOperation(thread1)
+queue.addOperation(thread2)
+queue.addOperation(thread3)
+
+while(true){}
+</code></pre>
+
+<h5 id="네트워크">네트워크</h5>
+
+<ul>
+<li>NSURL : 리소스 위치 정보
+
+<ul>
+<li>지역 파일, http(s) URL 다루기</li>
+<li>URL에 허용되지 않는 문자 - 한글 -&gt; 인코딩</li>
+</ul></li>
+<li>NSURLRequest : 리소스 요청</li>
+<li>NSURLResponse : 요청에 대한 응답</li>
+<li>NSURLConnection : 연결</li>
+<li>리소스 얻기
+
+<ul>
+<li>NSData 객체로 생성</li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">let urlStr = &quot;http://images.apple.com/v/imac-with-retina/a/images/overview/intro_fallback_xlarge.jpg&quot;
+let url = NSURL(string : urlStr)!
+
+if let data = NSData(contentsOfURL : url){
+	println(&quot;size : \(data.length)&quot;)
+    let image = NSImage(data: data)
+}
+</code></pre>
+
+                </section>
+            </article>
+
+            
+                <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fnjir.github.io%2fposts%2fbasic-swift14%2f - Swift13%20-%20Foundation%20Framework%2002 "><span class="icon-twitter"> tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+
+            
+
+            
+                <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'tak90'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.facebook.com/jinpcbang">
+        <i class="fa fa-facebook-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.github.com/njir">
+        <i class="fa fa-github-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://linkedin.com/in/hyungtak">
+        <i class="fa fa-linkedin-square"></i>
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2018 <i class="fa fa-heart" aria-hidden="true"></i> Tak
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://njir.github.io/js/jquery-3.3.1.min.js"></script>
+<script src="https://njir.github.io/js/main.js"></script>
+<script src="https://njir.github.io/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-46214266-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
+    </body>
+</html>

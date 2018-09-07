@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		 
+			
+  
+    <meta name="twitter:card" content="summary"/>
+    
+      <meta name="twitter:image" content="https://njir.github.io/images/avatar.png" />
+    
+  
+  
+  <meta name="twitter:title" content="Swift09 - 프로토콜"/>
+  <meta name="twitter:description" content="T아카데미 Swift1.2 강좌 정리"/>
+  
+  
+  
+  
+    <meta name="twitter:creator" content="@Tak"/>
+  
+
+
+
+		
+		<meta name="author" content="Tak">
+		<meta name="description" content="DevNote">
+		<meta name="generator" content="Hugo 0.48" />
+		<title>Swift09 - 프로토콜 &middot; DevNote</title>
+		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
+		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
+		<link rel="stylesheet" href="https://njir.github.io/css/highlight.css">
+
+		
+		<link rel="stylesheet" href="https://njir.github.io/css/font-awesome.min.css">
+		
+
+		
+		<link href="https://njir.github.io/index.xml" rel="alternate" type="application/rss+xml" title="DevNote" />
+		
+
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://njir.github.io/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://njir.github.io/posts'>Archive</a>
+	<a href='https://njir.github.io/tags'>Tags</a>
+	<a href='https://njir.github.io/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://njir.github.io/index.xml">Subscribe</a>
+	
+</nav>
+
+
+        <section id="wrapper" class="post">
+            <article>
+                <header>
+                    <h1>
+                        Swift09 - 프로토콜
+                    </h1>
+                    <h2 class="headline">
+                    Mar 19, 2015 20:55
+                    · 907 words
+                    · 2 minute read
+                      <span class="tags">
+                      
+                      
+                          
+                              <a href="https://njir.github.io/tags/swift">swift</a>
+                          
+                      
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                  
+                    <div id="toc">
+                      <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#프로토콜">프로토콜</a>
+<ul>
+<li><a href="#프로퍼티">프로퍼티</a></li>
+<li><a href="#프로토콜에-초기화-메소드-선언">프로토콜에 초기화 메소드 선언</a></li>
+<li><a href="#프로토콜-타입">프로토콜 타입</a></li>
+<li><a href="#프로토콜-상속">프로토콜 상속</a></li>
+<li><a href="#클래스-전용-프로토콜">클래스 전용 프로토콜</a></li>
+<li><a href="#필수-항목과-선택-항목">필수 항목과 선택 항목</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                  
+                
+                <section id="post-body">
+                    
+
+<h4 id="프로토콜">프로토콜</h4>
+
+<ul>
+<li>메소드 호출 규격</li>
+</ul>
+
+<pre><code class="language-swift">protocol Singing {
+    func sing() //선언만
+}
+</code></pre>
+
+<ul>
+<li>메소드의 선언만 작성</li>
+<li>인터페이스
+
+<ul>
+<li>구현이 없어서 단독 사용 불가</li>
+<li>메소드 호출 약속</li>
+</ul></li>
+<li>iOS 어플리케이션 개발에서 자주 사용되는 패턴</li>
+<li>상속과 함께 사용하면 부모클래스를 첫 번째로</li>
+<li>프로토콜 정의, 클래스 채택 - override 아님</li>
+<li>다중 프로토콜 채택 가능
+
+<ul>
+<li>메소드 충돌되지 않도록 주의</li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">protocol Species {
+    class func species() -&gt; String
+}
+
+class Cat : Singing, Species {
+    func sing(){
+        println(&quot;cat cat&quot;)
+    }
+    class func species() -&gt; String {
+        return &quot;고양이&quot;
+    }
+}
+</code></pre>
+
+<ul>
+<li>프로토콜 내 타입 메소드
+
+<ul>
+<li>클래스 : class를 이용한 타입 메소드</li>
+<li>구조체와 enum : static을 이용한 타입 메소드</li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">protocol Species {
+    class func species() -&gt; String
+}
+
+class Cat : Singing, Species {
+    func sing(){
+        println(&quot;cat cat&quot;)
+    }
+    class func species() -&gt; String {
+        return &quot;고양이&quot;
+    }
+}
+
+struct Cow : Species {
+    static func species() -&gt; String {
+        return &quot;소&quot;
+    }
+}
+</code></pre>
+
+<h5 id="프로퍼티">프로퍼티</h5>
+
+<ul>
+<li>프로퍼티 선언 : 프로퍼티의 get/set 행위 선언</li>
+<li>클래스 채택
+
+<ul>
+<li>계산 프로퍼티</li>
+<li>저장 프로퍼티</li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">protocol Singing {
+    func sing() //선언만
+    var duration : Int { get }
+    var volume : Float { get set}
+}
+
+class Bird : Singing {
+    func sing() {
+        println(&quot;sing!&quot;)
+    }
+    var duration : Int {
+        get {
+            return 0
+        }
+    }
+    var volume : Float = 0.0
+}
+</code></pre>
+
+<h5 id="프로토콜에-초기화-메소드-선언">프로토콜에 초기화 메소드 선언</h5>
+
+<ul>
+<li>구현시 <strong>required</strong></li>
+<li>프로토콜 내 failable initializer 선언</li>
+</ul>
+
+<pre><code class="language-swift">protocol Named {
+    init(name : String)
+}
+
+class Monster : Named {
+    let name : String
+    required init(name : String){
+        self.name = name
+    }
+}
+</code></pre>
+
+<h5 id="프로토콜-타입">프로토콜 타입</h5>
+
+<ul>
+<li>프로토콜을 타입으로 사용</li>
+</ul>
+
+<pre><code class="language-swift">var singingAnimal : Singing = Human()
+singingAnimal.sing()
+</code></pre>
+
+<ul>
+<li>프로토콜에 작성한 메소드, 프로퍼티만 사용</li>
+<li>타입 오류</li>
+</ul>
+
+<h5 id="프로토콜-상속">프로토콜 상속</h5>
+
+<ul>
+<li>다른 프로토콜 상속 가능</li>
+</ul>
+
+<pre><code class="language-swift">protocol Entertaining : Singing, Dancing {}
+
+class Human : Entertaining {
+    func sing(){
+        println(&quot;sdsd&quot;)
+    }
+    func danve(){
+        println(&quot;dancing&quot;)
+    }
+}
+</code></pre>
+
+<ul>
+<li>Entertaining 포로토콜을 채택하고 Entertaining이 상속하는 모든 프로토콜에 선언한 모든 메소드를 작성해야함</li>
+</ul>
+
+<h5 id="클래스-전용-프로토콜">클래스 전용 프로토콜</h5>
+
+<ul>
+<li>클래스에서만 채택 가능(구조체, enum 에러)</li>
+<li>class 키워드 사용</li>
+</ul>
+
+<pre><code class="language-swift">protocol PROTOCOL_NAME : class, SUPER_PROTOCOL {
+}
+</code></pre>
+
+<h5 id="필수-항목과-선택-항목">필수 항목과 선택 항목</h5>
+
+<ul>
+<li>필수 항목 - 구현 안하면 에러</li>
+<li>선택 항목 : optional</li>
+<li>@objc 키워드로 프로토콜 선언
+
+<ul>
+<li>objectC 코드에서 사용할 수 있도록 하는 키워드</li>
+</ul></li>
+</ul>
+
+<pre><code class="language-swift">@objc protocol Baking {
+	func baking()	//필수 구현 메소드
+    optional func makeDough() //선택 구현 메소드
+}
+</code></pre>
+
+<ul>
+<li>다각형의 면적을 구하는 SizeMeasuable, 각 변의 길이가 같은 Equilateral 프로토콜</li>
+</ul>
+
+<pre><code class="language-swift">class Shape {
+    var edge : Int
+    
+    init(numberOfEdge : Int){
+        edge = numberOfEdge
+    }
+    
+    func description() -&gt; String{
+        return &quot;\(edge)각형&quot;
+    }
+}
+
+protocol SizeMeasurable{
+    func size() -&gt; Double
+}
+
+protocol Equilateral {
+    var isEquilateral : Bool { get}
+    init?(equilateral : Double)
+}
+
+class Rectangle : Shape, SizeMeasurable, Equilateral {
+    var width : Double
+    var height : Double
+    
+    init(width : Double, height : Double){
+        self.width = width
+        self.height = height
+        super.init(numberOfEdge: 4)
+    }
+    
+    var isEquilateral : Bool {
+        return width == height
+    }
+    
+    required convenience init?(equilateral : Double){
+        self.init(width : equilateral, height : equilateral)
+        if equilateral &lt; 0 {
+            return nil
+        }
+    }
+    
+    func size() -&gt; Double{
+        return Double(width * height)
+    }
+    
+    override func description() -&gt; String {
+        return &quot;사각형가로 \(width) 세로 \(height)&quot;
+    }
+}
+
+if let obj1 = Rectangle(equilateral: 20){
+    println(&quot;\(obj1.description()), size : \(obj1.size()), 정사각형 : \(obj1.isEquilateral)&quot;)
+    // 사각형가로 20.0 세로 20.0, size : 400.0, 정사각형 : true
+}
+</code></pre>
+
+                </section>
+            </article>
+
+            
+                <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fnjir.github.io%2fposts%2fbasic-swift09%2f - Swift09%20-%20%ed%94%84%eb%a1%9c%ed%86%a0%ec%bd%9c "><span class="icon-twitter"> tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+
+            
+
+            
+                <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'tak90'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.facebook.com/jinpcbang">
+        <i class="fa fa-facebook-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.github.com/njir">
+        <i class="fa fa-github-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://linkedin.com/in/hyungtak">
+        <i class="fa fa-linkedin-square"></i>
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2018 <i class="fa fa-heart" aria-hidden="true"></i> Tak
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://njir.github.io/js/jquery-3.3.1.min.js"></script>
+<script src="https://njir.github.io/js/main.js"></script>
+<script src="https://njir.github.io/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-46214266-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
+    </body>
+</html>

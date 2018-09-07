@@ -6,27 +6,72 @@
     <description>Recent content in Java on DevNote</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 29 Mar 2015 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 12 Mar 2015 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://njir.github.io/tags/java/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Advanced Java - 오브젝트, 예외처리, 제너릭</title>
+      <title>Advanced Java 08 - Java API를 활용한 객체 활용 및 데이터 처리 기법</title>
+      <link>https://njir.github.io/posts/advanced-java07/</link>
+      <pubDate>Thu, 12 Mar 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://njir.github.io/posts/advanced-java07/</guid>
+      <description>Java Array 동일한 Type의 데이터를 여러 개 가질 때 사용하는 자료구조 String [] stringArray; 변수 Array의 객체 생성은 new String[size] 생성 Array가 생성되었다고 Array에 들어가는</description>
+    </item>
+    
+    <item>
+      <title>Advanced Java06, 07 - RTTI, Java annotation 및 Generic</title>
+      <link>https://njir.github.io/posts/advanced-java06/</link>
+      <pubDate>Tue, 10 Mar 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://njir.github.io/posts/advanced-java06/</guid>
+      <description>RTTI(Run-Time Type Information) 일반적으로 자바는 동적 resolving이 가능하다. 자바 프로그램의 실행 중에 타입 정보를 알아낼 수 있으며 사용 가능 라이브러리를 만들 때 RTTI를 사</description>
+    </item>
+    
+    <item>
+      <title>Advanced Java01 - 객체지향, 기본 구조, Keyword</title>
+      <link>https://njir.github.io/posts/advanced-java01/</link>
+      <pubDate>Sat, 07 Mar 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://njir.github.io/posts/advanced-java01/</guid>
+      <description>객체지향 컴퓨터 프로그래밍 하나 이상의 관련된 추상 알고리즘을 특정한 프로그래밍 언어를 이용해 구체적인 컴퓨터 프로그램으로 구현하는 기술 추상화 복잡한 자료, 모</description>
+    </item>
+    
+    <item>
+      <title>Advanced Java02 - 오브젝트, 예외처리, 제너릭</title>
       <link>https://njir.github.io/posts/advanced-java02/</link>
-      <pubDate>Sun, 29 Mar 2015 00:00:00 +0000</pubDate>
+      <pubDate>Sat, 07 Mar 2015 00:00:00 +0000</pubDate>
       
       <guid>https://njir.github.io/posts/advanced-java02/</guid>
       <description>Java Object Interface class 정의시 &amp;ldquo;어떤 정보가 어떻게 되면 외부에 알려준다.&amp;ldquo;와 같은 경우에 사용 예를 들어 함수 정의시 변수가 10의 배수가 되면 외부에</description>
     </item>
     
     <item>
-      <title>Advanced Java - 객체지향, 기본 구조, Keyword</title>
-      <link>https://njir.github.io/posts/advanced-java01/</link>
-      <pubDate>Fri, 27 Mar 2015 00:00:00 +0000</pubDate>
+      <title>Advanced Java03 - Java Keyword</title>
+      <link>https://njir.github.io/posts/advanced-java03/</link>
+      <pubDate>Sat, 07 Mar 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/advanced-java01/</guid>
-      <description>객체지향 컴퓨터 프로그래밍 하나 이상의 관련된 추상 알고리즘을 특정한 프로그래밍 언어를 이용해 구체적인 컴퓨터 프로그램으로 구현하는 기술 추상화 복잡한 자료, 모</description>
+      <guid>https://njir.github.io/posts/advanced-java03/</guid>
+      <description>Modifier 함수, 클래스, 필드 등의 속성을 나타냄 Note : abstract : 정의만 있다. 구현이 없는 method, abstract method를 갖고있는 class final : 필드의 변수에 객체를 할당하면 더이상 변경불가 native</description>
+    </item>
+    
+    <item>
+      <title>Advanced Java04 - Java Object</title>
+      <link>https://njir.github.io/posts/advanced-java04/</link>
+      <pubDate>Sat, 07 Mar 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://njir.github.io/posts/advanced-java04/</guid>
+      <description>Interface class정의시 &amp;ldquo;어떤 정보가 어떻게 되면 외부에 알려준다.&amp;ldquo;와 같은 경우에 사용 예를 들어 함수 정의시 변수가 10의 배수가 되면 외</description>
+    </item>
+    
+    <item>
+      <title>Advanced Java05 - Exceptions</title>
+      <link>https://njir.github.io/posts/advanced-java05/</link>
+      <pubDate>Sat, 07 Mar 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://njir.github.io/posts/advanced-java05/</guid>
+      <description>Java의 Error 처리 자바는 Error 또는 Exception 상황에 Throwable이라는 객체를 생성해서 던짐 Throwable : Exception, Error로 구성 Exception은 개발자가 처리할 수 있는</description>
     </item>
     
   </channel>

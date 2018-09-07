@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		 
+			
+  
+    <meta name="twitter:card" content="summary"/>
+    
+      <meta name="twitter:image" content="https://njir.github.io/images/avatar.png" />
+    
+  
+  
+  <meta name="twitter:title" content="Swift02 - 옵셔널"/>
+  <meta name="twitter:description" content="T아카데미 Swift1.2 강좌 정리"/>
+  
+  
+  
+  
+    <meta name="twitter:creator" content="@Tak"/>
+  
+
+
+
+		
+		<meta name="author" content="Tak">
+		<meta name="description" content="DevNote">
+		<meta name="generator" content="Hugo 0.48" />
+		<title>Swift02 - 옵셔널 &middot; DevNote</title>
+		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
+		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
+		<link rel="stylesheet" href="https://njir.github.io/css/highlight.css">
+
+		
+		<link rel="stylesheet" href="https://njir.github.io/css/font-awesome.min.css">
+		
+
+		
+		<link href="https://njir.github.io/index.xml" rel="alternate" type="application/rss+xml" title="DevNote" />
+		
+
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://njir.github.io/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://njir.github.io/posts'>Archive</a>
+	<a href='https://njir.github.io/tags'>Tags</a>
+	<a href='https://njir.github.io/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://njir.github.io/index.xml">Subscribe</a>
+	
+</nav>
+
+
+        <section id="wrapper" class="post">
+            <article>
+                <header>
+                    <h1>
+                        Swift02 - 옵셔널
+                    </h1>
+                    <h2 class="headline">
+                    Mar 19, 2015 14:15
+                    · 672 words
+                    · 2 minute read
+                      <span class="tags">
+                      
+                      
+                          
+                              <a href="https://njir.github.io/tags/swift">swift</a>
+                          
+                      
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                  
+                    <div id="toc">
+                      <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#옵셔널-정리">옵셔널 정리</a>
+<ul>
+<li><a href="#nil">nil</a></li>
+<li><a href="#옵셔널">옵셔널</a></li>
+<li><a href="#옵셔널-변수-사용하기">옵셔널 변수 사용하기</a></li>
+<li><a href="#nil-결합-연산자">nil 결합 연산자 : ??</a></li>
+<li><a href="#옵셔널-체인-강제-언래핑">옵셔널 체인, 강제 언래핑</a></li>
+<li><a href="#암시적-언래핑-옵셔널">암시적 언래핑 옵셔널</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                  
+                
+                <section id="post-body">
+                    
+
+<h4 id="옵셔널-정리">옵셔널 정리</h4>
+
+<h5 id="nil">nil</h5>
+
+<p>nil : 값이 할당되지 않은 상태
+nil에 함수나 프로퍼티 사용 -&gt; 런타임 에러</p>
+
+<p>변수와 상수를 사용하기 전에 값이 설정돼야한다.</p>
+
+<pre><code class="language-swift">var i : Int // Error
+println(i)
+</code></pre>
+
+<p>일반 변수(상수)는 nil이 될 수 없다.</p>
+
+<pre><code class="language-swift">var str = &quot;Hello&quot;
+str = nil //Error
+</code></pre>
+
+<h5 id="옵셔널">옵셔널</h5>
+
+<ul>
+<li>nil이 될 수 있는 변수</li>
+<li>타입 뒤에 물음표(?)로 선언</li>
+</ul>
+
+<pre><code class="language-swift">var optionalVar : Int?
+</code></pre>
+
+<ul>
+<li>타입 선언 필수</li>
+<li>옵셔널은 일반 타입과 다르다.</li>
+<li><strong>메소드 호출, 프로퍼티 사용 못함</strong></li>
+</ul>
+
+<pre><code class="language-swift">var i2 : Int? = 3
+println(i2) //nil
+
+//successor : 다음 숫자를 알려줌
+i2.successor() // Error. i2는 nil이다
+
+var i3 = i2?.successor() // optional type
+var i4 = i2!.successor() // not optional type
+</code></pre>
+
+<h5 id="옵셔널-변수-사용하기">옵셔널 변수 사용하기</h5>
+
+<ul>
+<li>nil인가? 아닌가? -&gt; if 조건문 사용</li>
+<li>if-let : nil 아니면 - 값 접근</li>
+</ul>
+
+<pre><code class="language-swift">if let realStr = optionalStr {
+	// realStr은 옵셔널이 아니다.
+    println(&quot;string : \(realStr)
+}
+else{
+ 	// optionalStr이 nil인 경우
+}
+</code></pre>
+
+<h5 id="nil-결합-연산자">nil 결합 연산자 : ??</h5>
+
+<ul>
+<li>해당 변수가 nil 이면 ?? 연산자 이후의 값 사용</li>
+</ul>
+
+<pre><code class="language-swift">var userSelectedColor : String?
+//userSelectedColor가 nil 이면 Red
+var colorName = userSelectedColor ?? &quot;Red&quot;  //colorName : Red
+userSelectedColor = &quot;Blue&quot;
+var colorName2 = userSelectedColor ?? &quot;Red&quot;  //ColorName : Blue
+</code></pre>
+
+<h5 id="옵셔널-체인-강제-언래핑">옵셔널 체인, 강제 언래핑</h5>
+
+<ul>
+<li>옵셔널 체인 : 객체가 nil아면 더 이상 객체에 접근하지 않고 nil 반환</li>
+<li>강제 언래핑 : 객체에 접근한 결과는 옵셔널 타입이 아니지만, 객체가 nil인 경우 에러 발생</li>
+</ul>
+
+<pre><code class="language-swift">//1. 옵셔널 체인
+var optionalStr2 : String? = &quot;abcd&quot;
+var num1 = optionalStr?.uppercaseString 
+// nil이면 뒤에꺼 실행 안함. nil이 될수도 있음
+// 이후에도 num1은 옵셔널임
+
+//2. 강제 언래핑(Forced Unwrapping)
+var num2 = optionalStr!.uppercaseString
+optionalStr2 = nil
+
+let str3 = optionalStr!.uppercaseString  //Error 발생. optionalStr2가 nil
+</code></pre>
+
+<pre><code class="language-swift">var optionalStr : String?
+optionalStr = &quot;abcd&quot;
+let str1 = optionalStr?.uppercaseString //이후 str1은 nil 가능
+
+var optionalStr : String?
+optionalStr = &quot;abcd&quot;
+let str2 = optionalStr!.uppercaseString //이후 str1은 무조건 nil이 아님
+</code></pre>
+
+<h5 id="암시적-언래핑-옵셔널">암시적 언래핑 옵셔널</h5>
+
+<ul>
+<li>? 대신 ! 사용</li>
+</ul>
+
+<pre><code class="language-swift">var optionalStr : String!
+optionalStr = &quot;123&quot;
+optionalStr.toInt() //Success
+
+optionalStr = nil
+optionalStr.toInt() //Error
+</code></pre>
+
+<h5 id="conclusion">Conclusion</h5>
+
+<ul>
+<li>옵셔널 : nil 가능한 변수. 타입?</li>
+<li>사용방법 : 변수?, 변수!</li>
+<li>옵셔널 바인딩, 강제 언래핑</li>
+<li>암시적 언래핑 : 타입!</li>
+<li><strong><em>코드 자동완성 이용하자</em></strong></li>
+</ul>
+
+                </section>
+            </article>
+
+            
+                <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fnjir.github.io%2fposts%2fbasic-swift02%2f - Swift02%20-%20%ec%98%b5%ec%85%94%eb%84%90 "><span class="icon-twitter"> tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+
+            
+
+            
+                <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'tak90'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.facebook.com/jinpcbang">
+        <i class="fa fa-facebook-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.github.com/njir">
+        <i class="fa fa-github-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://linkedin.com/in/hyungtak">
+        <i class="fa fa-linkedin-square"></i>
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2018 <i class="fa fa-heart" aria-hidden="true"></i> Tak
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://njir.github.io/js/jquery-3.3.1.min.js"></script>
+<script src="https://njir.github.io/js/main.js"></script>
+<script src="https://njir.github.io/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-46214266-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
+    </body>
+</html>

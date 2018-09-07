@@ -21,6 +21,15 @@
     </item>
     
     <item>
+      <title>Embedded</title>
+      <link>https://njir.github.io/tags/embedded/</link>
+      <pubDate>Thu, 16 Apr 2015 14:12:59 -0600</pubDate>
+      
+      <guid>https://njir.github.io/tags/embedded/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Eos</title>
       <link>https://njir.github.io/tags/eos/</link>
       <pubDate>Wed, 05 Sep 2018 18:15:59 -0600</pubDate>
@@ -32,7 +41,7 @@
     <item>
       <title>Java</title>
       <link>https://njir.github.io/tags/java/</link>
-      <pubDate>Sun, 29 Mar 2015 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 12 Mar 2015 00:00:00 +0000</pubDate>
       
       <guid>https://njir.github.io/tags/java/</guid>
       <description></description>
@@ -62,6 +71,15 @@
       <pubDate>Thu, 22 Mar 2018 00:00:00 +0000</pubDate>
       
       <guid>https://njir.github.io/tags/rxjs/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Swift</title>
+      <link>https://njir.github.io/tags/swift/</link>
+      <pubDate>Fri, 20 Mar 2015 12:22:59 -0600</pubDate>
+      
+      <guid>https://njir.github.io/tags/swift/</guid>
       <description></description>
     </item>
     

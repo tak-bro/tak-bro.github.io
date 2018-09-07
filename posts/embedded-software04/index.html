@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		 
+			
+  
+    <meta name="twitter:card" content="summary"/>
+    
+      <meta name="twitter:image" content="https://njir.github.io/images/avatar.png" />
+    
+  
+  
+  <meta name="twitter:title" content="임베디드 소프트웨어 - IEEE 802.15.4e, Scheduling"/>
+  <meta name="twitter:description" content="아주대학교 임베디드 소프트웨어 수업 정리"/>
+  
+  
+  
+  
+    <meta name="twitter:creator" content="@Tak"/>
+  
+
+
+
+		
+		<meta name="author" content="Tak">
+		<meta name="description" content="DevNote">
+		<meta name="generator" content="Hugo 0.48" />
+		<title>임베디드 소프트웨어 - IEEE 802.15.4e, Scheduling &middot; DevNote</title>
+		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
+		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
+		<link rel="stylesheet" href="https://njir.github.io/css/highlight.css">
+
+		
+		<link rel="stylesheet" href="https://njir.github.io/css/font-awesome.min.css">
+		
+
+		
+		<link href="https://njir.github.io/index.xml" rel="alternate" type="application/rss+xml" title="DevNote" />
+		
+
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://njir.github.io/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://njir.github.io/posts'>Archive</a>
+	<a href='https://njir.github.io/tags'>Tags</a>
+	<a href='https://njir.github.io/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://njir.github.io/index.xml">Subscribe</a>
+	
+</nav>
+
+
+        <section id="wrapper" class="post">
+            <article>
+                <header>
+                    <h1>
+                        임베디드 소프트웨어 - IEEE 802.15.4e, Scheduling
+                    </h1>
+                    <h2 class="headline">
+                    Mar 25, 2015 12:22
+                    · 1475 words
+                    · 3 minute read
+                      <span class="tags">
+                      
+                      
+                          
+                              <a href="https://njir.github.io/tags/embedded">embedded</a>
+                          
+                      
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                  
+                    <div id="toc">
+                      <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#ieee-802-15-4">IEEE 802.15.4</a></li>
+<li><a href="#power-saving-link-layer-ieee-802-15-4e">Power-Saving Link Layer - IEEE 802.15.4e</a></li>
+<li><a href="#slotframe-structure">Slotframe Structure</a></li>
+<li><a href="#scheduling">Scheduling</a></li>
+<li><a href="#synchronization">Synchronization</a></li>
+<li><a href="#channel-hopping">Channel Hopping</a></li>
+<li><a href="#network-formation">Network Formation</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                  
+                
+                <section id="post-body">
+                    
+
+<h5 id="ieee-802-15-4">IEEE 802.15.4</h5>
+
+<ul>
+<li>2.4GHz대역의 16개 채널을 갖고 있음</li>
+<li>하나당 2MHz(중심 frequnecy로부터 5MHz)</li>
+<li>패킷 전송 절차 : Preamble -&gt; SFD -&gt; LEN</li>
+<li>1) Preamble : 패킷을 전송하려고 할 때(시작 할때), 모든 무선 MAC(wifi 등)은 0101010&hellip;로 떤다(128us(마이크로sec)동안)
+
+<ul>
+<li>Locking하기 위해서</li>
+</ul></li>
+<li>2) SFD(Start of Frame Delimiter)
+
+<ul>
+<li>Start of Frame을 구분하는 구분자(특정 ID)</li>
+<li>패킷이 오는 것을 알 수 있다.</li>
+<li>패킷이 아님. 패킷의 시작임</li>
+<li>ex) 01001 &hellip;</li>
+</ul></li>
+<li>3) LEN(Length)
+
+<ul>
+<li>8bit</li>
+<li>패킷의 최대 길이는 <strong>128Bytes</strong></li>
+<li>Receiver 입장에서 LEN을 읽은 후, 데이터가 어디서부터 언제까지 오는지 알 수 있다.</li>
+</ul></li>
+</ul>
+
+<blockquote>
+<p>총 128Bytes 중 <strong>실제 데이터는 127Bytes(LEN까지 포함해서 128bytes)</strong></p>
+</blockquote>
+
+<ul>
+<li><strong><em>Once lockedoon, the receiver waits for the SFD, then for the length byte.</em></strong></li>
+</ul>
+
+<h5 id="power-saving-link-layer-ieee-802-15-4e">Power-Saving Link Layer - IEEE 802.15.4e</h5>
+
+<ul>
+<li>Star Topology에서는 IoT의 모든 사물들을 커버하려면 빽빽히 AP가 있어야 한다. -&gt; 너무 많이 있어야함</li>
+<li>실제로 IoT는 AP에서 이어진 host들이 서로 연결되는 Mesh Network를 이루어야 한다.</li>
+<li>Wifi(AP) 입장에서는 Host가 두개의 Wifi를 붙이는 것을 허용안한다.</li>
+<li>초기에는 패킷을 전달해주기 위해 연결다리에 있는 호스트는 무조건 켜져 있어야 했다.(<strong>100% duty cycle</strong>이어야만 한다.) -&gt; Duty Cycle Management가 어렵다. -&gt; 해결방법 : Time Slicing, Beconning(이전 포스트 내용)</li>
+<li>TSCH(Time Synchronized Channel Hopping)
+
+<ul>
+<li>TSMP : 이미 표준으로 등록되어 있다.(WirelessHART standard)</li>
+</ul></li>
+</ul>
+
+<h5 id="slotframe-structure">Slotframe Structure</h5>
+
+<ul>
+<li>Slotframe is a group of slots which repeat over time.</li>
+<li>Slotframe당 slot 4개</li>
+<li>보내는 주기가 정해짐
+
+<ul>
+<li>ex1) Host A가 5초에 한번, Host B가 10초에 한번, Host C가 20초에 한번씩 <strong>주기적으로</strong> 패킷을 전송할 때, 하나당 time slot을 20초로 잡아야 한다.(가장 긴 시간)</li>
+<li>ex2) 1초에 한번 보내면 timeslot 100개</li>
+</ul></li>
+<li>time slot 중 ACK의 시간 10ms(앞 포스트 Fig1.(b))</li>
+<li>sleeping slot에서는 라디오를 아예 보내지 않는다.</li>
+<li>실제로는 time slot 굉장히 크다.</li>
+<li>Single slot은 충분히 길어야 한다. 10ms정도</li>
+<li>When an upper layer generates a packet, is sends it to the MAC Layer
+
+<ul>
+<li>전송 큐(transmist queue)에 넣고 보낸다.</li>
+<li>MAC Layer는 큐에 패킷이 있는지 검사한다.
+
+<ul>
+<li>있으면 패킷 보냄 -&gt; ACK 기다림(ACK을 못받으면 dummy slot을 만들고 다시 전송)</li>
+<li>없으면 다시 sleep</li>
+</ul></li>
+</ul></li>
+<li>reception slot은 radio를 키고 받고 끈다.</li>
+</ul>
+
+<blockquote>
+<p>이 패러그래프 주제는 100% duty cycle 문제를 해결(duty cycle을 낮추기 위해)하기 위해 Multichannel hopping (Time Slotted Channel Hopping) -&gt; 같이 깨고 같이 잘 수 있다.</p>
+</blockquote>
+
+<h5 id="scheduling">Scheduling</h5>
+
+<ul>
+<li>두 가지 접근 방법 (centralized approach, distributed)</li>
+<li>Centralized approach : 혼자서
+
+<ul>
+<li>효율적인 스케쥴링이 가능하다.</li>
+<li>topology가 변하는 경우 re-form을 해줘야 함.-&gt; distributed approach
+
+<ul>
+<li>This type of approach has been commercially available since TSMP</li>
+</ul></li>
+</ul></li>
+<li>Distributed approach : 자기가 각각 결정함. 문제 발생 가능</li>
+</ul>
+
+<h5 id="synchronization">Synchronization</h5>
+
+<ul>
+<li>802.15.4e에는 beacon이 없다.</li>
+<li>두가지 방법
+
+<ul>
+<li>Acknowledgement-Based synchronization : 보내는 host의 시간과 싱크 조절</li>
+<li>Frame-Based synchronization</li>
+</ul></li>
+</ul>
+
+<h5 id="channel-hopping">Channel Hopping</h5>
+
+<ul>
+<li>interference, multipath fading 완화시킨다</li>
+</ul>
+
+<h5 id="network-formation">Network Formation</h5>
+
+<p><img src="/images/fig3.png" alt="fig3" />
+<img src="/images/fig4.png" alt="fig4" />
+채널 A가 스케쥴링 관리(super, AP, Centralized)</p>
+
+<p>0번 slot은 advertising(default provisioning channel)</p>
+
+<blockquote>
+<ul>
+<li>A가 AP라고 advertise(Cycle 0번. (Fig.3))</li>
+<li>Fig.3의 k는 Cycle 횟수를 뜻함</li>
+</ul>
+</blockquote>
+
+<ol>
+<li>Cycle 0일 때(k=0)
+
+<ul>
+<li>1) time slot=0 (ASN=0)
+
+<ul>
+<li>A가 Advertise</li>
+</ul></li>
+<li>2) time slot=1 (ASN=1)
+
+<ul>
+<li>B가 기다리고 있다 Join Request</li>
+</ul></li>
+</ul></li>
+<li>Cycle 1일때(k=1) : time slot 한바퀴 돌고 다시 처음으로 돌아온다.
+
+<ul>
+<li>1) time slot=0 (ASN=7)
+
+<ul>
+<li>A가 B에게 Join Response</li>
+</ul></li>
+</ul></li>
+<li>Cycle 2일때(k=2)
+
+<ul>
+<li>1) time slot=0 (ASN=14) : Set Link
+
+<ul>
+<li>t=2, chO=0, Adv : time slot=2, 0번 채널에 Advertise 설정</li>
+<li>t=3, chO=1 RX : time slot=3, 1번 채널에서 B RX 설정</li>
+</ul></li>
+</ul></li>
+<li>Cycle 3일때(k=3)
+
+<ul>
+<li>1) time slot=0 (ASN=21) : Set Link
+
+<ul>
+<li>t=4, chO=2, B-&gt;A : time slot=4, 2번 채널에 B-&gt;A 설정</li>
+</ul></li>
+<li>2) time slot=2 (ASN=23)
+
+<ul>
+<li>B가 Advertising</li>
+</ul></li>
+<li>3) time slot=3 (ASN=24)
+
+<ul>
+<li>B의 Advertising을 받고 C가 B에게 Join Request</li>
+</ul></li>
+<li>4) time slot=4 (ASN=25)
+
+<ul>
+<li>B가 C의 Request를 A에게 전달(<strong><em>B가 Centralized가 아니라서</em></strong>)</li>
+</ul></li>
+</ul></li>
+<li>Cycle 4일때(k=4)
+
+<ul>
+<li>1) time slot=0 (ASN=28)
+
+<ul>
+<li>A가 B에게 C의 Join Request에 대하여 Response 전달</li>
+</ul></li>
+<li>2) time slot=2 (ASN=30)
+
+<ul>
+<li>B가 C에게 Response 전달</li>
+</ul></li>
+</ul></li>
+<li>Cycle 5일때(k=5)
+
+<ul>
+<li>1) time slot=0 (ASN=35) : A가 B에게 전달
+
+<ul>
+<li>t=5, chO=3, C-&gt;B : time slot=5, 3번 채널에 C-&gt;B 전달</li>
+</ul></li>
+<li>2) time slot=2 (ASN=37) : B가 C를 세팅
+
+<ul>
+<li>t=5, chO=3, C-&gt;B : time slot=5, 3번 채널에 C-&gt;B 세팅</li>
+</ul></li>
+<li><strong><em>이 order는 B,C둘다 전달 되어야함</em></strong></li>
+</ul></li>
+<li>Cycle 6일때(k=6)
+
+<ul>
+<li>1) time slot=0 (ASN=42) : Set Link
+
+<ul>
+<li>t=6, chO=4, B-&gt;A : time slot=6, 4번 채널에 B-&gt;A 설정</li>
+</ul></li>
+</ul></li>
+</ol>
+
+                </section>
+            </article>
+
+            
+                <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fnjir.github.io%2fposts%2fembedded-software04%2f - %ec%9e%84%eb%b2%a0%eb%94%94%eb%93%9c%20%ec%86%8c%ed%94%84%ed%8a%b8%ec%9b%a8%ec%96%b4%20-%20IEEE%20802.15.4e%2c%20Scheduling "><span class="icon-twitter"> tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+
+            
+
+            
+                <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'tak90'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.facebook.com/jinpcbang">
+        <i class="fa fa-facebook-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.github.com/njir">
+        <i class="fa fa-github-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://linkedin.com/in/hyungtak">
+        <i class="fa fa-linkedin-square"></i>
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2018 <i class="fa fa-heart" aria-hidden="true"></i> Tak
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://njir.github.io/js/jquery-3.3.1.min.js"></script>
+<script src="https://njir.github.io/js/main.js"></script>
+<script src="https://njir.github.io/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-46214266-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
+    </body>
+</html>

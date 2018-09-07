@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		 
+			
+  
+    <meta name="twitter:card" content="summary"/>
+    
+      <meta name="twitter:image" content="https://njir.github.io/images/avatar.png" />
+    
+  
+  
+  <meta name="twitter:title" content="임베디드 소프트웨어 - Connecting to the Internet 01"/>
+  <meta name="twitter:description" content="아주대학교 임베디드 소프트웨어 수업 정리"/>
+  
+  
+  
+  
+    <meta name="twitter:creator" content="@Tak"/>
+  
+
+
+
+		
+		<meta name="author" content="Tak">
+		<meta name="description" content="DevNote">
+		<meta name="generator" content="Hugo 0.48" />
+		<title>임베디드 소프트웨어 - Connecting to the Internet 01 &middot; DevNote</title>
+		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
+		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
+		<link rel="stylesheet" href="https://njir.github.io/css/highlight.css">
+
+		
+		<link rel="stylesheet" href="https://njir.github.io/css/font-awesome.min.css">
+		
+
+		
+		<link href="https://njir.github.io/index.xml" rel="alternate" type="application/rss+xml" title="DevNote" />
+		
+
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://njir.github.io/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://njir.github.io/posts'>Archive</a>
+	<a href='https://njir.github.io/tags'>Tags</a>
+	<a href='https://njir.github.io/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://njir.github.io/index.xml">Subscribe</a>
+	
+</nav>
+
+
+        <section id="wrapper" class="post">
+            <article>
+                <header>
+                    <h1>
+                        임베디드 소프트웨어 - Connecting to the Internet 01
+                    </h1>
+                    <h2 class="headline">
+                    Apr 7, 2015 16:12
+                    · 932 words
+                    · 2 minute read
+                      <span class="tags">
+                      
+                      
+                          
+                              <a href="https://njir.github.io/tags/embedded">embedded</a>
+                          
+                      
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                  
+                    <div id="toc">
+                      <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#ieee802-15-4e가-wifi에-비해-에너지-소모를-줄일-수-있는-방법-power-plug-main-power-battery-on-no-replace">IEEE802.15.4e가 wifi에 비해 에너지 소모를 줄일 수 있는 방법(Power Plug : Main Power, Battery On : No Replace)</a></li>
+<li><a href="#2-b-a-c-d">2. B-&gt; A &lt;- C &lt;- D</a></li>
+<li><a href="#4장-connecting-to-the-internet">4장 Connecting to the internet</a></li>
+<li><a href="#a-server-b-c-iot-6lowpan-d-e-sensor">A(Server)-&gt; B-&gt; C(IoT 6LoWPAN)-&gt; D-&gt; E(Sensor)</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                  
+                
+                <section id="post-body">
+                    
+
+<h5 id="ieee802-15-4e가-wifi에-비해-에너지-소모를-줄일-수-있는-방법-power-plug-main-power-battery-on-no-replace">IEEE802.15.4e가 wifi에 비해 에너지 소모를 줄일 수 있는 방법(Power Plug : Main Power, Battery On : No Replace)</h5>
+
+<ul>
+<li>TSCH(Time Slicing이 배터리, Channel Hopping이 패딩(jamming) 방지)
+
+<ul>
+<li>time slicing, 계속 잘라서 쓰자</li>
+<li>필요할 때만 온전히 다쓴다.</li>
+<li>최소단위로 쪼개서 쓰는 것</li>
+</ul></li>
+<li>Beaconning
+
+<ul>
+<li>비콘이 뜰 때 Cyclic Behavior(주기적으로 깨어남)</li>
+</ul></li>
+</ul>
+
+<blockquote>
+<p><strong>Notes:</strong>
+둘다 표준이지만 모두 다 구현할 필요 없다. 대세는 TSCH방식</p>
+</blockquote>
+
+<p>Frequency Hopping은 Jamming을 방지하기 위해(배터리와는 무관)</p>
+
+<h5 id="2-b-a-c-d">2. B-&gt; A &lt;- C &lt;- D</h5>
+
+<p><img src="/images/abce.png" alt="" /></p>
+
+<ul>
+<li>cycle 0일 때
+아무것도 안붙어있으면 0번만 듣고 있음</li>
+<li>ex) Offset = 0, slot = 0 : A가 Advertisement (A-&gt;ALL)
+
+<ul>
+<li>B와 C가 Join request 해야함(<strong><em>Join Request는 동시에 할 수 없음</em></strong>)</li>
+<li>A가 B,C에게 Join Response</li>
+<li>A가 C에게 Set Link(off=0, t=2, Adv / off=1, t=2, RX모드), SetLink(&hellip; C-&gt;A)</li>
+<li>C가 Adv</li>
+<li>D가 C에게 Join Request</li>
+<li>C가 A에게 Join Request</li>
+<li>A가 C에게 Join Response</li>
+<li>C가 D에게 Join Response</li>
+<li>그 후 A가 Set Link</li>
+<li>D-&gt;C, C-&gt;A time slot 순으로 가는게 효율적이다.(ex time slot=5일때 D-&gt;C, slot=6일때 C-&gt;)</li>
+<li>D도 브로드캐스트하게 해줘야함(Router(동그라미)는 브로드캐스트, Host(사각형)는 브로드캐스트 필요 없음)</li>
+</ul></li>
+</ul>
+
+<blockquote>
+<ul>
+<li>3장은 Channel &amp; Mac(Medium Access Control)에 관한 얘기</li>
+<li>여기서 Medium은 Air -&gt; 시간을 쪼개서 전송한다는 뜻</li>
+</ul>
+</blockquote>
+
+<h5 id="4장-connecting-to-the-internet">4장 Connecting to the internet</h5>
+
+<ul>
+<li>Low Power WPAN
+
+<ul>
+<li>작은 패킷 사이즈</li>
+<li>low bandwidth</li>
+<li><strong>high unreliabilty</strong></li>
+<li>low cost</li>
+<li>long idle periods</li>
+<li>mesh topologies</li>
+<li>battery</li>
+<li>support for address with different lengths</li>
+</ul></li>
+<li>IPv6의 MTU(Maximum Transmission Unit)
+
+<ul>
+<li>40 bytes long IPv6 header</li>
+<li>IPv6 default minimum MTU size = 1280 bytes</li>
+<li>한번에 패킷을 보낼 수 있는 최대 크기</li>
+<li>MTU 자체가 1280bytes = 1.2kb보다 커야한다.(권장사항은 1.5kb)</li>
+<li>패킷 보낼 수 있는 사이즈가 (1byte ~ 1280bytes)</li>
+<li><strong>min MTU = 1.2k</strong></li>
+<li>MTU가 커지면 커질수록 한번에 보낼 수 있는 패킷크기가 커진다. -&gt; 에러가 작아진다</li>
+<li>MTU 작아지면 에러율 커짐</li>
+</ul></li>
+<li>IoT(IEEE802.15.4)에서는 MTU size = 128 bytes이다.
+
+<ul>
+<li>IoT를 IPv6에 어떻게 달수 있나</li>
+<li>눈속임(6LoWPAN Adaptaion Layer을 통해서)</li>
+</ul></li>
+</ul>
+
+<h5 id="a-server-b-c-iot-6lowpan-d-e-sensor">A(Server)-&gt; B-&gt; C(IoT 6LoWPAN)-&gt; D-&gt; E(Sensor)</h5>
+
+<blockquote>
+<ul>
+<li>A : Originator, E : Final Destination</li>
+<li>A에서 B MTU = 10K</li>
+<li>B에서 C MTU = 3k</li>
+<li>C에서 D MTU = 128bytes</li>
+<li>D에서 C MTU = 128bytes</li>
+</ul>
+</blockquote>
+
+<ol>
+<li>A가 B에게 전송할 때, Ping으로 테스트함(물어봄)
+
+<ul>
+<li>MTU보다 크면 ICMP Error(Packet Too Big), 자신의 MTU정보(B의 MTU = 3K) 전달</li>
+<li>위 과정을 PATH MTU discovery</li>
+<li>B가 자신은 MTU 3k라고 보내고, A는 3K의 패킷을 보냄</li>
+</ul></li>
+<li>B가 C에게 전송하는데, 보낼 패킷을 Ping으로 테스트
+
+<ul>
+<li><strong>C는 ICMP Error(PTB) 보내는데, 여기서 MTU정보는 1.2K로 보냄(속여서, min MTU)</strong></li>
+<li>B는 1.2K의 패킷을 전송함</li>
+</ul></li>
+<li>C는 1.2K패킷을 받고, 6LoWPAN가 패킷을 10개로 쪼개야한다.</li>
+</ol>
+
+                </section>
+            </article>
+
+            
+                <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fnjir.github.io%2fposts%2fembedded-software05%2f - %ec%9e%84%eb%b2%a0%eb%94%94%eb%93%9c%20%ec%86%8c%ed%94%84%ed%8a%b8%ec%9b%a8%ec%96%b4%20-%20Connecting%20to%20the%20Internet%2001 "><span class="icon-twitter"> tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+
+            
+
+            
+                <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'tak90'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.facebook.com/jinpcbang">
+        <i class="fa fa-facebook-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.github.com/njir">
+        <i class="fa fa-github-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://linkedin.com/in/hyungtak">
+        <i class="fa fa-linkedin-square"></i>
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2018 <i class="fa fa-heart" aria-hidden="true"></i> Tak
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://njir.github.io/js/jquery-3.3.1.min.js"></script>
+<script src="https://njir.github.io/js/main.js"></script>
+<script src="https://njir.github.io/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-46214266-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
+    </body>
+</html>

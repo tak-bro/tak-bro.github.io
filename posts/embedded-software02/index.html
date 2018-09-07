@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		 
+			
+  
+    <meta name="twitter:card" content="summary"/>
+    
+      <meta name="twitter:image" content="https://njir.github.io/images/avatar.png" />
+    
+  
+  
+  <meta name="twitter:title" content="임베디드 소프트웨어 - IoT 표준 프로토콜 논문"/>
+  <meta name="twitter:description" content="아주대학교 임베디드 소프트웨어 수업 정리"/>
+  
+  
+  
+  
+    <meta name="twitter:creator" content="@Tak"/>
+  
+
+
+
+		
+		<meta name="author" content="Tak">
+		<meta name="description" content="DevNote">
+		<meta name="generator" content="Hugo 0.48" />
+		<title>임베디드 소프트웨어 - IoT 표준 프로토콜 논문 &middot; DevNote</title>
+		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
+		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
+		<link rel="stylesheet" href="https://njir.github.io/css/highlight.css">
+
+		
+		<link rel="stylesheet" href="https://njir.github.io/css/font-awesome.min.css">
+		
+
+		
+		<link href="https://njir.github.io/index.xml" rel="alternate" type="application/rss+xml" title="DevNote" />
+		
+
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://njir.github.io/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://njir.github.io/posts'>Archive</a>
+	<a href='https://njir.github.io/tags'>Tags</a>
+	<a href='https://njir.github.io/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://njir.github.io/index.xml">Subscribe</a>
+	
+</nav>
+
+
+        <section id="wrapper" class="post">
+            <article>
+                <header>
+                    <h1>
+                        임베디드 소프트웨어 - IoT 표준 프로토콜 논문
+                    </h1>
+                    <h2 class="headline">
+                    Mar 9, 2015 00:00
+                    · 1167 words
+                    · 3 minute read
+                      <span class="tags">
+                      
+                      
+                          
+                              <a href="https://njir.github.io/tags/embedded">embedded</a>
+                          
+                      
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                  
+                    <div id="toc">
+                      <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#standardized-protocol-stack-for-the-internet-of-important-things">Standardized Protocol Stack for the Internet of (Important) Things</a></li>
+<li><a href="#iot의-세가지-core-requirements">IoT의 세가지 Core Requirements</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                  
+                
+                <section id="post-body">
+                    
+
+<h4 id="standardized-protocol-stack-for-the-internet-of-important-things">Standardized Protocol Stack for the Internet of (Important) Things</h4>
+
+<p>이 논문은 적절하게 산업계에서 필요로하는 무선통신 스택을 얘기하려 한다. 논문에서 설명하는 내용을 간단히 소개함.</p>
+
+<ul>
+<li><em>the emergence of the Mobile Internet with the exponential explosion of smart phones</em>
+
+<ul>
+<li>모바일 인터넷이 스마트폰을 통해 더 많이 확산되고 있다.</li>
+</ul></li>
+<li>표준화된 approach가 필요하고, 완성되지 않았지만 큰 그림을 보여줄 수 있다.
+
+<ul>
+<li>802.15.4, 802.15.4e, CoAP, RPL, Standards, IPv6 등 다양한 프로토콜을 아주 간단하게 해서 프로토콜 스택을 통합하여야 한다.</li>
+</ul></li>
+<li>Kevin Ashton은 RFID로 초기 IoT 터미널을 설명하려 했다.(IoT의 초기 컨셉이 RFID)</li>
+</ul>
+
+<p><em>&ldquo;the Internet of Things is poised to develop and to give rise to important possibilities for developing new services but that it also represents risks in terms of the protection of individual privacy”</em></p>
+
+<ul>
+<li>IoT는 새로운 서비스를 만들 가능성이 많지만 아직 privacy에 대한 컨셉이 아직 없다.(현재까지 없음)</li>
+</ul>
+
+<hr />
+
+<p><em>&ldquo;Although the IoT is a widely used term, its definition is still fuzzy due to the large amount of concepts ~&rdquo;</em></p>
+
+<ul>
+<li>IoT라는 단어는 널리 쓰이고 있지만, 많은 컨셉들이 계속 overwrapping 되기 때문에 IoT의 정의가 아직 명확하지 않다.</li>
+</ul>
+
+<p><em>IoT stands for a “world-wide network of interconnected objects uniquely
+addressable, based on standard communication protocols</em></p>
+
+<ul>
+<li>IoT는 addressable할 수 있어야 한다.(찾아갈 수 있어야)</li>
+</ul>
+
+<blockquote>
+<p><strong>address vs identifier</strong></p>
+
+<ul>
+<li>address : 주소, 찾는 길이 있다. 찾아가는 길의 address</li>
+
+<li><p>identifier : 식별자</p>
+
+<ul>
+<li>RFID는 id로부터 출발했다. 실제로 id를 갖고 시스템을 만들었지만 address(주소)는 아니다.</li>
+<li>예를 들어 ISBN으로 책이 무엇인지는 알 수 있지만 이 정보로 책이 정확히 어디있는지는 모른다.</li>
+</ul></li>
+
+<li><p>ex) URL (Locator) + URN (Name) = URI (Identifier)</p>
+
+<ul>
+<li>URL은 address에 속하고 URI는 identifier라고 볼 수 있다. 이는 명확한 차이가 있다.</li>
+</ul></li>
+</ul>
+</blockquote>
+
+<hr />
+
+<p><em>Structurally, the IoT requires software architectures that are able to deal with a large amounts of information, queries, and computation, making use of new data processing paradigms, stream processing, filtering, aggregation and data mining,</em></p>
+
+<ul>
+<li>IoT는 소프트웨어 아키텍처가 필요하다.</li>
+<li>intelligent한 시스템을 많은 Data가 필요한데, HTTP, TCP 등 다양한 통신 프로토콜을 통해 데이터를 모을 수 있다.</li>
+<li>이 많은 데이터를 위해 새로운 data processing paradigms(data mining 등)도 필요하게 되지만 결국 가장 기초가 되는 것은 HTTP, TCP, IP 프로토콜이다.</li>
+<li>하지만 PC에서 사용하는 프로토콜이 아니라 좀 다른 프로토콜이어야 한다.</li>
+</ul>
+
+<p><em>In contrast, due to the nature of IoT objects, very low power consumptions are required so any object can plug into the Internet while being powered by batteries or through energy-harvesting</em></p>
+
+<ul>
+<li>이러한 IP Stack들은 OS에 들어가기 때문에 OS가 중요해진다.</li>
+<li>very low power consumptions이 필요하기 때문에 리눅스를 사용하기에는 좋지 않다.</li>
+<li>IoT는 구조(아키텍처)가 중요한데, PC에서 사용하는 OS, Network Architecture들은 크기가 크고 복잡해서 너무 무겁다.</li>
+<li>IoT의 컨셉은 배터리로 5년을 버티는 것이기 때문에 간단하게 만들어야 한다.
+&gt;<strong>기존의 HTTP, TCP는 verbose meta-data, header, reliability 측면에서 최적이 아니다.</strong></li>
+</ul>
+
+<hr />
+
+<h4 id="iot의-세가지-core-requirements">IoT의 세가지 Core Requirements</h4>
+
+<ul>
+<li>A Low Power Communication Stack.
+
+<ul>
+<li>위에서 말했듯이 IoT는 배터리 하나로 몇년을 버텨야 하기 때문에 전력을 많이 소비하지 않는 저전력 스택이 필요하다.</li>
+</ul></li>
+<li>A Highly Reliable Communication Stack.
+
+<ul>
+<li>통신 프로토콜 또한 reliable 해야한다. 하지만 간단하게 만들어야 하므로 기존 TCP의 Flow Control, Congestion Control 없이 Error Control만 필요하다.</li>
+</ul></li>
+<li>An Internet-Enabled Communication Stack.
+
+<ul>
+<li>기본적으로 인터넷과 연결되어야 한다.</li>
+</ul></li>
+</ul>
+
+<blockquote>
+<p>위 3가지의 필요성을 찾는게 하루이틀에 완성된 것이 아니다.</p>
+</blockquote>
+
+                </section>
+            </article>
+
+            
+                <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fnjir.github.io%2fposts%2fembedded-software02%2f - %ec%9e%84%eb%b2%a0%eb%94%94%eb%93%9c%20%ec%86%8c%ed%94%84%ed%8a%b8%ec%9b%a8%ec%96%b4%20-%20IoT%20%ed%91%9c%ec%a4%80%20%ed%94%84%eb%a1%9c%ed%86%a0%ec%bd%9c%20%eb%85%bc%eb%ac%b8 "><span class="icon-twitter"> tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+
+            
+
+            
+                <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'tak90'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.facebook.com/jinpcbang">
+        <i class="fa fa-facebook-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.github.com/njir">
+        <i class="fa fa-github-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://linkedin.com/in/hyungtak">
+        <i class="fa fa-linkedin-square"></i>
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2018 <i class="fa fa-heart" aria-hidden="true"></i> Tak
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://njir.github.io/js/jquery-3.3.1.min.js"></script>
+<script src="https://njir.github.io/js/main.js"></script>
+<script src="https://njir.github.io/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-46214266-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
+    </body>
+</html>

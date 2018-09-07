@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		 
+			
+  
+    <meta name="twitter:card" content="summary"/>
+    
+      <meta name="twitter:image" content="https://njir.github.io/images/avatar.png" />
+    
+  
+  
+  <meta name="twitter:title" content="Swift04 - 클래스"/>
+  <meta name="twitter:description" content="T아카데미 Swift1.2 강좌 정리"/>
+  
+  
+  
+  
+    <meta name="twitter:creator" content="@Tak"/>
+  
+
+
+
+		
+		<meta name="author" content="Tak">
+		<meta name="description" content="DevNote">
+		<meta name="generator" content="Hugo 0.48" />
+		<title>Swift04 - 클래스 &middot; DevNote</title>
+		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
+		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
+		<link rel="stylesheet" href="https://njir.github.io/css/highlight.css">
+
+		
+		<link rel="stylesheet" href="https://njir.github.io/css/font-awesome.min.css">
+		
+
+		
+		<link href="https://njir.github.io/index.xml" rel="alternate" type="application/rss+xml" title="DevNote" />
+		
+
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://njir.github.io/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://njir.github.io/posts'>Archive</a>
+	<a href='https://njir.github.io/tags'>Tags</a>
+	<a href='https://njir.github.io/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://njir.github.io/index.xml">Subscribe</a>
+	
+</nav>
+
+
+        <section id="wrapper" class="post">
+            <article>
+                <header>
+                    <h1>
+                        Swift04 - 클래스
+                    </h1>
+                    <h2 class="headline">
+                    Mar 19, 2015 17:35
+                    · 1328 words
+                    · 3 minute read
+                      <span class="tags">
+                      
+                      
+                          
+                              <a href="https://njir.github.io/tags/swift">swift</a>
+                          
+                      
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                  
+                    <div id="toc">
+                      <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#클래스">클래스</a>
+<ul>
+<li><a href="#프로퍼티-클래스나-구조체-값-다루기">프로퍼티 : 클래스나 구조체 값 다루기</a></li>
+<li><a href="#메소드-클래스-내에-작성하는-함수">메소드 : 클래스 내에 작성하는 함수</a></li>
+<li><a href="#초기화">초기화</a></li>
+<li><a href="#초기화-메소드-init">초기화 메소드 init()</a></li>
+<li><a href="#designated-initializer-모든-값-초기화">Designated Initializer : 모든 값 초기화</a></li>
+<li><a href="#convenience-initializer">Convenience Initializer</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                  
+                
+                <section id="post-body">
+                    
+
+<h4 id="클래스">클래스</h4>
+
+<ul>
+<li>프로젝트에서 클래스는
+
+<ul>
+<li>하나의 swift 파일에 다수의 클래스 작성</li>
+<li>클래스마다 swift 파일 작성</li>
+</ul></li>
+<li>템플릿
+
+<ul>
+<li>Cocoa Class(클래스를 만듦, 부모클래스 정할 수 있음)</li>
+<li>Swift File(부모 클래스 없이 파일만)</li>
+</ul></li>
+<li>main.swift : 처음 동작 코드</li>
+<li>객체 생성</li>
+</ul>
+
+<pre><code class="language-swift">var obj = Rectangle()  // new 사용 안함 
+let obj2 = Rectangle()
+</code></pre>
+
+<blockquote>
+<ul>
+<li>var 새로운 객체 대입 가능</li>
+<li>let : 대입 불가능</li>
+</ul>
+</blockquote>
+
+<ul>
+<li>객체 생성 - 주소</li>
+<li>객체 비교 : 같은 주소 vs 같은 데이터</li>
+<li>객체 주소 비교 : &lsquo;===&rsquo;</li>
+</ul>
+
+<pre><code class="language-swift">var obj1 = Rectangle()
+var obj2 = obj1
+var obj3 = Rectangle()
+
+obj1 === obj2 //true
+obj1 === obj3 //false
+</code></pre>
+
+<h5 id="프로퍼티-클래스나-구조체-값-다루기">프로퍼티 : 클래스나 구조체 값 다루기</h5>
+
+<ul>
+<li>종류 : 저장 프로퍼티, 계산 프로퍼티</li>
+<li>저장 프로퍼티(stored property)
+
+<ul>
+<li>값을 저장하고 얻어오는 용도</li>
+<li>클래스 내 변수, 상수 정의
+
+<ul>
+<li>초기값, 옵셔널</li>
+</ul></li>
+</ul></li>
+<li>계산 프로퍼티(compucated property)
+
+<ul>
+<li>값 저장하지 않음</li>
+<li>계산된 값을 얻어오거나, 계산하도록 제공</li>
+<li>메소드가 아님</li>
+<li>읽고 쓰기 가능 : get/set 모두 작성</li>
+<li>읽기 전용: get만 작성, get 선언 생략가능</li>
+<li>사용 방법</li>
+</ul></li>
+</ul>
+
+<pre><code>var [프로퍼티 이름] : [type] {
+	get {
+    	return [계산 결과]
+    }
+    set(newValue){
+    	}
+    }
+</code></pre>
+
+<h5 id="메소드-클래스-내에-작성하는-함수">메소드 : 클래스 내에 작성하는 함수</h5>
+
+<ul>
+<li>첫번째 파라메터 : 외부 파라미터 이름 사용 안함</li>
+<li>두번째 파라메터부터 : 외부 파타미터 이름 사용</li>
+
+<li><p>내부 파라미터 이름으로 자동 사용</p></li>
+
+<li><p>외부파라미터 이름 설정</p></li>
+
+<li><p>두번째 파라미터 외부 파라미터 이름은 내부 파라미터 이름 그대로</p></li>
+
+<li><p>첫번째 파라미터도 외부 파라미터로 설정하려면 # 주거나, 수동으로 지정</p></li>
+</ul>
+
+<blockquote>
+<p><strong>함수와 클래스함수의 차이점:</strong>
+- 클래스 함수는 두번째 파라미터부터 외부 파라미터 이름 사용해야함</p>
+</blockquote>
+
+<ul>
+<li>외부 파라미터 이름을 사용하지 않으려면 _(언더스코어) 기호를 붙인다. -&gt; 두번째 파라미터부터 적용가능</li>
+</ul>
+
+<pre><code class="language-swift">// counter.swift
+class Counter{
+    var count = 0
+    func increment(){
+        count++
+    }
+    func incrementBy(amount : Int, numberOfTimes : Int){
+        count += amount * numberOfTimes
+    }
+    func reset(){
+        count = 0
+    }
+    func test(amount : Int, time number : Int){
+        count += amount * number
+    }
+    func notUsingExternal(amount : Int, _ number : Int){
+        count += amount * number
+    }
+    func selfCount(count : Int){
+        self.count = count
+    }
+}
+
+// main.swift
+let counter = Counter()
+counter.increment()         // 1
+counter.incrementBy(5, numberOfTimes : 5)   // 6
+counter.reset()                  // 0
+counter.test(4, time : 6)
+counter.notUsingExternal(3, 5)
+
+</code></pre>
+
+<h5 id="초기화">초기화</h5>
+
+<ul>
+<li>클래스 초기화</li>
+<li>모든 프로퍼티(옵셔널 제외)는 객체 생성시 초기화
+
+<ul>
+<li>초기값</li>
+<li>초기화 메소드</li>
+</ul></li>
+<li>객체 준비 과정
+
+<ul>
+<li>메모리 공간 준비</li>
+<li>객체 사용 준비</li>
+<li>초기값이 설정된 프로퍼티 - 초기값 설정</li>
+<li>옵셔널의 초기값 - nil</li>
+<li>그외 초기화 과정 필요
+<br /></li>
+</ul></li>
+</ul>
+
+<h5 id="초기화-메소드-init">초기화 메소드 init()</h5>
+
+<ul>
+<li>클래스의 프로퍼티가 옵셔널이 아니고 초기값ㅇ르 설정하지 않으면, 객체를 생성하면서 이 프로퍼티 초기값을 설정하는 메소드가 필요 -&gt; Initializer</li>
+<li>초기화 메소드는 func 지시자가 없고 반환값이 없는 init 메소드</li>
+</ul>
+
+<pre><code class="language-swift">class Rectangle(){
+	var width : Int
+    var height : Int
+    let edges = 0
+    // 초기화
+    init(){
+    	width = 0
+        height = 0
+        edged = 4 	// 초기화메소드에서 상수값을 설정할 수 있다.
+    }
+}
+</code></pre>
+
+<blockquote>
+<p><strong>tips:</strong></p>
+
+<p>init 메소드는 다른 메소드와는 다르게 첫 번째 파라미터부터 외부 파라미터 이름을 사용한다. 외부 파라미터를 사용하지 않으려면 _(언더스코어) 기호 사용하거나 수동으로 지정하여야 한다.</p>
+</blockquote>
+
+<h5 id="designated-initializer-모든-값-초기화">Designated Initializer : 모든 값 초기화</h5>
+
+<ul>
+<li>클래스에 초기화가 안된 프로퍼티가 있다면 반드시 1개 이상의 Designated Initializer가 있어야 한다.</li>
+<li>초기화가 필요한 <strong>모든 프로퍼티</strong>의 초기값을 설정</li>
+</ul>
+
+<pre><code class="language-swift">class MyClass {
+	var a : Int
+    var b : Int  
+    func otherprepare() {
+    	//다른 초기화 동작
+    }
+    init(a : Int, b : Int){
+    	self.a = a
+        self.b = b
+        otherprepare()	// 프로퍼티 초기화 후에는 허용
+    }
+}
+</code></pre>
+
+<pre><code class="language-swift">// 단, 초기화 과정이 끝나기 전에 다른 메소드 호출은 에러 발생
+init(a : Int, b : Int){
+  	self.a = a
+    otherprepare()	// Error
+    self.b = b
+}
+</code></pre>
+
+<h5 id="convenience-initializer">Convenience Initializer</h5>
+
+<ul>
+<li>초기화가 필요한 모든 프로퍼티의 초기값을 설정하지 않는다.</li>
+<li>단독으로 객체의 초기화 과정 완료 불가</li>
+<li>다른 초기화 메소드를 이용해서 초기화 과정 수행</li>
+</ul>
+
+<blockquote>
+<p>Initialize Delegation : 다른 초기화 메소드에게 나모지 초기화를 위임하는 것</p>
+</blockquote>
+
+<pre><code class="language-swift">// Music.swift
+class Music {
+    var title : String
+    var artist : String
+    
+    init(title : String, artist : String){
+        self.title = title
+        self.artist = artist
+    }
+    convenience init(artist : String){
+        self.init(title : &quot;&quot;, artist : artist)
+    }
+}
+
+// main.swift
+let music3 = Music(artist: &quot;다이나믹듀오&quot;)
+music3.title = &quot;고백&quot;
+</code></pre>
+
+                </section>
+            </article>
+
+            
+                <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fnjir.github.io%2fposts%2fbasic-swift04%2f - Swift04%20-%20%ed%81%b4%eb%9e%98%ec%8a%a4 "><span class="icon-twitter"> tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+
+            
+
+            
+                <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'tak90'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.facebook.com/jinpcbang">
+        <i class="fa fa-facebook-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.github.com/njir">
+        <i class="fa fa-github-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://linkedin.com/in/hyungtak">
+        <i class="fa fa-linkedin-square"></i>
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2018 <i class="fa fa-heart" aria-hidden="true"></i> Tak
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://njir.github.io/js/jquery-3.3.1.min.js"></script>
+<script src="https://njir.github.io/js/main.js"></script>
+<script src="https://njir.github.io/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-46214266-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
+    </body>
+</html>
