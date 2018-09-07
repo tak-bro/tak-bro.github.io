@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		 
+			
+  
+    <meta name="twitter:card" content="summary"/>
+    
+      <meta name="twitter:image" content="https://njir.github.io/images/avatar.png" />
+    
+  
+  
+  <meta name="twitter:title" content="EOS에 Smart Contract 생성하기(2018년 9월)"/>
+  <meta name="twitter:description" content="eos 로컬넷에 Hello world 스마트컨트랙트 작성하기"/>
+  
+  
+  
+  
+    <meta name="twitter:creator" content="@Tak"/>
+  
+
+
+
+		
+		<meta name="author" content="Tak">
+		<meta name="description" content="DevNote">
+		<meta name="generator" content="Hugo 0.48" />
+		<title>EOS에 Smart Contract 생성하기(2018년 9월) &middot; DevNote</title>
+		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
+		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
+		<link rel="stylesheet" href="https://njir.github.io/css/highlight.css">
+
+		
+		<link rel="stylesheet" href="https://njir.github.io/css/font-awesome.min.css">
+		
+
+		
+		<link href="https://njir.github.io/index.xml" rel="alternate" type="application/rss+xml" title="DevNote" />
+		
+
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://njir.github.io/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://njir.github.io/posts'>Archive</a>
+	<a href='https://njir.github.io/tags'>Tags</a>
+	<a href='https://njir.github.io/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://njir.github.io/index.xml">Subscribe</a>
+	
+</nav>
+
+
+        <section id="wrapper" class="post">
+            <article>
+                <header>
+                    <h1>
+                        EOS에 Smart Contract 생성하기(2018년 9월)
+                    </h1>
+                    <h2 class="headline">
+                    Sep 5, 2018 18:15
+                    · 1689 words
+                    · 4 minute read
+                      <span class="tags">
+                      
+                      
+                          
+                              <a href="https://njir.github.io/tags/eos">eos</a>
+                          
+                              <a href="https://njir.github.io/tags/blockchain">blockchain</a>
+                          
+                      
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                  
+                    <div id="toc">
+                      <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#setup-eos">Setup EOS</a>
+<ul>
+<li><a href="#create-wallet-and-key">Create wallet and Key</a></li>
+<li><a href="#start-wallet-demon">Start wallet demon</a></li>
+<li><a href="#open-and-unlock-wallet">Open and unlock wallet</a></li>
+<li><a href="#create-account-of-eos-block">Create Account of eos block</a></li>
+</ul></li>
+<li><a href="#헬로월드-smart-contract">헬로월드 Smart Contract</a></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                  
+                
+                <section id="post-body">
+                    
+
+<p>반년동안 아이폰 개발 열심히 했더니 엎어졌다. 스마트 컨트랙트 작성해야되서 다시 공부해봤다.</p>
+
+<h2 id="setup-eos">Setup EOS</h2>
+
+<pre><code class="language-shell">$ git clone https://github.com/EOSIO/eos --recursive
+$ cd eos
+$ git checkout v1.2.3
+$ git submodule update --init --recursive
+$ ./eosio_build.sh
+
+...
+
+[100%] Built target nodeos
+[100%] Linking CXX executable unit_test
+[100%] Built target unit_test
+
+
+	 _______  _______  _______ _________ _______
+	(  ____ \(  ___  )(  ____ \\__   __/(  ___  )
+	| (    \/| (   ) || (    \/   ) (   | (   ) |
+	| (__    | |   | || (_____    | |   | |   | |
+	|  __)   | |   | |(_____  )   | |   | |   | |
+	| (      | |   | |      ) |   | |   | |   | |
+	| (____/\| (___) |/\____) |___) (___| (___) |
+	(_______/(_______)\_______)\_______/(_______)
+
+	EOSIO has been successfully built. 00:14:43
+...
+</code></pre>
+
+<p>eos 소스코드를 받고 v1.2.3으로 checkout 해준다. 2018년 9월 5일 기준으로 <code>v1.2.3</code> 버전이 가장 최신 버전이다. 폴더 이동 후 <code>eosio_build.sh</code> 스크립트를 실행하여 eos를 빌드한다. 빌드하는 데는 약 15분정도 걸린다.</p>
+
+<pre><code class="language-shell">$ /usr/local/bin/mongod -f /usr/local/etc/mongod.conf &amp; 
+  cd /Users/tak/workspace/buzzler/eos/build; make test
+</code></pre>
+
+<p>위 명령어로 빌드가 잘 됐는지 테스트 가능하다. 참고로 40분 이상 걸린다.</p>
+
+<blockquote>
+<p>이번에는 한번에 빌드됐지만, 예전에 <code>dawn-v4.1</code> 버전 빌드할 때 llvm 관련 에러가 났었다.</p>
+
+<pre><code class="language-shell">$ brew install llvm@4
+$ export LLVM_DIR=/usr/local/Cellar/llvm\@4/4.0.1/lib/cmake
+</code></pre>
+
+<ul>
+<li><a href="https://github.com/EOSIO/eos/issues/43">https://github.com/EOSIO/eos/issues/43</a></li>
+<li><a href="https://github.com/EOSIO/eos/issues/2028">https://github.com/EOSIO/eos/issues/2028</a></li>
+<li><a href="https://github.com/EOSIO/eos/issues/2998">https://github.com/EOSIO/eos/issues/2998</a></li>
+</ul>
+</blockquote>
+
+<h3 id="create-wallet-and-key">Create wallet and Key</h3>
+
+<p>빌드가 완료되면 eos 관련 command를 사용할 수 있다. eos 지갑을 만들어보자. <code>-n</code> 옵션을 주면 지갑의 이름을 설정할 수 있다.</p>
+
+<pre><code class="language-shell">$ cleos wallet create
+&quot;/usr/local/bin/keosd&quot; launched
+Creating wallet: default
+Save password to use in the future to unlock this wallet.
+Without password imported keys will not be retrievable.
+&quot;PW5KRyUSVq3Ytht2mwHNx5ZQWYWginSJkiEhU5n6LWL6ehattytK2&quot;
+
+$ cleos wallet create -n tak
+Creating wallet: tak
+Save password to use in the future to unlock this wallet.
+Without password imported keys will not be retrievable.
+&quot;PW5KBvksXaoDgkQcCCnkFLbfxMUW5e5TK3hYZi5MhsW5duzzexdnV&quot;
+</code></pre>
+
+<p>지갑 생성 후에, <code>~/eosio-wallet</code> 폴더와 폴더 안에 지갑 데이터가 생성된다.</p>
+
+<pre><code class="language-shell">$ cd ~/eosio-wallet
+$ ls
+config.ini     default.wallet tak.wallet
+</code></pre>
+
+<p>이제 key 쌍을 만들고 지갑에 import 해보자</p>
+
+<pre><code class="language-shell"># create key
+
+$ cleos create key
+Private key: 5JRoLzjFcpBpEUAR3nErMTjRozeonFjBCnfr35t5MC6tVWQdqyW
+Public key: EOS8Txt52C9jUD4Pc5LFsceeBy9RKi9MSVEV4WvoaB2KpEjHwyPz8
+
+$ cleos create key
+Private key: 5Ja7N54Y9swFfFg4GgUWBBvAGz3jTKhpU5bEHxnFKpQELV5j5vV
+Public key: EOS6BFKgddEY1BGQSouFAhh366hyETt6A4x25xdMakwXwsqkUiVop
+</code></pre>
+
+<pre><code class="language-shell"># import key
+
+$ cleos wallet import 5JRoLzjFcpBpEUAR3nErMTjRozeonFjBCnfr35t5MC6tVWQdqyW
+imported private key for: EOS8Txt52C9jUD4Pc5LFsceeBy9RKi9MSVEV4WvoaB2KpEjHwyPz8
+
+$ cleos wallet import 5Ja7N54Y9swFfFg4GgUWBBvAGz3jTKhpU5bEHxnFKpQELV5j5vV
+imported private key for: EOS6BFKgddEY1BGQSouFAhh366hyETt6A4x25xdMakwXwsqkUiVop
+</code></pre>
+
+<p>지갑 및 key를 확인하자. 참고로 지갑 옆에 * 표시가 있으면 unlock 되어 있는 상태다.</p>
+
+<pre><code class="language-shell">$ cleos wallet list
+Wallets:
+[
+  &quot;default *&quot;,
+  &quot;tak *&quot;
+]
+</code></pre>
+
+<pre><code class="language-shell">$ cleos wallet keys
+[[
+    &quot;EOS6BFKgddEY1BGQSouFAhh366hyETt6A4x25xdMakwXwsqkUiVop&quot;,
+    &quot;5Ja7N54Y9swFfFg4GgUWBBvAGz3jTKhpU5bEHxnFKpQELV5j5vV&quot;
+  ],[
+    &quot;EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV&quot;,
+    &quot;5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3&quot;
+  ],[
+    &quot;EOS8Txt52C9jUD4Pc5LFsceeBy9RKi9MSVEV4WvoaB2KpEjHwyPz8&quot;,
+    &quot;5JRoLzjFcpBpEUAR3nErMTjRozeonFjBCnfr35t5MC6tVWQdqyW&quot;
+  ]
+]
+</code></pre>
+
+<h3 id="start-wallet-demon">Start wallet demon</h3>
+
+<p>wallet 데몬의 기본 포트 값은 8888이다. 현재 회사에서 개발하는 포트랑 겹쳐서 변경해야 한다. 우선 <code>eosio-wallet</code> 폴더에 있는 config.ini 파일을 수정한다.</p>
+
+<pre><code class="language-diff">- http-server-address = 127.0.0.1:8888
++ http-server-address = 127.0.0.1:9999
+</code></pre>
+
+<p>이제 wallet 데몬을 다시 실행하자. 아래 명령어로 메뉴얼하게 실행해도 되고, <code>cleos wallet</code> 관련 명령어를 수행하면 자동으로 데몬이 실행된다.</p>
+
+<pre><code class="language-shell">$ pkill keosd
+$ keosd --http-server-address=localhost:9999
+</code></pre>
+
+<h3 id="open-and-unlock-wallet">Open and unlock wallet</h3>
+
+<p>wallet 데몬을 다시 실행하면 wallet 리스트에 아무 것도 없다. 지갑을 오픈해줘야 한다.</p>
+
+<pre><code class="language-shell">$ cleos wallet list
+&quot;/usr/local/bin/keosd&quot; launched
+Wallets:
+[]
+</code></pre>
+
+<pre><code class="language-shell">$ cleos wallet open 
+Opened: default
+
+$ cleos wallet open -n tak
+Opened: tak
+
+$ cleos wallet list
+Wallets:
+[
+  &quot;default&quot;,
+  &quot;tak&quot;
+]
+</code></pre>
+
+<p>지갑을 확인해보면 * 표시가 없다. 마찬가지로 unlock을 해야한다.</p>
+
+<pre><code class="language-shell">$ cleos wallet unlock --password PW5KRyUSVq3Ytht2mwHNx5ZQWYWginSJkiEhU5n6LWL6ehattytK2
+Unlocked: default
+
+$ cleos wallet unlock -n tak --password PW5KBvksXaoDgkQcCCnkFLbfxMUW5e5TK3hYZi5MhsW5duzzexdnV
+Unlocked: tak
+</code></pre>
+
+<h3 id="create-account-of-eos-block">Create Account of eos block</h3>
+
+<p>eos 계정을 만들기 전에 <code>nodeos</code>를 실행하고 있어야 한다. 아래 명령어로 실행할 수 있다.
+<br>
+delete-all-block은 기존에 만들었던 block들을 지우고 실행하는 옵션이고, contracts-console 옵션을 줘야 print 메세지가 출력된다.</p>
+
+<pre><code class="language-shell">$ nodeos -e -p eosio --plugin eosio::chain_api_plugin --plugin eosio::history_api_plugin --delete-all-block --contracts-console
+</code></pre>
+
+<p>이제 계정을 만들어보자. 계정을 만들 때, 아까 생성했던 key 값이 필요하다.</p>
+
+<blockquote>
+<p>커맨드 정보</p>
+
+<pre><code class="language-shell">$ cleos create account eosio NEW_ACCOUNT OWNER_KEY ACTIVE_KEY
+</code></pre>
+</blockquote>
+
+<p>OWNER_KEY와 ACTIVE_KEY는 동일하게 했다.</p>
+
+<pre><code class="language-shell">$ cleos create account eosio tak EOS8Txt52C9jUD4Pc5LFsceeBy9RKi9MSVEV4WvoaB2KpEjHwyPz8 EOS8Txt52C9jUD4Pc5LFsceeBy9RKi9MSVEV4WvoaB2KpEjHwyPz8
+$ cleos create account eosio tester EOS6BFKgddEY1BGQSouFAhh366hyETt6A4x25xdMakwXwsqkUiVop EOS6BFKgddEY1BGQSouFAhh366hyETt6A4x25xdMakwXwsqkUiVop
+</code></pre>
+
+<p>계정이 생성되면 key 값을 가지고 account 정보를 확인할 수 있다.</p>
+
+<pre><code class="language-shell">$ cleos get accounts EOS8Txt52C9jUD4Pc5LFsceeBy9RKi9MSVEV4WvoaB2KpEjHwyPz8
+{
+  &quot;account_names&quot;: [
+    &quot;tak&quot;
+  ]
+}
+
+$ cleos get accounts EOS6BFKgddEY1BGQSouFAhh366hyETt6A4x25xdMakwXwsqkUiVop
+{
+  &quot;account_names&quot;: [
+    &quot;tester&quot;
+  ]
+}
+</code></pre>
+
+<p>기본적인 eos 셋업이 끝났다. 이제 smart contract를 작성할 수 있다.</p>
+
+<hr />
+
+<h2 id="헬로월드-smart-contract">헬로월드 Smart Contract</h2>
+
+<p>hello world를 프린트하는 smart contract를 작성해보자. 우선 <code>hello</code> 폴더를 생성한다.</p>
+
+<pre><code class="language-shell">$ mkdir hello
+$ cd hello
+$ touch hello.hpp hello.cpp build.sh
+</code></pre>
+
+<p>폴더 안에 <code>hello.hpp</code>, <code>hello.cpp</code> 파일을 만든다. 각 코드 내용은 다음과 같다.</p>
+
+<pre><code class="language-c++">// hello.hpp
+#include &lt;eosiolib/eosio.hpp&gt;
+#include &lt;eosiolib/print.hpp&gt;
+
+using namespace eosio;
+
+class hello: public eosio::contract {
+    public:
+        using contract::contract;
+
+        // @abi action
+        void hi(account_name user);
+};
+
+EOSIO_ABI(hello, (hi))
+</code></pre>
+
+<pre><code class="language-c++">// hello.cpp
+#include&lt;hello.hpp&gt;
+
+void hello::hi(account_name user) {
+    print(&quot;Hello, &quot;, name{user});
+}
+</code></pre>
+
+<p>간단히 설명하면 <code>hello</code>라는 contract를 만들고, 이 contract 안에 <code>hi</code> 라는 액션을 정의하는 것이다. 자세한 내용은 <a href="https://developers.eos.io/">eos developer portal</a>을 참고하자.</p>
+
+<p>체인 상에 올리기 위해 이 파일들을 웹어셈블리로 빌드해야 한다. 동일한 경로에 <code>build.sh</code> 파일을 만들자. 이 스크립트는 cpp파일을 빌드하고, 인자로 들어온 account에 contract를 설정한다. 첫 번째 인자로 account 이름, 두 번째 인자로 contract 이름을 받는다.</p>
+
+<pre><code class="language-sh">#!/bin/bash
+
+if [[ $# -ne 2 ]]; then
+    echo &quot;USAGE: build.sh &lt;account_name&gt; &lt;contract_name&gt; from within the directory&quot;
+    exit 1
+fi
+
+ACCOUNT=$1
+CONTRACT=$2
+
+eosiocpp -o ${CONTRACT}.wast ${CONTRACT}.cpp &amp;&amp;
+eosiocpp -g ${CONTRACT}.abi ${CONTRACT}.hpp &amp;&amp;
+cleos set contract ${ACCOUNT} ../${CONTRACT}
+</code></pre>
+
+<p>여기까지 됐으면 hello contract를 빌드해보자.</p>
+
+<pre><code>$ ./build.sh tak hello
+In file included from hello.cpp:1:
+In file included from ./hello.hpp:1:
+In file included from /usr/local/include/eosiolib/eosio.hpp:7:
+In file included from /usr/local/include/eosiolib/action.hpp:7:
+
+...
+
+Generated hello.abi ...
+Reading WAST/WASM from ../hello/hello.wasm...
+Using already assembled WASM...
+Publishing contract...
+executed transaction: 2dfa24fb3baf8744359878451f08f5627aa89a9aa15d6aedcb278db6c87bb3b0  1808 bytes  364 us
+#         eosio &lt;= eosio::setcode               {&quot;account&quot;:&quot;tak&quot;,&quot;vmtype&quot;:0,&quot;vmversion&quot;:0,&quot;code&quot;:&quot;0061736d01000000013b0c60027f7e006000017e60027e7e00...
+#         eosio &lt;= eosio::setabi                {&quot;account&quot;:&quot;tak&quot;,&quot;abi&quot;:&quot;0e656f73696f3a3a6162692f312e30000102686900010475736572046e616d65010000000000...
+warning: transaction executed locally, but may not be confirmed by the network yet
+</code></pre>
+
+<p>스크립트 실행 후 에러가 없으면 hello contract가 tak 계정에 잘 설정되었다는 뜻이다. <code>hi</code> action을 날려보자.</p>
+
+<pre><code>$ cleos push action tak hi '[&quot;world&quot;]' -p tak
+</code></pre>
+
+<p>위 커맨드를 실행하면 아래 그림과 같이 nodeos에서 <code>Hello, world</code> 메세지가 출력되는 걸 확인할 수 있다.</p>
+
+<p><img src="/images/new_helloworld.png" alt="helloworld" /></p>
+
+<p>반년 전에 해서 그런지, eos가 열심히하고 있어서 그런지 이번에는 덜 해맸다.</p>
+
+                </section>
+            </article>
+
+            
+                <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fnjir.github.io%2fposts%2fnew-eos-tutorial%2f - EOS%ec%97%90%20Smart%20Contract%20%ec%83%9d%ec%84%b1%ed%95%98%ea%b8%b0%282018%eb%85%84%209%ec%9b%94%29 "><span class="icon-twitter"> tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+
+            
+
+            
+                <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'tak90'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.facebook.com/jinpcbang">
+        <i class="fa fa-facebook-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.github.com/njir">
+        <i class="fa fa-github-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://linkedin.com/in/hyungtak">
+        <i class="fa fa-linkedin-square"></i>
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2018 <i class="fa fa-heart" aria-hidden="true"></i> Tak
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://njir.github.io/js/jquery-3.3.1.min.js"></script>
+<script src="https://njir.github.io/js/main.js"></script>
+<script src="https://njir.github.io/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-46214266-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
+    </body>
+</html>

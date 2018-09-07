@@ -27,7 +27,7 @@
 		
 		<meta name="author" content="Tak">
 		<meta name="description" content="DevNote">
-		<meta name="generator" content="Hugo 0.32.3" />
+		<meta name="generator" content="Hugo 0.48" />
 		<title>RxJS Operators &middot; DevNote</title>
 		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
 		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
@@ -70,8 +70,8 @@
                     </h1>
                     <h2 class="headline">
                     Mar 22, 2018 00:00
-                    · 1637 words
-                    · 4 minute read
+                    · 1467 words
+                    · 3 minute read
                       <span class="tags">
                       
                       
@@ -146,9 +146,9 @@
 
 <h3 id="do">do</h3>
 
-<p><code>do</code>는 새로운 데이터가 emit 될 때마다 매번 실행된다. output처럼 do 데이터와 map 데이터가 서로 다르다.</p>
-
-<pre><code class="language-javascript">Rx.Observable.range(1, 5)
+<pre><code class="language-do```는">
+```javascript
+Rx.Observable.range(1, 5)
     .do(a =&gt; console.log(`From do ${a}`))
     .map(a =&gt; a * a)
     .subscribe(createSubscriber('simple'));
@@ -170,9 +170,9 @@
 
 <h3 id="finally">finally</h3>
 
-<p><code>finally</code>는 subscribe가 완료(complete)된 후에 실행된다.</p>
-
-<pre><code class="language-javascript">Rx.Observable.range(1, 5)
+<pre><code class="language-finally```는">
+```javascript
+Rx.Observable.range(1, 5)
     .finally(a =&gt; console.log('From finally'))
     .map(a =&gt; a * 2)
     .subscribe(createSubscriber('finally'));
@@ -241,9 +241,9 @@ simple$.last()
 
 <h3 id="single">single</h3>
 
-<p><code>single</code> operator는 next를 한번만 emit해야 한다. 그렇지 않으면 에러가 발생한다.</p>
-
-<pre><code class="language-javascript">const single$ = new Rx.Observable(observer =&gt; {
+<pre><code class="language-single```">
+```javascript
+const single$ = new Rx.Observable(observer =&gt; {
     observer.next(1);
     observer.next(2);
     observer.next(3);
@@ -308,9 +308,9 @@ simple$.take(2)
 
 <h3 id="skipuntil-takeuntil">skipUntil, takeUntil</h3>
 
-<p><code>skipUntil</code>, <code>takeUntil</code>은 Observable, Subject 데이터를 인자로 갖는다.</p>
-
-<pre><code class="language-javascript">Rx.Observable.interval(500)
+<pre><code class="language-skipUntil```,">
+```javascript
+Rx.Observable.interval(500)
     .skipUntil(Rx.Observable.timer(2000))
     .takeUntil(Rx.Observable.timer(4000))
     .subscribe(createSubscriber('takeUntil'));
@@ -347,10 +347,11 @@ simple$.take(2)
 
 <h3 id="concat">concat</h3>
 
-<p>두 개의 Observable을 combine하여 emit한다.
-<code>merge</code>와 달리 순서가 중요하다(output 참고).</p>
+<p>두 개의 Observable을 combine하여 emit한다.</p>
 
-<pre><code class="language-javascript">Rx.Observable.range(1,5)
+<pre><code class="language-merge```와">
+```javascript
+Rx.Observable.range(1,5)
     .concat(Rx.Observable.range(10, 3))
     .subscribe(createSubscriber('concat1'));
     
@@ -670,14 +671,17 @@ Rx.Observable.of('my query')
 
 
   
-<script>
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-ga('create', 'UA-46214266-2', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-46214266-2', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
 
 

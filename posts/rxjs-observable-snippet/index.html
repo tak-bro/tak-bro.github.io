@@ -27,7 +27,7 @@
 		
 		<meta name="author" content="Tak">
 		<meta name="description" content="DevNote">
-		<meta name="generator" content="Hugo 0.32.3" />
+		<meta name="generator" content="Hugo 0.48" />
 		<title>RxJS Observable 간단정리 &middot; DevNote</title>
 		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
 		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
@@ -70,7 +70,7 @@
                     </h1>
                     <h2 class="headline">
                     Feb 15, 2018 00:00
-                    · 2437 words
+                    · 2082 words
                     · 5 minute read
                       <span class="tags">
                       
@@ -103,13 +103,8 @@
 <li><a href="#creating-observable">Creating Observable</a></li>
 <li><a href="#subscribe">Subscribe</a></li>
 <li><a href="#error">Error</a></li>
-<li><a href="#creating-take-operator">Creating take$ operator</a></li>
-</ul></li>
-<li><a href="#operators-1">Operators</a>
+<li><a href="#creating-take-operator">Creating take$ operator</a>
 <ul>
-<li><a href="#creating-observable-with-operator">Creating observable with operator</a>
-<ul>
-<li><a href="#interval">interval</a></li>
 <li><a href="#timer">timer</a></li>
 <li><a href="#of-from">of, from</a></li>
 <li><a href="#throw">throw</a></li>
@@ -312,21 +307,20 @@ const subscription = firstFiveSecond$.subscribe(createSubscriber('one'));
 // one.complete
 </code></pre>
 
-<p><code>creatingInteval$</code> 함수는 주어진 시간마다 observable의 next를 emit하는 역할을 한다. <code>createSubscriber</code> 함수는 observable을 subscribe하는 함수로, 단순히 console.log를 찍게 된다.</p>
+<pre><code class="language-creatingInteval$```">
+***
 
-<hr />
+# Operators 
 
-<h1 id="operators-1">Operators</h1>
+## Creating observable with operator
 
-<h2 id="creating-observable-with-operator">Creating observable with operator</h2>
+Observable를 만들 수 있는 operator에 대해 알아보자. 간단히 얘기하자면 ```operator```는 observable의 **wrapper**에 불과하다
 
-<p>Observable를 만들 수 있는 operator에 대해 알아보자. 간단히 얘기하자면 <code>operator</code>는 observable의 <strong>wrapper</strong>에 불과하다</p>
+### interval
+```interval```은 시간 간격을 지정하고 data를 emit한다. 아래 코드는 500ms의 인터벌을 가지면서, ```take``` operator로 data를 3개까지만 처리한다. 
 
-<h3 id="interval">interval</h3>
-
-<p><code>interval</code>은 시간 간격을 지정하고 data를 emit한다. 아래 코드는 500ms의 인터벌을 가지면서, <code>take</code> operator로 data를 3개까지만 처리한다.</p>
-
-<pre><code class="language-javascript">import Rx from 'rxjs/Rx';
+```javascript
+import Rx from 'rxjs/Rx';
 
 function createSubscriber(tag) {
     return {
@@ -350,9 +344,9 @@ Rx.Observable.interval(500)
 
 <h3 id="timer">timer</h3>
 
-<p><code>interval</code>과는 달리, 주어진 시간이 지나면 data를 emit하는 Observable을 만든다.</p>
-
-<pre><code class="language-javascript">Rx.Observable.timer(5000)
+<pre><code class="language-interval```과는">
+```javascript
+Rx.Observable.timer(5000)
     .subscribe(createSubscriber('timer'));
 
 // output
@@ -366,10 +360,10 @@ Rx.Observable.timer(1000, 500) // 1초 후에 500ms마다 데이터 처리
 
 <h3 id="of-from">of, from</h3>
 
-<p><code>of</code>는 주어진 arg를 Observable sequence로 바꾼다. <br>
-참고로 <code>of</code> 안에 array가 들어가면 안된다. array 자체를 하나의 observable로 인식해버린다. array의 데이터들을 sequence로 바꾸려면 <code>from</code>을 쓰자.</p>
+<pre><code class="language-of```는">참고로 ```of``` 안에 array가 들어가면 안된다. array 자체를 하나의 observable로 인식해버린다. array의 데이터들을 sequence로 바꾸려면 ```from```을 쓰자.
 
-<pre><code class="language-javascript">// of operator
+```javascript
+// of operator
 Rx.Observable.of('HELLO, WORLD', 42, 'whoa')
     .subscribe(createSubscriber('of'));
     
@@ -395,9 +389,9 @@ Rx.Observable.from([23, 10, 4, 'hey'])
 
 <h3 id="throw">throw</h3>
 
-<p><code>throw</code>는 observable의 error를 emit하기 위해 쓰인다.</p>
-
-<pre><code class="language-javascript">Rx.Observable.throw(new Error('hey'))
+<pre><code class="language-throw```는">
+```javascript
+Rx.Observable.throw(new Error('hey'))
     .subscribe(createSubscriber('error'));
 
 // output
@@ -407,9 +401,9 @@ Rx.Observable.from([23, 10, 4, 'hey'])
 
 <h3 id="empty-never">empty, never</h3>
 
-<p><code>empty</code>는 complete만 emit하며, <code>never</code>는 아무런 데이터도 generate하지 않는다.</p>
-
-<pre><code class="language-javascript">Rx.Observable.empty()
+<pre><code class="language-empty```는">	
+```javascript
+Rx.Observable.empty()
     .subscribe(createSubscriber('empty'));
     
 // output
@@ -472,9 +466,9 @@ readdir$('./src-server')
 
 <h3 id="frompromise">fromPromise</h3>
 
-<p><code>bindNodeCallback</code>과 마찬가지로 Promise로부터 Observable을 만든다.</p>
-
-<pre><code class="language-javascript">function getItem() {
+<pre><code class="language-bindNodeCallback```과">
+```javascript
+function getItem() {
     return new Promise((resolve, reject) =&gt; {
     	setTimeout(() =&gt; {
     	    resolve('hello');
@@ -495,11 +489,11 @@ Rx.Observable.fromPromise(getItem())
 
 <h1 id="subject">Subject</h1>
 
-<p><code>Subject</code>는 observer와 Observable을 둘 다 상속 받는 객체
-<br> reactive 코드와 그렇지 않은 코드를 연결할 때 사용될 수 있다고 하는데, 무슨 말인지 아직 정확히 이해를 못했다.
-<br> Subject를 통해 subject를 구독하는 모든 observer들에게 알려줄 수 있다. (notify 역할)</p>
+<pre><code class="language-Subject```는">&lt;br&gt; reactive 코드와 그렇지 않은 코드를 연결할 때 사용될 수 있다고 하는데, 무슨 말인지 아직 정확히 이해를 못했다.
+&lt;br&gt; Subject를 통해 subject를 구독하는 모든 observer들에게 알려줄 수 있다. (notify 역할)
 
-<pre><code class="language-javascript">import Rx from 'rxjs/Rx';
+```javascript
+import Rx from 'rxjs/Rx';
 import { createSubcriber } from './util';
 
 const simple$ = new Rx.Subject();
@@ -567,9 +561,9 @@ setTimeout(() =&gt; {
 
 <h3 id="replaysubject">ReplaySubject</h3>
 
-<p><code>replay subject</code>는 opserver가 구독을 시작한 시점과 관계 없이, observable들이 emit한 모든 항목들을 모든 observer에게 배출한다.<br></p>
-
-<pre><code class="language-javascript">const replay$ = new Rx.ReplaySubject(3);
+<pre><code class="language-replay">
+```javascript
+const replay$ = new Rx.ReplaySubject(3);
 replay$.next(1);
 replay$.next(2);
 
@@ -675,14 +669,17 @@ replay$.next(6);
 
 
   
-<script>
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-ga('create', 'UA-46214266-2', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-46214266-2', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
 
 

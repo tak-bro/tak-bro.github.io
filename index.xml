@@ -6,10 +6,19 @@
     <description>Recent content on DevNote</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 22 Mar 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 05 Sep 2018 18:15:59 -0600</lastBuildDate>
     
 	<atom:link href="https://njir.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>EOS에 Smart Contract 생성하기(2018년 9월)</title>
+      <link>https://njir.github.io/posts/new-eos-tutorial/</link>
+      <pubDate>Wed, 05 Sep 2018 18:15:59 -0600</pubDate>
+      
+      <guid>https://njir.github.io/posts/new-eos-tutorial/</guid>
+      <description>반년동안 아이폰 개발 열심히 했더니 엎어졌다. 스마트 컨트랙트 작성해야되서 다시 공부해봤다. Setup EOS $ git clone https://github.com/EOSIO/eos --recursive $ cd eos $ git checkout v1.2.3 $ git submodule update --init --recursive $ ./eosio_build.sh ... [100%] Built target nodeos [100%] Linking</description>
+    </item>
     
     <item>
       <title>RxJS Operators</title>
@@ -17,7 +26,7 @@
       <pubDate>Thu, 22 Mar 2018 00:00:00 +0000</pubDate>
       
       <guid>https://njir.github.io/posts/rxjs-operators/</guid>
-      <description>Operators of RxJS 참고로 모든 operator는 새로운 Observable을 리턴하게 된다. Utility do do는 새로운 데이터가 emit 될 때마다 매번 실행된다. output처럼</description>
+      <description>Operators of RxJS 참고로 모든 operator는 새로운 Observable을 리턴하게 된다. Utility do ```javascript Rx.Observable.range(1, 5) .do(a =&amp;gt; console.log(`From do ${a}`)) .map(a =&amp;gt; a * a) .subscribe(createSubscriber(&#39;simple&#39;)); // output // // From do 1 // simple.next 1 // From do 2 // simple.next</description>
     </item>
     
     <item>
@@ -44,7 +53,7 @@
       <pubDate>Wed, 07 Feb 2018 00:00:00 +0000</pubDate>
       
       <guid>https://njir.github.io/posts/eos-tutorial/</guid>
-      <description>EOS tutorial for mac 2018년 02월 7일 기준으로 eos의 master 브랜치가 많은 업데이트를 하고 있다. master에서는 제대로 진행할 수 없기 때문에 dawn-2.x 브랜치로 변경해서 진</description>
+      <description>2018년 9월 기준으로 eos가 많이 업데이트 되었습니다. 현재 버전에서 돌아가는 tutorial은 이 포스트를 참고해주세요. EOS tutorial for mac 2018년 02월</description>
     </item>
     
     <item>

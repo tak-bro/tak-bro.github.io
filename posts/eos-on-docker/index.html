@@ -27,7 +27,7 @@
 		
 		<meta name="author" content="Tak">
 		<meta name="description" content="DevNote">
-		<meta name="generator" content="Hugo 0.32.3" />
+		<meta name="generator" content="Hugo 0.48" />
 		<title>Docker에서 EOS 실행하기 &middot; DevNote</title>
 		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
 		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
@@ -70,7 +70,7 @@
                     </h1>
                     <h2 class="headline">
                     Jan 29, 2018 00:00
-                    · 2667 words
+                    · 2650 words
                     · 6 minute read
                       <span class="tags">
                       
@@ -293,11 +293,12 @@ fc::exists( my-&gt;genesis_file ): unable to find genesis file '/opt/eos/bin/dat
     thread-0  chain_plugin.cpp:210 plugin_startup
 </code></pre>
 
-<p><code>--genesis-json</code> 옵션에 <code>/opt/eosio/bin/data-dir</code> 주고 다시 해보자</p>
+<pre><code class="language---genesis-json```">
+</code></pre>
 
-<pre><code>$ docker run --name eosiod -p 8888:8888 -p 9876:9876 -t eosio/eos start_eosiod.sh --genesis-json /opt/eosio/bin/data-dir/genesis.json
+<p>$ docker run &ndash;name eosiod -p 8888:8888 -p 9876:9876 -t eosio/eos start_eosiod.sh &ndash;genesis-json /opt/eosio/bin/data-dir/genesis.json</p>
 
-1771061ms thread-0   chain_plugin.cpp:109          plugin_initialize    ] initializing chain plugin
+<p>1771061ms thread-0   chain_plugin.cpp:109          plugin_initialize    ] initializing chain plugin
 1771061ms thread-0   http_plugin.cpp:141           plugin_initialize    ] host: 0.0.0.0 port: 8888
 1771062ms thread-0   http_plugin.cpp:144           plugin_initialize    ] configured http to listen on 0.0.0.0:8888
 1771062ms thread-0   net_plugin.cpp:2376           plugin_initialize    ] Initialize net plugin
@@ -311,16 +312,19 @@ fc::exists( my-&gt;genesis_file ): unable to find genesis file '/opt/eos/bin/dat
 1771096ms thread-0   chain_plugin.cpp:201          plugin_startup       ] starting chain in read/write mode
 1771096ms thread-0   chain_plugin.cpp:206          plugin_startup       ] Blockchain started; head block is #0, genesis timestamp is 2017-03-30T12:00:00.000
 1771096ms thread-0   producer_plugin.cpp:152       plugin_startup       ] producer plugin:  plugin_startup() begin
-1771096ms thread-0   producer_plugin.cpp:157       plugin_startup       ] Launching block production for 21 producers.
+1771096ms thread-0   producer_plugin.cpp:157       plugin_startup       ] Launching block production for 21 producers.</p>
 
+<hr />
+
+<ul>
+<li>*</li>
+<li>&mdash;&mdash; NEW CHAIN &mdash;&mdash;   *</li>
+<li>-  Welcome to EOSIO!  -   *</li>
+<li>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;   *</li>
+<li>*
 *******************************
-*                             *
-*   ------ NEW CHAIN ------   *
-*   -  Welcome to EOSIO!  -   *
-*   -----------------------   *
-*                             *
-*******************************
-</code></pre>
+```</li>
+</ul>
 
 <p>드디어 성공. 거의 이틀 삽질해서 Docker에 eos를 실행했다.
 <br>이제 로컬 환경에서 아래 커맨드를 입력하면 실행중인 eos 체인 정보를 볼 수 있다.</p>
@@ -494,14 +498,17 @@ initb generated block 2a6e2354... #7 @ 2018-01-30T08:26:51.500 with 0 trxsuction
 
 
   
-<script>
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-ga('create', 'UA-46214266-2', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-46214266-2', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
 
 
