@@ -6,10 +6,28 @@
     <description>Recent content on DevNote</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 05 Sep 2018 18:15:59 -0600</lastBuildDate>
+    <lastBuildDate>Mon, 31 Dec 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://njir.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>React 개념 정리</title>
+      <link>https://njir.github.io/posts/default-react/</link>
+      <pubDate>Mon, 31 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://njir.github.io/posts/default-react/</guid>
+      <description>React React 샘플 코드 import * as React from &#39;react&#39;; import * as ReactDOM from &#39;react-dom&#39;; import { Preview } from &#39;./Preview&#39;; interface MyComponentProps { defaultName?: string; } interface MyComponentState { name?: string; } class MyComponent extends React.Component&amp;lt;MyComponentProps, MyComponentState&amp;gt; { constructor(props: MyComponentProps) { super(props); this.state = { name: props.defaultName, }; this.handleInputChange = this.handleInputChange.bind(this); } // state 수정과 관련된 메소드 private handleInputChange(event: React.FormEvent&amp;lt;HTMLInputElement&amp;gt;)</description>
+    </item>
+    
+    <item>
+      <title>c&#43;&#43; 간단 정리</title>
+      <link>https://njir.github.io/posts/default-cplusplus/</link>
+      <pubDate>Mon, 31 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://njir.github.io/posts/default-cplusplus/</guid>
+      <description>c++ 예전에 공부했던 내용 정리 c++의 타입 변환 연산자 static_cast&amp;lt;&amp;gt;: 가장 기본적인 캐스트 연산 방법 dynamic_cast&amp;lt;&amp;gt;: 객체지향 언어의 다형성을 이용하여 모호한 타입 캐스팅 오류를 막아줌 const_cast&amp;lt;&amp;gt;: 자료</description>
+    </item>
     
     <item>
       <title>EOS에 Smart Contract 생성하기(2018년 9월)</title>

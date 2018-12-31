@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		 
+			
+  
+    <meta name="twitter:card" content="summary"/>
+    
+      <meta name="twitter:image" content="https://njir.github.io/images/avatar.png" />
+    
+  
+  
+  <meta name="twitter:title" content="React 개념 정리"/>
+  <meta name="twitter:description" content="책 및 강의 보고 정리한 react 기본 개념 및 함수"/>
+  
+  
+  
+  
+    <meta name="twitter:creator" content="@Tak"/>
+  
+
+
+
+		
+		<meta name="author" content="Tak">
+		<meta name="description" content="DevNote">
+		<meta name="generator" content="Hugo 0.48" />
+		<title>React 개념 정리 &middot; DevNote</title>
+		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
+		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
+		<link rel="stylesheet" href="https://njir.github.io/css/highlight.css">
+
+		
+		<link rel="stylesheet" href="https://njir.github.io/css/font-awesome.min.css">
+		
+
+		
+		<link href="https://njir.github.io/index.xml" rel="alternate" type="application/rss+xml" title="DevNote" />
+		
+
+		
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='https://njir.github.io/'> <span class="arrow">←</span>Home</a>
+	
+	<a href='https://njir.github.io/posts'>Archive</a>
+	<a href='https://njir.github.io/tags'>Tags</a>
+	<a href='https://njir.github.io/about'>About</a>
+
+	
+
+	
+	<a class="cta" href="https://njir.github.io/index.xml">Subscribe</a>
+	
+</nav>
+
+
+        <section id="wrapper" class="post">
+            <article>
+                <header>
+                    <h1>
+                        React 개념 정리
+                    </h1>
+                    <h2 class="headline">
+                    Dec 31, 2018 00:00
+                    · 1265 words
+                    · 3 minute read
+                      <span class="tags">
+                      
+                      
+                          
+                              <a href="https://njir.github.io/tags/til">til</a>
+                          
+                              <a href="https://njir.github.io/tags/react">react</a>
+                          
+                              <a href="https://njir.github.io/tags/javascript">javascript</a>
+                          
+                      
+                      
+                      </span>
+                    </h2>
+                </header>
+                
+                  
+                    <div id="toc">
+                      <nav id="TableOfContents">
+<ul>
+<li><a href="#react">React</a>
+<ul>
+<li><a href="#react-샘플-코드">React 샘플 코드</a></li>
+<li><a href="#react의-컴포넌트">React의 컴포넌트</a>
+<ul>
+<li><a href="#컴포넌트를-구성하는-요소">컴포넌트를 구성하는 요소</a></li>
+<li><a href="#props">props</a></li>
+<li><a href="#state">state</a></li>
+<li><a href="#props-state-구분방법">props, state 구분방법</a>
+<ul>
+<li><a href="#참고-리액트-버전">참고: 리액트 버전</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#컴포넌트-라이프사이클">컴포넌트 라이프사이클</a>
+<ul>
+<li><a href="#componentdidmount">componentDidMount()</a></li>
+<li><a href="#componentwillunmount">componentWillUnmount()</a></li>
+<li><a href="#componentwillreceiveprops">componentWillReceiveProps()</a></li>
+<li><a href="#componentdidupdate">componentDidUpdate()</a></li>
+<li><a href="#shouldcomponentupdate">shouldComponentUpdate()</a></li>
+<li><a href="#componentdidcatch">componentDidCatch()</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                  
+                
+                <section id="post-body">
+                    
+
+<h1 id="react">React</h1>
+
+<h2 id="react-샘플-코드">React 샘플 코드</h2>
+
+<pre><code>import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import { Preview } from './Preview';
+
+interface MyComponentProps {
+	defaultName?: string;
+}
+
+interface MyComponentState {
+	name?: string;
+}
+
+class MyComponent extends React.Component&lt;MyComponentProps, MyComponentState&gt; {
+
+	constructor(props: MyComponentProps) {
+    	super(props);
+        this.state = {
+        	name: props.defaultName,
+        };
+        this.handleInputChange = this.handleInputChange.bind(this);
+    }
+    
+    // state 수정과 관련된 메소드
+    private handleInputChange(event: React.FormEvent&lt;HTMLInputElement&gt;) {
+    	event.preventDefault();
+        this.setState({
+        	name: event.currentTarget.value
+        });
+    }
+    
+    // 컴포넌트 라이프사이클
+    public componentDidMount() {
+    	console.log('mounted');
+    }
+    
+    // 렌더링
+    public render() {
+    	return (
+            &lt;form&gt;
+            	&lt;input value={this.state.name} onChange={this.handleInputChange} /&gt;
+                    &lt;Preview name={this.state.name} /&gt;
+            &lt;/form&gt;
+        )
+    }
+}
+
+const Preview = ({ name }) =&gt; {
+	return &lt;p&gt;{`Hello ${name}!`}&lt;/p&gt;;
+};
+
+ReactDOM.render(&lt;MyComponent defaultName='Mike' /&gt;, document.getElementById('app'));
+</code></pre>
+
+<h2 id="react의-컴포넌트">React의 컴포넌트</h2>
+
+<ul>
+<li>props와 state의 역할과 사용법 이해 필수</li>
+<li>컴포넌트 생애주기의 관리 이해 필수</li>
+</ul>
+
+<h3 id="컴포넌트를-구성하는-요소">컴포넌트를 구성하는 요소</h3>
+
+<ul>
+<li>React.Component</li>
+<li>constructor(): ES6부터 도입된 클래스의 생성자 메소드
+
+<ul>
+<li>React 컴포넌트에서는 주로 state의 초기 상태를 설정하는 데 사용</li>
+</ul></li>
+<li>state: 컴포넌트의 렌더링과 관계된 값을 관리하는 상태</li>
+<li>render(): 가상DOM의 렌더링 처리를 담당하는 메소드</li>
+<li>클래스형 컴포넌트 vs 함수형 컴포넌트: 함수형 컴포넌트는 리액트의 라이프사이클을 관리할 수 없다.</li>
+</ul>
+
+<pre><code>const Preview = ({ name }) =&gt; {
+	return &lt;p&gt;{`Hello ${name}!`}&lt;/p&gt;;
+};
+</code></pre>
+
+<h3 id="props">props</h3>
+
+<ul>
+<li>컴포넌트에 들어오는 입력</li>
+<li>부모 컴포넌트에서 자식 컴포넌트로 전달</li>
+</ul>
+
+<h3 id="state">state</h3>
+
+<ul>
+<li>컴포넌트 자체의 상태</li>
+<li>props와는 달리 state는 변경이 가능하다</li>
+<li>state를 변경할 때는 <code>this.setState()</code> 메소드 사용</li>
+<li>React는 클래스의 속성을 자유롭게 추가할 수 있다
+
+<ul>
+<li>즉, <code>render()</code>안에서 사용해야하는 경우에는 state로 추가해야 한다</li>
+<li>그게 아니라면 속성으로 관리</li>
+</ul></li>
+</ul>
+
+<h3 id="props-state-구분방법">props, state 구분방법</h3>
+
+<ul>
+<li>props를 전달받는 자식 컴포넌트 쪽은 &ldquo;본래 어떤 형태로 관리했었는지&rdquo;는 잊고, 읽기 전용이라는 것만 유념해서 사용한다</li>
+</ul>
+
+<h4 id="참고-리액트-버전">참고: 리액트 버전</h4>
+
+<ul>
+<li>v16.3: <code>getDerivedStateFromProps()</code>, <code>getSnapshotBeforeUpdate()</code> 메소드 추가</li>
+<li>v17: <code>componentWillMount()</code>, <code>componentWillReceiveProps()</code>, <code>componentWillUpdate()</code> 메소드 deprecated 됨</li>
+</ul>
+
+<hr />
+
+<h2 id="컴포넌트-라이프사이클">컴포넌트 라이프사이클</h2>
+
+<ul>
+<li>컴포넌트의 상태가 변화하는 것을 말함</li>
+<li><code>componentDidMount()</code>: 컴포넌트가 마운트 되었을 때 실행되는 메소드</li>
+<li><code>componentWillUnmount()</code>: 컴포넌트가 언마운트 될때</li>
+<li><code>componentWillReceiveProps()</code>: props를 전달받을 때 실행</li>
+<li>최초 마운트 시점
+
+<ul>
+<li>constructor(props) -&gt; componentWillMount() -&gt; render() -&gt; componentDidMount()</li>
+</ul></li>
+<li>마운트 이후, props가 수정될때
+
+<ul>
+<li>componentWillReceiveProps(nextProps)</li>
+</ul></li>
+<li>마운트 이후, state 수정될 때
+
+<ul>
+<li>shouldComponentUpdate(nextProps, nextState) -&gt; (반환 값이 true일때) componentWillUpdate(nextProps, nextState) -&gt; render() -&gt; componentDidUpdate(prevProps, prevState)</li>
+</ul></li>
+</ul>
+
+<h3 id="componentdidmount">componentDidMount()</h3>
+
+<ul>
+<li>컴포넌트가 마운트될 때 딱 한번 실행되는 메소드</li>
+<li>이 메소드의 처리 내용은 DOM이 존재한다고 가정</li>
+<li>css 프레임워크를 사용할 때 필요한 HTML 초기 처리는 이 메소드에서 수행하는 것이 좋다</li>
+<li>이벤트리스너 정의나 HTTP 요청으로부터 데이터를 받아오는 처리를 호출하는 일 등</li>
+</ul>
+
+<h3 id="componentwillunmount">componentWillUnmount()</h3>
+
+<ul>
+<li>컴포넌트가 언마운트 될 때 실행되는 메소드</li>
+<li>언마운트란? 렌더링 되고 있는 컴포넌트가 페이지 이동등의 이유로 렌더링 대상에서 빠질 때 발생한다</li>
+<li>타이머 해제나 비동기통신 취소 처리를 실행하는데 적합하다</li>
+<li>이벤트리스너를 해제할 때</li>
+</ul>
+
+<h3 id="componentwillreceiveprops">componentWillReceiveProps()</h3>
+
+<ul>
+<li>v17에서 deprecated 됨</li>
+<li>마운트된 컴포넌트가 새로운 props를 받았을 때 실행</li>
+<li>새로 수신된 props를 인자로 받는다</li>
+<li>props가 변경되는 것에 따라 state를 변경할 때 적합</li>
+</ul>
+
+<pre><code>public componentWillReceiveProps(nextProps) {
+    if (this.props.name !== nextProps.name) {
+        // do something
+    }
+}
+</code></pre>
+
+<h3 id="componentdidupdate">componentDidUpdate()</h3>
+
+<ul>
+<li>컴포넌트가 업데이트 되었을때 실행</li>
+<li>변경되기 전의 props와 state를 인자로 받음</li>
+<li>여기서 업데이트란 state나 props가 변경될 때</li>
+<li>최초 마운트 시점에는 실행되지 않음</li>
+</ul>
+
+<pre><code>public componentDidUpdate(prevProps, prevState) {
+    if (prevProps.name !== this.props.name) {
+        // do something   
+    }
+}
+</code></pre>
+
+<h3 id="shouldcomponentupdate">shouldComponentUpdate()</h3>
+
+<ul>
+<li>컴포넌트의 성능을 개선할 때 주목해야 할 메소드</li>
+<li>React 컴포넌트는 props, state가 변경되면 다시 render 호출</li>
+<li>이 함수를 이용해서 re-rendering 제어 가능</li>
+<li>불필요한 렌더링을 줄이면 성능 향상</li>
+<li>업데이트된 후의 state와 props를 인자로 받음</li>
+<li>비교시에는 deep comparison</li>
+</ul>
+
+<pre><code>public shouldComponentUpdate(nextProps, nextState) {
+    if (this.props.name !== nextProps.name) {
+        // name이 바뀌었을 때만 re-rendering
+        return true;
+    }
+    return false;
+}
+</code></pre>
+
+<h3 id="componentdidcatch">componentDidCatch()</h3>
+
+<ul>
+<li>v16부터 도입된 메소드</li>
+<li>자식 컴포넌트에서 발생한 예외를 catch한 경우 실행</li>
+</ul>
+
+                </section>
+            </article>
+
+            
+                <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fnjir.github.io%2fposts%2fdefault-react%2f - React%20%ea%b0%9c%eb%85%90%20%ec%a0%95%eb%a6%ac "><span class="icon-twitter"> tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+
+            
+
+            
+                <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'tak90'; 
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+            
+
+            
+
+            <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.facebook.com/jinpcbang">
+        <i class="fa fa-facebook-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.github.com/njir">
+        <i class="fa fa-github-square"></i>
+    </a>
+    
+    <a class="symbol" href="https://linkedin.com/in/hyungtak">
+        <i class="fa fa-linkedin-square"></i>
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+       © Copyright 2018 <i class="fa fa-heart" aria-hidden="true"></i> Tak
+    
+    </p>
+    <p class="small">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+        </section>
+
+        <script src="https://njir.github.io/js/jquery-3.3.1.min.js"></script>
+<script src="https://njir.github.io/js/main.js"></script>
+<script src="https://njir.github.io/js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-46214266-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+
+
+    </body>
+</html>

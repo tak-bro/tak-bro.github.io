@@ -6,10 +6,19 @@
     <description>Recent content in Javascript on DevNote</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 22 Mar 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 31 Dec 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://njir.github.io/tags/javascript/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>React 개념 정리</title>
+      <link>https://njir.github.io/posts/default-react/</link>
+      <pubDate>Mon, 31 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://njir.github.io/posts/default-react/</guid>
+      <description>React React 샘플 코드 import * as React from &#39;react&#39;; import * as ReactDOM from &#39;react-dom&#39;; import { Preview } from &#39;./Preview&#39;; interface MyComponentProps { defaultName?: string; } interface MyComponentState { name?: string; } class MyComponent extends React.Component&amp;lt;MyComponentProps, MyComponentState&amp;gt; { constructor(props: MyComponentProps) { super(props); this.state = { name: props.defaultName, }; this.handleInputChange = this.handleInputChange.bind(this); } // state 수정과 관련된 메소드 private handleInputChange(event: React.FormEvent&amp;lt;HTMLInputElement&amp;gt;)</description>
+    </item>
     
     <item>
       <title>RxJS Operators</title>
