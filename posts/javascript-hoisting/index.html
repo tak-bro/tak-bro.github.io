@@ -13,8 +13,8 @@
     
   
   
-  <meta name="twitter:title" content="Swift05 - 메소드"/>
-  <meta name="twitter:description" content="T아카데미 Swift1.2 강좌 정리"/>
+  <meta name="twitter:title" content="자바스크립트 Scope의 이해"/>
+  <meta name="twitter:description" content="자바스크립트의 Scope와 Hoisting 정리"/>
   
   
   
@@ -28,7 +28,7 @@
 		<meta name="author" content="Tak">
 		<meta name="description" content="DevNote">
 		<meta name="generator" content="Hugo 0.53" />
-		<title>Swift05 - 메소드 &middot; DevNote</title>
+		<title>자바스크립트 Scope의 이해 &middot; DevNote</title>
 		<link rel="shortcut icon" href="https://njir.github.io/images/favicon.ico">
 		<link rel="stylesheet" href="https://njir.github.io/css/style.css">
 		<link rel="stylesheet" href="https://njir.github.io/css/highlight.css">
@@ -66,17 +66,19 @@
             <article>
                 <header>
                     <h1>
-                        Swift05 - 메소드
+                        자바스크립트 Scope의 이해
                     </h1>
                     <h2 class="headline">
-                    Mar 19, 2015 17:50
-                    · 534 words
-                    · 2 minute read
+                    May 19, 2019 00:00
+                    · 0 word
+                    · 0 minute read
                       <span class="tags">
                       
                       
                           
-                              <a href="https://njir.github.io/tags/swift">swift</a>
+                              <a href="https://njir.github.io/tags/til">til</a>
+                          
+                              <a href="https://njir.github.io/tags/javascript">javascript</a>
                           
                       
                       
@@ -85,157 +87,14 @@
                 </header>
                 
                   
-                    <div id="toc">
-                      <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li>
-<ul>
-<li>
-<ul>
-<li><a href="#메소드">메소드</a>
-<ul>
-<li><a href="#인스턴스-메소드">인스턴스 메소드</a></li>
-<li><a href="#타입-메소드">타입 메소드</a></li>
-<li><a href="#타입-프로퍼티">타입 프로퍼티</a></li>
-<li><a href="#프로퍼티-감시">프로퍼티 감시</a></li>
-</ul></li>
-</ul></li>
-</ul></li>
-</ul></li>
-</ul>
-</nav>
-                    </div>
-                  
                 
                 <section id="post-body">
                     
-
-<h4 id="메소드">메소드</h4>
-
-<h5 id="인스턴스-메소드">인스턴스 메소드</h5>
-
-<ul>
-<li>객체를 생성하고 객체에 메소드를 호출하는 방식</li>
-<li>객체에 반영된 값인 프로퍼티를 사용할 수 있다.</li>
-</ul>
-
-<h5 id="타입-메소드">타입 메소드</h5>
-
-<ul>
-<li>객체를 생성하지 않고 동작하는 메소드</li>
-<li>메소드를 선언하면서 func 앞에 class 키워드를 이용</li>
-<li><strong>프로퍼티에 접근할 수 없다</strong></li>
-</ul>
-
-<pre><code class="language-swift">class MyClass {
-	var property = 0
-    class func typeMethod(){
-    	property = 3 	// Error. 타입 메소드에서 프로퍼티 접근 불가
-    }
-    func instanceMethod(){
-    	property = 1	// 인스턴스 메소드에서 프로퍼티 접근 가능
-    }
-}
-</code></pre>
-
-<ul>
-<li>인스턴스 메소드는 객체를 생성하고 객체에 호출</li>
-<li>타입 메소드는 클래스에 호출</li>
-</ul>
-
-<pre><code class="language-swift">var obj = MyClass()
-obj.instanceMethod()
-
-MyClass.typeMethod()
-</code></pre>
-
-<ul>
-<li>팩토리 메소드(Factory Method)가 타입 메소드의 대표 예</li>
-</ul>
-
-<blockquote>
-<p>Factory Method : 객체를 생성하는 목적으로 작성하는 디자인 패전 중 하나의 코드 작성 패턴</p>
-</blockquote>
-
-<pre><code class="language-swift">class Rectangle {
-	var width : Int
-    var height : Int
-
-    init(width : Int, height : Int){
-    	self.width = width
-        self.height = height
-    }
-    
-    class func newRectangle(width : Int, height : Int) -&gt; Rectangle{
-    	let obj = Rectangle(width: width, height : height)
-        return obj
-    }
-}
-</code></pre>
-
-<pre><code class="language-swift">//팩토리 메소드를 이용해 객체를 생성하는 코드
-var rect = Rectangle.newRectangle(70, height : 80)	// 두번째부터 외부파라미터
-</code></pre>
-
-<h5 id="타입-프로퍼티">타입 프로퍼티</h5>
-
-<ul>
-<li>class 키워드를 이용</li>
-<li>스위프트 버전 1.1에서 클래스에 계산 프로퍼티만 타입 프로퍼티로 사용할 수 있다.</li>
-</ul>
-
-<pre><code class="language-swift">class Rectangle{
-	var width = 0
-    var height = 0
-    class var name : String {
-    	return &quot;사각형&quot;
-    }
-}
-//main.swift
-Rectangle.name
-</code></pre>
-
-<h5 id="프로퍼티-감시">프로퍼티 감시</h5>
-
-<ul>
-<li>프로퍼티의 값 변경 감시</li>
-<li>값 변경 전
-
-<ul>
-<li>willSet</li>
-<li>변경될 값 : newValue</li>
-</ul></li>
-<li>값 변경 이후
-
-<ul>
-<li>didSet</li>
-<li>이전 값 : oldValue</li>
-</ul></li>
-<li>Object C - KVO</li>
-</ul>
-
-<pre><code class="language-swift">class Rectangle{
-	var width = 0
-    var height : Int = 0 {
-    	//프로퍼티에 값이 설정된 후에 동작
-        didSet {
-        	// 0보다 작으면 0으로 변경
-            if height &lt; 0 {
-            	height = 0
-            }
-            println(&quot;height didSet \(height) - oldValue : \(oldValue)&quot;)
-        }
-    }
-}
-</code></pre>
-
                 </section>
             </article>
 
             
-                <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fnjir.github.io%2fposts%2fbasic-swift05%2f - Swift05%20-%20%eb%a9%94%ec%86%8c%eb%93%9c "><span class="icon-twitter"> tweet</span></a>
+                <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fnjir.github.io%2fposts%2fjavascript-hoisting%2f - %ec%9e%90%eb%b0%94%ec%8a%a4%ed%81%ac%eb%a6%bd%ed%8a%b8%20Scope%ec%9d%98%20%ec%9d%b4%ed%95%b4 "><span class="icon-twitter"> tweet</span></a>
 
 <a class="facebook" href="#" onclick="
     window.open(

@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://njir.github.io/posts/javascript-hoisting/</loc>
+    <lastmod>2019-05-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://njir.github.io/posts/default-react/</loc>
     <lastmod>2018-12-31T00:00:00+00:00</lastmod>
   </url>
@@ -206,7 +211,7 @@
   
   <url>
     <loc>https://njir.github.io/</loc>
-    <lastmod>2018-12-31T00:00:00+00:00</lastmod>
+    <lastmod>2019-05-19T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -230,13 +235,13 @@
   
   <url>
     <loc>https://njir.github.io/tags/javascript/</loc>
-    <lastmod>2018-12-31T00:00:00+00:00</lastmod>
+    <lastmod>2019-05-19T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://njir.github.io/posts/</loc>
-    <lastmod>2018-12-31T00:00:00+00:00</lastmod>
+    <lastmod>2019-05-19T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -272,7 +277,7 @@
   
   <url>
     <loc>https://njir.github.io/tags/til/</loc>
-    <lastmod>2018-12-31T00:00:00+00:00</lastmod>
+    <lastmod>2019-05-19T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

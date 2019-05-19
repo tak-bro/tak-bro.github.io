@@ -6,10 +6,19 @@
     <description>Recent content on DevNote</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 31 Dec 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 19 May 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://njir.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>자바스크립트 Scope의 이해</title>
+      <link>https://njir.github.io/posts/javascript-hoisting/</link>
+      <pubDate>Sun, 19 May 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://njir.github.io/posts/javascript-hoisting/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>React 개념 정리</title>
