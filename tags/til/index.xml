@@ -17,7 +17,7 @@
       <pubDate>Sun, 19 May 2019 00:00:00 +0000</pubDate>
       
       <guid>https://njir.github.io/posts/javascript-hoisting/</guid>
-      <description></description>
+      <description>Javascript Scope의 이해 아래 코드를 실행하면 console.log(text)은 어떻게 찍힐까? var text = &#39;outside&#39;; function logIt() { console.log(text); var text = &#39;inside&#39;; }; logIt(); 답은 undefined다.</description>
     </item>
     
     <item>
