@@ -2,75 +2,75 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Embedded on DevNote</title>
-    <link>https://njir.github.io/tags/embedded/</link>
+    <link>https://tak-bro.github.io/tags/embedded/</link>
     <description>Recent content in Embedded on DevNote</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Thu, 16 Apr 2015 14:12:59 -0600</lastBuildDate>
     
-	<atom:link href="https://njir.github.io/tags/embedded/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://tak-bro.github.io/tags/embedded/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>임베디드 소프트웨어 - 6Lowpan Layer</title>
-      <link>https://njir.github.io/posts/embedded-software07/</link>
+      <link>https://tak-bro.github.io/posts/embedded-software07/</link>
       <pubDate>Thu, 16 Apr 2015 14:12:59 -0600</pubDate>
       
-      <guid>https://njir.github.io/posts/embedded-software07/</guid>
+      <guid>https://tak-bro.github.io/posts/embedded-software07/</guid>
       <description>6lowapn 6lowpan layer(= Adapation layer) 기능 MTU F&amp;amp;R 1.2K -&amp;gt; 128 bytes Header Compression IPv6 Header : 40 bytes(16src+16dst+8) UDP : 8 bytes A(origin)-&amp;gt;B-&amp;gt;C-&amp;gt;D(final dst) A &amp;lt;-&amp;gt; B : NetworkA B &amp;lt;-&amp;gt; C : NetworkB 실제 네트워크 주소는 MAC 주소이다. 따라서 MAC 헤더는 매번 바뀐다. IPv6 128bits [ 64 ][ 64</description>
     </item>
     
     <item>
       <title>임베디드 소프트웨어 - Connecting to the Internet 02</title>
-      <link>https://njir.github.io/posts/embedded-software06/</link>
+      <link>https://tak-bro.github.io/posts/embedded-software06/</link>
       <pubDate>Tue, 07 Apr 2015 17:12:59 -0600</pubDate>
       
-      <guid>https://njir.github.io/posts/embedded-software06/</guid>
+      <guid>https://tak-bro.github.io/posts/embedded-software06/</guid>
       <description>Path MTU Discovery Path MTU는 전체 구간의 최소값임 IPv6는 중간에 짜르는게 안됨(Fragmentation X) IPv6 : 128bit = 16byte(주소) -&amp;gt; 40byte(16byte SRC + 16byte DST + 8byte) why? -</description>
     </item>
     
     <item>
       <title>임베디드 소프트웨어 - Connecting to the Internet 01</title>
-      <link>https://njir.github.io/posts/embedded-software05/</link>
+      <link>https://tak-bro.github.io/posts/embedded-software05/</link>
       <pubDate>Tue, 07 Apr 2015 16:12:59 -0600</pubDate>
       
-      <guid>https://njir.github.io/posts/embedded-software05/</guid>
+      <guid>https://tak-bro.github.io/posts/embedded-software05/</guid>
       <description>IEEE802.15.4e가 wifi에 비해 에너지 소모를 줄일 수 있는 방법(Power Plug : Main Power, Battery On : No Replace) TSCH(Time Slicing이 배터리, Channel Hopping</description>
     </item>
     
     <item>
       <title>임베디드 소프트웨어 - IEEE 802.15.4e, Scheduling</title>
-      <link>https://njir.github.io/posts/embedded-software04/</link>
+      <link>https://tak-bro.github.io/posts/embedded-software04/</link>
       <pubDate>Wed, 25 Mar 2015 12:22:59 -0600</pubDate>
       
-      <guid>https://njir.github.io/posts/embedded-software04/</guid>
+      <guid>https://tak-bro.github.io/posts/embedded-software04/</guid>
       <description>IEEE 802.15.4 2.4GHz대역의 16개 채널을 갖고 있음 하나당 2MHz(중심 frequnecy로부터 5MHz) 패킷 전송 절차 : Preamble -&amp;gt; SFD -&amp;gt; LEN 1) Preamble : 패킷을 전송하려고 할 때(</description>
     </item>
     
     <item>
       <title>임베디드 소프트웨어 - IEEE 802.15.4, 15.4e</title>
-      <link>https://njir.github.io/posts/embedded-software03/</link>
+      <link>https://tak-bro.github.io/posts/embedded-software03/</link>
       <pubDate>Tue, 17 Mar 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/embedded-software03/</guid>
+      <guid>https://tak-bro.github.io/posts/embedded-software03/</guid>
       <description>프로토콜 버전 버전 : 15.4 2003 ~ 2006년도 버전 : 15.4e (4e : Industry IoT, 산업용 IoT) ~ 2010 Industry IoT의 특징: 신뢰성 예전부터 무선통신은 신뢰성과는 관련이 없었지만, 신뢰성이 있</description>
     </item>
     
     <item>
       <title>임베디드 소프트웨어 - IoT 표준 프로토콜 논문</title>
-      <link>https://njir.github.io/posts/embedded-software02/</link>
+      <link>https://tak-bro.github.io/posts/embedded-software02/</link>
       <pubDate>Mon, 09 Mar 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/embedded-software02/</guid>
+      <guid>https://tak-bro.github.io/posts/embedded-software02/</guid>
       <description>Standardized Protocol Stack for the Internet of (Important) Things 이 논문은 적절하게 산업계에서 필요로하는 무선통신 스택을 얘기하려 한다. 논문에서 설명하는 내용을 간단히 소개함. the emergence of the Mobile Internet with the exponential explosion of</description>
     </item>
     
     <item>
       <title>임베디드 소프트웨어 - IoT 소개</title>
-      <link>https://njir.github.io/posts/embedded-software01/</link>
+      <link>https://tak-bro.github.io/posts/embedded-software01/</link>
       <pubDate>Sun, 08 Mar 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/embedded-software01/</guid>
+      <guid>https://tak-bro.github.io/posts/embedded-software01/</guid>
       <description>Introduction to IoT Platform IoT의 개괄적인 구조는 다음 그림과 같다. Platform은 IoT이 돌아가는 플랫폼으로 예를 들어 WAS, open-iot 등이 있다. IoT에서 중요한 부분은 Machine To Machine</description>
     </item>
     

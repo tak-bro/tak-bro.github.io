@@ -2,39 +2,39 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Reactive on DevNote</title>
-    <link>https://njir.github.io/tags/reactive/</link>
+    <link>https://tak-bro.github.io/tags/reactive/</link>
     <description>Recent content in Reactive on DevNote</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Thu, 22 Mar 2018 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://njir.github.io/tags/reactive/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://tak-bro.github.io/tags/reactive/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>RxJS Operators</title>
-      <link>https://njir.github.io/posts/rxjs-operators/</link>
+      <link>https://tak-bro.github.io/posts/rxjs-operators/</link>
       <pubDate>Thu, 22 Mar 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/rxjs-operators/</guid>
+      <guid>https://tak-bro.github.io/posts/rxjs-operators/</guid>
       <description>Operators of RxJS 참고로 모든 operator는 새로운 Observable을 리턴하게 된다. Utility do do는 새로운 데이터가 emit 될 때마다 매번 실행된다. output처럼</description>
     </item>
     
     <item>
       <title>RxJS 개발 참고자료</title>
-      <link>https://njir.github.io/posts/rxjs-resources/</link>
+      <link>https://tak-bro.github.io/posts/rxjs-resources/</link>
       <pubDate>Sat, 17 Feb 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/rxjs-resources/</guid>
+      <guid>https://tak-bro.github.io/posts/rxjs-resources/</guid>
       <description>RxJS 개발 참고 자료 Doc 문서 RxJS 라이브러리의 latest 코드는 ReactiveX/rxjs에 올라오고 있다. 이 사이트의 문서를 봐도 되지만, 예제 코드가 많이 없어서 개발할</description>
     </item>
     
     <item>
       <title>RxJS Observable 간단정리</title>
-      <link>https://njir.github.io/posts/rxjs-observable-snippet/</link>
+      <link>https://tak-bro.github.io/posts/rxjs-observable-snippet/</link>
       <pubDate>Thu, 15 Feb 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/rxjs-observable-snippet/</guid>
+      <guid>https://tak-bro.github.io/posts/rxjs-observable-snippet/</guid>
       <description>시작하기 전에, Reactive Programming은 내가 원하는 데이터는 어디에서 오는가를 항상 생각해야 한다고 한다. Glossary Observables 계속해서 data를 생성(emit, pr</description>
     </item>
     

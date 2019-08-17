@@ -2,39 +2,39 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Eos on DevNote</title>
-    <link>https://njir.github.io/tags/eos/</link>
+    <link>https://tak-bro.github.io/tags/eos/</link>
     <description>Recent content in Eos on DevNote</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Wed, 05 Sep 2018 18:15:59 -0600</lastBuildDate>
     
-	<atom:link href="https://njir.github.io/tags/eos/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://tak-bro.github.io/tags/eos/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>EOS에 Smart Contract 생성하기(2018년 9월)</title>
-      <link>https://njir.github.io/posts/new-eos-tutorial/</link>
+      <link>https://tak-bro.github.io/posts/new-eos-tutorial/</link>
       <pubDate>Wed, 05 Sep 2018 18:15:59 -0600</pubDate>
       
-      <guid>https://njir.github.io/posts/new-eos-tutorial/</guid>
+      <guid>https://tak-bro.github.io/posts/new-eos-tutorial/</guid>
       <description>반년동안 아이폰 개발 열심히 했더니 엎어졌다. 스마트 컨트랙트 작성해야되서 다시 공부해봤다. Setup EOS $ git clone https://github.com/EOSIO/eos --recursive $ cd eos $ git checkout v1.2.3 $ git submodule update --init --recursive $ ./eosio_build.sh ... [100%] Built target nodeos [100%] Linking</description>
     </item>
     
     <item>
       <title>EOS에 Smart Contract 생성해보기</title>
-      <link>https://njir.github.io/posts/eos-tutorial/</link>
+      <link>https://tak-bro.github.io/posts/eos-tutorial/</link>
       <pubDate>Wed, 07 Feb 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/eos-tutorial/</guid>
+      <guid>https://tak-bro.github.io/posts/eos-tutorial/</guid>
       <description>2018년 9월 기준으로 eos가 많이 업데이트 되었습니다. 현재 버전에서 돌아가는 tutorial은 이 포스트를 참고해주세요. EOS tutorial for mac 2018년 02월</description>
     </item>
     
     <item>
       <title>Docker에서 EOS 실행하기</title>
-      <link>https://njir.github.io/posts/eos-on-docker/</link>
+      <link>https://tak-bro.github.io/posts/eos-on-docker/</link>
       <pubDate>Mon, 29 Jan 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/eos-on-docker/</guid>
+      <guid>https://tak-bro.github.io/posts/eos-on-docker/</guid>
       <description>Docker에서 EOS 실행하기 요약: 2018-01-29일 현재, eos 프로젝트 그대로 clone하면 Docker에서 빌드 에러 발생 PR #1184, PR #1218 참고하여 DockerFile 및 config.ini</description>
     </item>
     

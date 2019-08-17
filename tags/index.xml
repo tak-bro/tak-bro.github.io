@@ -2,111 +2,111 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on DevNote</title>
-    <link>https://njir.github.io/tags/</link>
+    <link>https://tak-bro.github.io/tags/</link>
     <description>Recent content in Tags on DevNote</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Wed, 05 Sep 2018 18:15:59 -0600</lastBuildDate>
     
-	<atom:link href="https://njir.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://tak-bro.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Blockchain</title>
-      <link>https://njir.github.io/tags/blockchain/</link>
+      <link>https://tak-bro.github.io/tags/blockchain/</link>
       <pubDate>Wed, 05 Sep 2018 18:15:59 -0600</pubDate>
       
-      <guid>https://njir.github.io/tags/blockchain/</guid>
+      <guid>https://tak-bro.github.io/tags/blockchain/</guid>
       <description></description>
     </item>
     
     <item>
       <title>C&#43;&#43;</title>
-      <link>https://njir.github.io/tags/c&#43;&#43;/</link>
+      <link>https://tak-bro.github.io/tags/c&#43;&#43;/</link>
       <pubDate>Mon, 31 Dec 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/tags/c&#43;&#43;/</guid>
+      <guid>https://tak-bro.github.io/tags/c&#43;&#43;/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Embedded</title>
-      <link>https://njir.github.io/tags/embedded/</link>
+      <link>https://tak-bro.github.io/tags/embedded/</link>
       <pubDate>Thu, 16 Apr 2015 14:12:59 -0600</pubDate>
       
-      <guid>https://njir.github.io/tags/embedded/</guid>
+      <guid>https://tak-bro.github.io/tags/embedded/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Eos</title>
-      <link>https://njir.github.io/tags/eos/</link>
+      <link>https://tak-bro.github.io/tags/eos/</link>
       <pubDate>Wed, 05 Sep 2018 18:15:59 -0600</pubDate>
       
-      <guid>https://njir.github.io/tags/eos/</guid>
+      <guid>https://tak-bro.github.io/tags/eos/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Java</title>
-      <link>https://njir.github.io/tags/java/</link>
+      <link>https://tak-bro.github.io/tags/java/</link>
       <pubDate>Thu, 12 Mar 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/tags/java/</guid>
+      <guid>https://tak-bro.github.io/tags/java/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Javascript</title>
-      <link>https://njir.github.io/tags/javascript/</link>
+      <link>https://tak-bro.github.io/tags/javascript/</link>
       <pubDate>Sun, 19 May 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/tags/javascript/</guid>
+      <guid>https://tak-bro.github.io/tags/javascript/</guid>
       <description></description>
     </item>
     
     <item>
       <title>React</title>
-      <link>https://njir.github.io/tags/react/</link>
+      <link>https://tak-bro.github.io/tags/react/</link>
       <pubDate>Mon, 31 Dec 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/tags/react/</guid>
+      <guid>https://tak-bro.github.io/tags/react/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Reactive</title>
-      <link>https://njir.github.io/tags/reactive/</link>
+      <link>https://tak-bro.github.io/tags/reactive/</link>
       <pubDate>Thu, 22 Mar 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/tags/reactive/</guid>
+      <guid>https://tak-bro.github.io/tags/reactive/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Rxjs</title>
-      <link>https://njir.github.io/tags/rxjs/</link>
+      <link>https://tak-bro.github.io/tags/rxjs/</link>
       <pubDate>Thu, 22 Mar 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/tags/rxjs/</guid>
+      <guid>https://tak-bro.github.io/tags/rxjs/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Swift</title>
-      <link>https://njir.github.io/tags/swift/</link>
+      <link>https://tak-bro.github.io/tags/swift/</link>
       <pubDate>Fri, 20 Mar 2015 12:22:59 -0600</pubDate>
       
-      <guid>https://njir.github.io/tags/swift/</guid>
+      <guid>https://tak-bro.github.io/tags/swift/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Til</title>
-      <link>https://njir.github.io/tags/til/</link>
+      <link>https://tak-bro.github.io/tags/til/</link>
       <pubDate>Sun, 19 May 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/tags/til/</guid>
+      <guid>https://tak-bro.github.io/tags/til/</guid>
       <description></description>
     </item>
     

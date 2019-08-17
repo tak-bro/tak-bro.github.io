@@ -2,57 +2,57 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Javascript on DevNote</title>
-    <link>https://njir.github.io/tags/javascript/</link>
+    <link>https://tak-bro.github.io/tags/javascript/</link>
     <description>Recent content in Javascript on DevNote</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Sun, 19 May 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://njir.github.io/tags/javascript/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://tak-bro.github.io/tags/javascript/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>자바스크립트 Scope의 이해</title>
-      <link>https://njir.github.io/posts/javascript-hoisting/</link>
+      <link>https://tak-bro.github.io/posts/javascript-hoisting/</link>
       <pubDate>Sun, 19 May 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/javascript-hoisting/</guid>
+      <guid>https://tak-bro.github.io/posts/javascript-hoisting/</guid>
       <description>Javascript Scope의 이해 아래 코드를 실행하면 console.log(text)은 어떻게 찍힐까? var text = &#39;outside&#39;; function logIt() { console.log(text); var text = &#39;inside&#39;; }; logIt(); 답은 undefined다.</description>
     </item>
     
     <item>
       <title>React 개념 정리</title>
-      <link>https://njir.github.io/posts/default-react/</link>
+      <link>https://tak-bro.github.io/posts/default-react/</link>
       <pubDate>Mon, 31 Dec 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/default-react/</guid>
+      <guid>https://tak-bro.github.io/posts/default-react/</guid>
       <description>React React 샘플 코드 import * as React from &#39;react&#39;; import * as ReactDOM from &#39;react-dom&#39;; import { Preview } from &#39;./Preview&#39;; interface MyComponentProps { defaultName?: string; } interface MyComponentState { name?: string; } class MyComponent extends React.Component&amp;lt;MyComponentProps, MyComponentState&amp;gt; { constructor(props: MyComponentProps) { super(props); this.state = { name: props.defaultName, }; this.handleInputChange = this.handleInputChange.bind(this); } // state 수정과 관련된 메소드 private handleInputChange(event: React.FormEvent&amp;lt;HTMLInputElement&amp;gt;)</description>
     </item>
     
     <item>
       <title>RxJS Operators</title>
-      <link>https://njir.github.io/posts/rxjs-operators/</link>
+      <link>https://tak-bro.github.io/posts/rxjs-operators/</link>
       <pubDate>Thu, 22 Mar 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/rxjs-operators/</guid>
+      <guid>https://tak-bro.github.io/posts/rxjs-operators/</guid>
       <description>Operators of RxJS 참고로 모든 operator는 새로운 Observable을 리턴하게 된다. Utility do do는 새로운 데이터가 emit 될 때마다 매번 실행된다. output처럼</description>
     </item>
     
     <item>
       <title>RxJS 개발 참고자료</title>
-      <link>https://njir.github.io/posts/rxjs-resources/</link>
+      <link>https://tak-bro.github.io/posts/rxjs-resources/</link>
       <pubDate>Sat, 17 Feb 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/rxjs-resources/</guid>
+      <guid>https://tak-bro.github.io/posts/rxjs-resources/</guid>
       <description>RxJS 개발 참고 자료 Doc 문서 RxJS 라이브러리의 latest 코드는 ReactiveX/rxjs에 올라오고 있다. 이 사이트의 문서를 봐도 되지만, 예제 코드가 많이 없어서 개발할</description>
     </item>
     
     <item>
       <title>RxJS Observable 간단정리</title>
-      <link>https://njir.github.io/posts/rxjs-observable-snippet/</link>
+      <link>https://tak-bro.github.io/posts/rxjs-observable-snippet/</link>
       <pubDate>Thu, 15 Feb 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/rxjs-observable-snippet/</guid>
+      <guid>https://tak-bro.github.io/posts/rxjs-observable-snippet/</guid>
       <description>시작하기 전에, Reactive Programming은 내가 원하는 데이터는 어디에서 오는가를 항상 생각해야 한다고 한다. Glossary Observables 계속해서 data를 생성(emit, pr</description>
     </item>
     

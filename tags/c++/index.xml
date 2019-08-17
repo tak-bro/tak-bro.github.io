@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>C&#43;&#43; on DevNote</title>
-    <link>https://njir.github.io/tags/c&#43;&#43;/</link>
+    <link>https://tak-bro.github.io/tags/c&#43;&#43;/</link>
     <description>Recent content in C&#43;&#43; on DevNote</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Mon, 31 Dec 2018 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://njir.github.io/tags/c++/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://tak-bro.github.io/tags/c++/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>c&#43;&#43; 간단 정리</title>
-      <link>https://njir.github.io/posts/default-cplusplus/</link>
+      <link>https://tak-bro.github.io/posts/default-cplusplus/</link>
       <pubDate>Mon, 31 Dec 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/default-cplusplus/</guid>
+      <guid>https://tak-bro.github.io/posts/default-cplusplus/</guid>
       <description>c++ 예전에 공부했던 내용 정리 c++의 타입 변환 연산자 static_cast&amp;lt;&amp;gt;: 가장 기본적인 캐스트 연산 방법 dynamic_cast&amp;lt;&amp;gt;: 객체지향 언어의 다형성을 이용하여 모호한 타입 캐스팅 오류를 막아줌 const_cast&amp;lt;&amp;gt;: 자료</description>
     </item>
     

@@ -2,345 +2,345 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on DevNote</title>
-    <link>https://njir.github.io/posts/</link>
+    <link>https://tak-bro.github.io/posts/</link>
     <description>Recent content in Posts on DevNote</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Sun, 19 May 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://njir.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://tak-bro.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>자바스크립트 Scope의 이해</title>
-      <link>https://njir.github.io/posts/javascript-hoisting/</link>
+      <link>https://tak-bro.github.io/posts/javascript-hoisting/</link>
       <pubDate>Sun, 19 May 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/javascript-hoisting/</guid>
+      <guid>https://tak-bro.github.io/posts/javascript-hoisting/</guid>
       <description>Javascript Scope의 이해 아래 코드를 실행하면 console.log(text)은 어떻게 찍힐까? var text = &#39;outside&#39;; function logIt() { console.log(text); var text = &#39;inside&#39;; }; logIt(); 답은 undefined다.</description>
     </item>
     
     <item>
       <title>React 개념 정리</title>
-      <link>https://njir.github.io/posts/default-react/</link>
+      <link>https://tak-bro.github.io/posts/default-react/</link>
       <pubDate>Mon, 31 Dec 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/default-react/</guid>
+      <guid>https://tak-bro.github.io/posts/default-react/</guid>
       <description>React React 샘플 코드 import * as React from &#39;react&#39;; import * as ReactDOM from &#39;react-dom&#39;; import { Preview } from &#39;./Preview&#39;; interface MyComponentProps { defaultName?: string; } interface MyComponentState { name?: string; } class MyComponent extends React.Component&amp;lt;MyComponentProps, MyComponentState&amp;gt; { constructor(props: MyComponentProps) { super(props); this.state = { name: props.defaultName, }; this.handleInputChange = this.handleInputChange.bind(this); } // state 수정과 관련된 메소드 private handleInputChange(event: React.FormEvent&amp;lt;HTMLInputElement&amp;gt;)</description>
     </item>
     
     <item>
       <title>c&#43;&#43; 간단 정리</title>
-      <link>https://njir.github.io/posts/default-cplusplus/</link>
+      <link>https://tak-bro.github.io/posts/default-cplusplus/</link>
       <pubDate>Mon, 31 Dec 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/default-cplusplus/</guid>
+      <guid>https://tak-bro.github.io/posts/default-cplusplus/</guid>
       <description>c++ 예전에 공부했던 내용 정리 c++의 타입 변환 연산자 static_cast&amp;lt;&amp;gt;: 가장 기본적인 캐스트 연산 방법 dynamic_cast&amp;lt;&amp;gt;: 객체지향 언어의 다형성을 이용하여 모호한 타입 캐스팅 오류를 막아줌 const_cast&amp;lt;&amp;gt;: 자료</description>
     </item>
     
     <item>
       <title>EOS에 Smart Contract 생성하기(2018년 9월)</title>
-      <link>https://njir.github.io/posts/new-eos-tutorial/</link>
+      <link>https://tak-bro.github.io/posts/new-eos-tutorial/</link>
       <pubDate>Wed, 05 Sep 2018 18:15:59 -0600</pubDate>
       
-      <guid>https://njir.github.io/posts/new-eos-tutorial/</guid>
+      <guid>https://tak-bro.github.io/posts/new-eos-tutorial/</guid>
       <description>반년동안 아이폰 개발 열심히 했더니 엎어졌다. 스마트 컨트랙트 작성해야되서 다시 공부해봤다. Setup EOS $ git clone https://github.com/EOSIO/eos --recursive $ cd eos $ git checkout v1.2.3 $ git submodule update --init --recursive $ ./eosio_build.sh ... [100%] Built target nodeos [100%] Linking</description>
     </item>
     
     <item>
       <title>RxJS Operators</title>
-      <link>https://njir.github.io/posts/rxjs-operators/</link>
+      <link>https://tak-bro.github.io/posts/rxjs-operators/</link>
       <pubDate>Thu, 22 Mar 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/rxjs-operators/</guid>
+      <guid>https://tak-bro.github.io/posts/rxjs-operators/</guid>
       <description>Operators of RxJS 참고로 모든 operator는 새로운 Observable을 리턴하게 된다. Utility do do는 새로운 데이터가 emit 될 때마다 매번 실행된다. output처럼</description>
     </item>
     
     <item>
       <title>RxJS 개발 참고자료</title>
-      <link>https://njir.github.io/posts/rxjs-resources/</link>
+      <link>https://tak-bro.github.io/posts/rxjs-resources/</link>
       <pubDate>Sat, 17 Feb 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/rxjs-resources/</guid>
+      <guid>https://tak-bro.github.io/posts/rxjs-resources/</guid>
       <description>RxJS 개발 참고 자료 Doc 문서 RxJS 라이브러리의 latest 코드는 ReactiveX/rxjs에 올라오고 있다. 이 사이트의 문서를 봐도 되지만, 예제 코드가 많이 없어서 개발할</description>
     </item>
     
     <item>
       <title>RxJS Observable 간단정리</title>
-      <link>https://njir.github.io/posts/rxjs-observable-snippet/</link>
+      <link>https://tak-bro.github.io/posts/rxjs-observable-snippet/</link>
       <pubDate>Thu, 15 Feb 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/rxjs-observable-snippet/</guid>
+      <guid>https://tak-bro.github.io/posts/rxjs-observable-snippet/</guid>
       <description>시작하기 전에, Reactive Programming은 내가 원하는 데이터는 어디에서 오는가를 항상 생각해야 한다고 한다. Glossary Observables 계속해서 data를 생성(emit, pr</description>
     </item>
     
     <item>
       <title>EOS에 Smart Contract 생성해보기</title>
-      <link>https://njir.github.io/posts/eos-tutorial/</link>
+      <link>https://tak-bro.github.io/posts/eos-tutorial/</link>
       <pubDate>Wed, 07 Feb 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/eos-tutorial/</guid>
+      <guid>https://tak-bro.github.io/posts/eos-tutorial/</guid>
       <description>2018년 9월 기준으로 eos가 많이 업데이트 되었습니다. 현재 버전에서 돌아가는 tutorial은 이 포스트를 참고해주세요. EOS tutorial for mac 2018년 02월</description>
     </item>
     
     <item>
       <title>Docker에서 EOS 실행하기</title>
-      <link>https://njir.github.io/posts/eos-on-docker/</link>
+      <link>https://tak-bro.github.io/posts/eos-on-docker/</link>
       <pubDate>Mon, 29 Jan 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/eos-on-docker/</guid>
+      <guid>https://tak-bro.github.io/posts/eos-on-docker/</guid>
       <description>Docker에서 EOS 실행하기 요약: 2018-01-29일 현재, eos 프로젝트 그대로 clone하면 Docker에서 빌드 에러 발생 PR #1184, PR #1218 참고하여 DockerFile 및 config.ini</description>
     </item>
     
     <item>
       <title>임베디드 소프트웨어 - 6Lowpan Layer</title>
-      <link>https://njir.github.io/posts/embedded-software07/</link>
+      <link>https://tak-bro.github.io/posts/embedded-software07/</link>
       <pubDate>Thu, 16 Apr 2015 14:12:59 -0600</pubDate>
       
-      <guid>https://njir.github.io/posts/embedded-software07/</guid>
+      <guid>https://tak-bro.github.io/posts/embedded-software07/</guid>
       <description>6lowapn 6lowpan layer(= Adapation layer) 기능 MTU F&amp;amp;R 1.2K -&amp;gt; 128 bytes Header Compression IPv6 Header : 40 bytes(16src+16dst+8) UDP : 8 bytes A(origin)-&amp;gt;B-&amp;gt;C-&amp;gt;D(final dst) A &amp;lt;-&amp;gt; B : NetworkA B &amp;lt;-&amp;gt; C : NetworkB 실제 네트워크 주소는 MAC 주소이다. 따라서 MAC 헤더는 매번 바뀐다. IPv6 128bits [ 64 ][ 64</description>
     </item>
     
     <item>
       <title>임베디드 소프트웨어 - Connecting to the Internet 02</title>
-      <link>https://njir.github.io/posts/embedded-software06/</link>
+      <link>https://tak-bro.github.io/posts/embedded-software06/</link>
       <pubDate>Tue, 07 Apr 2015 17:12:59 -0600</pubDate>
       
-      <guid>https://njir.github.io/posts/embedded-software06/</guid>
+      <guid>https://tak-bro.github.io/posts/embedded-software06/</guid>
       <description>Path MTU Discovery Path MTU는 전체 구간의 최소값임 IPv6는 중간에 짜르는게 안됨(Fragmentation X) IPv6 : 128bit = 16byte(주소) -&amp;gt; 40byte(16byte SRC + 16byte DST + 8byte) why? -</description>
     </item>
     
     <item>
       <title>임베디드 소프트웨어 - Connecting to the Internet 01</title>
-      <link>https://njir.github.io/posts/embedded-software05/</link>
+      <link>https://tak-bro.github.io/posts/embedded-software05/</link>
       <pubDate>Tue, 07 Apr 2015 16:12:59 -0600</pubDate>
       
-      <guid>https://njir.github.io/posts/embedded-software05/</guid>
+      <guid>https://tak-bro.github.io/posts/embedded-software05/</guid>
       <description>IEEE802.15.4e가 wifi에 비해 에너지 소모를 줄일 수 있는 방법(Power Plug : Main Power, Battery On : No Replace) TSCH(Time Slicing이 배터리, Channel Hopping</description>
     </item>
     
     <item>
       <title>임베디드 소프트웨어 - IEEE 802.15.4e, Scheduling</title>
-      <link>https://njir.github.io/posts/embedded-software04/</link>
+      <link>https://tak-bro.github.io/posts/embedded-software04/</link>
       <pubDate>Wed, 25 Mar 2015 12:22:59 -0600</pubDate>
       
-      <guid>https://njir.github.io/posts/embedded-software04/</guid>
+      <guid>https://tak-bro.github.io/posts/embedded-software04/</guid>
       <description>IEEE 802.15.4 2.4GHz대역의 16개 채널을 갖고 있음 하나당 2MHz(중심 frequnecy로부터 5MHz) 패킷 전송 절차 : Preamble -&amp;gt; SFD -&amp;gt; LEN 1) Preamble : 패킷을 전송하려고 할 때(</description>
     </item>
     
     <item>
       <title>Swift13 - Foundation Framework 02</title>
-      <link>https://njir.github.io/posts/basic-swift14/</link>
+      <link>https://tak-bro.github.io/posts/basic-swift14/</link>
       <pubDate>Fri, 20 Mar 2015 12:22:59 -0600</pubDate>
       
-      <guid>https://njir.github.io/posts/basic-swift14/</guid>
+      <guid>https://tak-bro.github.io/posts/basic-swift14/</guid>
       <description>직렬화 바이너리 형태로 변환 바이너리 데이터 다루기 : NSData 직렬화된 데이터를 읽고, 파일로 쓰기 직렬화 담당 : 아카이버/언아카이버 직렬화 : NSKeyedArchiver 역직렬화 : NSKeyedUnarchiver 직렬화</description>
     </item>
     
     <item>
       <title>Swift13 - Foundation Framework 01</title>
-      <link>https://njir.github.io/posts/basic-swift13/</link>
+      <link>https://tak-bro.github.io/posts/basic-swift13/</link>
       <pubDate>Fri, 20 Mar 2015 12:02:59 -0600</pubDate>
       
-      <guid>https://njir.github.io/posts/basic-swift13/</guid>
+      <guid>https://tak-bro.github.io/posts/basic-swift13/</guid>
       <description>프레임워크와 클래스 OS X, iOS용 어플리케이션의 기본 프레임워크 클래스 접두어 NS~ 데이터 다루기 네트워크 파일처리 Object C와 프레임워크 Swift 언어 발표 이전 개발 언어로</description>
     </item>
     
     <item>
       <title>Swift12 - 옵셔널 체인</title>
-      <link>https://njir.github.io/posts/basic-swift12/</link>
+      <link>https://tak-bro.github.io/posts/basic-swift12/</link>
       <pubDate>Thu, 19 Mar 2015 22:02:59 -0600</pubDate>
       
-      <guid>https://njir.github.io/posts/basic-swift12/</guid>
+      <guid>https://tak-bro.github.io/posts/basic-swift12/</guid>
       <description>옵셔널 체인 옵셔널로 선언된 변수나 프로퍼티에 접근하려면 if let을 이용한 옵셔널 바인딩을 이용하거나 강제 어래핑을 한다. 옵셔널 채인은 nil로 인한 에러 없이</description>
     </item>
     
     <item>
       <title>Swift11 - Extension, 연산자, 비교</title>
-      <link>https://njir.github.io/posts/basic-swift11/</link>
+      <link>https://tak-bro.github.io/posts/basic-swift11/</link>
       <pubDate>Thu, 19 Mar 2015 21:58:59 -0600</pubDate>
       
-      <guid>https://njir.github.io/posts/basic-swift11/</guid>
+      <guid>https://tak-bro.github.io/posts/basic-swift11/</guid>
       <description>확장 첨자 표기 타입 내 타입 연산자 정의 리터럴 호환 클래스(구조체, enum) 확장 프로퍼티, 메소드, 프로토콜, 서브스크립트, nested type ObjectiveC의 카테고리</description>
     </item>
     
     <item>
       <title>Swift10 - 클로저</title>
-      <link>https://njir.github.io/posts/basic-swift10/</link>
+      <link>https://tak-bro.github.io/posts/basic-swift10/</link>
       <pubDate>Thu, 19 Mar 2015 21:55:59 -0600</pubDate>
       
-      <guid>https://njir.github.io/posts/basic-swift10/</guid>
+      <guid>https://tak-bro.github.io/posts/basic-swift10/</guid>
       <description>클로저 메소드이자 객체 Object C에서는 블록 클로저를 파라미터로 사용하는 것은 파라미터의 타입이 파라미터 -&amp;gt; 번환타입 형태 func sayHello() -&amp;gt; String { return &amp;quot;Hello&amp;quot; } var v1 = sayHello() var v2 = sayHello // v1 과</description>
     </item>
     
     <item>
       <title>Swift09 - 프로토콜</title>
-      <link>https://njir.github.io/posts/basic-swift09/</link>
+      <link>https://tak-bro.github.io/posts/basic-swift09/</link>
       <pubDate>Thu, 19 Mar 2015 20:55:59 -0600</pubDate>
       
-      <guid>https://njir.github.io/posts/basic-swift09/</guid>
+      <guid>https://tak-bro.github.io/posts/basic-swift09/</guid>
       <description>프로토콜 메소드 호출 규격 protocol Singing { func sing() //선언만 } 메소드의 선언만 작성 인터페이스 구현이 없어서 단독 사용 불가 메소드 호출 약속 iOS 어플리케이션 개발에서 자주 사용</description>
     </item>
     
     <item>
       <title>Swift08 - 구조체</title>
-      <link>https://njir.github.io/posts/basic-swift08/</link>
+      <link>https://tak-bro.github.io/posts/basic-swift08/</link>
       <pubDate>Thu, 19 Mar 2015 20:50:59 -0600</pubDate>
       
-      <guid>https://njir.github.io/posts/basic-swift08/</guid>
+      <guid>https://tak-bro.github.io/posts/basic-swift08/</guid>
       <description>구조체 클래스처럼 프로퍼티와 함수를 선언 클래스와 구조체 같은점 : 데이터, 행위 다른점 : 상속, 레퍼런스vs밸류, ARC(레퍼런스 타입만) 구조체 정의 ////// 1</description>
     </item>
     
     <item>
       <title>Swift07 - 상속</title>
-      <link>https://njir.github.io/posts/basic-swift07/</link>
+      <link>https://tak-bro.github.io/posts/basic-swift07/</link>
       <pubDate>Thu, 19 Mar 2015 19:50:59 -0600</pubDate>
       
-      <guid>https://njir.github.io/posts/basic-swift07/</guid>
+      <guid>https://tak-bro.github.io/posts/basic-swift07/</guid>
       <description>상속 기존 클래스에서 새 클래스 작성 프로퍼티, 메소드 그대로 사용 class [자식 클래스] : [부모 클래스] {} 재정의하기 : override 메소드 // 자식 클래스에서 override func size() -&amp;gt; Int { return</description>
     </item>
     
     <item>
       <title>Swift06 - 메모리 관리(ARC)</title>
-      <link>https://njir.github.io/posts/basic-swift06/</link>
+      <link>https://tak-bro.github.io/posts/basic-swift06/</link>
       <pubDate>Thu, 19 Mar 2015 18:50:59 -0600</pubDate>
       
-      <guid>https://njir.github.io/posts/basic-swift06/</guid>
+      <guid>https://tak-bro.github.io/posts/basic-swift06/</guid>
       <description>메모리 메모리 관리 객체 생성 -&amp;gt; 메모리 차지 메모리 공간의 제약 -&amp;gt; 메모리 관리 메모리 관리 필요한 객체 유지 필요없는 객체 해제 사용 중이라는 표시 - own(소유하기)</description>
     </item>
     
     <item>
       <title>Swift05 - 메소드</title>
-      <link>https://njir.github.io/posts/basic-swift05/</link>
+      <link>https://tak-bro.github.io/posts/basic-swift05/</link>
       <pubDate>Thu, 19 Mar 2015 17:50:59 -0600</pubDate>
       
-      <guid>https://njir.github.io/posts/basic-swift05/</guid>
+      <guid>https://tak-bro.github.io/posts/basic-swift05/</guid>
       <description>메소드 인스턴스 메소드 객체를 생성하고 객체에 메소드를 호출하는 방식 객체에 반영된 값인 프로퍼티를 사용할 수 있다. 타입 메소드 객체를 생성하지 않고 동작하는 메소</description>
     </item>
     
     <item>
       <title>Swift04 - 클래스</title>
-      <link>https://njir.github.io/posts/basic-swift04/</link>
+      <link>https://tak-bro.github.io/posts/basic-swift04/</link>
       <pubDate>Thu, 19 Mar 2015 17:35:59 -0600</pubDate>
       
-      <guid>https://njir.github.io/posts/basic-swift04/</guid>
+      <guid>https://tak-bro.github.io/posts/basic-swift04/</guid>
       <description>클래스 프로젝트에서 클래스는 하나의 swift 파일에 다수의 클래스 작성 클래스마다 swift 파일 작성 템플릿 Cocoa Class(클래스를 만듦, 부모클래스 정할 수 있음) Swift Fil</description>
     </item>
     
     <item>
       <title>Swift03 - 함수</title>
-      <link>https://njir.github.io/posts/basic-swift03/</link>
+      <link>https://tak-bro.github.io/posts/basic-swift03/</link>
       <pubDate>Thu, 19 Mar 2015 14:35:59 -0600</pubDate>
       
-      <guid>https://njir.github.io/posts/basic-swift03/</guid>
+      <guid>https://tak-bro.github.io/posts/basic-swift03/</guid>
       <description>함수 -&amp;gt; 로 결과 타입 반환 // Bool 반환 func areYouOK() -&amp;gt; Bool { return true } // String func favorite() -&amp;gt; String{ return &amp;quot;Coffee&amp;quot; } 다수의 값 반환 : 튜플 사용 func random3() -&amp;gt; (Int, Int, Int){ let r1 = Int(arc4random() % 10) let r2 = Int(arc4random() % 10) let r3 = Int(arc4random() % 10) return (r1, r2, r3)</description>
     </item>
     
     <item>
       <title>Swift02 - 옵셔널</title>
-      <link>https://njir.github.io/posts/basic-swift02/</link>
+      <link>https://tak-bro.github.io/posts/basic-swift02/</link>
       <pubDate>Thu, 19 Mar 2015 14:15:59 -0600</pubDate>
       
-      <guid>https://njir.github.io/posts/basic-swift02/</guid>
+      <guid>https://tak-bro.github.io/posts/basic-swift02/</guid>
       <description>옵셔널 정리 nil nil : 값이 할당되지 않은 상태 nil에 함수나 프로퍼티 사용 -&amp;gt; 런타임 에러 변수와 상수를 사용하기 전에 값이 설정돼야한다. var i : Int // Error println(i) 일반 변수(</description>
     </item>
     
     <item>
       <title>Swift01 - 기본 문법과 타입</title>
-      <link>https://njir.github.io/posts/basic-swift01/</link>
+      <link>https://tak-bro.github.io/posts/basic-swift01/</link>
       <pubDate>Thu, 19 Mar 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/basic-swift01/</guid>
+      <guid>https://tak-bro.github.io/posts/basic-swift01/</guid>
       <description>기본문법 별도의 main함수를 작성하지 않는다. main 소스 코드의 글로벌 영역의 코드에서 시작한다. main이 아닌 다른 소스 파일에는 함수나 타입을 선언하는 코드</description>
     </item>
     
     <item>
       <title>임베디드 소프트웨어 - IEEE 802.15.4, 15.4e</title>
-      <link>https://njir.github.io/posts/embedded-software03/</link>
+      <link>https://tak-bro.github.io/posts/embedded-software03/</link>
       <pubDate>Tue, 17 Mar 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/embedded-software03/</guid>
+      <guid>https://tak-bro.github.io/posts/embedded-software03/</guid>
       <description>프로토콜 버전 버전 : 15.4 2003 ~ 2006년도 버전 : 15.4e (4e : Industry IoT, 산업용 IoT) ~ 2010 Industry IoT의 특징: 신뢰성 예전부터 무선통신은 신뢰성과는 관련이 없었지만, 신뢰성이 있</description>
     </item>
     
     <item>
       <title>Advanced Java 08 - Java API를 활용한 객체 활용 및 데이터 처리 기법</title>
-      <link>https://njir.github.io/posts/advanced-java07/</link>
+      <link>https://tak-bro.github.io/posts/advanced-java07/</link>
       <pubDate>Thu, 12 Mar 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/advanced-java07/</guid>
+      <guid>https://tak-bro.github.io/posts/advanced-java07/</guid>
       <description>Java Array 동일한 Type의 데이터를 여러 개 가질 때 사용하는 자료구조 String [] stringArray; 변수 Array의 객체 생성은 new String[size] 생성 Array가 생성되었다고 Array에 들어가는</description>
     </item>
     
     <item>
       <title>Advanced Java06, 07 - RTTI, Java annotation 및 Generic</title>
-      <link>https://njir.github.io/posts/advanced-java06/</link>
+      <link>https://tak-bro.github.io/posts/advanced-java06/</link>
       <pubDate>Tue, 10 Mar 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/advanced-java06/</guid>
+      <guid>https://tak-bro.github.io/posts/advanced-java06/</guid>
       <description>RTTI(Run-Time Type Information) 일반적으로 자바는 동적 resolving이 가능하다. 자바 프로그램의 실행 중에 타입 정보를 알아낼 수 있으며 사용 가능 라이브러리를 만들 때 RTTI를 사</description>
     </item>
     
     <item>
       <title>임베디드 소프트웨어 - IoT 표준 프로토콜 논문</title>
-      <link>https://njir.github.io/posts/embedded-software02/</link>
+      <link>https://tak-bro.github.io/posts/embedded-software02/</link>
       <pubDate>Mon, 09 Mar 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/embedded-software02/</guid>
+      <guid>https://tak-bro.github.io/posts/embedded-software02/</guid>
       <description>Standardized Protocol Stack for the Internet of (Important) Things 이 논문은 적절하게 산업계에서 필요로하는 무선통신 스택을 얘기하려 한다. 논문에서 설명하는 내용을 간단히 소개함. the emergence of the Mobile Internet with the exponential explosion of</description>
     </item>
     
     <item>
       <title>임베디드 소프트웨어 - IoT 소개</title>
-      <link>https://njir.github.io/posts/embedded-software01/</link>
+      <link>https://tak-bro.github.io/posts/embedded-software01/</link>
       <pubDate>Sun, 08 Mar 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/embedded-software01/</guid>
+      <guid>https://tak-bro.github.io/posts/embedded-software01/</guid>
       <description>Introduction to IoT Platform IoT의 개괄적인 구조는 다음 그림과 같다. Platform은 IoT이 돌아가는 플랫폼으로 예를 들어 WAS, open-iot 등이 있다. IoT에서 중요한 부분은 Machine To Machine</description>
     </item>
     
     <item>
       <title>Advanced Java01 - 객체지향, 기본 구조, Keyword</title>
-      <link>https://njir.github.io/posts/advanced-java01/</link>
+      <link>https://tak-bro.github.io/posts/advanced-java01/</link>
       <pubDate>Sat, 07 Mar 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/advanced-java01/</guid>
+      <guid>https://tak-bro.github.io/posts/advanced-java01/</guid>
       <description>객체지향 컴퓨터 프로그래밍 하나 이상의 관련된 추상 알고리즘을 특정한 프로그래밍 언어를 이용해 구체적인 컴퓨터 프로그램으로 구현하는 기술 추상화 복잡한 자료, 모</description>
     </item>
     
     <item>
       <title>Advanced Java02 - 오브젝트, 예외처리, 제너릭</title>
-      <link>https://njir.github.io/posts/advanced-java02/</link>
+      <link>https://tak-bro.github.io/posts/advanced-java02/</link>
       <pubDate>Sat, 07 Mar 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/advanced-java02/</guid>
+      <guid>https://tak-bro.github.io/posts/advanced-java02/</guid>
       <description>Java Object Interface class 정의시 &amp;ldquo;어떤 정보가 어떻게 되면 외부에 알려준다.&amp;ldquo;와 같은 경우에 사용 예를 들어 함수 정의시 변수가 10의 배수가 되면 외부에</description>
     </item>
     
     <item>
       <title>Advanced Java03 - Java Keyword</title>
-      <link>https://njir.github.io/posts/advanced-java03/</link>
+      <link>https://tak-bro.github.io/posts/advanced-java03/</link>
       <pubDate>Sat, 07 Mar 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/advanced-java03/</guid>
+      <guid>https://tak-bro.github.io/posts/advanced-java03/</guid>
       <description>Modifier 함수, 클래스, 필드 등의 속성을 나타냄 Note : abstract : 정의만 있다. 구현이 없는 method, abstract method를 갖고있는 class final : 필드의 변수에 객체를 할당하면 더이상 변경불가 native</description>
     </item>
     
     <item>
       <title>Advanced Java04 - Java Object</title>
-      <link>https://njir.github.io/posts/advanced-java04/</link>
+      <link>https://tak-bro.github.io/posts/advanced-java04/</link>
       <pubDate>Sat, 07 Mar 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/advanced-java04/</guid>
+      <guid>https://tak-bro.github.io/posts/advanced-java04/</guid>
       <description>Interface class정의시 &amp;ldquo;어떤 정보가 어떻게 되면 외부에 알려준다.&amp;ldquo;와 같은 경우에 사용 예를 들어 함수 정의시 변수가 10의 배수가 되면 외</description>
     </item>
     
     <item>
       <title>Advanced Java05 - Exceptions</title>
-      <link>https://njir.github.io/posts/advanced-java05/</link>
+      <link>https://tak-bro.github.io/posts/advanced-java05/</link>
       <pubDate>Sat, 07 Mar 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://njir.github.io/posts/advanced-java05/</guid>
+      <guid>https://tak-bro.github.io/posts/advanced-java05/</guid>
       <description>Java의 Error 처리 자바는 Error 또는 Exception 상황에 Throwable이라는 객체를 생성해서 던짐 Throwable : Exception, Error로 구성 Exception은 개발자가 처리할 수 있는</description>
     </item>
     
