@@ -53,7 +53,7 @@
       <pubDate>Thu, 22 Mar 2018 00:00:00 +0000</pubDate>
       
       <guid>https://njir.github.io/posts/rxjs-operators/</guid>
-      <description>Operators of RxJS 참고로 모든 operator는 새로운 Observable을 리턴하게 된다. Utility do ```javascript Rx.Observable.range(1, 5) .do(a =&amp;gt; console.log(`From do ${a}`)) .map(a =&amp;gt; a * a) .subscribe(createSubscriber(&#39;simple&#39;)); // output // // From do 1 // simple.next 1 // From do 2 // simple.next</description>
+      <description>Operators of RxJS 참고로 모든 operator는 새로운 Observable을 리턴하게 된다. Utility do do는 새로운 데이터가 emit 될 때마다 매번 실행된다. output처럼</description>
     </item>
     
     <item>
