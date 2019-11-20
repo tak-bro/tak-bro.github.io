@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="kr"><!--
+ __  __                __                                     __
+/\ \/\ \              /\ \             __                    /\ \
+\ \ \_\ \   __  __    \_\ \      __   /\_\      __       ___ \ \ \/'\
+ \ \  _  \ /\ \/\ \   /'_` \   /'__`\ \/\ \   /'__`\    /'___\\ \ , <
+  \ \ \ \ \\ \ \_\ \ /\ \L\ \ /\  __/  \ \ \ /\ \L\.\_ /\ \__/ \ \ \\`\
+   \ \_\ \_\\/`____ \\ \___,_\\ \____\ _\ \ \\ \__/.\_\\ \____\ \ \_\ \_\
+    \/_/\/_/ `/___/> \\/__,_ / \/____//\ \_\ \\/__/\/_/ \/____/  \/_/\/_/
+                /\___/                \ \____/
+                \/__/                  \/___/
+
+Powered by Hydejack v8.5.2 <https://hydejack.com/>
+--><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"><meta http-equiv="x-ua-compatible" content="ie=edge"><title>RxJS Operators | Tak</title><meta name="generator" content="Jekyll v3.8.6" /><meta property="og:title" content="RxJS Operators" /><meta name="author" content="<Hyungtak> <Jin>" /><meta property="og:locale" content="kr" /><meta name="description" content="RxJS 자주 쓰이거나 꼭 알아야할 operator 간단하게 정리" /><meta property="og:description" content="RxJS 자주 쓰이거나 꼭 알아야할 operator 간단하게 정리" /><link rel="canonical" href="https://tak-bro.github.io/blog/javascript/rxjs-operators/" /><meta property="og:url" content="https://tak-bro.github.io/blog/javascript/rxjs-operators/" /><meta property="og:site_name" content="Tak" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2018-03-22T00:00:00+09:00" /> <script type="application/ld+json"> {"dateModified":"2018-03-22T00:00:00+09:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://tak-bro.github.io/blog/javascript/rxjs-operators/"},"url":"https://tak-bro.github.io/blog/javascript/rxjs-operators/","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://tak-bro.github.io/assets/icons/profile.png"},"name":"<Hyungtak> <Jin>"},"author":{"@type":"Person","name":"<Hyungtak> <Jin>"},"description":"RxJS 자주 쓰이거나 꼭 알아야할 operator 간단하게 정리","headline":"RxJS Operators","@type":"BlogPosting","datePublished":"2018-03-22T00:00:00+09:00","@context":"https://schema.org"}</script><meta name="keywords" content="developer,software-engineer,blog,jekyll,project,portfolio,web,develop,rxjs,javascript,frontend,backend"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Tak"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="application-name" content="Tak"><meta name="msapplication-config" content="/assets/ieconfig.xml"><meta name="theme-color" content="rgb(96,104,112)"><meta name="generator" content="Hydejack v8.5.2" /><link type="application/atom+xml" rel="alternate" href="https://tak-bro.github.io/feed.xml" title="Tak" /><link rel="alternate" href="https://tak-bro.github.io/blog/javascript/rxjs-operators/" hreflang="kr"><link rel="shortcut icon" href="/assets/icons/favicon.ico"><link rel="apple-touch-icon" href="/assets/icons/icon.png"><link rel="manifest" href="/assets/manifest.json"><link rel="dns-prefetch" href="https://fonts.googleapis.com"><link rel="dns-prefetch" href="https://fonts.gstatic.com"><link rel="dns-prefetch" href="https://www.google-analytics.com"><link rel="dns-prefetch" href="/" id="_baseURL"><link rel="dns-prefetch" href="/sw.js" id="_hrefSW"><link rel="dns-prefetch" href="/assets/bower_components/katex/dist/katex.min.js" id="_hrefKatexJS"><link rel="dns-prefetch" href="/assets/bower_components/katex/dist/katex.min.css" id="_hrefKatexCSS"><link rel="dns-prefetch" href="/assets/bower_components/katex/dist/contrib/copy-tex.min.js" id="_hrefKatexCopyJS"><link rel="dns-prefetch" href="/assets/bower_components/katex/dist/contrib/copy-tex.min.css" id="_hrefKatexCopyCSS"><link rel="dns-prefetch" href="/assets/img/swipe.svg" id="_hrefSwipeSVG"><link rel="dns-prefetch" href="https://tak90.disqus.com" id="_hrefDisqus"> <script> !function(e,t){"use strict";function n(e,t,n,o){e.addEventListener?e.addEventListener(t,n,o):e.attachEvent?e.attachEvent("on"+t,n):e["on"+t]=n}e.loadJS=function(e,o){var r=t.createElement("script");r.src=e,o&&n(r,"load",o,{once:!0});var a=t.scripts[0];return a.parentNode.insertBefore(r,a),r},e._loaded=!1,e.loadJSDeferred=function(o,r){function a(){e._loaded=!0,r&&n(c,"load",r,{once:!0});var o=t.scripts[0];o.parentNode.insertBefore(c,o)}var c=t.createElement("script");return c.src=o,e._loaded?a():n(e,"load",a,{once:!0}),c},e.setRel=e.setRelStylesheet=function(e){function o(){this.rel="stylesheet"}n(t.getElementById(e),"load",o,{once:!0})}}(window,document); ; !function(a){"use strict";var b=function(b,c,d){function e(a){return h.body?a():void setTimeout(function(){e(a)})}function f(){i.addEventListener&&i.removeEventListener("load",f),i.media=d||"all"}var g,h=a.document,i=h.createElement("link");if(c)g=c;else{var j=(h.body||h.getElementsByTagName("head")[0]).childNodes;g=j[j.length-1]}var k=h.styleSheets;i.rel="stylesheet",i.href=b,i.media="only x",e(function(){g.parentNode.insertBefore(i,c?g:g.nextSibling)});var l=function(a){for(var b=i.href,c=k.length;c--;)if(k[c].href===b)return a();setTimeout(function(){l(a)})};return i.addEventListener&&i.addEventListener("load",f),i.onloadcssdefined=l,l(f),i};"undefined"!=typeof exports?exports.loadCSS=b:a.loadCSS=b}("undefined"!=typeof global?global:this); ; !function(a){if(a.loadCSS){var b=loadCSS.relpreload={};if(b.support=function(){try{return a.document.createElement("link").relList.supports("preload")}catch(b){return!1}},b.poly=function(){for(var b=a.document.getElementsByTagName("link"),c=0;c<b.length;c++){var d=b[c];"preload"===d.rel&&"style"===d.getAttribute("as")&&(a.loadCSS(d.href,d,d.getAttribute("media")),d.rel=null)}},!b.support()){b.poly();var c=a.setInterval(b.poly,300);a.addEventListener&&a.addEventListener("load",function(){b.poly(),a.clearInterval(c)}),a.attachEvent&&a.attachEvent("onload",function(){a.clearInterval(c)})}}}(this); ; !function(w, d) { w._noPushState = false; w._noDrawer = false; }(window, document); </script> <!--[if gt IE 8]><!----><style> body{--code-font-family: Menlo,Monaco,Consolas,monospace;--font-weight: 400;--font-weight-bold: 700;--font-weight-heading: 400;--text-muted: #888;--gray-bg: rgba(0,0,0,0.025);--gray-text: #666;--menu-text: #bbb;--body-color: #333;--body-bg: #fff;--border-color: #ebebeb}.clearfix,.sidebar-social::after{content:"";display:table;clear:both}.color-transition,body,p,hr,.hr,table:not(.highlight) td,table:not(.highlight) th,.message{transition:background-color 1s ease, border-color 1s ease}.no-color-transition{transition:none !important}@media screen{body.light-mode{--text-muted: #888;--gray-bg: rgba(0,0,0,0.025);--gray-text: #666;--menu-text: #bbb;--body-color: #333;--body-bg: #fff;--border-color: #ebebeb}body.dark-mode{--text-muted: rgba(255,255,255,.5);--gray-bg: rgba(255,255,255,.033);--gray-text: rgba(255,255,255,.625);--menu-text: rgba(255,255,255,.25);--body-color: #ccc;--body-bg: #2d3339;--border-color: #3d464f}}@media screen{body.light-mode{--text-muted: #888;--gray-bg: rgba(0,0,0,0.025);--gray-text: #666;--menu-text: #bbb;--body-color: #333;--body-bg: #fff;--border-color: #ebebeb}body.dark-mode{--text-muted: rgba(255,255,255,.5);--gray-bg: rgba(255,255,255,.033);--gray-text: rgba(255,255,255,.625);--menu-text: rgba(255,255,255,.25);--body-color: #ccc;--body-bg: #2d3339;--border-color: #3d464f}}@media screen and (prefers-color-scheme: dark){body{--text-muted: rgba(255,255,255,.5);--gray-bg: rgba(255,255,255,.033);--gray-text: rgba(255,255,255,.625);--menu-text: rgba(255,255,255,.25);--body-color: #ccc;--body-bg: #2d3339;--border-color: #3d464f}}*{box-sizing:border-box}html,body{margin:0;padding:0}html{font-size:16px;line-height:1.75}body{color:var(--body-color);background-color:var(--body-bg);font-weight:var(--font-weight);overflow-y:scroll}a{text-decoration:none}.lead{margin-left:-1rem;margin-right:-1rem}.content img,.img,.content video,.video{max-width:100%}.content img.lead,.img.lead,.content video.lead,.video.lead{max-width:calc(100% + 2rem);width:calc(100% + 2rem)}h1,h2,h3,h4,h5,h6,.h1,.h2,.h3,.h4,.h5,.h6{font-weight:var(--font-weight-heading);margin:5rem 0 1rem}h1,.h1{font-size:2rem;line-height:1.3}h2,.h2{font-size:1.5rem;line-height:1.4}h3,.h3{font-size:1.17em;line-height:1.5}h4,h5,h6,.h4,.h5,.h6{font-size:1rem;margin-bottom:0.5rem}p{margin-top:0;margin-bottom:1rem}p.lead{font-size:1.2em;margin-top:1.5rem;margin-bottom:1.5rem;padding:0 1rem}ul,ol,dl{margin-top:0;margin-bottom:1rem}ul,ol{padding-left:1.25rem}hr{position:relative;margin:3rem 0;border:0;border-top:1px solid var(--border-color)}.hr{border-bottom:1px solid var(--border-color);padding-bottom:1rem;margin-bottom:2rem}table:not(.highlight){border-collapse:collapse;margin-bottom:2rem;margin-left:-1rem}table:not(.highlight) td,table:not(.highlight) th{padding:.25rem .5rem;border:1px solid var(--border-color)}table:not(.highlight) td:first-child,table:not(.highlight) th:first-child{padding-left:1rem}table:not(.highlight) td:last-child,table:not(.highlight) th:last-child{padding-right:1rem}.page{margin-bottom:3em}.page li+li{margin-top:.25rem}.page>header{margin-bottom:2rem}.page-title,.post-title{margin-top:0}.post-date{display:block;margin-top:-0.5rem;margin-bottom:1rem;color:var(--text-muted)}.related-posts{padding-left:0;list-style:none;margin-bottom:2rem}.related-posts>li,.related-posts>li+li{margin-top:1rem}.message{margin-bottom:1rem;padding:1rem;color:var(--gray-text);background-color:var(--gray-bg);margin-left:-1rem;margin-right:-1rem}@media screen{body::before{content:'';width:.5rem;background:var(--border-color);position:fixed;left:0;top:0;bottom:0}}@media screen and (min-width: 64em){body::before{width:21rem}}@media screen and (min-width: 1666px){body::before{width:calc(50% - 28rem)}}@media screen and (min-width: 42em){html{font-size:17px}}@media screen and (min-width: 124em){html{font-size:18px}}.fade-in{animation-duration:500ms;animation-timing-function:ease;animation-name:fade-in;animation-fill-mode:forwards}@keyframes fade-in{from{transform:translateY(-3rem);opacity:0}50%{transform:translateY(-3rem);opacity:0}to{transform:translateY(0);opacity:1}}.fl{float:left}.fr{float:right}.mb4{margin-bottom:4rem}.mb6{margin-bottom:6rem}.mt0{margin-top:0}.mt2{margin-top:2rem}.mt3{margin-top:3rem}.mt4{margin-top:4rem}.pb0{padding-bottom:0}.sixteen-nine{position:relative}.sixteen-nine::before{display:block;content:"";width:100%;padding-top:56.25%}.sixteen-nine>*{position:absolute;top:0;left:0;right:0;bottom:0}.sr-only{display:none}.border{border:1px solid var(--border-color)}hy-push-state a,.a{position:relative;padding-bottom:.15rem;border-bottom:1px solid}hy-push-state a.no-hover,.a.no-hover{border-bottom:none;padding-bottom:0}.content .img{overflow:hidden}.content .img img{margin:0;width:100%;height:100%;background-color:var(--gray-bg)}hy-drawer{width:100%;position:relative;overflow:hidden}@media screen and (min-width: 64em){hy-drawer{position:fixed;width:21rem;top:0;left:0;bottom:0;margin-left:0}hy-drawer.cover{position:relative;width:100%}}@media screen and (min-width: 1666px){hy-drawer{width:calc(50% - 28rem)}}.sidebar{position:relative;display:flex;justify-content:center;align-items:center;color:rgba(255,255,255,0.75);text-align:center;z-index:2;min-height:100vh}.sidebar a{color:#fff;border-bottom-color:rgba(255,255,255,0.2)}.sidebar-bg{position:absolute;top:0;left:calc(50% - 50vw);width:100vw;height:100%;background:#202020 center / cover}.sidebar-bg::after{content:"";position:absolute;top:0;left:0;bottom:0;right:0;background:rgba(0,0,0,0.05)}.sidebar-bg.sidebar-overlay::after{background:linear-gradient(to bottom, rgba(32,32,32,0) 0%, rgba(32,32,32,0.5) 50%, rgba(32,32,32,0) 100%)}.sidebar-sticky{position:relative;z-index:3;max-width:21rem;padding:1.5rem;contain:content}.sidebar-about .avatar{margin-bottom:1.5rem}.sidebar-about>h2{margin-top:0}.sidebar-nav>ul{list-style:none;padding-left:0}a.sidebar-nav-item{display:inline-block;font-weight:var(--font-weight-heading);line-height:1.75;padding:.25rem;border-bottom:1px solid rgba(255,255,255,0.2)}.sidebar-social>ul{display:inline-block;list-style:none;padding-left:0;margin-bottom:0}.sidebar-social>ul>li{float:left}.sidebar-social>ul>li>a{display:inline-block;text-align:center;font-size:1.4rem;width:3rem;height:4rem;padding:.5rem 0;line-height:3rem}.sidebar-social>ul li+li{margin-top:0}.fixed-common,.fixed-top,.fixed-bottom{position:fixed;left:0;width:100%;z-index:2}.fixed-top{top:0}.fixed-bottom{bottom:0}.navbar>.content{padding-top:0;padding-bottom:0;min-height:0;color:var(--menu-text)}.nav-btn-bar{margin:0 -1rem 0 -.875rem}.nav-btn{background:none;border:none;padding:1.75rem .875rem;color:var(--menu-text) !important;cursor:pointer}.animation-main{opacity:0;pointer-events:none}.content{position:relative;margin-left:auto;margin-right:auto;padding:6rem 1rem 12rem}@media screen{.content{padding-left:1.5rem;max-width:38rem;min-height:100vh}}@media screen and (min-width: 54em){.content{max-width:42rem}}@media screen and (min-width: 64em){.content{padding-left:1rem;margin-left:24rem;margin-right:3rem}}@media screen and (min-width: 88em){.content{margin-left:25rem;margin-right:4rem;max-width:48rem}}@media screen and (min-width: 1666px){.content{margin:auto}}.avatar{width:6.5rem;height:6.5rem;border-radius:100%;overflow:hidden}@media screen and (min-width: 88em){.avatar{width:7rem;height:7rem}}.content .avatar{float:right;margin-left:.5rem}html{font-family:Noto Sans,Helvetica,Arial,sans-serif}h1,h2,h3,h4,h5,h6,.h1,.h2,.h3,.h4,.h5,.h6,.heading{font-family:Roboto Slab,Helvetica,Arial,sans-serif}</style><link rel="preload" as="style" href="/assets/css/hydejack-8.5.2.css" id="_stylePreload"><link rel="preload" as="style" href="/assets/icomoon/style.css" id="_iconsPreload"><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Roboto+Slab:400|Noto+Sans:400,400i,700,700i&display=swap" id="_fontsPreload"> <script>setRel('_stylePreload');setRel('_iconsPreload');/**/setRel('_fontsPreload');/**/</script> <noscript><link rel="stylesheet" href="/assets/css/hydejack-8.5.2.css"><link rel="stylesheet" href="/assets/icomoon/style.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab:400|Noto+Sans:400,400i,700,700i&display=swap"> </noscript><style id="_pageStyle"> .content a:not(.btn){color:#606870;border-color:rgba(96,104,112,0.2)}.content a:not(.btn):hover{border-color:#606870}:focus{outline-color:#606870 !important}.btn-primary{color:#fff;background-color:#606870;border-color:#606870}.btn-primary:focus,.btn-primary.focus,.form-control:focus,.form-control.focus{box-shadow:0 0 0 3px rgba(96,104,112,0.5)}.btn-primary:hover,.btn-primary.hover{color:#fff;background-color:#4e555b;border-color:#4e555b}.btn-primary:disabled,.btn-primary.disabled{color:#fff;background-color:#606870;border-color:#606870}.btn-primary:active,.btn-primary.active{color:#fff;background-color:#4e555b;border-color:#4e555b}@media screen{body.dark-mode{--body-bg: #2d3339;--border-color: #3d464f}}@media screen and (prefers-color-scheme: dark){body{--body-bg: #2d3339;--border-color: #3d464f}}::selection{color:#fff;background:#606870}::-moz-selection{color:#fff;background:#606870}</style><!--<![endif]--><body class="no-color-transition"> <script> window._sunrise = 6; window._sunset = 21; !function(e,s){var a="light-mode",d="dark-mode",o=(new Date).getHours();if(!("matchMedia"in e&&e.matchMedia("(prefers-color-scheme)"))){var i=o<=e._sunrise||o>=e._sunset?d:a,t=i===d?a:d;s.body.classList.add(i),s.body.classList.remove(t)}}(window,document); </script><div id="_navbar" class="navbar fixed-top"><div class="content"><div class="nav-btn-bar"> <span class="sr-only">Jump to:</span> <a id="_menu" class="nav-btn no-hover fl" href="#_navigation"> <span class="sr-only">Navigation</span> <span class="icon-menu"></span> </a></div></div></div><hr class="sr-only" hidden /> <hy-push-state replace-ids="_main" link-selector="a[href]:not([href*='/assets/']):not(.external):not(.no-push-state)" duration="250" script-selector="script:not([type^='math/tex'])" prefetch ><main id="_main" class="content fade-in layout-post" role="main" data-color="rgb(96,104,112)" data-theme-color="rgb(96,104,112)" data-image="/assets/img/sidebar-bg.jpg" data-overlay ><article id="post-blog-javascript-rxjs-operators" class="page post mb6" role="article"><header><h1 class="post-title"> RxJS Operators</h1><p class="post-date heading"> <time datetime="2018-03-22T00:00:00+09:00">22 Mar 2018</time> in <a href="/blog/javascript/" class="flip-title">Javascript</a><p class="message" > RxJS 자주 쓰이거나 꼭 알아야할 operator 간단하게 정리</header><p>참고로 모든 operator는 새로운 Observable을 리턴하게 된다.<h2 id="utility">Utility</h2><h3 id="do">do</h3><p><code class="highlighter-rouge">do</code>는 새로운 데이터가 emit 될 때마다 매번 실행된다. output처럼 do 데이터와 map 데이터가 서로 다르다.<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="p">.</span><span class="k">do</span><span class="p">(</span><span class="nx">a</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`From do </span><span class="p">${</span><span class="nx">a</span><span class="p">}</span><span class="s2">`</span><span class="p">))</span>
+    <span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">a</span> <span class="o">=&gt;</span> <span class="nx">a</span> <span class="o">*</span> <span class="nx">a</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">createSubscriber</span><span class="p">(</span><span class="dl">'</span><span class="s1">simple</span><span class="dl">'</span><span class="p">));</span>
+
+<span class="c1">// output</span>
+<span class="c1">//</span>
+<span class="c1">// From do 1</span>
+<span class="c1">// simple.next 1</span>
+<span class="c1">// From do 2</span>
+<span class="c1">// simple.next 4</span>
+<span class="c1">// From do 3</span>
+<span class="c1">// simple.next 9</span>
+<span class="c1">// From do 4</span>
+<span class="c1">// simple.next 16</span>
+<span class="c1">// From do 5</span>
+<span class="c1">// simple.next 25</span>
+<span class="c1">// simple.complete</span>
+</code></pre></div></div><h3 id="finally">finally</h3><p><code class="highlighter-rouge">finally</code>는 subscribe가 완료(complete)된 후에 실행된다.<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="p">.</span><span class="k">finally</span><span class="p">(</span><span class="nx">a</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">From finally</span><span class="dl">'</span><span class="p">))</span>
+    <span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">a</span> <span class="o">=&gt;</span> <span class="nx">a</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">createSubscriber</span><span class="p">(</span><span class="dl">'</span><span class="s1">finally</span><span class="dl">'</span><span class="p">));</span>
+    
+<span class="c1">// output</span>
+<span class="c1">//</span>
+<span class="c1">// finally.next 2</span>
+<span class="c1">// finally.next 4</span>
+<span class="c1">// finally.next 6</span>
+<span class="c1">// finally.next 8</span>
+<span class="c1">// finally.next 10</span>
+<span class="c1">// finally.complete</span>
+<span class="c1">// From finally</span>
+</code></pre></div></div><hr /><h2 id="filtering">Filtering</h2><h3 id="filter">filter</h3><p>말그대로 <code class="highlighter-rouge">filter</code>의 조건에 만족하는 Observable의 데이터만 emit한다.<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">a</span> <span class="o">=&gt;</span> <span class="nx">a</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">createSubscriber</span><span class="p">(</span><span class="dl">'</span><span class="s1">filter</span><span class="dl">'</span><span class="p">));</span>
+    
+<span class="c1">// output</span>
+<span class="c1">//</span>
+<span class="c1">// filter.next 1</span>
+<span class="c1">// filter.next 2</span>
+<span class="c1">// filter.next 3</span>
+<span class="c1">// filter.next 4</span>
+<span class="c1">// filter.complete</span>
+</code></pre></div></div><h3 id="first-last">first, last</h3><p>Observable 데이터의 첫 번째 혹은 마지막 데이터만 처리 각 operator에서 공통적으로 알아야할 점은 next()가 없으면 <code class="highlighter-rouge">EmptyError</code>가 발생한다.<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">simple$</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">(</span><span class="nx">observer</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">observer</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="nx">observer</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+    <span class="nx">observer</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+    <span class="nx">observer</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+    <span class="nx">observer</span><span class="p">.</span><span class="nx">complete</span><span class="p">();</span>
+<span class="p">});</span>
+
+<span class="nx">simple$</span><span class="p">.</span><span class="nx">first</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">createSubscriber</span><span class="p">(</span><span class="dl">'</span><span class="s1">first</span><span class="dl">'</span><span class="p">));</span>
+
+<span class="c1">// output</span>
+<span class="c1">//</span>
+<span class="c1">// first.next 1</span>
+<span class="c1">// first.complete</span>
+
+<span class="nx">simple$</span><span class="p">.</span><span class="nx">last</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">createSubscriber</span><span class="p">(</span><span class="dl">'</span><span class="s1">last</span><span class="dl">'</span><span class="p">));</span>
+
+<span class="c1">// output</span>
+<span class="c1">//</span>
+<span class="c1">// last.next 4</span>
+<span class="c1">// last.complete</span>
+</code></pre></div></div><h3 id="single">single</h3><p><code class="highlighter-rouge">single</code> operator는 next를 한번만 emit해야 한다. 그렇지 않으면 에러가 발생한다.<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">single$</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">(</span><span class="nx">observer</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">observer</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="nx">observer</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+    <span class="nx">observer</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+    <span class="nx">observer</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+    <span class="nx">observer</span><span class="p">.</span><span class="nx">complete</span><span class="p">();</span>
+<span class="p">});</span>
+
+<span class="nx">single$</span><span class="p">.</span><span class="nx">single</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">createSubscriber</span><span class="p">(</span><span class="dl">'</span><span class="s1">single</span><span class="dl">'</span><span class="p">));</span>
+
+<span class="c1">// output</span>
+<span class="c1">//</span>
+<span class="c1">// single.error Sequence contains more than one element</span>
+<span class="c1">// single.complete</span>
+</code></pre></div></div><h3 id="take-skip">take, skip</h3><ul><li><code class="highlighter-rouge">take</code>: observable에서 <code class="highlighter-rouge">take</code>의 인자 만큼 data를 처리한다.<br /><li><code class="highlighter-rouge">skip</code>: 말그대로 data를 skip한 후 나머지 데이터만 처리한다.</ul><div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">simple$</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">(</span><span class="nx">observer</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">observer</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="nx">observer</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+    <span class="nx">observer</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+    <span class="nx">observer</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+    <span class="nx">observer</span><span class="p">.</span><span class="nx">complete</span><span class="p">();</span>
+<span class="p">});</span>
+
+<span class="nx">simple$</span><span class="p">.</span><span class="nx">take</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">createSubscriber</span><span class="p">(</span><span class="dl">'</span><span class="s1">take</span><span class="dl">'</span><span class="p">));</span>
+
+<span class="c1">// output</span>
+<span class="c1">//</span>
+<span class="c1">// take.next 1</span>
+<span class="c1">// take.next 2</span>
+<span class="c1">// take.complete</span>
+</code></pre></div></div><h3 id="skipwhile-takewhile">skipWhile, takeWhile</h3><ul><li><code class="highlighter-rouge">skipWhile</code>: 해당 expression이 false인 데이터는 건너뛴 후 데이터를 emit.<li><code class="highlighter-rouge">takeWhile</code>: skipWhile과 유사하지만 expression이 true일 때까지 데이터 emit</ul><div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">interval</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">skipWhile</span><span class="p">(</span><span class="nx">i</span> <span class="o">=&gt;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">takeWhile</span><span class="p">(</span><span class="nx">i</span> <span class="o">=&gt;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">8</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">createSubscriber</span><span class="p">(</span><span class="dl">'</span><span class="s1">skipWhile</span><span class="dl">'</span><span class="p">));</span>
+
+<span class="c1">// output</span>
+<span class="c1">//</span>
+<span class="c1">// skipWhile.next 4</span>
+<span class="c1">// skipWhile.next 5</span>
+<span class="c1">// skipWhile.next 6</span>
+<span class="c1">// skipWhile.next 7</span>
+<span class="c1">// skipWhile.complete</span>
+</code></pre></div></div><h3 id="skipuntil-takeuntil">skipUntil, takeUntil</h3><p><code class="highlighter-rouge">skipUntil</code>, <code class="highlighter-rouge">takeUntil</code>은 Observable, Subject 데이터를 인자로 갖는다.<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">interval</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">skipUntil</span><span class="p">(</span><span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">timer</span><span class="p">(</span><span class="mi">2000</span><span class="p">))</span>
+    <span class="p">.</span><span class="nx">takeUntil</span><span class="p">(</span><span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">timer</span><span class="p">(</span><span class="mi">4000</span><span class="p">))</span>
+    <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">createSubscriber</span><span class="p">(</span><span class="dl">'</span><span class="s1">takeUntil</span><span class="dl">'</span><span class="p">));</span>
+
+<span class="c1">// output</span>
+<span class="c1">// 2초 후부터 print하고, 총 4초가 지나면 complete 된다.</span>
+<span class="c1">// takeUntil.next 3</span>
+<span class="c1">// takeUntil.next 4</span>
+<span class="c1">// takeUntil.next 5</span>
+<span class="c1">// takeUntil.next 6</span>
+<span class="c1">// takeUntil.complete</span>
+</code></pre></div></div><hr /><h2 id="combinations">Combinations</h2><h3 id="startwith">startWith</h3><p>선언된 value부터 순서대로 emit한다.<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">startWith</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+    <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">createSubscriber</span><span class="p">(</span><span class="dl">'</span><span class="s1">startWith</span><span class="dl">'</span><span class="p">));</span>
+    
+<span class="c1">// output</span>
+<span class="c1">//</span>
+<span class="c1">// startWith.next 0</span>
+<span class="c1">// startWith.next 1</span>
+<span class="c1">// startWith.next 2</span>
+<span class="c1">// startWith.next 3</span>
+<span class="c1">// startWith.complete</span>
+</code></pre></div></div><h3 id="concat">concat</h3><p>두 개의 Observable을 combine하여 emit한다. <code class="highlighter-rouge">merge</code>와 달리 순서가 중요하다(output 참고).<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">createSubscriber</span><span class="p">(</span><span class="dl">'</span><span class="s1">concat1</span><span class="dl">'</span><span class="p">));</span>
+    
+<span class="c1">// output</span>
+<span class="c1">//</span>
+<span class="c1">// concat1.next 0 </span>
+<span class="c1">// concat1.next 1</span>
+<span class="c1">// concat1.next 2</span>
+<span class="c1">// concat1.next 10</span>
+<span class="c1">// concat1.next 11</span>
+<span class="c1">// concat1.next 12</span>
+<span class="c1">// concat1.complete</span>
+</code></pre></div></div><h3 id="merge">merge</h3><p>두 개의 Observable을 하나의 Observable로 변환한다. 아래 예제처럼 두가지 방법으로 사용할 수 있다.<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">interval</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">interval</span><span class="p">(</span><span class="mi">500</span><span class="p">))</span>
+    <span class="p">.</span><span class="nx">take</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">createSubscriber</span><span class="p">(</span><span class="dl">'</span><span class="s1">merge1</span><span class="dl">'</span><span class="p">));</span>
+
+<span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span>
+    <span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">interval</span><span class="p">(</span><span class="mi">1000</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="nx">i</span> <span class="o">=&gt;</span> <span class="s2">`</span><span class="p">${</span><span class="nx">i</span><span class="p">}</span><span class="s2"> secondes`</span><span class="p">),</span>
+    <span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">interval</span><span class="p">(</span><span class="mi">500</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="nx">i</span> <span class="o">=&gt;</span> <span class="s2">`</span><span class="p">${</span><span class="nx">i</span><span class="p">}</span><span class="s2"> half secondes`</span><span class="p">))</span>
+    <span class="p">.</span><span class="nx">take</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">createSubscriber</span><span class="p">(</span><span class="dl">'</span><span class="s1">merge2</span><span class="dl">'</span><span class="p">));</span>
+    
+<span class="c1">// output</span>
+<span class="c1">//</span>
+<span class="c1">// merge2.next 0 half seconds</span>
+<span class="c1">// merge2.next 0 seconds</span>
+<span class="c1">// merge2.next 1 half seconds</span>
+<span class="c1">// merge2.next 2 half seconds</span>
+<span class="c1">// merge2.next 1 seconds</span>
+<span class="c1">// merge2.next 3 half seconds</span>
+<span class="c1">// merge2.next 4 half seconds</span>
+<span class="c1">// merge2.next 2 sec</span>
+<span class="c1">// merge2.complete</span>
+</code></pre></div></div><h4 id="concat-vs-merge">concat vs merge</h4><p>위 <code class="highlighter-rouge">merge</code> output 참고(순서가 다름)<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span>
+    <span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">interval</span><span class="p">(</span><span class="mi">1000</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="nx">i</span> <span class="o">=&gt;</span> <span class="s2">`</span><span class="p">${</span><span class="nx">i</span><span class="p">}</span><span class="s2"> secondes`</span><span class="p">).</span><span class="nx">take</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+    <span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">interval</span><span class="p">(</span><span class="mi">500</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="nx">i</span> <span class="o">=&gt;</span> <span class="s2">`</span><span class="p">${</span><span class="nx">i</span><span class="p">}</span><span class="s2"> half secondes`</span><span class="p">).</span><span class="nx">take</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+    <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">createSubscriber</span><span class="p">(</span><span class="dl">'</span><span class="s1">concat2</span><span class="dl">'</span><span class="p">));</span>
+    
+<span class="c1">// output</span>
+<span class="c1">//</span>
+<span class="c1">// concat2.next 0 seconds</span>
+<span class="c1">// concat2.next 1 seconds</span>
+<span class="c1">// concat2.next 2 seconds</span>
+<span class="c1">// concat2.next 0 half seconds</span>
+<span class="c1">// concat2.next 1 half seconds</span>
+<span class="c1">// concat2.next 2 half seconds</span>
+<span class="c1">// concat2.complete</span>
+</code></pre></div></div><h3 id="zip-combinelatest-withlatestfrom">zip, combineLatest, withLatestFrom</h3><ul><li><code class="highlighter-rouge">combineLatest</code>: Observable 각각의 데이터가 emit될 때, 각 Observable의 최근 data를 서로 combine 한다.<li><code class="highlighter-rouge">zip</code>: 모든 Observable이 complete된 후에, 배열로 데이터를 emit한다.</ul><div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">currentUser$</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Rx</span><span class="p">.</span><span class="nx">BehaviorSubject</span><span class="p">({</span> <span class="na">isLoggedIn</span><span class="p">:</span> <span class="kc">false</span><span class="p">});</span>
+
+<span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">interval</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span> <span class="c1">// event click</span>
+    <span class="p">.</span><span class="nx">withLatestFrom</span><span class="p">(</span><span class="nx">currentUser$</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">filter</span><span class="p">([</span><span class="nx">i</span><span class="p">,</span> <span class="nx">user</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="nx">user</span><span class="p">.</span><span class="nx">isLoggedIn</span><span class="p">)</span>    <span class="c1">// withLatestFrom은 array를 리턴한다.</span>
+    <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">createSubscriber</span><span class="p">(</span><span class="dl">'</span><span class="s1">withLatestFrom</span><span class="dl">'</span><span class="p">));</span>
+
+<span class="c1">// noting print</span>
+
+<span class="nx">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">currentUser$</span><span class="p">.</span><span class="nx">next</span><span class="p">({</span> <span class="na">isLoggedIn</span><span class="p">:</span> <span class="kc">true</span> <span class="p">});</span>
+<span class="p">},</span> <span class="mi">3000</span><span class="p">);</span>
+
+<span class="c1">// output </span>
+<span class="c1">//</span>
+<span class="c1">// withLatestFrom.next 1,[object Object]</span>
+<span class="c1">// withLatestFrom.next 2,[object Object]</span>
+<span class="c1">// withLatestFrom.next 3,[object Object]</span>
+<span class="c1">// withLatestFrom.next 4,[object Object]</span>
+<span class="c1">// ...</span>
+</code></pre></div></div><hr /><h2 id="transformation">Transformation</h2><h3 id="mergemapflatmap">mergeMap(flatmap)</h3><p>주로 <code class="highlighter-rouge">map</code>과 <code class="highlighter-rouge">mergeAll</code> operation을 한번에 수행하고 싶을 때 사용한다.<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">mergeMap</span><span class="p">(</span><span class="nx">i</span> <span class="o">=&gt;</span> <span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">time</span><span class="p">(</span><span class="nx">i</span> <span class="o">*</span> <span class="mi">2000</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">map</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="s2">`After </span><span class="p">${</span><span class="nx">i</span> <span class="o">*</span> <span class="mi">2</span><span class="p">}</span><span class="s2"> Seconds`</span><span class="p">))</span>
+    <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">createSubscriber</span><span class="p">(</span><span class="dl">'</span><span class="s1">mergeMap</span><span class="dl">'</span><span class="p">));</span>
+    
+<span class="c1">// output</span>
+<span class="c1">//</span>
+<span class="c1">// mergeMap.next After 4 seconds</span>
+<span class="c1">// mergeMap.next After 6 seconds</span>
+<span class="c1">// mergeMap.next After 8 seconds</span>
+<span class="c1">// mergeMap.complete</span>
+</code></pre></div></div><div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">query</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    	<span class="nx">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        	<span class="nx">resolve</span><span class="p">(</span><span class="dl">'</span><span class="s1">this is the value</span><span class="dl">'</span><span class="p">);</span>
+        <span class="p">},</span> <span class="mi">1000</span><span class="p">);</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+
+<span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="k">of</span><span class="p">(</span><span class="dl">'</span><span class="s1">my query</span><span class="dl">'</span><span class="p">)</span>
+    <span class="p">.</span><span class="k">do</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Querying</span><span class="dl">'</span><span class="p">))</span>
+    <span class="p">.</span><span class="nx">mergeMap</span><span class="p">(</span><span class="nx">a</span> <span class="o">=&gt;</span> <span class="nx">query</span><span class="p">(</span><span class="nx">a</span><span class="p">))</span>
+    <span class="p">.</span><span class="k">do</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">After Querying</span><span class="dl">'</span><span class="p">))</span>
+    <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">createSubscriber</span><span class="p">(</span><span class="dl">'</span><span class="s1">mergeMap</span><span class="dl">'</span><span class="p">));</span>
+
+<span class="c1">// output</span>
+<span class="c1">//</span>
+<span class="c1">// Querying</span>
+<span class="c1">// After Querying</span>
+<span class="c1">// query.next this is the value</span>
+<span class="c1">// query.complete</span>
+</code></pre></div></div><h3 id="switchmap">switchMap</h3><p>이전의 Observable이 complete된 후에 새로운 값을 emit한다. 기존의 old observable 데이터를 신경쓰지 않거나 여러 서비스를 차례로 호출해야 할 때, <code class="highlighter-rouge">switchMap</code>을 사용한다.<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="k">of</span><span class="p">(</span><span class="dl">'</span><span class="s1">some_url</span><span class="dl">'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">switchMap</span><span class="p">(</span><span class="nx">url</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">http</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">url</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="nx">res</span><span class="o">=&gt;</span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">())</span>
+    <span class="p">.</span><span class="nx">switchMap</span><span class="p">(</span><span class="nx">res</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">http</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">url</span> <span class="o">+</span> <span class="dl">'</span><span class="s1">res</span><span class="dl">'</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="nx">res</span><span class="o">=&gt;</span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">())</span>
+</code></pre></div></div><h3 id="reduce">reduce</h3><p>하나의 single value로 만든다.<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">acc</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">acc</span> <span class="o">+</span> <span class="nx">value</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">createSubscriber</span><span class="p">(</span><span class="dl">'</span><span class="s1">reduce</span><span class="dl">'</span><span class="p">));</span>
+    
+<span class="c1">// output</span>
+<span class="c1">//</span>
+<span class="c1">// reduce.next 55</span>
+<span class="c1">// reduce.complete</span>
+</code></pre></div></div><h3 id="scan">scan</h3><p>각 데이터에 <code class="highlighter-rouge">scan</code> 함수를 적용하고 emit한다. 데이터가 들어올 때마다 값을 처리하는 데 매우 좋다.<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">i</span> <span class="o">=&gt;</span> <span class="nx">i</span> <span class="o">*</span> <span class="nx">i</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">scan</span><span class="p">(([</span><span class="nx">last</span><span class="p">,</span> <span class="nx">_</span><span class="p">],</span> <span class="nx">current</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="nx">current</span><span class="p">,</span> <span class="nx">last</span><span class="p">],</span> <span class="p">[])</span>
+    <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">createSubscriber</span><span class="p">(</span><span class="dl">'</span><span class="s1">scan</span><span class="dl">'</span><span class="p">));</span>
+    
+<span class="c1">// output</span>
+<span class="c1">//</span>
+<span class="c1">// scan.next 1</span>
+<span class="c1">// scan.next 4,1</span>
+<span class="c1">// scan.next 9,4</span>
+<span class="c1">// scan.next 16,9</span>
+<span class="c1">// scan.next 25,16</span>
+<span class="c1">// scan.next 36,25</span>
+<span class="c1">// scan.next 49,36</span>
+<span class="c1">// scan.next 64,49</span>
+<span class="c1">// scan.next 81,64</span>
+<span class="c1">// scan.next 100,81</span>
+<span class="c1">// scan.complete</span>
+</code></pre></div></div><h3 id="buffercount">bufferCount</h3><div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+	<span class="p">.</span><span class="nx">bufferCount</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
+	<span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">createSubscriber</span><span class="p">(</span><span class="dl">'</span><span class="s1">bufferCount</span><span class="dl">'</span><span class="p">));</span>
+    
+
+<span class="c1">// output</span>
+<span class="c1">//</span>
+<span class="c1">// bufferCount.next 1,2,3,4,...25</span>
+<span class="c1">// bufferCount.next 26,27,28,...50</span>
+<span class="c1">// bufferCount.next 51,52,53,...75</span>
+<span class="c1">// bufferCount.next 76,77,78,...100</span>
+<span class="c1">// bufferCount.complete</span>
+</code></pre></div></div><h3 id="buffertime">bufferTime</h3><div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">interval</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span>
+	<span class="p">.</span><span class="nx">bufferTime</span><span class="p">(</span><span class="mi">2000</span><span class="p">)</span>
+	<span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">createSubscriber</span><span class="p">(</span><span class="dl">'</span><span class="s1">bufferTime</span><span class="dl">'</span><span class="p">));</span>
+    
+
+<span class="c1">// output</span>
+<span class="c1">// 2초마다 아래 next 발생</span>
+<span class="c1">// bufferTime.next 0,1,2</span>
+<span class="c1">// bufferTime.next 3,4,5,6,7</span>
+<span class="c1">// bufferTime.next 8,9,10,11</span>
+</code></pre></div></div><h3 id="buffer">buffer</h3><div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">interval</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span>
+	<span class="p">.</span><span class="nx">buffer</span><span class="p">(</span><span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">interval</span><span class="p">(</span><span class="mi">2000</span><span class="p">))</span>
+	<span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">createSubscriber</span><span class="p">(</span><span class="dl">'</span><span class="s1">buffer</span><span class="dl">'</span><span class="p">));</span>
+    
+
+<span class="c1">// output</span>
+<span class="c1">// 2초마다 아래 next 발생</span>
+<span class="c1">// buffer.next 0,1,2</span>
+<span class="c1">// buffer.next 3,4,5,6,7</span>
+<span class="c1">// buffer.next 8,9,10,11</span>
+</code></pre></div></div><h3 id="toarray">toArray</h3><p>Observable이 complete될 때까지, source 스트림의 데이터를 collect한다.<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Rx</span><span class="p">.</span><span class="nx">Observable</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">toArray</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">createSubscriber</span><span class="p">(</span><span class="dl">'</span><span class="s1">toArray</span><span class="dl">'</span><span class="p">));</span>
+    
+<span class="c1">// output</span>
+<span class="c1">//</span>
+<span class="c1">// toArray.next 1,2,3,4,5,6,7</span>
+<span class="c1">// toArray.complete </span>
+</code></pre></div></div></article><hr class="dingbat related" /><aside class="related mb4" role="complementary"><h2 class="hr">Read more</h2><ul class="related-posts"><li> <a href="/blog/javascript/bindnodecallback-readfile/" class="h4 flip-title"><span>Typescript + RxJS로 fs.readFile 사용</span></a> <time class="heading faded fine" datetime="2019-10-07T00:00:00+09:00">07 Oct 2019</time><li> <a href="/blog/javascript/javascript-hoisting/" class="h4 flip-title"><span>자바스크립트 Scope의 이해</span></a> <time class="heading faded fine" datetime="2019-05-19T00:00:00+09:00">19 May 2019</time><li> <a href="/blog/javascript/default-react/" class="h4 flip-title"><span>React 개념 정리</span></a> <time class="heading faded fine" datetime="2018-12-31T00:00:00+09:00">31 Dec 2018</time></ul></aside><aside class="comments related" role="complementary"><h2 class="hr">Comments</h2><div id="disqus_thread"></div><noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript> <script>!function(w, d) { if (d.getElementById("disqus_thread")) { if (w.DISQUS) { w.DISQUS.reset({ reload: true, config() { this.page.url = w.location.href; this.page.title = d.title; }, }); } else { w.disqus_config = function disqusConfig() { this.page.url = w.location.href; this.page.title = d.title; }; w.loadJSDeferred(d.getElementById("_hrefDisqus").href + '/embed.js'); } } }(window, document);</script></aside><footer role="contentinfo"><hr/><p><small class="copyright">© 2019. All rights reserved. </small><hr class="sr-only"/></footer></main><hy-drawer class="" align="left" threshold="10" touch-events prevent-default ><header id="_sidebar" class="sidebar" role="banner"><div class="sidebar-bg sidebar-overlay" style="background-color:rgb(96,104,112);background-image:url(/assets/img/sidebar-bg.jpg)"></div><div class="sidebar-sticky"><div class="sidebar-about"> <a class="no-hover" href="/" tabindex="-1"> <img src="/assets/icons/profile.png" class="avatar" alt="Tak" data-ignore /> </a><h2 class="h1"><a href="/">Tak</a></h2><p class=""> Hello. I’m a Developer.</div><nav class="sidebar-nav heading" role="navigation"> <span class="sr-only">Navigation:</span><ul><li> <a id="_navigation" href="/blog/" class="sidebar-nav-item active" > BLOG </a><li> <a href="/projects/" class="sidebar-nav-item" > PORTFOLIO </a></ul></nav><div class="sidebar-social"> <span class="sr-only">Social:</span><ul><li> <a href="https://github.com/tak-bro" title="GitHub" class="no-mark-external" target="_blank"> <span class="icon-github"></span> <span class="sr-only">GitHub</span> </a><li> <a href="https://www.linkedin.com/in/hyungtak" title="LinkedIn" class="no-mark-external" target="_blank"> <span class="icon-linkedin2"></span> <span class="sr-only">LinkedIn</span> </a><li> <a href="/assets/resume_eng.pdf" title="resume" class="no-mark-external" target="_blank"> <span class="icon-link"></span> <span class="sr-only">resume</span> </a><li> <a href="mailto:env.tak@gmail.com" title="Email" class="no-mark-external" target="_blank"> <span class="icon-mail"></span> <span class="sr-only">Email</span> </a></ul></div></div></header></hy-drawer><hr class="sr-only" hidden /> </hy-push-state> <!--[if gt IE 10]><!----> <script nomodule>!function(){var e=document.createElement("script");if(!("noModule"in e)&&"onbeforeload"in e){var t=!1;document.addEventListener("beforeload",function(n){if(n.target===e)t=!0;else if(!n.target.hasAttribute("nomodule")||!t)return;n.preventDefault()},!0),e.type="module",e.src=".",document.head.appendChild(e),e.remove()}}(); </script> <script type="module" src="/assets/js/hydejack-8.5.2.js"></script> <script nomodule src="/assets/js/hydejack-legacy-8.5.2.js" defer></script> <script>!function(w, d) { w.ga=w.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date; /**/ ga('create', 'UA-145829778-1', 'auto'); /**/ var pushStateEl = d.getElementsByTagName('hy-push-state')[0]; var timeoutId; pushStateEl.addEventListener('hy-push-state-load', function() { w.clearTimeout(timeoutId); timeoutId = w.setTimeout(function() { ga('set', 'page', w.location.pathname); ga('send', 'pageview'); }, 500); }); d.addEventListener('hy--cookies-ok', function () { w.ga(function(tracker) { w.ga("set", "anonymizeIp", undefined); localStorage && localStorage.setItem("ga--client-id", tracker.get("clientId")); }); }); w.loadJSDeferred('https://www.google-analytics.com/analytics.js'); }(window, document);</script> <script type="module"> if ('serviceWorker' in navigator) { /**/ navigator.serviceWorker.getRegistration() .then(r => r.unregister()) .catch(() => {}); /**/ } </script> <!--<![endif]--><h2 class="sr-only" hidden>Templates (for web app):</h2><template id="_animation-template" hidden><div class="animation-main fixed-top"><div class="content"><div class="page"></div></div></div></template> <template id="_loading-template" hidden><div class="loading nav-btn fr"> <span class="sr-only">Loading…</span> <span class="icon-cog"></span></div></template> <template id="_error-template" hidden><div class="page"><h1 class="page-title">Error</h1><p class="lead"> Sorry, an error occurred while loading <a class="this-link" href=""></a>.</div></template> <template id="_forward-template" hidden> <button id="_forward" class="forward nav-btn no-hover fl"> <span class="sr-only">Forward</span> <span class="icon-arrow-right2"></span> </button> </template> <template id="_back-template" hidden> <button id="_back" class="back nav-btn no-hover fl"> <span class="sr-only">Back</span> <span class="icon-arrow-left2"></span> </button> </template> <template id="_permalink-template" hidden> <a href="#" class="permalink"> <span class="sr-only">Permalink</span> <span class="icon-link"></span> </a> </template> <template id="_dark-mode-template" hidden> <button id="_dark-mode" class="nav-btn no-hover fl" > <span class="sr-only">Dark Mode</span> <span class="icon-contrast"></span> </button> </template></html>
