@@ -15,7 +15,7 @@ cd _site
 git add .
 
 # Commit changes.
-msg="rebuilding site $(date)"
+msg="feat: rebuilding site $(date)"
 if [ -n "$*" ]; then
 	msg="$*"
 fi
