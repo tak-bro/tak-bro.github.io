@@ -28,11 +28,7 @@ const SHELL_CACHE = "shell-8.1.1--v1--sw/";
 const ASSETS_CACHE = "assets--v1--sw/";
 
 // The cache for regular content, which will be invalidated every time you make a new build.
-<<<<<<< HEAD
-const CONTENT_CACHE = "content--2020-02-26T11:39:42+09:00--sw/";
-=======
-const CONTENT_CACHE = "content--2020-02-15T21:42:33+09:00--sw/";
->>>>>>> 49373d1d5e763e076864a4652feb89c6633b11a5
+const CONTENT_CACHE = "content--2020-02-26T11:41:04+09:00--sw/";
 
 // A URL search parameter you can add to external assets to cache them in the service worker.
 const CACHE_SEARCH_PARAM = "sw-cache";
