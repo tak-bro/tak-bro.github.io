@@ -1,5 +1,153 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="kr"><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="https://tak-bro.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://tak-bro.github.io/" rel="alternate" type="text/html" hreflang="kr" /><updated>2020-02-26T12:02:11+09:00</updated><id>https://tak-bro.github.io/feed.xml</id><title type="html">Tak</title><subtitle>Hello. I'm a Developer.
-</subtitle><author><name>&lt;Hyungtak&gt; &lt;Jin&gt;</name><email>&lt;env.tak@gmail.com&gt;</email></author><entry><title type="html">Typescript + RxJS로 fs.readFile 사용하기</title><link href="https://tak-bro.github.io/blog/javascript/bindnodecallback-readfile/" rel="alternate" type="text/html" title="Typescript + RxJS로 fs.readFile 사용하기" /><published>2019-10-07T00:00:00+09:00</published><updated>2019-10-07T00:00:00+09:00</updated><id>https://tak-bro.github.io/blog/javascript/bindnodecallback-readfile</id><content type="html" xml:base="https://tak-bro.github.io/blog/javascript/bindnodecallback-readfile/">&lt;p&gt;Typescript + RxJS 환경에서 &lt;code class=&quot;highlighter-rouge&quot;&gt;bindNodeCallback&lt;/code&gt; 함수를 사용하는 방법을 참고하기 위해 작성한다.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="kr"><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="https://tak-bro.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://tak-bro.github.io/" rel="alternate" type="text/html" hreflang="kr" /><updated>2020-05-01T14:20:44+09:00</updated><id>https://tak-bro.github.io/feed.xml</id><title type="html">Tak</title><subtitle>Hello. I'm a Developer.
+</subtitle><author><name>&lt;Hyungtak&gt; &lt;Jin&gt;</name><email>&lt;env.tak@gmail.com&gt;</email></author><entry><title type="html">CSR 환경에서 Angular 초기 로딩 타임 최적화하는 방법 정리</title><link href="https://tak-bro.github.io/blog/javascript/angular-optimization/" rel="alternate" type="text/html" title="CSR 환경에서 Angular 초기 로딩 타임 최적화하는 방법 정리" /><published>2020-04-20T00:00:00+09:00</published><updated>2020-04-20T00:00:00+09:00</updated><id>https://tak-bro.github.io/blog/javascript/angular-optimization</id><content type="html" xml:base="https://tak-bro.github.io/blog/javascript/angular-optimization/">&lt;p&gt;어느 순간부터 회사에서 작업 중인 앵귤러 프로젝트들의 main 사이즈가 커져서 초기 로딩이 늦어지는 이슈가 있었다.&lt;/p&gt;
+
+&lt;p&gt;아래 이미지처럼 초기에 로딩되는 앵귤러 bundle 파일이 &lt;strong&gt;1.6MB&lt;/strong&gt;나 됐었고, &lt;code class=&quot;highlighter-rouge&quot;&gt;Fast 3G&lt;/code&gt; 환경에서는 로딩하는데 약 &lt;strong&gt;11~12초&lt;/strong&gt;정도나 걸렸다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/blog/angular-bundle-1.png&quot; alt=&quot;angular-bundle-1&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;1-이슈-원인-파악&quot;&gt;1. 이슈 원인 파악&lt;/h2&gt;
+
+&lt;p&gt;우선 번들 파일을 확인하기 위해 &lt;code class=&quot;highlighter-rouge&quot;&gt;webpack-bundle-analyzer&lt;/code&gt;를 설치한 후, &lt;code class=&quot;highlighter-rouge&quot;&gt;package.json&lt;/code&gt;에 아래 스크립트를 추가해준다.&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;stats 파일은 tsconfig.json의 target에 따라 달라진다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;npm &lt;span class=&quot;nb&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-D&lt;/span&gt; webpack-bundle-anlayzer
+
+&lt;span class=&quot;c&quot;&gt;# package.json&lt;/span&gt;
+...
+&lt;span class=&quot;s2&quot;&gt;&quot;scripts&quot;&lt;/span&gt;: &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  ...
+  &lt;span class=&quot;s2&quot;&gt;&quot;analyze&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;ng build --aot --prod --stats-json &amp;amp;&amp;amp; webpack-bundle-analyzer ./dist/my-angular-project/stats-es2015.json&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;npm run analyze&lt;/code&gt;를 통해 bundle 파일을 확인해보니 &lt;code class=&quot;highlighter-rouge&quot;&gt;@lemoncloud/components&lt;/code&gt; 라이브러리가 전체 번들 사이즈의 반 이상 차지하고 있었다.
+회사에서 주로 사용하는 컴포넌트나 서비스는 따로 라이브러리화해서 사용 중이었는데, 라이브러리 최적화가 잘못된건지 사이즈가 상당히 컸다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/blog/angular-bundle-2.png&quot; alt=&quot;angular-bundle-2&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;일단 이슈가 급하니, 사용하는 컴포넌트들만 빼서 해당 프로젝트에 다시 만들고 &lt;code class=&quot;highlighter-rouge&quot;&gt;@lemoncloud/components&lt;/code&gt; 라이브러리를 걷어냈다.
+이 라이브러리만 걷어내니 &lt;code class=&quot;highlighter-rouge&quot;&gt;main.js&lt;/code&gt;의 크기가 약 &lt;strong&gt;700KB&lt;/strong&gt;로 감소했다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/blog/angular-bundle-3.png&quot; alt=&quot;angular-bundle-3&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;일단 안쓰는 라이브러리들은 다 삭제해주자.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;2-bundle-파일-압축gzip하기&quot;&gt;2. bundle 파일 압축(gzip)하기&lt;/h2&gt;
+
+&lt;p&gt;좀 더 지연시간을 줄이기 위해 &lt;strong&gt;gzip&lt;/strong&gt;을 활용해서 bundle 파일들을 압축하기로 했다.&lt;/p&gt;
+
+&lt;h3 id=&quot;2-1-angular-builderscustom-webpack-설치&quot;&gt;2-1. &lt;code class=&quot;highlighter-rouge&quot;&gt;@angular-builders/custom-webpack&lt;/code&gt; 설치&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/just-jeb/angular-builders/tree/master/packages/custom-webpack&quot; target=&quot;_blank&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;@angular-builders/custom-webpack&lt;/code&gt;&lt;/a&gt;은 angular의 기본 빌드 환경에서 추가적으로 웹팩을 설정할 수 있는 라이브러리이다.
+웹팩의 &lt;a href=&quot;https://webpack.js.org/plugins/compression-webpack-plugin/&quot; target=&quot;_blank&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;compression-webpack-plugin&lt;/code&gt;&lt;/a&gt; 플러그인을 사용하기 위해 설치했다.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;npm &lt;span class=&quot;nb&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-D&lt;/span&gt; @angular-builders/custom-webpack
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;npm &lt;span class=&quot;nb&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-D&lt;/span&gt; compression-webpack-plugin
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2-2-angularjson-파일-수정&quot;&gt;2-2. angular.json 파일 수정&lt;/h3&gt;
+
+&lt;p&gt;angular.json 파일을 다음과 같이 수정한다.&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;angular의 버전에 따라 아래 내용이 다를 수 있다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;div class=&quot;language-json highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;err&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;architect&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;build&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;builder&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;@angular-builders/custom-webpack:browser&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;options&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;customWebpackConfig&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+          &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;path&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;./webpack.config.js&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2-3-webpackconfigjs-파일-추가&quot;&gt;2-3. webpack.config.js 파일 추가&lt;/h3&gt;
+
+&lt;p&gt;프로젝트의 루트에 webpack.config.js 파일을 생성 후 아래와 같이 수정한다.&lt;/p&gt;
+
+&lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;CompressionPlugin&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;`compression-webpack-plugin`&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;module&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;exports&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;plugins&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;CompressionPlugin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;sr&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\.(&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;js|css&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;$/&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;nx&quot;&gt;filename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;info&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;opFile&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;info&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;split&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+                &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;opFileType&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;opFile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pop&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+                &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;opFileName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;opFile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;join&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;opFileName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;opFileType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;.gz`&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;위 설정을 마친 후, 프로젝트를 빌드하면 아래와 같이 &lt;code class=&quot;highlighter-rouge&quot;&gt;gz&lt;/code&gt; 파일도 생성된다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/blog/angular-bundle-4.png&quot; alt=&quot;angular-bundle-4&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;이제 &lt;code class=&quot;highlighter-rouge&quot;&gt;js&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;css&lt;/code&gt; 파일 대신에 &lt;code class=&quot;highlighter-rouge&quot;&gt;gz&lt;/code&gt; 파일들을 AWS S3에 올려 호스팅해야 한다.&lt;/p&gt;
+
+&lt;h2 id=&quot;3-aws-s3에-gzip-파일-업로드&quot;&gt;3. AWS S3에 gzip 파일 업로드&lt;/h2&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;scripts&lt;/code&gt; 폴더를 생성한 후, &lt;code class=&quot;highlighter-rouge&quot;&gt;deploy.sh&lt;/code&gt; 파일을 추가한다.&lt;/p&gt;
+
+&lt;p&gt;스크립트 내용을 요약하면 다음과 같다.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;.js&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;.css&lt;/code&gt; 파일 삭제&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;.gz&lt;/code&gt; 파일 이름 변경(&lt;code class=&quot;highlighter-rouge&quot;&gt;gz&lt;/code&gt; 확장자 삭제)&lt;/li&gt;
+  &lt;li&gt;content-encoding을 &lt;strong&gt;gzip&lt;/strong&gt;으로 설정 후  s3 업로드&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class=&quot;nv&quot;&gt;APP_NAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;my-angular-project
+&lt;span class=&quot;c&quot;&gt;# delete origin js, css files&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;while &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;IFS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;read&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; file&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;done&lt;/span&gt; &amp;lt; &amp;lt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;find dist/&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;APP_NAME&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;/ &lt;span class=&quot;nt&quot;&gt;-type&lt;/span&gt; f &lt;span class=&quot;nt&quot;&gt;-name&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;*.{js|css}&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# rename gzip files to remove .gz extension&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;while &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;IFS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;read&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; file&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;mv&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$file&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;%.gz&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;done&lt;/span&gt; &amp;lt; &amp;lt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;find dist/&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;APP_NAME&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;/ &lt;span class=&quot;nt&quot;&gt;-type&lt;/span&gt; f &lt;span class=&quot;nt&quot;&gt;-name&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;*.gz&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# sync data to AWS S3&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'Deploy to S3'&lt;/span&gt;
+aws s3 &lt;span class=&quot;nb&quot;&gt;sync &lt;/span&gt;dist/&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;APP_NAME&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; s3://&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;APP_NAME&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--metadata-directive&lt;/span&gt; REPLACE &lt;span class=&quot;nt&quot;&gt;--acl&lt;/span&gt; public-read &lt;span class=&quot;nt&quot;&gt;--exclude&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;index.html&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--exclude&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;*.css&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--exclude&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;*.js&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'ERROR: s3 sync failed'&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;exit &lt;/span&gt;1&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+aws s3 &lt;span class=&quot;nb&quot;&gt;sync &lt;/span&gt;dist/&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;APP_NAME&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; s3://&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;APP_NAME&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--metadata-directive&lt;/span&gt; REPLACE &lt;span class=&quot;nt&quot;&gt;--acl&lt;/span&gt; public-read &lt;span class=&quot;nt&quot;&gt;--exclude&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;*&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--include&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;*.css&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--include&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;*.js&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--content-encoding&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;gzip&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'ERROR: s3 js/css sync failed'&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;exit &lt;/span&gt;1&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+aws s3 &lt;span class=&quot;nb&quot;&gt;cp &lt;/span&gt;dist/&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;APP_NAME&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;/index.html s3://&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;APP_NAME&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;//index.html &lt;span class=&quot;nt&quot;&gt;--metadata-directive&lt;/span&gt; REPLACE &lt;span class=&quot;nt&quot;&gt;--cache-control&lt;/span&gt; max-age&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0,no-cache,no-store,must-revalidate &lt;span class=&quot;nt&quot;&gt;--content-type&lt;/span&gt; text/html &lt;span class=&quot;nt&quot;&gt;--acl&lt;/span&gt; public-read &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'ERROR: s3 cp index failed'&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;exit &lt;/span&gt;1&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;angular &lt;code class=&quot;highlighter-rouge&quot;&gt;package.json&lt;/code&gt;에서 deploy 스크립트를 수정하자.&lt;/p&gt;
+
+&lt;div class=&quot;language-json highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;w&quot;&gt;  &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;scripts&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;!deploy&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;-------- deploy to s3  -------------&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;predeploy&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;npm run clean &amp;amp;&amp;amp; npm run build&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;deploy&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;./scripts/deploy.sh&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;npm run deploy&lt;/code&gt; 스크립트를 실행하면, 자동으로 AWS S3에 &lt;code class=&quot;highlighter-rouge&quot;&gt;gzip&lt;/code&gt; 인코딩 설정으로 올라간다. 참고로 AWS S3 CORS 설정도 변경해야할 수도 있다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;참고로 AWS CloudFront에 자동으로 압축하는 설정이 활성화 되어있었는데, 잘 동작하지 않은 것 같다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;4-배포-및-테스트&quot;&gt;4. 배포 및 테스트&lt;/h2&gt;
+
+&lt;p&gt;위 스크립트로 배포 후 해당 사이트를 확인해보자.&lt;/p&gt;
+
+&lt;p&gt;아래 이미지와 같이 bundle 사이즈가 약 &lt;strong&gt;300KB&lt;/strong&gt;정도로 줄어들었고, Fast 3G 환경에서 3~4초정도 걸린다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/blog/angular-bundle-5.png&quot; alt=&quot;angular-bundle-5&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;main.js&lt;/code&gt; 파일의 헤더를 보면 &lt;code class=&quot;highlighter-rouge&quot;&gt;content-encoding&lt;/code&gt;이 &lt;strong&gt;gzip&lt;/strong&gt;으로 설정된 것을 확인할 수 있다.
+&lt;img src=&quot;/assets/img/blog/angular-bundle-6.png&quot; alt=&quot;angular-bundle-6&quot; /&gt;&lt;/p&gt;</content><author><name>&lt;Hyungtak&gt; &lt;Jin&gt;</name><email>&lt;env.tak@gmail.com&gt;</email></author><summary type="html">어느 순간부터 회사에서 작업 중인 앵귤러 프로젝트들의 main 사이즈가 커져서 초기 로딩이 늦어지는 이슈가 있었다.</summary></entry><entry><title type="html">Typescript + RxJS로 fs.readFile 사용하기</title><link href="https://tak-bro.github.io/blog/javascript/bindnodecallback-readfile/" rel="alternate" type="text/html" title="Typescript + RxJS로 fs.readFile 사용하기" /><published>2019-10-07T00:00:00+09:00</published><updated>2019-10-07T00:00:00+09:00</updated><id>https://tak-bro.github.io/blog/javascript/bindnodecallback-readfile</id><content type="html" xml:base="https://tak-bro.github.io/blog/javascript/bindnodecallback-readfile/">&lt;p&gt;Typescript + RxJS 환경에서 &lt;code class=&quot;highlighter-rouge&quot;&gt;bindNodeCallback&lt;/code&gt; 함수를 사용하는 방법을 참고하기 위해 작성한다.&lt;/p&gt;
 
 &lt;hr /&gt;
 
@@ -122,7 +270,153 @@
 
 &lt;p&gt;따라서 &lt;code class=&quot;highlighter-rouge&quot;&gt;console.log(text)&lt;/code&gt;의 결과는 text 변수에 아무 값도 할당되지 않은 &lt;code class=&quot;highlighter-rouge&quot;&gt;undefined&lt;/code&gt;를 출력하게 된다.&lt;/p&gt;
 
-&lt;p&gt;자바스크립트에서 var 변수를 선언할 때는 항상 &lt;strong&gt;현재 스코프&lt;/strong&gt;의 최상단으로 호이스팅된다는 것을 기억하자. ES6 환경에서는 &lt;code class=&quot;highlighter-rouge&quot;&gt;let&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;const&lt;/code&gt; 변수 쓰는 게 마음 편하다.&lt;/p&gt;</content><author><name>&lt;Hyungtak&gt; &lt;Jin&gt;</name><email>&lt;env.tak@gmail.com&gt;</email></author><summary type="html">아래 코드를 실행하면 console.log(text)은 어떻게 찍힐까?</summary></entry><entry><title type="html">React 개념 정리</title><link href="https://tak-bro.github.io/blog/javascript/default-react/" rel="alternate" type="text/html" title="React 개념 정리" /><published>2018-12-31T00:00:00+09:00</published><updated>2018-12-31T00:00:00+09:00</updated><id>https://tak-bro.github.io/blog/javascript/default-react</id><content type="html" xml:base="https://tak-bro.github.io/blog/javascript/default-react/">&lt;p&gt;React 샘플 코드&lt;/p&gt;
+&lt;p&gt;자바스크립트에서 var 변수를 선언할 때는 항상 &lt;strong&gt;현재 스코프&lt;/strong&gt;의 최상단으로 호이스팅된다는 것을 기억하자. ES6 환경에서는 &lt;code class=&quot;highlighter-rouge&quot;&gt;let&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;const&lt;/code&gt; 변수 쓰는 게 마음 편하다.&lt;/p&gt;</content><author><name>&lt;Hyungtak&gt; &lt;Jin&gt;</name><email>&lt;env.tak@gmail.com&gt;</email></author><summary type="html">아래 코드를 실행하면 console.log(text)은 어떻게 찍힐까?</summary></entry><entry><title type="html">C++ 간단 정리</title><link href="https://tak-bro.github.io/blog/cplusplus/default-cplusplus/" rel="alternate" type="text/html" title="C++ 간단 정리" /><published>2018-12-31T00:00:00+09:00</published><updated>2018-12-31T00:00:00+09:00</updated><id>https://tak-bro.github.io/blog/cplusplus/default-cplusplus</id><content type="html" xml:base="https://tak-bro.github.io/blog/cplusplus/default-cplusplus/">&lt;p&gt;잡다하게 필기해놨던 내용들&lt;/p&gt;
+
+&lt;h2 id=&quot;c의-타입-변환-연산자&quot;&gt;c++의 타입 변환 연산자&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;static_cast&amp;lt;&amp;gt;: 가장 기본적인 캐스트 연산 방법&lt;/li&gt;
+  &lt;li&gt;dynamic_cast&amp;lt;&amp;gt;: 객체지향 언어의 다형성을 이용하여 모호한 타입 캐스팅 오류를 막아줌&lt;/li&gt;
+  &lt;li&gt;const_cast&amp;lt;&amp;gt;: 자료형이 갖고 있는 상수속성 제거&lt;/li&gt;
+  &lt;li&gt;reinterpret_cast&amp;lt;&amp;gt;: 어떠한 포인터 타입끼리도 변환할 수 있게 도움&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;자료형-크기&quot;&gt;자료형 크기&lt;/h2&gt;
+&lt;div class=&quot;language-c++ highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Temp&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;no&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;bool&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;is_no&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Temp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// 8&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Temp 클래스는 int 4바이트와 bool 1바이트만 갖고 있어서 5바이트 사이즈라고 착각할 수 있다. 이는 CPU의 데이터 버스와 관련이 있는데, 데이터 버스는 한 번에 4바이트씩 데이터를 담아 이동한다. sizeof는 4바이트 단위로 몇 번 움직이느냐에 따라 결과가 달라진다. Temp 클래스는 5바이트이기 때문에 데이터버스가 2번 이동하여 8바이트이다.&lt;/p&gt;
+
+&lt;h2 id=&quot;문자열-길이&quot;&gt;문자열 길이&lt;/h2&gt;
+&lt;p&gt;한글 문자열은 1바이트 아스키 문자로 표현 못한다. 2바이트에 한글자를 담기 때문에 문자열 길이가 영문에 비해 두 배다.&lt;/p&gt;
+
+&lt;h2 id=&quot;포인터&quot;&gt;포인터&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;변수가 실제 값을 저장하는 용도로 사용된다면, 포인터는 변수의 주소를 가리킨다.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-c++ highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pA&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; 
+&lt;span class=&quot;c1&quot;&gt;// 10이란 정수가 담겨있는 위치를 나타낸 것이 포인터&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;아스테리스크가 붙은 변수는 실제 값이 아니라 주소를 저장한다는 뜻&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-c++ highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;10.3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pB&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// size: 8&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pB&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// size: 4&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;포인터는 실제 값이 아니라 주소를 가리키는 화살표만 저장하는데, 이 화살표의 크기가 4바이트이다.
+이 사이즈가 중요한데, &lt;strong&gt;함수 인자 넘길때 4바이트만 넘겨도 된다는 뜻&lt;/strong&gt;이다. 즉, 성능 올라감&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;함수는 인자로 넘어오는 값을 복사하여 사용하는데, 인자의 사이즈가 크다면 복사하는데 많은 시간이 소요된다. 해당 함수를 자주 호출할 수록 프로그램 성능은 떨어질 것이다. &lt;strong&gt;인자의 크기가 클수록 포인터를 이용하여 4바이트 주소만 넘기는 것이 좋다&lt;/strong&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-c++ highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#include&amp;lt;iostream&amp;gt;
+#include&amp;lt;string&amp;gt;
+#include&amp;lt;vector&amp;gt;
+&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;namespace&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;PointerFunc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;info&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;info&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;empty&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt; 
+    	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; 
+    	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;info&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;vector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;push_back&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;abcd&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;push_back&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;bcd&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;push_back&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;cd&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;push_back&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;d&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    
+    &lt;span class=&quot;n&quot;&gt;cout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PointerFunc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;endl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;// 4&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;cout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;endl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;	    &lt;span class=&quot;c1&quot;&gt;// 16&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;call-by-value-call-by-reference&quot;&gt;Call By Value, Call By Reference&lt;/h2&gt;
+
+&lt;h3 id=&quot;call-by-value&quot;&gt;Call By Value&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;인자 값을 직접 복사해서 사용하는 것&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;call-by-reference&quot;&gt;Call By Reference&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;인자의 주소를 이용&lt;/li&gt;
+  &lt;li&gt;함수 인자로 자료형의 주소를 가리키는 포인터를 받는다 -&amp;gt; 포인터가 가리키는 곳. 즉, 주소의 값을 직접 바꾸는 것&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;call-by-address&quot;&gt;Call By Address&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;주소를 명시적으로 전달받아 4바이트가 할당 됨&lt;/li&gt;
+  &lt;li&gt;함수는 인자로 포인터를 받는데, 이 경우 함수를 호출하는 곳에서 주소를 명시적으로 전달해줘야 함&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-c++ highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#include&amp;lt;iostream&amp;gt;
+&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;namespace&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;CallByAddress&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;bool&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;is_on&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;cout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Call by Address: &quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;is_on&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;endl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;CallByReference&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;bool&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;is_on&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;cout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Call by Reference: &quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;is_on&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;endl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;bool&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;it_tmp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    
+    &lt;span class=&quot;n&quot;&gt;Func1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;is_tmp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// call by address:   4&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;Func2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;is_tmp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;// call by reference: 1&lt;/span&gt;
+    
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;변수의 주소를 명시적으로 알려주면 포인터의 크기가 4바이트 인자로 넘어가지만, call by reference(넘어오는 값을 포인터로 받으면)는 자료형의 바이트가 사용된다.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;const&quot;&gt;const&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;값을 바꿀 수 없는 변수&lt;/li&gt;
+  &lt;li&gt;포인터의 위치에 따라 의미가 달라짐&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-c++ highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;number1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;number2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ptr1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;ptr1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;number1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;ptr1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;number2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// 가능&lt;/span&gt;
+
+&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ptr2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;number1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ptr2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;number2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;// *ptr2 = &amp;amp;number2;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;ptr1: 가리키는 대상을 변경할 수 있지만, 가리키는 대상의 값은 변경할 수 없다.&lt;/li&gt;
+  &lt;li&gt;ptr2: 가리키는 대상을 변경할 수 없고, 포인터는 변경 가능&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>&lt;Hyungtak&gt; &lt;Jin&gt;</name><email>&lt;env.tak@gmail.com&gt;</email></author><summary type="html">잡다하게 필기해놨던 내용들</summary></entry><entry><title type="html">React 개념 정리</title><link href="https://tak-bro.github.io/blog/javascript/default-react/" rel="alternate" type="text/html" title="React 개념 정리" /><published>2018-12-31T00:00:00+09:00</published><updated>2018-12-31T00:00:00+09:00</updated><id>https://tak-bro.github.io/blog/javascript/default-react</id><content type="html" xml:base="https://tak-bro.github.io/blog/javascript/default-react/">&lt;p&gt;React 샘플 코드&lt;/p&gt;
 
 &lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;React&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;react&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ReactDOM&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;react-dom&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
@@ -330,153 +624,7 @@
 &lt;ul&gt;
   &lt;li&gt;v16부터 도입된 메소드&lt;/li&gt;
   &lt;li&gt;자식 컴포넌트에서 발생한 예외를 catch한 경우 실행&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>&lt;Hyungtak&gt; &lt;Jin&gt;</name><email>&lt;env.tak@gmail.com&gt;</email></author><summary type="html">React 샘플 코드</summary></entry><entry><title type="html">C++ 간단 정리</title><link href="https://tak-bro.github.io/blog/cplusplus/default-cplusplus/" rel="alternate" type="text/html" title="C++ 간단 정리" /><published>2018-12-31T00:00:00+09:00</published><updated>2018-12-31T00:00:00+09:00</updated><id>https://tak-bro.github.io/blog/cplusplus/default-cplusplus</id><content type="html" xml:base="https://tak-bro.github.io/blog/cplusplus/default-cplusplus/">&lt;p&gt;잡다하게 필기해놨던 내용들&lt;/p&gt;
-
-&lt;h2 id=&quot;c의-타입-변환-연산자&quot;&gt;c++의 타입 변환 연산자&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;static_cast&amp;lt;&amp;gt;: 가장 기본적인 캐스트 연산 방법&lt;/li&gt;
-  &lt;li&gt;dynamic_cast&amp;lt;&amp;gt;: 객체지향 언어의 다형성을 이용하여 모호한 타입 캐스팅 오류를 막아줌&lt;/li&gt;
-  &lt;li&gt;const_cast&amp;lt;&amp;gt;: 자료형이 갖고 있는 상수속성 제거&lt;/li&gt;
-  &lt;li&gt;reinterpret_cast&amp;lt;&amp;gt;: 어떠한 포인터 타입끼리도 변환할 수 있게 도움&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;자료형-크기&quot;&gt;자료형 크기&lt;/h2&gt;
-&lt;div class=&quot;language-c++ highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Temp&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;no&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;kt&quot;&gt;bool&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;is_no&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Temp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// 8&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Temp 클래스는 int 4바이트와 bool 1바이트만 갖고 있어서 5바이트 사이즈라고 착각할 수 있다. 이는 CPU의 데이터 버스와 관련이 있는데, 데이터 버스는 한 번에 4바이트씩 데이터를 담아 이동한다. sizeof는 4바이트 단위로 몇 번 움직이느냐에 따라 결과가 달라진다. Temp 클래스는 5바이트이기 때문에 데이터버스가 2번 이동하여 8바이트이다.&lt;/p&gt;
-
-&lt;h2 id=&quot;문자열-길이&quot;&gt;문자열 길이&lt;/h2&gt;
-&lt;p&gt;한글 문자열은 1바이트 아스키 문자로 표현 못한다. 2바이트에 한글자를 담기 때문에 문자열 길이가 영문에 비해 두 배다.&lt;/p&gt;
-
-&lt;h2 id=&quot;포인터&quot;&gt;포인터&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;변수가 실제 값을 저장하는 용도로 사용된다면, 포인터는 변수의 주소를 가리킨다.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-c++ highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pA&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; 
-&lt;span class=&quot;c1&quot;&gt;// 10이란 정수가 담겨있는 위치를 나타낸 것이 포인터&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;아스테리스크가 붙은 변수는 실제 값이 아니라 주소를 저장한다는 뜻&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-c++ highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;10.3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;kt&quot;&gt;double&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pB&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// size: 8&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pB&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// size: 4&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;포인터는 실제 값이 아니라 주소를 가리키는 화살표만 저장하는데, 이 화살표의 크기가 4바이트이다.
-이 사이즈가 중요한데, &lt;strong&gt;함수 인자 넘길때 4바이트만 넘겨도 된다는 뜻&lt;/strong&gt;이다. 즉, 성능 올라감&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;함수는 인자로 넘어오는 값을 복사하여 사용하는데, 인자의 사이즈가 크다면 복사하는데 많은 시간이 소요된다. 해당 함수를 자주 호출할 수록 프로그램 성능은 떨어질 것이다. &lt;strong&gt;인자의 크기가 클수록 포인터를 이용하여 4바이트 주소만 넘기는 것이 좋다&lt;/strong&gt;&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-c++ highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#include&amp;lt;iostream&amp;gt;
-#include&amp;lt;string&amp;gt;
-#include&amp;lt;vector&amp;gt;
-&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;namespace&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;PointerFunc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;info&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;info&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;empty&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt; 
-    	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; 
-    	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;info&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;vector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;push_back&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;abcd&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;push_back&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;bcd&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;push_back&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;cd&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;push_back&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;d&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    
-    &lt;span class=&quot;n&quot;&gt;cout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PointerFunc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;endl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;// 4&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;cout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;endl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;	    &lt;span class=&quot;c1&quot;&gt;// 16&lt;/span&gt;
-
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;call-by-value-call-by-reference&quot;&gt;Call By Value, Call By Reference&lt;/h2&gt;
-
-&lt;h3 id=&quot;call-by-value&quot;&gt;Call By Value&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;인자 값을 직접 복사해서 사용하는 것&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;call-by-reference&quot;&gt;Call By Reference&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;인자의 주소를 이용&lt;/li&gt;
-  &lt;li&gt;함수 인자로 자료형의 주소를 가리키는 포인터를 받는다 -&amp;gt; 포인터가 가리키는 곳. 즉, 주소의 값을 직접 바꾸는 것&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;call-by-address&quot;&gt;Call By Address&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;주소를 명시적으로 전달받아 4바이트가 할당 됨&lt;/li&gt;
-  &lt;li&gt;함수는 인자로 포인터를 받는데, 이 경우 함수를 호출하는 곳에서 주소를 명시적으로 전달해줘야 함&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-c++ highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#include&amp;lt;iostream&amp;gt;
-&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;namespace&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;CallByAddress&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;bool&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;is_on&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;cout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Call by Address: &quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;is_on&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;endl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;CallByReference&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;bool&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;is_on&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;cout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Call by Reference: &quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;is_on&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;endl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kt&quot;&gt;bool&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;it_tmp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    
-    &lt;span class=&quot;n&quot;&gt;Func1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;is_tmp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// call by address:   4&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;Func2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;is_tmp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;// call by reference: 1&lt;/span&gt;
-    
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;strong&gt;변수의 주소를 명시적으로 알려주면 포인터의 크기가 4바이트 인자로 넘어가지만, call by reference(넘어오는 값을 포인터로 받으면)는 자료형의 바이트가 사용된다.&lt;/strong&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;const&quot;&gt;const&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;값을 바꿀 수 없는 변수&lt;/li&gt;
-  &lt;li&gt;포인터의 위치에 따라 의미가 달라짐&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-c++ highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;number1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;number2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ptr1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;ptr1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;number1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;ptr1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;number2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// 가능&lt;/span&gt;
-
-&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ptr2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;number1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ptr2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;number2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;c1&quot;&gt;// *ptr2 = &amp;amp;number2;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;ptr1: 가리키는 대상을 변경할 수 있지만, 가리키는 대상의 값은 변경할 수 없다.&lt;/li&gt;
-  &lt;li&gt;ptr2: 가리키는 대상을 변경할 수 없고, 포인터는 변경 가능&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>&lt;Hyungtak&gt; &lt;Jin&gt;</name><email>&lt;env.tak@gmail.com&gt;</email></author><summary type="html">잡다하게 필기해놨던 내용들</summary></entry><entry><title type="html">EOS에 Smart Contract 생성하기(2018년 9월)</title><link href="https://tak-bro.github.io/blog/blockchain/new-eos-tutorial/" rel="alternate" type="text/html" title="EOS에 Smart Contract 생성하기(2018년 9월)" /><published>2018-09-05T00:00:00+09:00</published><updated>2018-09-05T00:00:00+09:00</updated><id>https://tak-bro.github.io/blog/blockchain/new-eos-tutorial</id><content type="html" xml:base="https://tak-bro.github.io/blog/blockchain/new-eos-tutorial/">&lt;p&gt;반년동안 아이폰 개발 열심히 했더니 엎어졌다. 스마트 컨트랙트 작성해야되서 다시 공부해봤다.&lt;/p&gt;
+&lt;/ul&gt;</content><author><name>&lt;Hyungtak&gt; &lt;Jin&gt;</name><email>&lt;env.tak@gmail.com&gt;</email></author><summary type="html">React 샘플 코드</summary></entry><entry><title type="html">EOS에 Smart Contract 생성하기(2018년 9월)</title><link href="https://tak-bro.github.io/blog/blockchain/new-eos-tutorial/" rel="alternate" type="text/html" title="EOS에 Smart Contract 생성하기(2018년 9월)" /><published>2018-09-05T00:00:00+09:00</published><updated>2018-09-05T00:00:00+09:00</updated><id>https://tak-bro.github.io/blog/blockchain/new-eos-tutorial</id><content type="html" xml:base="https://tak-bro.github.io/blog/blockchain/new-eos-tutorial/">&lt;p&gt;반년동안 아이폰 개발 열심히 했더니 엎어졌다. 스마트 컨트랙트 작성해야되서 다시 공부해봤다.&lt;/p&gt;
 
 &lt;h2 id=&quot;setup-eos&quot;&gt;Setup EOS&lt;/h2&gt;
 
@@ -2234,308 +2382,4 @@ code &lt;span class=&quot;nb&quot;&gt;hash&lt;/span&gt;: 3d535c4f132928023f9e3ff
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;여기까지가 eos 체인 내에서 ‘hello world’를 찍는 smart contract를 올리는 방법이다.&lt;br /&gt;
-쉽지 않다.&lt;/p&gt;</content><author><name>&lt;Hyungtak&gt; &lt;Jin&gt;</name><email>&lt;env.tak@gmail.com&gt;</email></author><summary type="html">2018년 09월 eos가 많이 업데이트 되었습니다. 현재 버전에서 돌아가는 tutorial은 이 포스트를 참고해주세요.</summary></entry><entry><title type="html">Docker에서 EOS 실행하기</title><link href="https://tak-bro.github.io/blog/blockchain/eos-on-docker/" rel="alternate" type="text/html" title="Docker에서 EOS 실행하기" /><published>2018-01-29T00:00:00+09:00</published><updated>2018-01-29T00:00:00+09:00</updated><id>https://tak-bro.github.io/blog/blockchain/eos-on-docker</id><content type="html" xml:base="https://tak-bro.github.io/blog/blockchain/eos-on-docker/">&lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;요약:&lt;/strong&gt; 2018-01-29일 현재, eos 프로젝트 그대로 clone하면 Docker에서 &lt;a href=&quot;https://github.com/EOSIO/eos/issues/1146&quot; target=&quot;_blank&quot;&gt;빌드 에러&lt;/a&gt; 발생 
-&lt;br /&gt;
-&lt;a href=&quot;https://github.com/EOSIO/eos/pull/1184&quot; target=&quot;_blank&quot;&gt;PR #1184&lt;/a&gt;, &lt;a href=&quot;https://github.com/EOSIO/eos/pull/1218&quot; target=&quot;_blank&quot;&gt;PR #1218&lt;/a&gt; 참고하여 DockerFile 및 config.ini 수정해야 함&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://github.com/EOSIO/eos&quot; target=&quot;_blank&quot;&gt;EOS&lt;/a&gt;를 Docker 환경에서 실행해보기 위헤 &lt;a href=&quot;https://github.com/EOSIO/eos/tree/master/Docker&quot; target=&quot;_blank&quot;&gt;eos/Docker&lt;/a&gt; 페이지를 보며 따라하고 있다. 우선 eos를 실행하기 위한 기본 Docker setting은 17.05 버전 이상, 8GB 이상의 메모리로 설정해야 한다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Docker setting
-&lt;img src=&quot;https://user-images.githubusercontent.com/7614353/35480584-9b6fce84-0454-11e8-8a2c-00f3a47791b2.png&quot; alt=&quot;Docker Memory&quot; /&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;eos-image-빌드&quot;&gt;EOS Image 빌드&lt;/h2&gt;
-&lt;p&gt;Docker를 업데이트하고 기본 셋팅을 바꿨으면 eos Docker 이미지를 받아보자.&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git clone https://github.com/EOSIO/eos.git --recursive
-cd eos/Docker
-docker build . -t eosio/eos
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;위 스크립트를 실행하면 Docker 관련 에러가 나온다. eos docker 이미지를 받으려면 커맨드 상에서 로그인한 상태여야 한다. Docker에 로그인해주자.&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ docker login
-Login with your Docker ID to push and pull images from Docker Hub. If you don't have a Docker ID, head over to https://hub.docker.com to create one.
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;로그인 후, &lt;code class=&quot;highlighter-rouge&quot;&gt;docker build . -t eosio/eos&lt;/code&gt;를 다시 실행했다.
-참고로 eos의 경우, Docker 이미지를 받고 세팅하는 데 오래 걸린다(약 50분). 긴 시간이 흐른 뒤에 다시 에러 메세지가 나타났다.&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Step 20/27 : COPY --from=builder /opt/eos/bin /opt/eos/bin COPY failed: stat /var/lib/docker/overlay2/d66370d8a0140a0596ce407855eb13790db1a051570b4771bad485381c8853be/merged/opt/eos/bin: no such file or directory
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Docker 설정을 하면서 뭔가 파일을 못찾아서 나온 에러였다. 아마 경로가 잘못되어 있었나? eos github를 보니 이미 issue에 올라온 &lt;a href=&quot;https://github.com/EOSIO/eos/issues/1146&quot; target=&quot;_blank&quot;&gt;에러&lt;/a&gt;였다. 해결책은 DockerFile을 수정하는 것. Docker 폴더 내에 DockFile을 열고 아래와 같이 수정했다.&lt;/p&gt;
-
-&lt;div class=&quot;language-diff highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;err&quot;&gt;//&lt;/span&gt; DockerFile
-
-RUN git clone -b master --depth 1 https://github.com/EOSIO/eos.git --recursive \
-    &amp;amp;&amp;amp; cd eos \
-    &amp;amp;&amp;amp; cmake -H. -B&quot;/tmp/build&quot; -GNinja -DCMAKE_BUILD_TYPE=Release -DWASM_LLVM_CONFIG=/opt/wasm/bin/llvm-config -DCMAKE_CXX_COMPILER=clang++ \
-       -DCMAKE_C_COMPILER=clang -DCMAKE_INSTALL_PREFIX=/opt/eos  -DSecp256k1_ROOT_DIR=/usr/local \
-&lt;span class=&quot;gd&quot;&gt;-    &amp;amp;&amp;amp; cmake --build /tmp/build --target install
--    
-&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+    &amp;amp;&amp;amp; cmake --build /tmp/build --target install \
-+    &amp;amp;&amp;amp; cd /tmp/build &amp;amp;&amp;amp; cmake -DCMAKE_INSTALL_PREFIX=/opt/eos -P cmake_install.cmake
-&lt;/span&gt;
-
-&lt;span class=&quot;p&quot;&gt;FROM ubuntu:16.04
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;다시 eos docker 이미지를 받아보자. &lt;code class=&quot;highlighter-rouge&quot;&gt;docker build . -t eosio/eos&lt;/code&gt;를 실행하자.
-&lt;img src=&quot;https://user-images.githubusercontent.com/7614353/35480858-31c4235c-045b-11e8-91ec-576f60aa0701.png&quot; alt=&quot;image-success&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;됐다. 드디어 image가 받아졌다. 이제 다운 받은 eos image를 실행해보자. 
-해당 커맨드는 eos에 소개되어 있는 커맨드다.&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ docker run --name eosiod -p 8888:8888 -p 9876:9876 -t eosio/eos start_eosiod.sh arg1 arg2
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;위 커맨드를 실행하면 다음과 같은 에러가 나온다.
-역시나 에러가 안나오면 이상하지. 이 세상엔 쉬운게 없다. 한번에 되길 바라는 것은 큰 욕심이다.
-&lt;img src=&quot;https://user-images.githubusercontent.com/7614353/35480856-291282a8-045b-11e8-9fc7-a5624d6c9da9.png&quot; alt=&quot;error&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Docker 이미지에서 &lt;code class=&quot;highlighter-rouge&quot;&gt;/opt/eos/bin/data-dir/genesis.json&lt;/code&gt; 파일이 없다는 에러다. 실제로 eos Docker 컨테이너로 접속하여 확인해보니 해당 폴더 내에 아무 파일도 없었다. &lt;code class=&quot;highlighter-rouge&quot;&gt;/&lt;/code&gt; 경로에 관련 파일들이 다 있긴 했는데 뭔가 직접 옮기고 싶지 않고, 스크립트로 해결하고 싶어서 무시했다.&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;docker run &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; eosio/eos /bin/bash
-root@e1a820beab12:/#
-root@e1a820beab12:/# &lt;span class=&quot;nb&quot;&gt;ls
-&lt;/span&gt;bin   config.ini  dev  genesis.json  lib    media  opt   root  sbin  sys  usr
-boot  contracts   etc  home          lib64  mnt    proc  run   srv   tmp  var
-root@e1a820beab12:/# &lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;opt/eos/bin/data-dir/
-root@e1a820beab12:/opt/eos/bin/data-dir# &lt;span class=&quot;nb&quot;&gt;ls
-&lt;/span&gt;root@e1a820beab12:/opt/eos/bin/data-dir#
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;eos github에서 Docker 관련 에러를 찾아보니 비슷한 &lt;a href=&quot;https://github.com/EOSIO/eos/issues/1219&quot; target=&quot;_blank&quot;&gt;issue&lt;/a&gt;와 &lt;a href=&quot;https://github.com/EOSIO/eos/pull/1218&quot; target=&quot;_blank&quot;&gt;PR #1218&lt;/a&gt;이 올라와있었다. 해당 PR대로 DockerFile과 config.ini 파일을 수정했다.&lt;/p&gt;
-
-&lt;div class=&quot;language-diff highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;err&quot;&gt;//&lt;/span&gt; config.ini
-
-# File to read Genesis State from
-&lt;span class=&quot;err&quot;&gt;#&lt;/span&gt; genesis-json =
-&lt;span class=&quot;gd&quot;&gt;- genesis-json = &quot;/opt/eos/bin/data-dir/genesis.json&quot;
-&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+ genesis-json = &quot;/opt/eosio/bin/data-dir/genesis.json&quot;
-&lt;/span&gt;
-// DockerFile
-
-FROM ubuntu:16.04
-&lt;span class=&quot;p&quot;&gt;RUN apt-get update &amp;amp;&amp;amp; DEBIAN_FRONTEND=noninteractive apt-get -y install openssl &amp;amp;&amp;amp; rm -rf /var/lib/apt/lists/*
-COPY --from=builder /usr/local/lib/* /usr/local/lib/
-&lt;/span&gt;&lt;span class=&quot;gd&quot;&gt;- COPY --from=builder /opt/eosio/bin /opt/eosio/bin
-&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+ COPY --from=builder /tmp/build/install/bin /opt/eosio/bin
-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;COPY --from=builder /tmp/build/contracts /contracts
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;해당 PR대로 수정하고, 다시 docker build 시도했더니 이젠 docker가 난리다. 방금 받은 docker image의 container가 실행 중이란다. docker container부터 삭제해주고, 이미 받은 image도 삭제해버렸다.&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;// 현재 실행 중인 docker container 확인
-$ docker ps -a
-CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS                      PORTS               NAMES
-941ec0585029        eosio/eos           &quot;start_eosiod.sh arg…&quot;   21 seconds ago      Exited (0) 23 seconds ago                       eosiod
-
-// container 삭제
-$ docker rm 941ec0585029
-
-// docker 이미지 확인
-$ docker images
-REPOSITORY          TAG                 IMAGE ID            CREATED              SIZE
-eosio/eos           latest              b23b51a35625        About a minute ago   241MB
-&amp;lt;none&amp;gt;              &amp;lt;none&amp;gt;              d1794d48d291        About a minute ago   2.92GB
-ubuntu              16.04               0458a4468cbc        2 days ago           112MB
-
-// docker image 삭제
-$ docker rmi b23b51a35625 d1794d48d291
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;이제 실행 중인 eos container도 없고 image도 없다. 해야할 일은 &lt;a href=&quot;https://github.com/EOSIO/eos/pull/1218&quot; target=&quot;_blank&quot;&gt;PR #1218&lt;/a&gt;처럼 수정하여 다시 eos docker 이미지를 받는 것.&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;// 여러번 다운 받아보는 eos docker image
-$ docker build . -t eosio/eos
-
-// 이미지를 받은 후 다시 docker container 실행
-$ docker run --name eosiod -p 8888:8888 -p 9876:9876 -t eosio/eos start_eosiod.sh arg1 arg2
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;역시나 같은 에러다. 그놈의 genesis.json 파일이 뭔지 계속 못찾는다. README 대로 arg도 바꿔보고 별짓 다해봤지만 안된다.&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ docker run --name eosiod -p 8888:8888 -p 9876:9876 -t eosio/eos start_eosiod.sh --genesis-json /opt/eosio/bin/data-dir/genesis.json
-$ docker run --name eosiod -p 8888:8888 -p 9876:9876 -t eosio/eos start_eosiod.sh --genesis-json /opt/eos/bin/data-dir/genesis.json
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;dockerfile-configini-수정&quot;&gt;DockerFile, config.ini 수정&lt;/h2&gt;
-
-&lt;p&gt;대충 보니까 /opt/eos를 /opt/eosio로 네이밍하면서 실제 코드랑 docker 쪽이 싱크가 안맞나보다. DockerFile은 자세히 모르지만 &lt;a href=&quot;https://github.com/EOSIO/eos/pull/1184&quot; target=&quot;_blank&quot;&gt;PR #1184&lt;/a&gt;의 코드에서 INSTALL_PREFIX 경로를 살짝 바꿔보고,  &lt;a href=&quot;https://github.com/EOSIO/eos/pull/1218&quot; target=&quot;_blank&quot;&gt;PR #1218&lt;/a&gt;처럼 config.ini도 바꿔보았다.&lt;/p&gt;
-
-&lt;div class=&quot;language-diff highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gh&quot;&gt;diff --git a/Docker/Dockerfile b/Docker/Dockerfile
-index 89ea2b22..d2f0973e 100644
-&lt;/span&gt;&lt;span class=&quot;gd&quot;&gt;--- a/Docker/Dockerfile
-&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+++ b/Docker/Dockerfile
-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;@@ -73,9 +73,9 @@&lt;/span&gt; RUN git clone --depth 1 -b releases/stable git://github.com/mongodb/mongo-cxx-dr
- RUN git clone -b master --depth 1 https://github.com/EOSIO/eos.git --recursive \
-     &amp;amp;&amp;amp; cd eos \
-     &amp;amp;&amp;amp; cmake -H. -B&quot;/tmp/build&quot; -GNinja -DCMAKE_BUILD_TYPE=Release -DWASM_LLVM_CONFIG=/opt/wasm/bin/llvm-config -DCMAKE_CXX_COMPILER=clang++ \
-&lt;span class=&quot;gd&quot;&gt;-       -DCMAKE_C_COMPILER=clang -DCMAKE_INSTALL_PREFIX=/opt/eos  -DSecp256k1_ROOT_DIR=/usr/local \
--    &amp;amp;&amp;amp; cmake --build /tmp/build --target install
--
-&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+       -DCMAKE_C_COMPILER=clang -DCMAKE_INSTALL_PREFIX=/opt/eosio  -DSecp256k1_ROOT_DIR=/usr/local \
-+    &amp;amp;&amp;amp; cmake --build /tmp/build --target install \
-+       &amp;amp;&amp;amp; cd /tmp/build &amp;amp;&amp;amp; cmake -DCMAKE_INSTALL_PREFIX=/opt/eosio -P cmake_install.cmake
-&lt;/span&gt;
-
- FROM ubuntu:16.04
-&lt;span class=&quot;gh&quot;&gt;diff --git a/Docker/config.ini b/Docker/config.ini
-index 6401c549..11e51c14 100644
-&lt;/span&gt;&lt;span class=&quot;gd&quot;&gt;--- a/Docker/config.ini
-&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+++ b/Docker/config.ini
-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;@@ -1,6 +1,6 @@&lt;/span&gt;
- # File to read Genesis State from
- # genesis-json =
-&lt;span class=&quot;gd&quot;&gt;-genesis-json = &quot;/opt/eos/bin/data-dir/genesis.json&quot;
-&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+genesis-json = &quot;/opt/eosio/bin/data-dir/genesis.json&quot;
-&lt;/span&gt;
- # the location of the block log (absolute path or relative to application data dir)
- block-log-dir = &quot;blocks&quot;
-&lt;span class=&quot;err&quot;&gt;(END)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;모든 eos docker 컨테이너 지우고 image도 지운 후, 위 설정대로 docker 빌드했더니 빌드는 잘된다. 이제 eos에 소개된 커맨드로 실행해보니 역시나 안된다.&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ docker run --name eosiod -p 8888:8888 -p 9876:9876 -t eosio/eos start_eosiod.sh arg1 arg2
-1584162ms thread-0   chain_plugin.cpp:109          plugin_initialize    ] initializing chain plugin
-1584163ms thread-0   http_plugin.cpp:141           plugin_initialize    ] host: 0.0.0.0 port: 8888
-1584163ms thread-0   http_plugin.cpp:144           plugin_initialize    ] configured http to listen on 0.0.0.0:8888
-1584163ms thread-0   net_plugin.cpp:2376           plugin_initialize    ] Initialize net plugin
-1584163ms thread-0   net_plugin.cpp:2396           plugin_initialize    ] Setting net_plugin logging level to info
-1584163ms thread-0   net_plugin.cpp:2422           plugin_initialize    ] host: 0.0.0.0 port: 9876
-1584164ms thread-0   net_plugin.cpp:2498           plugin_initialize    ] my node_id is efe7237ad945ddd96a8d73b93d1a3eedc9d33b88e42496a8bc4bfde9a7cd66a9
-1584164ms thread-0   main.cpp:85                   main                 ] eosiod version 37312a4b
-1584164ms thread-0   main.cpp:89                   main                 ] 10 assert_exception: Assert Exception
-fc::exists( my-&amp;gt;genesis_file ): unable to find genesis file '/opt/eos/bin/data-dir/genesis.json', check --genesis-json argument
-    {&quot;f&quot;:&quot;/opt/eos/bin/data-dir/genesis.json&quot;}
-    thread-0  chain_plugin.cpp:189 plugin_startup
-
-    {&quot;my-&amp;gt;genesis_file.generic_string()&quot;:&quot;/opt/eos/bin/data-dir/genesis.json&quot;}
-    thread-0  chain_plugin.cpp:210 plugin_startup
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;--genesis-json&lt;/code&gt; 옵션에 &lt;code class=&quot;highlighter-rouge&quot;&gt;/opt/eosio/bin/data-dir&lt;/code&gt; 주고 다시 해보자&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ docker run --name eosiod -p 8888:8888 -p 9876:9876 -t eosio/eos start_eosiod.sh --genesis-json /opt/eosio/bin/data-dir/genesis.json
-
-1771061ms thread-0   chain_plugin.cpp:109          plugin_initialize    ] initializing chain plugin
-1771061ms thread-0   http_plugin.cpp:141           plugin_initialize    ] host: 0.0.0.0 port: 8888
-1771062ms thread-0   http_plugin.cpp:144           plugin_initialize    ] configured http to listen on 0.0.0.0:8888
-1771062ms thread-0   net_plugin.cpp:2376           plugin_initialize    ] Initialize net plugin
-1771062ms thread-0   net_plugin.cpp:2396           plugin_initialize    ] Setting net_plugin logging level to info
-1771062ms thread-0   net_plugin.cpp:2422           plugin_initialize    ] host: 0.0.0.0 port: 9876
-1771063ms thread-0   net_plugin.cpp:2498           plugin_initialize    ] my node_id is f1d610309ae23a08ae333ca7b560aefa29043c5b900bb2b9799236ee941d9558
-1771063ms thread-0   main.cpp:85                   main                 ] eosiod version 37312a4b
-1771066ms thread-0   block_log.cpp:92              open                 ] Opening block log at /opt/eosio/bin/data-dir/blocks/blocks.log
-1771095ms thread-0   chain_controller.cpp:1087     operator()           ] applying genesis transaction
-1771096ms thread-0   chain_controller.cpp:1100     operator()           ] done applying genesis transaction
-1771096ms thread-0   chain_plugin.cpp:201          plugin_startup       ] starting chain in read/write mode
-1771096ms thread-0   chain_plugin.cpp:206          plugin_startup       ] Blockchain started; head block is #0, genesis timestamp is 2017-03-30T12:00:00.000
-1771096ms thread-0   producer_plugin.cpp:152       plugin_startup       ] producer plugin:  plugin_startup() begin
-1771096ms thread-0   producer_plugin.cpp:157       plugin_startup       ] Launching block production for 21 producers.
-
-*******************************
-*                             *
-*   ------ NEW CHAIN ------   *
-*   -  Welcome to EOSIO!  -   *
-*   -----------------------   *
-*                             *
-*******************************
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;드디어 성공. 거의 이틀 삽질해서 Docker에 eos를 실행했다.
-&lt;br /&gt;이제 로컬 환경에서 아래 커맨드를 입력하면 실행중인 eos 체인 정보를 볼 수 있다.&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ curl http://127.0.0.1:8888/v1/chain/get_info
-{&quot;server_version&quot;:&quot;37312a4b&quot;,&quot;head_block_num&quot;:337,&quot;last_irreversible_block_num&quot;:257,&quot;head_block_id&quot;:&quot;00000151edbabd1fdcd7e09cdc5c9c7198f76b59df1213b359fc5eeb8e44c6c8&quot;,&quot;head_block_time&quot;:&quot;2018-01-29T08:32:19&quot;,&quot;head_block_producer&quot;:&quot;inito&quot;,&quot;recent_slots&quot;:&quot;1111111111111111111111111111111111111111111111111111111111111111&quot;,&quot;participation_rate&quot;:&quot;1.00000000000000000&quot;}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;docker-compose-사용하기&quot;&gt;Docker Compose 사용하기&lt;/h2&gt;
-&lt;p&gt;이제 거의 다 온거 같다. 문서에 소개되어 있는 스크립트를 실행해봤다.&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ docker-compose up
-  Recreating docker_eosiod_1 ... done
-  
-  ...
-  
-  eosiod_1   | 1208309ms thread-0   net_plugin.cpp:2376           plugin_initialize    ] Initialize net plugin
-  walletd_1  | 1209367ms thread-0   http_plugin.cpp:144           plugin_initialize    ] configured http to listen on 127.0.0.1:8888
-  eosiod_1   | 1208309ms thread-0   net_plugin.cpp:2396           plugin_initialize    ] Setting net_plugin logging level to info
-  eosiod_1   | 1208309ms thread-0   net_plugin.cpp:2422           plugin_initialize    ] host: 0.0.0.0 port: 9876
-  walletd_1  | 1209368ms thread-0   http_plugin.cpp:156           plugin_startup       ] start processing http thread
-  eosiod_1   | 1208311ms thread-0   net_plugin.cpp:2498           plugin_initialize    ] my node_id is a352950487baa060934d82d5d61dd8d1d22b4de20be4c01f39738774214123fb
-  walletd_1  | 1209368ms thread-0   http_plugin.cpp:213           plugin_startup       ] start listening for http requests
-  eosiod_1   | 1208311ms thread-0   main.cpp:85                   main                 ] eosiod version 37312a4b
-  walletd_1  | 1209368ms thread-0   http_plugin.cpp:218           plugin_startup       ] http io service exit
-  eosiod_1   | 1208312ms thread-0   main.cpp:89                   main                 ] 10 assert_exception: Assert Exception
-  eosiod_1   | fc::exists( my-&amp;gt;genesis_file ): unable to find genesis file '/opt/eos/bin/data-dir/genesis.json', check --genesis-json argument
-  eosiod_1   |     {&quot;f&quot;:&quot;/opt/eos/bin/data-dir/genesis.json&quot;}
-  eosiod_1   |     thread-0  chain_plugin.cpp:189 plugin_startup
-  walletd_1  | 1209368ms thread-0   wallet_api_plugin.cpp:70      plugin_startup       ] starting wallet_api_plugin
-  eosiod_1   |
-  walletd_1  | 1209368ms thread-0   http_plugin.cpp:242           add_handler          ] add api url: /v1/wallet/create
-  eosiod_1   |     {&quot;my-&amp;gt;genesis_file.generic_string()&quot;:&quot;/opt/eos/bin/data-dir/genesis.json&quot;}
-  walletd_1  | 1209368ms thread-0   http_plugin.cpp:242           add_handler          ] add api url: /v1/wallet/get_public_keys
-  eosiod_1   |     thread-0  chain_plugin.cpp:210 plugin_startup
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;또 없단다. 결론적으로 Docker 내부의 config.ini가 수정이 안되어서 계속 &lt;code class=&quot;highlighter-rouge&quot;&gt;/opt/eos/bin/&lt;/code&gt; 폴더를 바라보는 것 같다. 
-&lt;br /&gt; docker-compose.yml 파일을 수정해서 현재 로컬에 있는 config.ini로 컨피규레이션을 바꿔버렸다. &lt;br /&gt; 로컬의 &lt;code class=&quot;highlighter-rouge&quot;&gt;config.ini&lt;/code&gt;는 경로가 &lt;code class=&quot;highlighter-rouge&quot;&gt;/opt/eosio/bin&lt;/code&gt;으로 설정되어 있어서 잘 될듯 싶다.&lt;/p&gt;
-
-&lt;div class=&quot;language-diff highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gh&quot;&gt;diff --git a/Docker/docker-compose.yml b/Docker/docker-compose.yml
-index 38116beb..326746e4 100755
-&lt;/span&gt;&lt;span class=&quot;gd&quot;&gt;--- a/Docker/docker-compose.yml
-&lt;/span&gt;&lt;span class=&quot;gi&quot;&gt;+++ b/Docker/docker-compose.yml
-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;@@ -13,6 +13,7 @@&lt;/span&gt; services:
-       - &quot;8888&quot;
-     volumes:
-       - eosiod-data-volume:/opt/eosio/bin/data-dir
-&lt;span class=&quot;gi&quot;&gt;+      - ./config.ini:/opt/eosio/bin/data-dir/config.ini
-&lt;/span&gt;
-   walletd:
-     image: eosio/eos
-&lt;span class=&quot;p&quot;&gt;@@ -24,4 +25,4 @@&lt;/span&gt; services:
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;다시 &lt;code class=&quot;highlighter-rouge&quot;&gt;docker-compose up&lt;/code&gt; 커맨드를 실행해보자.&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ docker-compose up
-Recreating docker_eosiod_1 ... done
-Recreating docker_walletd_1 ... done
-Attaching to docker_eosiod_1, docker_walletd_1
-
-...
-
-eosiod_1   | 1608044ms thread-0   producer_plugin.cpp:157       plugin_startup       ] Launching block production for 21 producers.
-walletd_1  | 1608678ms thread-0   http_plugin.cpp:242           add_handler          ] add api url: /v1/wallet/unlock
-eosiod_1   |
-eosiod_1   | *******************************
-eosiod_1   | *                             *
-eosiod_1   | *   ------ NEW CHAIN ------   *
-eosiod_1   | *   -  Welcome to EOSIO!  -   *
-eosiod_1   | *   -----------------------   *
-eosiod_1   | *                             *
-eosiod_1   | *******************************
-eosiod_1   |
-eosiod_1   | Your genesis seems to have an old timestamp
-eosiod_1   | Please consider using the --genesis-timestamp option to give your genesis a recent timestamp
-eosiod_1   |
-eosiod_1   | 1608045ms thread-0   producer_plugin.cpp:167       plugin_startup       ] producer plugin:  plugin_startup() end
-eosiod_1   | 1608045ms thread-0   http_plugin.cpp:156           plugin_startup       ] start processing http thread
-
-...
-
-inita generated block 1f2ae552... #4 @ 2018-01-30T08:26:50.000 with 0 trxsuction_loo ]
-inita generated block 34e9bfef... #5 @ 2018-01-30T08:26:50.500 with 0 trxsuction_loo ]
-initb generated block e55b0ece... #6 @ 2018-01-30T08:26:51.000 with 0 trxsuction_loo ]
-initb generated block 2a6e2354... #7 @ 2018-01-30T08:26:51.500 with 0 trxsuction_loo ]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;이제 docker로 eos의 eosioc와 wallet를 실행했다. 
-&lt;br /&gt;
-드디어 eos의 &lt;a href=&quot;https://github.com/EOSIO/eos/wiki/Tutorials&quot; target=&quot;_blank&quot;&gt;tutorial&lt;/a&gt;를 진행할 수 있다.&lt;/p&gt;</content><author><name>&lt;Hyungtak&gt; &lt;Jin&gt;</name><email>&lt;env.tak@gmail.com&gt;</email></author><summary type="html">요약: 2018-01-29일 현재, eos 프로젝트 그대로 clone하면 Docker에서 빌드 에러 발생 PR #1184, PR #1218 참고하여 DockerFile 및 config.ini 수정해야 함</summary></entry></feed>
+쉽지 않다.&lt;/p&gt;</content><author><name>&lt;Hyungtak&gt; &lt;Jin&gt;</name><email>&lt;env.tak@gmail.com&gt;</email></author><summary type="html">2018년 09월 eos가 많이 업데이트 되었습니다. 현재 버전에서 돌아가는 tutorial은 이 포스트를 참고해주세요.</summary></entry></feed>
