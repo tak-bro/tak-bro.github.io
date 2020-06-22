@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="kr"><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="https://tak-bro.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://tak-bro.github.io/" rel="alternate" type="text/html" hreflang="kr" /><updated>2020-05-01T14:20:44+09:00</updated><id>https://tak-bro.github.io/feed.xml</id><title type="html">Tak</title><subtitle>Hello. I'm a Developer.
-</subtitle><author><name>&lt;Hyungtak&gt; &lt;Jin&gt;</name><email>&lt;env.tak@gmail.com&gt;</email></author><entry><title type="html">CSR 환경에서 Angular 초기 로딩 타임 최적화하는 방법 정리</title><link href="https://tak-bro.github.io/blog/javascript/angular-optimization/" rel="alternate" type="text/html" title="CSR 환경에서 Angular 초기 로딩 타임 최적화하는 방법 정리" /><published>2020-04-20T00:00:00+09:00</published><updated>2020-04-20T00:00:00+09:00</updated><id>https://tak-bro.github.io/blog/javascript/angular-optimization</id><content type="html" xml:base="https://tak-bro.github.io/blog/javascript/angular-optimization/">&lt;p&gt;어느 순간부터 회사에서 작업 중인 앵귤러 프로젝트들의 main 사이즈가 커져서 초기 로딩이 늦어지는 이슈가 있었다.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="kr"><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="https://tak-bro.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://tak-bro.github.io/" rel="alternate" type="text/html" hreflang="kr" /><updated>2020-06-22T10:21:36+09:00</updated><id>https://tak-bro.github.io/feed.xml</id><title type="html">Tak</title><subtitle>Hello. I'm a Developer.
+</subtitle><author><name>&lt;Hyungtak&gt; &lt;Jin&gt;</name><email>&lt;env.tak@gmail.com&gt;</email></author><entry><title type="html">Angular main bundle 사이즈 줄이기</title><link href="https://tak-bro.github.io/blog/javascript/angular-optimization/" rel="alternate" type="text/html" title="Angular main bundle 사이즈 줄이기" /><published>2020-04-20T00:00:00+09:00</published><updated>2020-04-20T00:00:00+09:00</updated><id>https://tak-bro.github.io/blog/javascript/angular-optimization</id><content type="html" xml:base="https://tak-bro.github.io/blog/javascript/angular-optimization/">&lt;p&gt;어느 순간부터 회사에서 작업 중인 앵귤러 프로젝트들의 main 사이즈가 커져서 초기 로딩이 늦어지는 이슈가 있었다.&lt;/p&gt;
 
 &lt;p&gt;아래 이미지처럼 초기에 로딩되는 앵귤러 bundle 파일이 &lt;strong&gt;1.6MB&lt;/strong&gt;나 됐었고, &lt;code class=&quot;highlighter-rouge&quot;&gt;Fast 3G&lt;/code&gt; 환경에서는 로딩하는데 약 &lt;strong&gt;11~12초&lt;/strong&gt;정도나 걸렸다.&lt;/p&gt;
 
@@ -24,6 +24,9 @@
 
 &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;npm run analyze&lt;/code&gt;를 통해 bundle 파일을 확인해보니 &lt;code class=&quot;highlighter-rouge&quot;&gt;@lemoncloud/components&lt;/code&gt; 라이브러리가 전체 번들 사이즈의 반 이상 차지하고 있었다.
 회사에서 주로 사용하는 컴포넌트나 서비스는 따로 라이브러리화해서 사용 중이었는데, 라이브러리 최적화가 잘못된건지 사이즈가 상당히 컸다.&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;확인해보니 font, img 등 asset 파일들도 포함되어 있어서 사이즈가 비정상적으로 컸다.&lt;/p&gt;
+&lt;/blockquote&gt;
 
 &lt;p&gt;&lt;img src=&quot;/assets/img/blog/angular-bundle-2.png&quot; alt=&quot;angular-bundle-2&quot; /&gt;&lt;/p&gt;
 
