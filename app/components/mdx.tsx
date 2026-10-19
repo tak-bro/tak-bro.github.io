@@ -31,6 +31,5 @@ export const VideoEmbed = ({ src, title }: { src: string; title: string }) => (
     className="my-6 aspect-video w-full rounded-lg border"
     loading="lazy"
     allow="fullscreen; picture-in-picture"
-    allowFullScreen
   />
 );
