@@ -1,5 +1,5 @@
 export { homeCopy, type HomeCopy, type HomeGuide } from './home-copy';
-export { alternateLinks, i18n, localeFromPath, localeSwitchPath, localizedDocsHref, type AlternateLink } from './i18n';
+export { alternateLinks, i18n, isLocalizedPath, localeFromPath, localeSwitchPath, localizedDocsHref, type AlternateLink } from './i18n';
 export { baseOptions } from './layout.shared';
 export { llmsFullTxt, llmsTxt } from './llms';
 export { resolveDocsHref } from './relative-href';

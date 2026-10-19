@@ -28,6 +28,7 @@ It runs, in order: sensitive pattern scan, typecheck, tests, production build, i
 ## Content
 
 - Docs pages live in `content/docs/`. Each page has a Korean file `x.mdx` and an English file `x.en.mdx`, and each `meta.json` has a `meta.en.json`. A test fails if either side is missing.
+- Blog posts (`content/blog/`) and projects (`content/projects/`) are Korean only. They are served at `/blog/<slug>` and `/projects/<name>`, with no English page, no hreflang, and no language switcher. They are generated from the old Jekyll repo, so do not edit them by hand. To regenerate them, run `node scripts/import-jekyll.mjs <jekyll repo>`. It also copies the referenced images to `public/assets/img/` and masks keys and local paths. If any output still matches a sensitive pattern, nothing is written.
 - Config snippets in `content/snippets/` are copied from my private repos by `just sync-configs`. Only the files listed in `config/sync-allowlist.json` are copied. If any file matches a sensitive pattern, nothing is written.
 
 ## License

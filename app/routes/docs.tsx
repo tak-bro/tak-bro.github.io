@@ -58,7 +58,7 @@ const DocsRoute = ({ loaderData }: Route.ComponentProps) => {
   const { pageTree, path, slugs, lang } = useFumadocsLoader(loaderData);
 
   return (
-    <DocsLayout {...baseOptions()} tree={pageTree}>
+    <DocsLayout {...baseOptions({ lang })} tree={pageTree}>
       <Content path={path} slugs={slugs} lang={lang} />
     </DocsLayout>
   );

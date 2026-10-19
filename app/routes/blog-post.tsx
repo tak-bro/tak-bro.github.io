@@ -51,7 +51,7 @@ const Content = ({ path }: { path: string }) => {
 };
 
 const BlogPost = ({ loaderData }: Route.ComponentProps) => (
-  <HomeLayout {...baseOptions()}>
+  <HomeLayout {...baseOptions({ localized: false })}>
     <Content path={loaderData.path} />
   </HomeLayout>
 );

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { alternateLinks, localeFromPath, localeSwitchPath, localizedDocsHref } from '../i18n';
+import { alternateLinks, isLocalizedPath, localeFromPath, localeSwitchPath, localizedDocsHref } from '../i18n';
 
 /**
  * URL shape under `hideLocale: 'default-locale'`: Korean is unprefixed, English
@@ -61,6 +61,27 @@ describe('alternateLinks', () => {
   it('pairs a docs page with its translation and points x-default at Korean', () => {
     expect(alternateLinks('/docs', 'ko')).toEqual(docsSet);
     expect(alternateLinks('/en/docs', 'en')).toEqual(docsSet);
+  });
+});
+
+// The blog and projects are Korean only: advertising /en/blog/... would point
+// crawlers and the language switcher at pages that are never built.
+describe('isLocalizedPath', () => {
+  it('is true for the homes and docs in either language', () => {
+    for (const path of ['/', '/en', '/en/', '/docs', '/docs/', '/docs/herdr', '/en/docs/', '/en/docs/herdr/keys']) {
+      expect(isLocalizedPath(path), path).toBe(true);
+    }
+  });
+
+  it('is false for the Korean-only collections and look-alike paths', () => {
+    for (const path of ['/blog', '/blog/eos-tutorial', '/projects', '/projects/suji', '/docsx', '/en/blog']) {
+      expect(isLocalizedPath(path), path).toBe(false);
+    }
+  });
+
+  it('gives a Korean-only page no alternates', () => {
+    expect(alternateLinks('/blog/eos-tutorial', 'ko')).toEqual([]);
+    expect(alternateLinks('/projects', 'ko')).toEqual([]);
   });
 });
 

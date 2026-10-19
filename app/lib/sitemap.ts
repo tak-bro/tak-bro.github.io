@@ -1,11 +1,12 @@
 import { alternateLinks, i18n, type AlternateLink } from './i18n';
 import { canonicalUrl } from './site';
-import { source } from './source';
+import { blogPosts, projectPages, source } from './source';
+import { BLOG_ROUTE, PROJECTS_ROUTE } from './shared';
 
 /** One sitemap entry: the page, when it last changed, and its translations. */
 export interface SitemapEntry {
   readonly alternates: readonly AlternateLink[];
-  /** Absent for a file git has no commit for, and for the home pages. */
+  /** Git's for docs, the frontmatter date for posts and projects; absent for list pages and docs git has no commit for. */
   readonly lastModified?: Date;
   readonly path: string;
 }
@@ -13,9 +14,9 @@ export interface SitemapEntry {
 const homePath = (lang: string): string => (lang === i18n.defaultLanguage ? '/' : `/${lang}`);
 
 /**
- * Every page the site publishes in every language, each with the same hreflang set
- * its own head carries (root.tsx), so the sitemap cannot offer a translation the
- * page itself does not.
+ * Every page the site publishes: homes and docs in every language, each with the
+ * same hreflang set its own head carries (root.tsx), so the sitemap cannot offer a
+ * translation the page itself does not; then the Korean-only blog and projects.
  */
 export const sitemapEntries = async (): Promise<SitemapEntry[]> => {
   const homes = i18n.languages.map((lang) => ({
@@ -34,7 +35,15 @@ export const sitemapEntries = async (): Promise<SitemapEntry[]> => {
     ),
   );
 
-  return [...homes, ...pages];
+  // Korean only: no alternates, and the frontmatter date stands in for git's.
+  const collections = [
+    { alternates: [], path: BLOG_ROUTE },
+    ...blogPosts().map((post) => ({ alternates: [], lastModified: new Date(post.data.date), path: post.url })),
+    { alternates: [], path: PROJECTS_ROUTE },
+    ...projectPages().map((page) => ({ alternates: [], lastModified: new Date(page.data.date), path: page.url })),
+  ];
+
+  return [...homes, ...pages, ...collections];
 };
 
 const escapeXml = (value: string): string =>

@@ -62,7 +62,7 @@ const Content = ({ path }: { path: string }) => {
 };
 
 const Project = ({ loaderData }: Route.ComponentProps) => (
-  <HomeLayout {...baseOptions()}>
+  <HomeLayout {...baseOptions({ localized: false })}>
     <Content path={loaderData.path} />
   </HomeLayout>
 );
