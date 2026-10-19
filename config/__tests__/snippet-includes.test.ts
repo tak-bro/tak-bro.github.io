@@ -65,6 +65,7 @@ describe('snippet includes', () => {
         '<include cwd lang="toml">snippets/dotfiles/herdr/config.toml</include>',
         '<include cwd>../snippets/dotfiles/herdr/config.toml</include>',
         '<include>../snippets/dotfiles/herdr/config.toml#keys</include>',
+        `<include meta='title="cwd"'>../snippets/dotfiles/herdr/config.toml</include>`,
         '',
       ].join('\n'),
       'snippets/dotfiles/herdr/config.toml': 'a = 1\n',
