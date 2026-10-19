@@ -3,6 +3,118 @@ title: Herdr
 description: Key routing and my config for herdr, the terminal workspace I run coding agents in.
 ---
 
-The English translation of this guide is in progress. The config below is the same file the Korean page shows.
+[herdr](https://herdr.dev) is an agent multiplexer. Like tmux it splits tabs and panes, but its sidebar also shows which agent runs in each pane and whether it is working or waiting for my answer. I start herdr inside Ghostty and run every agent session in it.
+
+## How it works
+
+### Keys come in two ways
+
+herdr shortcuts have two kinds of input.
+
+- **Prefix keys** — press `ctrl+space`, then one key. This works the same way as tmux and in any terminal.
+- **Cmd keys** — the keys Mac apps use, like `Cmd+T` and `Cmd+D`. A terminal usually keeps Cmd keys for itself, so on their own they never reach herdr.
+
+To use Cmd keys I use a Ghostty **key table**. Only while the `herdr` table is on, Ghostty turns Cmd keys into [kitty keyboard protocol](https://sw.kovidgoyal.net/kitty/keyboard-protocol/) escape sequences (`CSI <key code>;<modifiers>u`, or `CSI 1;<modifiers><A-D>` for arrow keys) and sends them to herdr. While the table is off, the same keys do what Ghostty normally does (a new tab, and so on).
+
+```text
+Cmd+T ──▶ Ghostty (herdr table on)  ──▶ CSI 116;9u ──▶ herdr: new_tab
+Cmd+T ──▶ Ghostty (table off)       ──▶ new Ghostty tab
+```
+
+The modifier value is `1 + shift(1) + alt(2) + ctrl(4) + cmd(8)`. `Cmd` alone is `9`, and `Cmd+Shift` is `10`.
+
+### The table turns on when herdr starts
+
+A key turns the table on and off by hand (`Cmd+Shift+H`), but usually a shell function does it. When I run `herdr`, it uses AppleScript to turn on the table for the current Ghostty terminal, and turns it off when herdr exits. It does nothing for subcommands like `herdr status`, or in a shell inside herdr (where `HERDR_ENV` is set).
+
+### A timer script fills in the sidebar branch
+
+To show each pane's git branch on the second line of an agent row, I use a custom token, `$branch`. herdr does not fill this token itself. So the right side of the tab bar has a command entry that prints nothing, and it runs `pane-branch.sh` every 5 seconds. The script reads the branch of each agent pane and reports it with `herdr pane report-metadata`. The token has a 30-second TTL, so the branch disappears on its own if the script stops.
+
+## My config
+
+### Shortcuts
+
+| Action | Prefix key | Cmd key |
+|---|---|---|
+| New tab | `prefix c` | `Cmd+T` |
+| Close tab | `prefix Shift+X` | `Cmd+Shift+W` |
+| Previous / next tab | `prefix p` / `prefix n` | `Cmd+Shift+[` / `Cmd+Shift+]` |
+| Go to tab 1–9 | `prefix 1..9` | `Cmd+1..9` |
+| Split vertically / horizontally | `prefix v` / `prefix -` | `Cmd+D` / `Cmd+Shift+D` |
+| Close pane | `prefix x` | `Cmd+W` |
+| Move between panes | `prefix h/j/k/l` | `Cmd+Alt+arrow` |
+| Next / previous pane | `prefix Tab` / `prefix Shift+Tab` | `Cmd+]` / `Cmd+[` |
+| Zoom pane | `prefix z` | `Cmd+Shift+Enter` |
+| Resize pane | — | `Cmd+Ctrl+arrow` |
+| New workspace | `prefix Shift+N` | `Cmd+Shift+N` |
+| Go to a workspace | `prefix g` | `Cmd+K` |
+| Previous / next workspace | — | `Cmd+Shift+↑` / `Cmd+Shift+↓` |
+| Workspace 1–9 | `prefix Shift+1..9` | `Alt+1..9` |
+| Toggle sidebar | `prefix b` | `Cmd+B` |
+| lazygit popup | — | `Cmd+Shift+G` |
+| Switch agent account | — | `Cmd+Shift+A` |
+
+`prefix` is `ctrl+space`. The last two rows are herdr user commands (`[[keys.command]]`). The account switch uses the `rcosteira.account-switch` plugin to change the Claude Code and Codex login.
+
+### herdr config
+
+The sidebar has two panels. The spaces panel on top shows projects and branches. The agents panel below leads with who is running. Each kind of agent gets its own colour, and the state text shows only when I need to look (`blocked`, `done`). Default branches (`main`, `master`, `develop`) fade out, and working branches take a colour by prefix (`feat`, `fix`, `hotfix`).
 
 <include lang="toml" meta='title="~/.config/herdr/config.toml"'>../snippets/dotfiles/herdr/config.toml</include>
+
+### Branch token script
+
+<include lang="sh" meta='title="~/.config/herdr/pane-branch.sh"'>../snippets/dotfiles/herdr/pane-branch.sh</include>
+
+### Ghostty key table
+
+The herdr table is at the top of the file. The rest is Ghostty's own config and has nothing to do with herdr.
+
+<include lang="ini" meta='title="~/.config/ghostty/config"'>../snippets/dotfiles/ghostty/config</include>
+
+### Shell function
+
+`.zshrc` mixes in personal settings, so it is not synced. Only the herdr part is copied here. Its comments are in Korean, as in the source.
+
+```zsh title="~/.zshrc"
+herdr() {
+  local tid=""
+  # 세션을 여는 호출(인자 없음 또는 --옵션)일 때만. `herdr status` 같은 하위 명령은 그대로 통과.
+  if [[ "$TERM_PROGRAM" == "ghostty" && -z "$HERDR_ENV" ]] \
+     && { (( $# == 0 )) || [[ "$1" == -* ]]; } \
+     && (( $+commands[osascript] )); then
+    tid=$(osascript \
+      -e 'tell application "Ghostty"' \
+      -e 'set t to focused terminal of selected tab of front window' \
+      -e 'perform action "activate_key_table:herdr" on t' \
+      -e 'return id of t' \
+      -e 'end tell' 2>/dev/null)
+  fi
+
+  command herdr "$@"
+  local rc=$?
+
+  if [[ -n "$tid" ]]; then
+    osascript \
+      -e 'on run argv' \
+      -e 'tell application "Ghostty"' \
+      -e 'set m to every terminal whose id is (item 1 of argv)' \
+      -e 'if (count of m) > 0 then perform action "deactivate_key_table" on item 1 of m' \
+      -e 'end tell' \
+      -e 'end run' "$tid" >/dev/null 2>&1
+  fi
+  return $rc
+}
+```
+
+## Check
+
+1. Run `herdr` in Ghostty. Press `Cmd+T`. If a herdr tab opens instead of a Ghostty tab, the key table is on.
+2. Exit herdr and press `Cmd+T` again. This time a Ghostty tab must open (the table is off).
+3. Start an agent in a repo that is on a working branch. Within 5 seconds, the second line of its sidebar row shows the branch name without its type prefix.
+4. If no branch shows, look at the values the script reads.
+
+```sh
+herdr pane list | jq '.result.panes[] | select(.agent != null) | {pane_id, cwd: (.foreground_cwd // .cwd)}'
+```
