@@ -12,7 +12,8 @@
     "typecheck": "react-router typegen --mode prod && tsc --noEmit",
     "test": "vitest run",
     "check:links": "node scripts/check-docs-links.mjs",
-    "check:required": "node scripts/check-required-files.mjs"
+    "check:required": "node scripts/check-required-files.mjs",
+    "check:sensitive": "node scripts/check-sensitive.mjs"
   },
   "dependencies": {
     "@react-router/node": "7.18.2",
