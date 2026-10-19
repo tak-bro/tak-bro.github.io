@@ -16,10 +16,7 @@ export const meta = ({ location }: Route.MetaArgs) => {
   ];
 };
 
-// One module behind a route per language (routes.ts), so the language comes from
-// the path. A card links to its guide, so only guides whose folder exists get
-// one; the link checker would otherwise fail the build on a card for an
-// unwritten guide.
+// Cards only for guides that exist; check:links fails on a card to an unwritten one.
 export const loader = ({ request }: Route.LoaderArgs) => {
   const lang = localeFromPath(requestPath(request));
 

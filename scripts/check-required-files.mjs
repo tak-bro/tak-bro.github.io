@@ -1,17 +1,10 @@
 #!/usr/bin/env node
-// Fails the build when a file that must exist at a fixed URL was not emitted.
-//
-// /assets/resume.pdf and /assets/resume_eng.pdf are linked from outside this
-// site (résumé submissions), so losing them breaks links nobody here can fix.
-// GitHub Pages serves 404.html for unknown paths, and index.html is the home.
+// Fails when a file that must exist at a fixed URL was not emitted. The resume
+// PDFs are linked from outside the site; GitHub Pages needs 404.html.
 
 import { stat } from 'node:fs/promises';
 import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const BUILD_DIR =
-  process.env.SITE_BUILD_DIR ??
-  fileURLToPath(new URL('../build/client', import.meta.url));
+import { BUILD_DIR } from './lib/build-dir.mjs';
 
 const REQUIRED = ['index.html', '404.html', 'assets/resume.pdf', 'assets/resume_eng.pdf'];
 

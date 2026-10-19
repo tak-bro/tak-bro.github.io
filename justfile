@@ -12,6 +12,6 @@ sync-configs:
 check-sensitive:
     node scripts/check-sensitive.mjs
 
-# Run every gate CI runs: typecheck, tests, build, links, required files, sensitive scan.
+# Run every gate CI runs: sensitive scan, typecheck, tests, build, links, required files.
 check:
     pnpm check

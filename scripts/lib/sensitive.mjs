@@ -1,11 +1,10 @@
 // Patterns that must never reach this public repo: work identity, local paths,
 // and credential shapes. Shared by check-sensitive.mjs and sync-configs.mjs.
 
-import { open, readdir, readFile, stat } from 'node:fs/promises';
+import { readdir, readFile, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 
 export const PATTERNS = [
-  { name: '@lemoncloud.io', regex: /@lemoncloud\.io/i },
   { name: 'louis-lemon', regex: /louis-lemon/i },
   { name: 'lemoncloud', regex: /lemoncloud/i },
   { name: '/Users/tak', regex: /\/Users\/tak\b/ },
@@ -20,15 +19,7 @@ const BINARY_PROBE = 8192;
 
 // A NUL byte near the start means a binary (PDF, image), which is not scanned:
 // the resume PDF names a past employer and is published on purpose.
-const isBinary = async (file) => {
-  const handle = await open(file, 'r');
-  try {
-    const { buffer, bytesRead } = await handle.read(Buffer.alloc(BINARY_PROBE), 0, BINARY_PROBE, 0);
-    return buffer.subarray(0, bytesRead).includes(0);
-  } finally {
-    await handle.close();
-  }
-};
+const isBinary = (bytes) => bytes.subarray(0, BINARY_PROBE).includes(0);
 
 const listFiles = async (target) => {
   const info = await stat(target);
@@ -55,8 +46,9 @@ export const findSensitive = async (targets, allowed = () => false) => {
   const hits = [];
   for (const target of targets) {
     for (const file of (await listFiles(target)).sort()) {
-      if (await isBinary(file)) continue;
-      const lines = (await readFile(file, 'utf8')).split('\n');
+      const bytes = await readFile(file);
+      if (isBinary(bytes)) continue;
+      const lines = bytes.toString('utf8').split('\n');
       lines.forEach((text, index) => {
         for (const { name, regex } of PATTERNS) {
           if (regex.test(text) && !allowed(file, name)) hits.push({ file, line: index + 1, pattern: name });

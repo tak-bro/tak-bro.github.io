@@ -5,11 +5,8 @@ import { docsPrerenderPaths, listMdxFiles } from '../config';
 import { i18n } from './lib/i18n';
 import { DOCS_CONTENT_DIR } from './lib/shared';
 
-// Only real pages get a route; there is no `:lang?` segment and no `docs/*`
-// splat. The build is static (`ssr: false`), so a URL that was not prerendered
-// has no loader data, and a pattern route with a loader would render a data
-// error for a typo (/nope-x, /docs/nope). Unknown paths reach the catch-all 404.
-// Korean (the default) is unprefixed, English lives under /en.
+// One static route per real page: in a static build a pattern route (`:lang?`,
+// `docs/*`) has no loader data for unknown URLs, so those must reach the 404.
 const homeRoutes = i18n.languages.map((lang) =>
   lang === i18n.defaultLanguage
     ? index('routes/home.tsx', { id: `home-${lang}` })

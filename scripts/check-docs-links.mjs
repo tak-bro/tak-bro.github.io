@@ -14,13 +14,8 @@
 
 import { readdir, readFile } from 'node:fs/promises';
 import { join, relative } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { BUILD_DIR } from './lib/build-dir.mjs';
 
-// The override exists so the checker's own test can point it at a fixture tree
-// and exercise this file rather than a copy of its logic.
-const BUILD_DIR =
-  process.env.SITE_BUILD_DIR ??
-  fileURLToPath(new URL('../build/client', import.meta.url));
 
 const listHtmlFiles = async (dir) => {
   const entries = await readdir(dir, { recursive: true });

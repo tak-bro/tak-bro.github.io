@@ -1,15 +1,10 @@
 #!/usr/bin/env node
-// GitHub Pages serves a top-level 404.html for any unknown path. React Router
-// prerenders the /404 route to 404/index.html, so copy it into place. The
-// catch-all `*` route cannot be prerendered, which is why /404 exists at all.
+// GitHub Pages serves 404.html for unknown paths. The catch-all route cannot be
+// prerendered, so the /404 route's page is copied into place.
 
 import { copyFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const BUILD_DIR =
-  process.env.SITE_BUILD_DIR ??
-  fileURLToPath(new URL('../build/client', import.meta.url));
+import { BUILD_DIR } from './lib/build-dir.mjs';
 
 const source = join(BUILD_DIR, '404/index.html');
 

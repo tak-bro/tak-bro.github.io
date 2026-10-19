@@ -21,9 +21,7 @@ const counterpart = (file: string): string | undefined => {
 
 /** Every content file whose other-language counterpart is missing, one line each. */
 export const localeParityGaps = async (dir: string): Promise<string[]> => {
-  const files = new Set(
-    (await readdir(dir, { recursive: true })).map((entry) => entry.split('\\').join('/')),
-  );
+  const files = new Set(await readdir(dir, { recursive: true }));
 
   return [...files]
     .flatMap((file) => {

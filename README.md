@@ -20,7 +20,7 @@ pnpm dev            # http://localhost:5175
 pnpm check
 ```
 
-It runs, in order: typecheck, tests, production build, internal link check, required files check, and sensitive pattern scan. The last line it prints is `check: ok`. CI runs the same command on every pull request.
+It runs, in order: sensitive pattern scan, typecheck, tests, production build, internal link check, and required files check. The last line it prints is `check: ok`. CI runs the same command on every pull request.
 
 - **Required files.** `/assets/resume.pdf`, `/assets/resume_eng.pdf`, `404.html`, and `index.html` must be in the build. The resume URLs are linked from outside the site.
 - **Sensitive patterns.** `content/`, `public/`, and `app/` must not contain a work email or account, a local home path, or a credential. Binary files are skipped. Exceptions go in `config/sensitive-allow.json`.
