@@ -150,6 +150,10 @@ export const convertBody = (body) => {
 };
 
 const IMAGE_DIR = '/assets/img/';
+// The only image folders the import owns and replaces; anything else under
+// public/assets/img is left alone.
+const IMAGE_FOLDERS = ['blog', 'projects'];
+const isImportedImage = (url) => IMAGE_FOLDERS.some((folder) => url.startsWith(`${IMAGE_DIR}${folder}/`));
 const MARKDOWN_IMAGE = /!\[([^\]]*)\]\((\/[^)\s]+)\)/g;
 
 const exists = async (path) => (await stat(path).catch(() => undefined))?.isFile() ?? false;
@@ -162,7 +166,7 @@ const exists = async (path) => (await stat(path).catch(() => undefined))?.isFile
 const resolveImages = async (text, source, assets) => {
   const replacements = new Map();
   for (const [image, alt, url] of text.matchAll(MARKDOWN_IMAGE)) {
-    if (url.startsWith(IMAGE_DIR) && (await exists(join(source, url)))) assets.add(url);
+    if (isImportedImage(url) && (await exists(join(source, url)))) assets.add(url);
     else replacements.set(image, alt);
   }
 
@@ -188,6 +192,7 @@ const listPosts = async (source) => {
 const renderPost = async ({ path, tag, date }, source, assets) => {
   // Masked before conversion, so a placeholder in prose gets escaped like any other `<`.
   const { data, body } = parseFrontmatter(mask(await readFile(path, 'utf8')));
+  if (!data.title) fail(`${path}: no title`);
   const frontmatter = [
     '---',
     `title: ${yamlString(data.title)}`,
@@ -227,7 +232,7 @@ const renderProject = async ({ path }, source, assets) => {
   const date = isoDate(data.date);
   if (!date) fail(`${path}: cannot read date "${data.date}"`);
   // The /projects card needs it, so a project without a copyable one stops the import.
-  if (!data.screenshot.startsWith(IMAGE_DIR) || !(await exists(join(source, data.screenshot)))) {
+  if (!isImportedImage(data.screenshot) || !(await exists(join(source, data.screenshot)))) {
     fail(`${path}: screenshot ${data.screenshot} is missing`);
   }
   assets.add(data.screenshot);
@@ -304,10 +309,16 @@ const projects = await Promise.all(
 const images = await Promise.all(
   [...assets].sort().map(async (url) => [url.slice(IMAGE_DIR.length), await readFile(join(source, url))]),
 );
+const imageDirs = IMAGE_FOLDERS.map((folder) => [
+  join(out, `public${IMAGE_DIR}${folder}`),
+  images
+    .filter(([name]) => name.startsWith(`${folder}/`))
+    .map(([name, data]) => [name.slice(folder.length + 1), data]),
+]);
 const written = await replaceDirs([
   [join(out, 'content/blog'), files],
   [join(out, 'content/projects'), projects],
-  [join(out, `public${IMAGE_DIR.slice(0, -1)}`), images],
+  ...imageDirs,
 ]);
 if (!written) process.exit(1);
 console.log(`OK: imported ${files.length} posts, ${projects.length} projects, and ${images.length} images`);

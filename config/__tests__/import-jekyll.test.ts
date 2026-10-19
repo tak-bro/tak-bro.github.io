@@ -165,7 +165,7 @@ describe('import-jekyll', () => {
 
     expect(result.code).toBe(1);
     expect(await blogFiles()).toEqual(['stale.mdx']);
-    await expect(readdir(join(dir!, 'site/public/assets/img'))).rejects.toThrow();
+    await expect(readdir(join(dir!, 'site/public/assets/img/blog'))).rejects.toThrow();
   });
 
   it('refuses a source root without posts', async () => {
@@ -293,6 +293,30 @@ describe('import-jekyll', () => {
     const result = await importPosts();
     expect(result.code).toBe(1);
     expect(result.output).toContain('screenshot /assets/img/projects/bare/01.png is missing');
+  });
+
+  it('replaces only its own image folders and keeps other files under public/assets/img', async () => {
+    const { importPosts, out } = await setup({
+      'etc/_posts/2015-03-08-pics.md': post('그림', '![t](/assets/img/blog/t.gif)'),
+      'assets/img/blog/t.gif': 'GIF89a',
+    });
+    await mkdir(join(out, 'public/assets/img/blog'), { recursive: true });
+    await writeFile(join(out, 'public/assets/img/blog/stale.gif'), 'old');
+    await writeFile(join(out, 'public/assets/img/hand-added.png'), 'mine');
+
+    expect((await importPosts()).code).toBe(0);
+    expect(await readdir(join(out, 'public/assets/img/blog'))).toEqual(['t.gif']);
+    await expect(readFile(join(out, 'public/assets/img/hand-added.png'), 'utf8')).resolves.toBe('mine');
+  });
+
+  it('refuses a post without a title', async () => {
+    const { importPosts } = await setup({
+      'etc/_posts/2015-03-08-untitled.md': ['---', 'layout: post', '---', '', '본문', ''].join('\n'),
+    });
+
+    const result = await importPosts();
+    expect(result.code).toBe(1);
+    expect(result.output).toContain('untitled.md: no title');
   });
 
   it('produces identical output when run twice', async () => {
