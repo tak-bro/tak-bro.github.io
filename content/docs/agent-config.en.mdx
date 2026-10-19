@@ -1,0 +1,90 @@
+---
+title: Agent config
+description: How Claude Code, pi, and opencode share the rules, hooks, and subagents in one repo.
+---
+
+I keep my coding agent config in one repo, `agent-config`. Three harnesses read it through symlinks: Claude Code, pi, and opencode. The repo is private, so you cannot clone it as is. The install script, the command denylist, and the review subagent definition are shown in full below. The skill pipeline that takes one task from plan to merge is covered separately in the workflow guide.
+
+## How it works
+
+### Three harnesses read one repo
+
+`install.sh` symlinks each part of the repo to the place its harness looks for it. On a new Mac, step 4 of [Mac setup](./setup.mdx) runs this script.
+
+| Repo | Linked to | Harness |
+|---|---|---|
+| `claude/<item>` | `~/.claude/<item>` | Claude Code |
+| `agent-skills/*` | `~/.agents/skills/<name>` | pi, opencode |
+| `pi/home/*` | `~/.pi/agent/*` | pi |
+| `opencode/*` | `~/.config/opencode/*` | opencode (only when that directory exists) |
+
+It links `~/.claude` item by item, not as a whole. `~/.claude` also holds machine state that Claude Code writes itself (session history, credentials). Linking the whole directory would put that state inside the repo.
+
+`settings.json` is not linked. It is copied once, the first time. Claude Code rewrites this file in place. Instead, a hook reports the difference between the repo copy and the real file when a session starts.
+
+### Rules ask, hooks block
+
+Rule files are instructions the model reads. Shared rules (git, commit messages, how to reply, coding discipline) live in one harness-neutral file. Claude Code imports that file from `CLAUDE.md`, and opencode reads the same file through `instructions` in `opencode.json`. pi keeps a summary of the same rules in its own system prompt addendum. Only what differs per harness (tool names, how skills are called) goes in a per-harness file.
+
+The model can break a rule. What must not happen is blocked by a hook. A hook is a script that runs before or after a tool call. If a hook that runs before the call exits with 2, the call does not run. For example, "commit messages follow Conventional Commits" is a rule, and a hook also blocks a `git commit` with the wrong format.
+
+### Subagents pin their model
+
+Exploring, reviewing, and performance analysis go to subagents. Each subagent definition sets `model:`. Only `reviewer`, which gives the verdict, is `opus`. The other 8 (exploring, simplifying, performance, design, and so on) are `sonnet`. Changing the main session's model does not change the subagents' cost or behavior.
+
+## My config
+
+### Install script
+
+The header comment sums up the link policy. A correct link is left alone, a broken link is replaced, and any other file is moved to `<item>.bak-<time>` before linking. So running it again is safe.
+
+<include lang="sh" meta='title="install.sh"'>../snippets/agent-config/install.sh</include>
+
+### Hooks
+
+These are the main hooks wired in the Claude Code `settings.json`.
+
+| Event | Hook | What it does |
+|---|---|---|
+| PreToolUse (Bash, Monitor) | `deny-dangerous.sh` | Blocks irreversible commands (denylist below). Also blocks the hook bypass flag `git commit --no-verify` |
+| PreToolUse (Bash, Monitor) | `commit-convention.py` | Blocks a commit that is not in Conventional Commits format or has an AI co-author trailer |
+| PreToolUse (Bash) | `rtk-guarded.sh` | Rewrites commands to forms with shorter output, then checks the rewritten command against the denylist again |
+| PreToolUse (Read, Bash) | `read-guard.sh` | Blocks reading a very large file whole. Reads with a range and subagents pass |
+| PostToolUse | `tool-output-trim.sh` | Shrinks tool output over 1 KB |
+| PostToolUse, PostToolUseFailure, Stop | `completion-gate.py` | Catches a "done" claim when no test, lint, or typecheck has passed since the last code edit |
+| PreCompact | `compact-gate.py` | Allows automatic context compaction only at a phase boundary (PR created, merged, and so on). It makes an exception when the context is about to overflow |
+| SessionStart | `settings-sync.py` | Reports the difference between the repo's `settings.json` and the real file |
+
+In opencode, one plugin runs some of the same hook scripts (the denylist, commit format, output trimming, and others) with the same input and the same exit 2 rule. In pi, its own extension runs a copy of the hooks.
+
+### Command denylist
+
+This is the regex list that `deny-dangerous.sh` reads. It blocks only commands that cannot be undone, such as losing data, wiping a disk, or overwriting a protected branch. Recoverable commands such as `rm -rf node_modules` and `git clean` are not blocked, because blocking too much makes the agent useless. The list is a seatbelt, not a sandbox. It cannot block a command written to get around the regexes.
+
+<include lang="sh" meta='title="claude/hooks/dangerous-patterns.txt"'>../snippets/agent-config/hooks/dangerous-patterns.txt</include>
+
+### Review subagent
+
+`reviewer` is the subagent that runs reviews. The caller says what to look at, and this file holds only the execution constraints. It does not change the code under review. It returns findings only, and the caller decides whether the change passes.
+
+<include lang="text" meta='title="claude/agents/reviewer.md"'>../snippets/agent-config/agents/reviewer.md</include>
+
+## Check
+
+1. See what would be linked without changing anything.
+
+```sh
+bash install.sh --dry-run
+```
+
+2. Check that the items in `~/.claude` point into the repo.
+
+```sh
+ls -l ~/.claude   # hooks, agents, skills, CLAUDE.md, and others point to <agent-config checkout>/claude/...
+```
+
+3. Run the command guard's regression test. The last line must be `failed: 0`.
+
+```sh
+bash ~/.claude/hooks/test-guard.sh
+```

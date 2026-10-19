@@ -78,7 +78,7 @@ task dot:check
 # 11. Log in to the pi agent and run it once. The steps are in the pi guide of the agent config repo
 ```
 
-My own order has one more step that adds a personal API key file. It is left out here.
+My own order has one more step that adds a personal API key file. It is left out here. What the agent config link in step 4 sets up is in the [Agent config](./agent-config.mdx) guide.
 
 The repo path is fixed at `~/workspace/tak-bro/dotfiles`. The symlinks and launchd jobs point at it, and the check script verifies that each symlink points at this checkout.
 
@@ -92,7 +92,7 @@ The repo path is fixed at `~/workspace/tak-bro/dotfiles`. The symlinks and launc
 | Shell | Oh My Zsh, zsh-syntax-highlighting and zsh-autosuggestions, Powerlevel10k |
 | Runtimes | NVM + Node LTS + global npm packages, Bun |
 | Config links | Symlinks, copies of the secret templates, pyenv global version |
-| Agents | Link `~/.claude`, `~/.agents`, and `~/.pi` to the agent config repo (needs SSH, so deferred on a new Mac) |
+| Agents | Link `~/.claude`, `~/.agents`, and `~/.pi` (and `~/.config/opencode` when it exists) to the agent config repo (needs SSH, so deferred on a new Mac) |
 | Scheduled jobs | Register the launchd plists in the repo |
 | Extensions | gh extensions, fzf key bindings |
 | macOS | Run `macos-defaults.sh` |

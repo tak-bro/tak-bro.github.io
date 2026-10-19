@@ -4,5 +4,8 @@
   { "repo": "dotfiles", "from": "ghostty/config", "to": "ghostty/config" },
   { "repo": "dotfiles", "from": "nvim/config/lua/config/settings.lua", "to": "nvim/settings.lua" },
   { "repo": "dotfiles", "from": "Brewfile", "to": "Brewfile" },
-  { "repo": "dotfiles", "from": "macos-defaults.sh", "to": "macos-defaults.sh" }
+  { "repo": "dotfiles", "from": "macos-defaults.sh", "to": "macos-defaults.sh" },
+  { "repo": "agent-config", "from": "install.sh", "to": "install.sh" },
+  { "repo": "agent-config", "from": "claude/hooks/dangerous-patterns.txt", "to": "hooks/dangerous-patterns.txt" },
+  { "repo": "agent-config", "from": "claude/agents/reviewer.md", "to": "agents/reviewer.md" }
 ]

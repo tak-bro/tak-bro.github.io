@@ -30,7 +30,7 @@ const en: HomeCopy = {
   recentPostsHeading: 'Recent posts (Korean)',
   allPostsLabel: 'All posts',
   guides: [
-    { slug: 'agent-config', title: 'Agent config', blurb: 'Rules, hooks, and skills for Claude Code, pi, and opencode.' },
+    { slug: 'agent-config', title: 'Agent config', blurb: 'Rules, hooks, and subagents for Claude Code, pi, and opencode.' },
     { slug: 'workflow', title: 'Workflow', blurb: 'How a task goes from plan to merged PR.' },
     { slug: 'herdr', title: 'Herdr', blurb: 'Terminal workspace setup and its keyboard shortcuts.' },
     { slug: 'keymaps', title: 'Keymaps', blurb: 'macOS keyboard defaults, Ghostty keys, Karabiner, and LazyVim.' },
@@ -49,7 +49,7 @@ const ko: HomeCopy = {
   recentPostsHeading: '최근 글',
   allPostsLabel: '전체 글',
   guides: [
-    { slug: 'agent-config', title: '에이전트 설정', blurb: 'Claude Code·pi·opencode 의 규칙·훅·스킬.' },
+    { slug: 'agent-config', title: '에이전트 설정', blurb: 'Claude Code·pi·opencode 의 규칙·훅·서브에이전트.' },
     { slug: 'workflow', title: '워크플로우', blurb: '작업 하나가 계획에서 머지까지 가는 길.' },
     { slug: 'herdr', title: 'Herdr', blurb: '터미널 작업 공간 설정과 단축키.' },
     { slug: 'keymaps', title: '키맵', blurb: 'macOS 키보드 기본값·Ghostty 키·Karabiner·LazyVim.' },

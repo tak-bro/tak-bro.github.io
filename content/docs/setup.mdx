@@ -78,7 +78,7 @@ task dot:check
 # 11. pi 에이전트 인증과 첫 실행. 절차는 에이전트 설정 레포의 pi 가이드에 있다
 ```
 
-원래 순서에는 개인 API 키 파일 하나를 넣는 단계가 더 있다. 여기서는 뺐다.
+원래 순서에는 개인 API 키 파일 하나를 넣는 단계가 더 있다. 여기서는 뺐다. 4번의 에이전트 설정 연결이 무엇을 거는지는 [에이전트 설정](./agent-config.mdx) 가이드에 있다.
 
 레포 경로는 `~/workspace/tak-bro/dotfiles` 로 고정한다. 심링크와 launchd 잡이 이 경로를 가리키고, 검사 스크립트는 심링크가 이 체크아웃을 가리키는지까지 대조한다.
 
@@ -92,7 +92,7 @@ task dot:check
 | 셸 | Oh My Zsh, zsh-syntax-highlighting·zsh-autosuggestions, Powerlevel10k |
 | 런타임 | NVM + Node LTS + 전역 npm 패키지, Bun |
 | 설정 연결 | 심링크, 시크릿 템플릿 복사, pyenv 전역 버전 |
-| 에이전트 | `~/.claude`·`~/.agents`·`~/.pi` 를 에이전트 설정 레포에 연결(SSH 필요 — 새 맥에서는 보류) |
+| 에이전트 | `~/.claude`·`~/.agents`·`~/.pi`(opencode 는 `~/.config/opencode` 가 있을 때)를 에이전트 설정 레포에 연결(SSH 필요 — 새 맥에서는 보류) |
 | 주기 작업 | 레포에 있는 launchd plist 등록 |
 | 확장 | gh 확장, fzf 키바인딩 |
 | macOS | `macos-defaults.sh` 실행 |
