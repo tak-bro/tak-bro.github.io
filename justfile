@@ -11,3 +11,7 @@ sync-configs:
 # Scan published sources for sensitive patterns.
 check-sensitive:
     node scripts/check-sensitive.mjs
+
+# Run every gate CI runs: typecheck, tests, build, links, required files, sensitive scan.
+check:
+    pnpm check

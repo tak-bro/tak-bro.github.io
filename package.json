@@ -13,7 +13,8 @@
     "test": "vitest run",
     "check:links": "node scripts/check-docs-links.mjs",
     "check:required": "node scripts/check-required-files.mjs",
-    "check:sensitive": "node scripts/check-sensitive.mjs"
+    "check:sensitive": "node scripts/check-sensitive.mjs",
+    "check": "pnpm typecheck && pnpm test && pnpm build && pnpm check:links && pnpm check:required && pnpm check:sensitive && echo 'check: ok'"
   },
   "dependencies": {
     "@react-router/node": "7.18.2",
