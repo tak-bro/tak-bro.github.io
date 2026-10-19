@@ -2,7 +2,7 @@ import { reactRouter } from '@react-router/dev/vite';
 import tailwindcss from '@tailwindcss/vite';
 import { fumadocsMdx } from 'fumadocs-mdx/vite';
 import { defineConfig } from 'vite';
-import { docsRouteReload } from './config/docs-route-reload.ts';
+import { contentRouteReload } from './config/content-route-reload.ts';
 import { assertBuildEnv } from './config/env.ts';
 
 export default defineConfig(({ command, mode }) => {
@@ -13,7 +13,7 @@ export default defineConfig(({ command, mode }) => {
       fumadocsMdx(),
       tailwindcss(),
       reactRouter(),
-      docsRouteReload({
+      contentRouteReload({
         contentDirs: ['docs', 'blog', 'projects'].map((dir) => `${import.meta.dirname}/content/${dir}`),
         routesFile: `${import.meta.dirname}/app/routes.ts`,
       }),

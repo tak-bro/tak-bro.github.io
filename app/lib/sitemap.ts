@@ -36,11 +36,13 @@ export const sitemapEntries = async (): Promise<SitemapEntry[]> => {
   );
 
   // Korean only: no alternates, and the frontmatter date stands in for git's.
+  const dated = (pages: { url: string; data: { date: string } }[]): SitemapEntry[] =>
+    pages.map((page) => ({ alternates: [], lastModified: new Date(page.data.date), path: page.url }));
   const collections = [
     { alternates: [], path: BLOG_ROUTE },
-    ...blogPosts().map((post) => ({ alternates: [], lastModified: new Date(post.data.date), path: post.url })),
+    ...dated(blogPosts()),
     { alternates: [], path: PROJECTS_ROUTE },
-    ...projectPages().map((page) => ({ alternates: [], lastModified: new Date(page.data.date), path: page.url })),
+    ...dated(projectPages()),
   ];
 
   return [...homes, ...pages, ...collections];

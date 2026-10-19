@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isContentPageFile } from '../docs-route-reload';
+import { isContentPageFile } from '../content-route-reload';
 
 // Routes are generated from the content files (app/routes.ts), so adding or
 // deleting one must reload the route config; editing one must not.

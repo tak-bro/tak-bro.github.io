@@ -39,8 +39,10 @@ export const blogSource = loader({
   baseUrl: BLOG_ROUTE,
 });
 
-/** Newest first. */
-export const blogPosts = () => [...blogSource.getPages()].sort((a, b) => b.data.date.localeCompare(a.data.date));
+const newestFirst = <Page extends { data: { date: string } }>(pages: Page[]): Page[] =>
+  [...pages].sort((a, b) => b.data.date.localeCompare(a.data.date));
+
+export const blogPosts = () => newestFirst(blogSource.getPages());
 
 export const projects = defineDocs({
   // String literal for the same reason as `docs` above.
@@ -57,5 +59,4 @@ export const projectsSource = loader({
   baseUrl: PROJECTS_ROUTE,
 });
 
-/** Newest first. */
-export const projectPages = () => [...projectsSource.getPages()].sort((a, b) => b.data.date.localeCompare(a.data.date));
+export const projectPages = () => newestFirst(projectsSource.getPages());

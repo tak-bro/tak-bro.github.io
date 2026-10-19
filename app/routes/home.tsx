@@ -16,6 +16,8 @@ export const meta = ({ location }: Route.MetaArgs) => {
   ];
 };
 
+const RECENT_POSTS = 5;
+
 // Cards only for guides that exist; check:links fails on a card to an unwritten one.
 export const loader = ({ request }: Route.LoaderArgs) => {
   const lang = localeFromPath(requestPath(request));
@@ -27,7 +29,7 @@ export const loader = ({ request }: Route.LoaderArgs) => {
       .filter((slug) => source.getPage([slug], lang) !== undefined),
     // Korean only, so the English home links the same Korean posts.
     recentPosts: blogPosts()
-      .slice(0, 5)
+      .slice(0, RECENT_POSTS)
       .map((post) => ({ url: post.url, title: post.data.title, date: post.data.date })),
   };
 };

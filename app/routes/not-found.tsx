@@ -19,7 +19,6 @@ const NotFound = () => {
   const { pathname } = useLocation();
   const lang = localeFromPath(pathname);
   const copy = notFoundCopy(lang);
-  // A missing blog post has no English counterpart either, so no switcher there.
 
   return (
     <HomeLayout {...baseOptions({ lang, localized: isLocalizedPath(pathname) })}>

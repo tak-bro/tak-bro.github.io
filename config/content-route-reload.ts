@@ -13,8 +13,8 @@ export const isContentPageFile = (file: string, contentDirs: readonly string[]):
  * imports changes. A new page would otherwise 404 until the server restarts.
  * Touching routes.ts is the change the dev server already reacts to.
  */
-export const docsRouteReload = ({ contentDirs, routesFile }: { contentDirs: string[]; routesFile: string }): Plugin => ({
-  name: 'docs-route-reload',
+export const contentRouteReload = ({ contentDirs, routesFile }: { contentDirs: string[]; routesFile: string }): Plugin => ({
+  name: 'content-route-reload',
   apply: 'serve',
   configureServer(server) {
     const dirs = contentDirs.map((dir) => resolve(dir));
