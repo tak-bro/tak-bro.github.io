@@ -25,10 +25,6 @@ export interface HomeCopy {
   readonly resumeHref: string;
   readonly guidesHeading: string;
   readonly guideGroups: readonly HomeGuideGroup[];
-  readonly projectsHeading: string;
-  readonly allProjectsLabel: string;
-  readonly blogHeading: string;
-  readonly allPostsLabel: string;
   readonly codeLicense: string;
   readonly contentLicense: string;
   readonly newTabLabel: string;
@@ -49,10 +45,6 @@ const en: HomeCopy = {
     { id: 'agents', heading: 'Coding agents' },
     { id: 'machine', heading: 'Terminal and Mac' },
   ],
-  projectsHeading: 'Projects (Korean)',
-  allProjectsLabel: 'All projects',
-  blogHeading: 'Blog archive (Korean)',
-  allPostsLabel: 'All posts',
   codeLicense: 'Code: MIT',
   contentLicense: 'Content: CC BY 4.0',
   newTabLabel: '(opens in a new tab)',
@@ -79,10 +71,6 @@ const ko: HomeCopy = {
     { id: 'agents', heading: '코딩 에이전트' },
     { id: 'machine', heading: '터미널과 맥' },
   ],
-  projectsHeading: '프로젝트',
-  allProjectsLabel: '전체 프로젝트',
-  blogHeading: '블로그 아카이브',
-  allPostsLabel: '전체 글',
   codeLicense: '코드: MIT',
   contentLicense: '글: CC BY 4.0',
   newTabLabel: '(새 탭)',

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { blogPosts, homeCopy } from '../../lib';
+import { homeCopy } from '../../lib';
 import { loader } from '../home';
 
 type LoaderArgs = Parameters<typeof loader>[0];
@@ -17,21 +17,6 @@ describe('home loader', () => {
     // All five guides are written; a card without a docs page would link to a 404.
     expect(call('/').publishedGuides).toEqual(['agent-config', 'workflow', 'herdr', 'keymaps', 'setup']);
     expect(call('/en').publishedGuides).toEqual(['agent-config', 'workflow', 'herdr', 'keymaps', 'setup']);
-  });
-});
-
-describe('home sections', () => {
-  it('shows at most three projects, newest first', () => {
-    const projects = call('/').recentProjects;
-    expect(projects.length).toBeGreaterThan(0);
-    expect(projects.length).toBeLessThanOrEqual(3);
-    expect(projects.map((project) => project.date)).toEqual([...projects.map((project) => project.date)].sort().reverse());
-    expect(projects[0].url).toMatch(/^\/projects\//);
-  });
-
-  it('labels the blog with the years its posts span', () => {
-    const dates = blogPosts().map((post) => post.data.date).sort();
-    expect(call('/').postYears).toEqual({ first: dates[0].slice(0, 4), last: dates.at(-1)?.slice(0, 4) });
   });
 });
 
