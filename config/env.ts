@@ -28,7 +28,7 @@ const STAGES = ['LOCAL', 'DEV', 'PROD'];
 /**
  * Fail when `VITE_ENV` is not one of the known stages.
  *
- * Only the exact value `PROD` allows indexing (`src/lib/site.ts`). A typo such as
+ * Only the exact value `PROD` allows indexing (`app/lib/site.ts`). A typo such as
  * `prod` would publish the real site with `noindex` on every page and no error.
  */
 export const assertStage = (env: Record<string, string | undefined>): void => {

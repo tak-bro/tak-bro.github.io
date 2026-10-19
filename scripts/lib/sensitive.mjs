@@ -1,5 +1,5 @@
-// Patterns that must never reach this public repo: work identity, local paths,
-// and credential shapes. Shared by check-sensitive.mjs and sync-configs.mjs.
+// Patterns that must never appear in published sources (content/, public/, app/)
+// or synced snippets: work identity, local paths, and credential shapes.
 
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { join } from 'node:path';

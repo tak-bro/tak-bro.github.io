@@ -32,7 +32,7 @@ const main = async () => {
     files = await listHtmlFiles(BUILD_DIR);
   } catch {
     console.error(`ERROR: no build output at ${relative(process.cwd(), BUILD_DIR)}`);
-    console.error('Run `pnpm --filter docs build` first.');
+    console.error('Run `pnpm build` first.');
     process.exit(1);
   }
 
