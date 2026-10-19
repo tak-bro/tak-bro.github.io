@@ -1,0 +1,246 @@
+# Taps
+#
+# homebrew/{core,bundle,cask-fonts} 는 여기 없다. 셋 다 이제 tap 대상이 아니고,
+# 새 머신에서 tap 하려 들면 실패한다 — core 는 JSON API 로 대체됐고, bundle 은
+# brew 에 내장됐으며, cask-fonts 는 homebrew/cask 로 병합돼 빈 저장소가 됐다.
+# nerd font cask 들은 homebrew/cask 에서 그대로 받아진다.
+#
+# tak-bro/aicommit2 와 tak-bro/core 도 뺐다. 전자는 private repo 라 인증 없는
+# HTTPS clone 이 실패하고(새 머신에서 설치가 여기서 멈춘다), 후자는 homebrew-core
+# 전체를 포크한 탭이라 코어 formula 를 넉 달 묵은 버전으로 가린다. aicommit2 는
+# 이제 homebrew/core 에 있으므로 둘 다 필요 없다.
+tap "lucaspickering/tap"   # slumber
+tap "supabase/tap"         # supabase CLI
+tap "nerv-sh/tap"          # nerv
+
+# ============================================
+# Version Control
+# ============================================
+brew "git"
+brew "git-lfs"
+brew "git-flow-next"   # git-flow 의 현행 구현. avh 판은 core 에 없고 git-flow 본체는 deprecated 다
+                       # (git-flow 와 conflicts — 둘을 같이 선언하면 안 된다)
+brew "git-filter-repo"
+brew "gh"              # GitHub CLI
+brew "jj"              # Jujutsu VCS
+
+# ============================================
+# Shell & Terminal
+# ============================================
+brew "zsh"
+brew "zsh-completions"
+brew "tmux"
+brew "tmuxinator"
+
+# ============================================
+# Editors
+# ============================================
+brew "neovim"
+
+# ============================================
+# Modern CLI Tools
+# ============================================
+brew "fzf"             # Fuzzy finder
+brew "ripgrep"         # Fast grep alternative
+brew "fd"              # Fast find alternative
+brew "bat"             # Cat with syntax highlighting
+brew "eza"             # Modern ls replacement
+brew "tlrc"            # tldr 공식 클라이언트. `tldr` 명령을 제공한다 (.zshrc 의 alias man="tldr")
+                       # 옛 tldr formula 는 unmaintained 로 disabled 돼 설치 자체가 거부된다
+brew "thefuck"         # Correct previous command
+brew "jq"              # JSON processor
+brew "fx"              # JSON viewer
+brew "navi"            # Interactive cheatsheet
+brew "tree"            # Directory tree viewer
+brew "tig"             # Git text interface
+brew "lazygit"         # Git TUI client
+brew "wifi-password"   # Get WiFi password
+brew "coreutils"       # GNU core utilities
+brew "cliclick"        # Mouse/keyboard clicks from CLI — `task iterm:*` layouts use it
+brew "nerv"            # Shell helper — .zshrc runs `nerv init zsh` when present
+brew "witr"            # "Why is this running?" — 떠 있는 프로세스의 출처를 되짚는다
+
+# ============================================
+# Development Tools
+# ============================================
+brew "node"
+brew "yarn"
+brew "pnpm"
+brew "watchman"        # File watching service
+brew "pre-commit"      # Git hook framework
+brew "go-task"         # Task runner
+brew "act"             # Run GitHub Actions locally
+brew "shellcheck"      # Shell linter — `task dot:lint` gates on this
+brew "scc"             # Code counter
+brew "pandoc"          # Document converter
+brew "md2pdf"          # Markdown to PDF
+
+# ============================================
+# Version Managers
+# ============================================
+brew "jenv"            # Java version manager
+brew "pyenv"           # Python version manager
+brew "uv"              # Python 도구 러너 — claude-mem 플러그인이 uvx 로 chroma-mcp 를 띄운다
+brew "chruby"          # Ruby version manager
+brew "ruby-install"
+
+# ============================================
+# HTTP & Network Tools
+# ============================================
+brew "wget"
+brew "httpie"          # User-friendly HTTP client
+brew "http-server"     # Simple HTTP server
+brew "awscurl"         # AWS signed HTTP requests
+brew "aws-sam-cli"     # AWS SAM CLI
+
+# ============================================
+# Container & DevOps
+# ============================================
+brew "docker", link: false
+
+# ============================================
+# Mobile Development
+# ============================================
+brew "cocoapods"       # iOS dependency manager
+brew "ios-deploy"      # iOS app deployment
+brew "fastlane"        # Mobile automation
+
+# ============================================
+# AI Tools
+# ============================================
+brew "aicommit2"       # AI commit message generator
+brew "gemini-cli"      # Gemini CLI
+brew "rtk"             # Rust Token Killer (Claude Code token savings)
+brew "herdr"           # 에이전트 멀티플렉서 — 설정은 herdr/config.toml
+
+# ============================================
+# Backend & Cloud
+# ============================================
+brew "supabase/tap/supabase"  # Supabase CLI
+
+# ============================================
+# Java Development
+# ============================================
+brew "openjdk"
+brew "openjdk@11"
+brew "openjdk@17"
+
+# ============================================
+# Database
+# ============================================
+brew "postgresql@14", restart_service: :changed
+
+# ============================================
+# Other Tools
+# ============================================
+brew "asciinema"       # Terminal session recorder
+brew "automake"
+brew "bison"
+brew "cryptography"
+brew "gdbm"
+brew "harfbuzz"
+brew "libffi"
+# brew "libgit2@1.7"   # disabled(unsupported) — 필요한 쪽이 있으면 최신 libgit2 를 쓴다
+brew "libyaml"
+brew "openssl@3"
+brew "rpm"
+brew "lucaspickering/tap/slumber"
+
+# ============================================
+# GUI Applications
+# ============================================
+
+# Terminals
+cask "warp"                    # Modern terminal
+cask "iterm2"                  # Feature-rich terminal
+cask "ghostty"                 # herdr 를 띄우는 터미널 — 설정은 ghostty/config
+
+# Productivity & Utilities
+cask "alfred"                  # Launcher & productivity
+cask "rectangle"               # 윈도우 관리. spectacle 은 homebrew/cask 에서 삭제돼 새 머신에 설치 불가
+cask "hiddenbar"               # Hide menu bar items
+cask "maccy"                   # Clipboard manager
+# cask "cornercal"             # disabled(unmaintained) — 설치 불가. 메뉴바 캘린더가 필요하면 대체재를 찾을 것
+cask "karabiner-elements"      # Keyboard customization
+cask "openinterminal-lite"     # Open terminal from Finder
+
+# Browsers — 셋 다 이 맥에 깔려 있어 옮긴다 (2026-08-09 /Applications 전수조사)
+cask "arc"
+cask "google-chrome"
+cask "naver-whale"             # 웨일. cask 가 있으므로 손으로 받을 필요 없다
+
+# Communication
+cask "slack"                   # Team communication
+cask "notion"
+cask "zoom"
+# cask "kakaotalk"             # cask 없음 (App Store 전용) — 손으로 깐다
+
+# Development Tools
+cask "visual-studio-code"      # Code editor
+cask "cursor"                  # AI 코드 에디터
+cask "docker-desktop"          # Docker GUI
+cask "dbeaver-community"       # Database management
+cask "postman"                 # API testing
+cask "ngrok"                   # Tunneling service
+cask "flipper"                 # 모바일 디버깅
+
+# Design & Collaboration
+cask "figma"
+cask "zeplin"
+
+# IDEs
+cask "intellij-idea"           # Ultimate — 첫 실행에 JetBrains 계정 로그인이 필요하다
+cask "kiro"                    # spec-driven IDE
+cask "trae"                    # AI IDE
+# cask "android-studio"        # 이 맥에 없다 — 안드로이드 작업이 생기면 주석을 푼다
+
+# AI Tools
+cask "claude-code"             # Claude Code CLI
+cask "claude"                  # Claude 데스크톱 앱
+cask "ollama-app"              # 로컬 LLM 런너. `ollama` 토큰이 이쪽으로 리다이렉트된다
+
+# Mobile Development
+cask "android-platform-tools"
+
+# Java Distributions
+cask "temurin@21"
+cask "zulu@17"
+
+# Other
+cask "basictex"                # LaTeX (for pandoc/md2pdf)
+cask "wine-stable"
+cask "gstreamer-runtime"
+cask "obsidian"                # 노트
+cask "iina"                    # 동영상 플레이어
+cask "omnidisksweeper"         # 디스크 용량 추적
+cask "qmk-toolbox"             # 키보드 펌웨어 플래싱
+cask "microsoft-excel"         # 첫 실행에 Microsoft 365 로그인이 필요하다
+
+# ============================================
+# Fonts
+# ============================================
+cask "font-d2coding"
+cask "font-hack-nerd-font"
+cask "font-meslo-lg-nerd-font"
+
+# ============================================
+# 이 맥에서 손으로 깐 것들
+# ============================================
+# repo 안의 파일이 참조하지는 않지만 `brew leaves` + `installed_on_request=true` 로
+# 확인된, 직접 골라 설치한 도구들이다. 새 맥을 같은 상태로 만드는 게 목적이므로 싣는다.
+brew "actionlint"      # GitHub Actions 워크플로 린터
+brew "vhs"             # 터미널 세션 GIF 레코더
+brew "yt-dlp"          # 동영상 다운로더
+brew "cmake"           # 네이티브 모듈 빌드
+brew "poppler"         # PDF 유틸 (pdftotext 등)
+brew "webp"            # cwebp/dwebp
+brew "fish"            # 보조 셸 — 기본 셸은 여전히 zsh
+brew "yadm"            # 다른 dotfiles 관리자. 이 repo와 역할이 겹치니 상태 관리에는 쓰지 말 것
+
+# ============================================
+# VS Code Extensions
+# ============================================
+# amazonwebservices.codewhisperer-for-command-line-companion 은 뺐다. Amazon Q CLI
+# 동반 확장이 마켓플레이스에서 내려가 `Extension ... not found` 로 실패하고, 그 실패가
+# brew bundle 전체를 red 로 만들어 설치가 3단계에서 멈춘다. 이 맥에도 안 깔려 있다.
+vscode "vscodevim.vim"

@@ -1,0 +1,132 @@
+onboarding = false
+[theme]
+name = "dracula"
+auto_switch = false
+
+# Sidebar sits one step darker than the Ghostty background (#1D1E27) so it
+# reads as its own panel. Dracula's neon state colours are swapped for pastels
+# so state icons and the sidebar row colours below share one palette.
+[theme.custom]
+accent = "#c6a0f6"
+green = "#a6da95"
+yellow = "#eed49f"
+red = "#ed8796"
+blue = "#8aadf4"
+teal = "#8bd5ca"
+peach = "#f5a97f"
+mauve = "#c6a0f6"
+sidebar_bg = "#17181f"
+active_row_bg = "#2a2c3a"
+selection_bg = "#44475a"
+
+[ui]
+agent_panel_sort = "spaces"
+status_indicators = "symbols"
+prompt_new_tab_name = false
+# The command entry prints nothing and so never shows: it is the timer that
+# keeps the sidebar's $branch token fresh (see pane-branch.sh).
+tab_bar_right = [
+  { type = "zoom" },
+  { type = "datetime", format = "%H:%M" },
+  { type = "command", command = "~/.config/herdr/pane-branch.sh", interval_seconds = 5, timeout_seconds = 3 },
+]
+tab_bar_right_separator = " · "
+
+# The spaces panel above already lists projects, so agent rows lead with who:
+# line 1 is the agent, coloured per kind, plus the state in words only when it
+# needs me (blocked, done) — the icon already carries idle and working.
+# Line 2 is the workspace and, off the default branch, the branch without its
+# type prefix (reported by pane-branch.sh), both faded.
+[ui.sidebar.agents]
+row_gap = 1
+rows = [
+  [
+    "state_icon",
+    { token = "agent", fg = "#8aadf4", bold = true, rules = [
+      { equals = "hwip cc", fg = "#f5a97f" },
+      { contains = "claude", ignore_case = true, fg = "#f5a97f" },
+      { equals = "hwip pi", fg = "#c6a0f6" },
+      { equals = "pi", fg = "#c6a0f6" },
+      { contains = "codex", ignore_case = true, fg = "#8bd5ca" },
+    ] },
+    { token = "state_text", rules = [
+      { starts_with = "blocked", fg = "#ed8796", bold = true },
+      { starts_with = "done", fg = "#a6da95" },
+      { starts_with = "", hide = true },
+    ] },
+  ],
+  [
+    { token = "workspace", fg = "#6e738d", bold = false },
+    { token = "$branch", fg = "#6e738d" },
+  ],
+]
+
+# Default branches fade out; working branches take a colour by prefix.
+[ui.sidebar.spaces]
+row_gap = 1
+rows = [
+  ["state_icon", { token = "workspace", fg = "#e4e6f5", bold = true }],
+  [
+    { token = "branch", fg = "#8aadf4", rules = [
+      { equals = "main", fg = "#6e738d" },
+      { equals = "master", fg = "#6e738d" },
+      { equals = "develop", fg = "#6e738d" },
+      { starts_with = "feat", fg = "#a6da95" },
+      { starts_with = "fix", fg = "#f5bde6" },
+      { starts_with = "hotfix", fg = "#ed8796" },
+    ] },
+    "git_status",
+  ],
+]
+
+[ui.sound]
+enabled = true
+
+[keys]
+prefix = "ctrl+space"
+
+# tabs
+new_tab = ["prefix+c", "cmd+t"]
+close_tab = ["prefix+shift+x", "cmd+shift+w"]
+previous_tab = ["prefix+p", "cmd+shift+["]
+next_tab = ["prefix+n", "cmd+shift+]"]
+switch_tab = ["prefix+1..9", "cmd+1..9"]
+
+# panes
+split_vertical = ["prefix+v", "cmd+d"]
+split_horizontal = ["prefix+minus", "cmd+shift+d"]
+close_pane = ["prefix+x", "cmd+w"]
+focus_pane_left = ["prefix+h", "cmd+alt+left"]
+focus_pane_down = ["prefix+j", "cmd+alt+down"]
+focus_pane_up = ["prefix+k", "cmd+alt+up"]
+focus_pane_right = ["prefix+l", "cmd+alt+right"]
+cycle_pane_next = ["prefix+tab", "cmd+]"]
+cycle_pane_previous = ["prefix+shift+tab", "cmd+["]
+zoom = ["prefix+z", "cmd+shift+enter"]
+resize_pane_left = "cmd+ctrl+left"
+resize_pane_down = "cmd+ctrl+down"
+resize_pane_up = "cmd+ctrl+up"
+resize_pane_right = "cmd+ctrl+right"
+
+# workspaces
+new_workspace = ["prefix+shift+n", "cmd+shift+n"]
+goto = ["prefix+g", "cmd+k"]
+previous_workspace = "cmd+shift+up"
+next_workspace = "cmd+shift+down"
+switch_workspace = ["prefix+shift+1..9", "alt+1..9"]
+toggle_sidebar = ["prefix+b", "cmd+b"]
+
+[[keys.command]]
+key = "cmd+shift+g"
+type = "popup"
+command = "lazygit"
+description = "lazygit"
+width = "90%"
+height = "90%"
+
+# Account picker (plugin rcosteira.account-switch): swaps the Claude Code / Codex login.
+[[keys.command]]
+key = "cmd+shift+a"
+type = "shell"
+command = "herdr plugin action invoke open --plugin rcosteira.account-switch"
+description = "accounts"

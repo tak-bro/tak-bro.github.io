@@ -1,0 +1,75 @@
+# --- herdr key table -------------------------------------------------------
+# 평소에는 Ghostty 기본 키(iTerm 과 거의 같음)가 그대로 동작한다.
+# herdr 테이블이 켜져 있을 때만 같은 키를 herdr 로 보낸다.
+# 값은 kitty keyboard protocol: <키 코드>;<1 + shift1 alt2 ctrl4 cmd8>u
+keybind = super+shift+h=activate_key_table:herdr
+keybind = herdr/super+shift+h=deactivate_key_table
+
+# tabs
+keybind = herdr/performable:super+t=csi:116;9u
+keybind = herdr/performable:super+shift+w=csi:119;10u
+keybind = herdr/performable:super+shift+[=csi:91;10u
+keybind = herdr/performable:super+shift+]=csi:93;10u
+keybind = herdr/performable:super+1=csi:49;9u
+keybind = herdr/performable:super+digit_1=csi:49;9u
+keybind = herdr/performable:super+2=csi:50;9u
+keybind = herdr/performable:super+digit_2=csi:50;9u
+keybind = herdr/performable:super+3=csi:51;9u
+keybind = herdr/performable:super+digit_3=csi:51;9u
+keybind = herdr/performable:super+4=csi:52;9u
+keybind = herdr/performable:super+digit_4=csi:52;9u
+keybind = herdr/performable:super+5=csi:53;9u
+keybind = herdr/performable:super+digit_5=csi:53;9u
+keybind = herdr/performable:super+6=csi:54;9u
+keybind = herdr/performable:super+digit_6=csi:54;9u
+keybind = herdr/performable:super+7=csi:55;9u
+keybind = herdr/performable:super+digit_7=csi:55;9u
+keybind = herdr/performable:super+8=csi:56;9u
+keybind = herdr/performable:super+digit_8=csi:56;9u
+keybind = herdr/performable:super+9=csi:57;9u
+keybind = herdr/performable:super+digit_9=csi:57;9u
+
+# panes
+keybind = herdr/performable:super+d=csi:100;9u
+keybind = herdr/performable:super+shift+d=csi:100;10u
+keybind = herdr/performable:super+w=csi:119;9u
+keybind = herdr/performable:super+[=csi:91;9u
+keybind = herdr/performable:super+]=csi:93;9u
+keybind = herdr/performable:super+shift+enter=csi:13;10u
+keybind = herdr/performable:super+alt+arrow_left=csi:1;11D
+keybind = herdr/performable:super+alt+arrow_down=csi:1;11B
+keybind = herdr/performable:super+alt+arrow_up=csi:1;11A
+keybind = herdr/performable:super+alt+arrow_right=csi:1;11C
+keybind = herdr/performable:super+ctrl+arrow_left=csi:1;13D
+keybind = herdr/performable:super+ctrl+arrow_down=csi:1;13B
+keybind = herdr/performable:super+ctrl+arrow_up=csi:1;13A
+keybind = herdr/performable:super+ctrl+arrow_right=csi:1;13C
+
+# workspaces, tools
+keybind = herdr/performable:super+shift+n=csi:110;10u
+keybind = herdr/performable:super+k=csi:107;9u
+keybind = herdr/performable:super+shift+arrow_up=csi:1;10A
+keybind = herdr/performable:super+shift+arrow_down=csi:1;10B
+keybind = herdr/performable:super+b=csi:98;9u
+keybind = herdr/performable:super+shift+g=csi:103;10u
+keybind = herdr/performable:super+shift+a=csi:97;10u
+
+# --- iTerm 과 맞추기 (herdr 밖) ---------------------------------------------
+keybind = super+arrow_up=scroll_page_lines:-1
+keybind = super+arrow_down=scroll_page_lines:1
+
+# --- 한글만 D2Coding (font-d2coding 설치 후) ---------------------------------
+font-codepoint-map = U+1100-U+11FF=D2Coding
+font-codepoint-map = U+3130-U+318F=D2Coding
+font-codepoint-map = U+AC00-U+D7AF=D2Coding
+
+# --- Look and feel ----------------------------------------------------------
+background = #1D1E27
+foreground = #FDFDFD
+font-size = 14
+window-padding-x = 10
+window-padding-y = 8
+cursor-style = bar
+cursor-style-blink = false
+scrollback-limit = 100000
+macos-option-as-alt = true

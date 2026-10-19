@@ -1,0 +1,137 @@
+---
+title: Mac setup
+description: The order I set up a new Mac in so it matches my current one, and why the order matters.
+---
+
+I set up a new Mac with one run of `install.sh` from my dotfiles repo and a few manual steps. This page lists that order. The dotfiles repo is private, so you cannot clone it as is. The package list (`Brewfile`) and the macOS defaults script are shown in full below.
+
+## How it works
+
+### The install script is safe to run again
+
+`install.sh` installs what is missing and upgrades what is already there, so running it again is how I update. Its first step pulls the dotfiles and agent config repos with `git pull --ff-only`, and if the script itself changed, it restarts with the new version. Config files are not copied. They are symlinks into the repo. Any file that would be overwritten is first moved to `~/.dotfiles.backup.<date>/`.
+
+### Some steps depend on order
+
+A new Mac has no SSH key. So the first clone uses HTTPS, and `install.sh` finishes with the steps that need SSH or a gh login skipped (linking the agent config, gh extensions). After I add the SSH key to GitHub, I link the agent config (step 4) and clone the work repos (step 6) by hand. Steps 7, 8 and 9 depend on the step 6 clone, so running them earlier skips them silently. Running `install.sh` again (step 8) finishes the steps the first run skipped.
+
+**`Installation Complete!` means the first run is done, not the whole setup.**
+
+### It asks for the password twice
+
+It asks for the `sudo` password once just before `brew bundle` and once just before the macOS defaults step. A background loop keeps the sudo timestamp fresh, so I only need to be at the keyboard for those two prompts and the rest runs unattended. If each cask asked on its own, the prompt would get buried in brew output and the install would look stuck.
+
+## My config
+
+### Order
+
+```sh
+# 0. Xcode Command Line Tools + Homebrew (needed before the clone)
+xcode-select --install
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+eval "$(/opt/homebrew/bin/brew shellenv)"
+brew install git
+
+# 1. Clone over HTTPS, since there is no SSH key yet
+git clone https://github.com/tak-bro/dotfiles.git ~/workspace/tak-bro/dotfiles
+cd ~/workspace/tak-bro/dotfiles
+
+# 2. First install. Takes about an hour
+./install.sh
+
+# 3. Create SSH keys and add them to my personal and work GitHub accounts
+./ssh/setup.sh
+ssh -T git@github.com
+
+# 4. Log in to gh once per account, then link the agent config repo
+gh auth login                            # personal account
+gh auth login                            # work account
+gh auth status                           # both accounts must show
+gh auth switch --user <personal account> # make the personal account active
+bash setup-claude-code-workspace.sh
+
+# 5. Fill in the secret files (table below)
+vi ~/.zshrc.local
+cp npm/.npmrc.template ~/.npmrc
+cp aicommit2/.aicommit2.template ~/.aicommit2
+cp aicommit2/.aipick.template ~/.aipick
+aws configure
+hwip login
+
+# 6. Clone the work repos
+./workspace/sync.sh
+
+# 7. Install codegraph and build the first index
+curl -fsSL https://raw.githubusercontent.com/colbymchenry/codegraph/main/install.sh | sh
+task dot:index
+
+# 8. Run install.sh again. The deferred steps run now
+./install.sh
+
+# 9. Step 8 registers the scheduled jobs (launchd). The check in step 10 shows their state
+
+# 10. Reload the shell, set up the prompt, run the check
+source ~/.zshrc
+p10k configure
+task dot:check
+
+# 11. Log in to the pi agent and run it once. The steps are in the pi guide of the agent config repo
+```
+
+My own order has one more step that adds a personal API key file. It is left out here. What the agent config link in step 4 sets up is in the [Agent config](./agent-config.mdx) guide.
+
+The repo path is fixed at `~/workspace/tak-bro/dotfiles`. The symlinks and launchd jobs point at it, and the check script verifies that each symlink points at this checkout.
+
+### What install.sh does
+
+| Step | What it does |
+|---|---|
+| Update | Pull the dotfiles and agent config repos, only when on the default branch |
+| Base tools | Check Xcode Command Line Tools, install Homebrew and its shellenv |
+| Packages | Install the whole Brewfile with `brew bundle` (upgrading outdated ones) |
+| Shell | Oh My Zsh, zsh-syntax-highlighting and zsh-autosuggestions, Powerlevel10k |
+| Runtimes | NVM + Node LTS + global npm packages, Bun |
+| Config links | Symlinks, copies of the secret templates, pyenv global version |
+| Agents | Link `~/.claude`, `~/.agents`, and `~/.pi` (and `~/.config/opencode` when it exists) to the agent config repo (needs SSH, so deferred on a new Mac) |
+| Scheduled jobs | Register the launchd plists in the repo |
+| Extensions | gh extensions, fzf key bindings |
+| macOS | Run `macos-defaults.sh` |
+
+The `install.sh` source is not shown here because it contains work account names.
+
+### Secrets stay out of the repo
+
+The repo holds no real values. Real values go in gitignored, machine-local files.
+
+| File | Source | What it holds |
+|---|---|---|
+| `~/.zshrc.local` | Template, copied by `install.sh` | PATH, aliases, and environment variables for this machine |
+| `~/.npmrc` | Template | npm token |
+| `~/.aicommit2`, `~/.aipick` | Template | LLM API keys |
+| `~/.aws/credentials` | Written by hand | AWS credentials |
+| `~/.gitconfig.local` | Written by hand | Per-machine git user (included by `.gitconfig`) |
+
+### Packages
+
+<include lang="ruby" meta='title="Brewfile"'>../snippets/dotfiles/Brewfile</include>
+
+### macOS defaults
+
+This builds on [mathiasbynens/dotfiles](https://github.com/mathiasbynens/dotfiles/blob/main/.macos) `.macos` with my own preferences. The keyboard part is explained in the [Keymaps](./keymaps.mdx) guide.
+
+<include lang="sh" meta='title="macos-defaults.sh"'>../snippets/dotfiles/macos-defaults.sh</include>
+
+## Check
+
+1. Run `task dot:check`. It gives the final verdict. A line left at Warn is a step that is actually missing.
+2. Check that a symlink points into the repo.
+
+```sh
+readlink ~/.config/ghostty/config   # <dotfiles checkout>/ghostty/config
+```
+
+3. Read one macOS default.
+
+```sh
+defaults read com.apple.finder ShowPathbar   # 1
+```

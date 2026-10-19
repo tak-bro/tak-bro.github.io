@@ -1,0 +1,73 @@
+---
+title: "Puton"
+description: "일상 속의 스타일을 공유하기 위한 블록체인 기반의 dApp"
+date: "2019-02-21"
+type: "side"
+screenshot: "/assets/img/projects/puton/01.png"
+links: [{"title":"Contest Announcement","url":"https://link.medium.com/vAwILANNTT"},{"title":"Github","url":"https://github.com/failnicely"}]
+---
+**NOTE**: Side Project with 5 team members
+
+## 1. Description
+
+- 진행기간: 2018.09 ~ 2019.02
+- 프로젝트 내용: 일상 속의 패션과 스타일을 공유하기 위한 블록체인 기반의 dApp
+- 역할: EOS 기반의 Smart Contract 개발
+- 사용한 Skill: `C++`, `BlockChain(EOS)`
+- 성과: EOSYS The 1st DApp Development Contest 2위 수상
+
+## 2. Code Snippet
+
+- Github: [https://github.com/failnicely/puton_contract](https://github.com/failnicely/puton_contract)
+
+```cpp
+void puton_service::cancellike(const account_name user, const uint64_t id)
+{
+    // check user permission
+    require_auth(user);
+
+    // check post on post_table
+    auto post_itr = post_table.find(id);
+    eosio_assert(post_itr != post_table.end(), "PostTable does not has id");
+
+    // check account on user_table
+    auto user_itr = user_table.find(user);
+    eosio_assert(user_itr != user_table.end(), "UserTable does not has a user");
+
+    // check liked
+    const int likedIndex = getIndex(user_itr->liked_rows, id);
+    eosio_assert(likedIndex != NULL_ID, "The user did not like this post");
+
+    // update liked_rows of user
+    user_table.modify(user_itr, _self, [&](auto &user) {
+        user.liked_rows.erase(user.liked_rows.begin() + likedIndex);
+    });
+
+    // update post_table
+    post_table.modify(post_itr, _self, [&](auto &post) {
+        post.like_cnt = post.like_cnt - 1;
+
+        // calculate time range
+        const bool is_author = (user == post.author);
+        const bool is_compensation_period = (post.created_at + THREE_DAYS > now());
+
+        if (!is_author && is_compensation_period) {
+            post.point = post.point - 1;
+        }
+    });
+
+    // debug print
+    print("cancel like post#", id);
+}
+```
+
+## 3. Images
+
+- 모바일 앱
+![](/assets/img/projects/puton/01.png)
+
+- Puton 서버 아키텍처
+![](/assets/img/projects/puton/02.png)
+
+- Bidding 웹 사이트
+![](/assets/img/projects/puton/07.png)

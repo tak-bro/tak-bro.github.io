@@ -1,0 +1,93 @@
+---
+title: "SUJI"
+description: "소상공인을 위한 오픈소스 웹, 모바일 POS 시스템"
+date: "2016-05-30"
+type: "side"
+screenshot: "/assets/img/projects/suji/01.png"
+links: [{"title":"Demo Link","url":"https://m.site.naver.com/qrcode/view.nhn?v=0fMig"},{"title":"Github","url":"https://github.com/suji-labs/suji"}]
+---
+**NOTE**: Side Project with 3 team members
+
+## 1. Description
+
+- 진행기간: 2015.12 ~ 2016.05
+- 프로젝트 내용: 소상공인을 위한 오픈소스 웹, 모바일 POS 시스템
+- 역할: 프론트엔드, 백엔드 개발
+- 사용한 Skill: `Node.js`, `Meteor.js`, `AngularJS`, `MariaDB`
+- 성과: Naver D2 Campus FEST 2015 결승 진출
+
+## 2. Code Snippet
+
+- Github: [https://github.com/suji-labs/suji](https://github.com/suji-labs/suji)
+    - Author: njir, tak-bro
+
+```javascript
+// products-list.controller.ng.js
+
+angular.module('sujiAngularApp').controller('ProductsListCtrl', function($scope) {
+    $scope.page = 1;
+    $scope.perPage = 3;
+    $scope.sort = {name_sort : 1};
+    $scope.orderProperty = '1';
+
+    $scope.helpers({
+        products: function() {
+            return Products.find({}, {
+                sort: $scope.getReactively('sort')
+            });
+        },
+        productsCount: function() {
+            return Counts.get('numberOfProducts');
+        }
+    });
+
+    $scope.subscribe('products', function() {
+        return [{
+            sort: $scope.getReactively('sort'),
+            limit: parseInt($scope.getReactively('perPage')),
+            skip: ((parseInt($scope.getReactively('page'))) - 1) * (parseInt($scope.getReactively('perPage')))
+        }, $scope.getReactively('search')];
+    });
+
+    $scope.save = function() {
+        if ($scope.form.$valid) {
+            Products.insert($scope.newProduct);
+            $scope.newProduct = undefined;
+        }
+    };
+
+    $scope.remove = function(product) {
+        Products.remove({_id:product.id});
+    };
+
+    $scope.pageChanged = function(newPage) {
+        $scope.page = newPage;
+    };
+
+    return $scope.$watch('orderProperty', function() {
+        if ($scope.orderProperty) {
+            $scope.sort = {
+                name_sort: parseInt($scope.orderProperty)
+            };
+        }
+    });
+});
+```
+
+## 3. Demo
+
+- 홍보 영상
+
+<VideoEmbed src="https://www.youtube.com/embed/zyoQs-_bHCQ?rel=0&hd=1" title="SUJI" />
+<br />
+
+- 시연 영상
+
+<VideoEmbed src="https://www.youtube.com/embed/MwMT5YzClQQ?rel=0&hd=1" title="SUJI" />
+
+
+## 4. Images
+
+![](/assets/img/projects/suji/02.png)
+<br />
+![](/assets/img/projects/suji/03.png)
