@@ -7,6 +7,11 @@
 @source '../app';
 @source '../content';
 
+/* fumadocs' neutral muted text (#737373) falls under 4.5:1 on its light card and accent backgrounds. */
+:root:not(.dark) {
+  --color-fd-muted-foreground: hsl(0, 0%, 35%);
+}
+
 @theme {
   --font-sans: 'Pretendard Variable', ui-sans-serif, system-ui, sans-serif;
 }

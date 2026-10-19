@@ -1,19 +1,21 @@
 import { describe, expect, it } from 'vitest';
-import { isDocsPageFile } from '../docs-route-reload';
+import { isContentPageFile } from '../docs-route-reload';
 
-// Routes are generated from the docs files (app/routes.ts), so adding or
+// Routes are generated from the content files (app/routes.ts), so adding or
 // deleting one must reload the route config; editing one must not.
-describe('isDocsPageFile', () => {
-  const dir = '/repo/content/docs';
+describe('isContentPageFile', () => {
+  const dirs = ['/repo/content/docs', '/repo/content/blog'];
 
-  it('matches a page file anywhere under the docs directory', () => {
-    expect(isDocsPageFile('/repo/content/docs/index.mdx', dir)).toBe(true);
-    expect(isDocsPageFile('/repo/content/docs/herdr/keyboard.en.mdx', dir)).toBe(true);
+  it('matches a page file anywhere under any content directory', () => {
+    expect(isContentPageFile('/repo/content/docs/index.mdx', dirs)).toBe(true);
+    expect(isContentPageFile('/repo/content/docs/herdr/keyboard.en.mdx', dirs)).toBe(true);
+    expect(isContentPageFile('/repo/content/blog/eos-tutorial.mdx', dirs)).toBe(true);
   });
 
   it('ignores other files and other directories', () => {
-    expect(isDocsPageFile('/repo/content/docs/meta.json', dir)).toBe(false);
-    expect(isDocsPageFile('/repo/content/docs-old/index.mdx', dir)).toBe(false);
-    expect(isDocsPageFile('/repo/app/routes.ts', dir)).toBe(false);
+    expect(isContentPageFile('/repo/content/docs/meta.json', dirs)).toBe(false);
+    expect(isContentPageFile('/repo/content/docs-old/index.mdx', dirs)).toBe(false);
+    expect(isContentPageFile('/repo/content/snippets/x.mdx', dirs)).toBe(false);
+    expect(isContentPageFile('/repo/app/routes.ts', dirs)).toBe(false);
   });
 });

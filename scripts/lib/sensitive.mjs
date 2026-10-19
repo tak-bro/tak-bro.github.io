@@ -13,6 +13,10 @@ export const PATTERNS = [
   { name: 'sk-ant-', regex: /sk-ant-[A-Za-z0-9]/ },
   { name: 'AKIA', regex: /AKIA[0-9A-Z]{16}/ },
   { name: 'PRIVATE KEY', regex: /BEGIN .*PRIVATE KEY/ },
+  // EOSIO keys from the old blockchain posts: WIF private keys and wallet passwords.
+  { name: 'WIF private key', regex: /\b5[HJK][1-9A-HJ-NP-Za-km-z]{49}\b/ },
+  { name: 'wallet password', regex: /\bPW5[1-9A-HJ-NP-Za-km-z]{40,}/ },
+  { name: 'PVT_K1 private key', regex: /\bPVT_K1_[1-9A-HJ-NP-Za-km-z]{40,}/ },
 ];
 
 const BINARY_PROBE = 8192;

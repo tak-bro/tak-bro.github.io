@@ -12,3 +12,9 @@ export const frontmatterSchema = pageSchema.extend({
   title: text,
   description: text,
 });
+
+/** A blog post: the date orders the list and stands in for git's lastModified. */
+export const blogFrontmatterSchema = frontmatterSchema.extend({
+  date: z.iso.date(),
+  tags: z.array(text).min(1),
+});

@@ -1,6 +1,6 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 import { i18n } from './i18n';
-import { APP_NAME } from './shared';
+import { APP_NAME, BLOG_ROUTE } from './shared';
 
 // Passing the config (not just `true`) is what puts the language switcher in the
 // layout chrome; without it /en is reachable by URL only. The active locale comes
@@ -13,6 +13,9 @@ export const baseOptions = (): BaseLayoutProps => ({
       </>
     ),
   },
-  links: [{ text: 'GitHub', url: 'https://github.com/tak-bro', external: true }],
+  links: [
+    { text: '블로그', url: BLOG_ROUTE },
+    { text: 'GitHub', url: 'https://github.com/tak-bro', external: true },
+  ],
   i18n,
 });
