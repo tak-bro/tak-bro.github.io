@@ -13,9 +13,9 @@ describe('home loader', () => {
   });
 
   it('lists only guides whose docs page exists', () => {
-    // Only the Herdr and keymaps guides are written so far; other cards would link to a 404.
-    expect(call('/').publishedGuides).toEqual(['herdr', 'keymaps']);
-    expect(call('/en').publishedGuides).toEqual(['herdr', 'keymaps']);
+    // Only the Herdr, keymaps and setup guides are written so far; other cards would link to a 404.
+    expect(call('/').publishedGuides).toEqual(['herdr', 'keymaps', 'setup']);
+    expect(call('/en').publishedGuides).toEqual(['herdr', 'keymaps', 'setup']);
   });
 });
 

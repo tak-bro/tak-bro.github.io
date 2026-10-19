@@ -1,0 +1,137 @@
+---
+title: 맥 셋업
+description: 새 맥을 지금 쓰는 맥과 같은 상태로 만드는 순서와, 그 순서인 이유.
+---
+
+새 맥은 dotfiles 레포의 `install.sh` 한 번과 손으로 하는 몇 단계로 세팅한다. 이 페이지는 그 순서를 적는다. dotfiles 레포는 비공개라서 그대로 clone 할 수는 없다. 대신 패키지 목록(`Brewfile`)과 macOS 기본값 스크립트는 원문을 아래에 실었다.
+
+## 동작 원리
+
+### 설치 스크립트는 다시 돌려도 안전하다
+
+`install.sh` 는 없는 것은 깔고, 이미 있는 것은 최신으로 올린다. 그래서 다시 돌리는 것이 곧 업데이트다. 첫 단계에서 dotfiles 와 에이전트 설정 레포를 `git pull --ff-only` 로 받고, 스크립트 자신이 바뀌었으면 새 버전으로 다시 시작한다. 설정 파일은 복사하지 않고 레포를 가리키는 심링크로 건다. 덮어쓸 파일이 있으면 먼저 `~/.dotfiles.backup.<날짜>/` 로 옮긴다.
+
+### 순서가 중요한 단계가 있다
+
+새 맥에는 SSH 키가 없다. 그래서 첫 clone 은 HTTPS 로 하고, `install.sh` 는 SSH 나 gh 로그인이 필요한 단계(에이전트 설정 연결, gh 확장)를 건너뛴 채 끝난다. SSH 키를 GitHub 에 등록한 뒤 에이전트 설정 연결(4번)과 작업 레포 clone(6번)은 손으로 한다. 7·8·9번은 6번 clone 에 기대므로 앞당기면 조용히 건너뛰어진다. `install.sh` 를 한 번 더 돌리면(8번) 첫 실행에서 건너뛴 단계가 마저 돈다.
+
+**`Installation Complete!` 는 첫 실행이 끝났다는 뜻이다. 셋업 전체가 끝났다는 뜻이 아니다.**
+
+### 암호는 두 번만 묻는다
+
+`brew bundle` 직전과 macOS 기본값 단계 직전에 `sudo` 암호를 한 번씩 받는다. 백그라운드 루프가 sudo 타임스탬프를 갱신하므로, 그 두 지점만 자리를 지키면 나머지는 무인으로 진행된다. cask 마다 암호를 묻게 두면 프롬프트가 brew 출력에 묻혀 멈춘 것처럼 보이기 때문이다.
+
+## 내 설정
+
+### 순서
+
+```sh
+# 0. Xcode Command Line Tools + Homebrew (clone 하기 전에 필요하다)
+xcode-select --install
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+eval "$(/opt/homebrew/bin/brew shellenv)"
+brew install git
+
+# 1. clone. SSH 키가 아직 없으니 HTTPS 로 받는다
+git clone https://github.com/tak-bro/dotfiles.git ~/workspace/tak-bro/dotfiles
+cd ~/workspace/tak-bro/dotfiles
+
+# 2. 첫 설치. 1시간 안팎 걸린다
+./install.sh
+
+# 3. SSH 키를 만들고 GitHub 개인·회사 계정에 등록한다
+./ssh/setup.sh
+ssh -T git@github.com
+
+# 4. gh 로그인을 계정마다 한 번씩 하고, 에이전트 설정 레포를 연결한다
+gh auth login                       # 개인 계정
+gh auth login                       # 회사 계정
+gh auth status                      # 두 계정이 다 보여야 한다
+gh auth switch --user <개인 계정>    # 평소 활성 계정을 개인 계정으로
+bash setup-claude-code-workspace.sh
+
+# 5. 시크릿 파일 채우기 (아래 표)
+vi ~/.zshrc.local
+cp npm/.npmrc.template ~/.npmrc
+cp aicommit2/.aicommit2.template ~/.aicommit2
+cp aicommit2/.aipick.template ~/.aipick
+aws configure
+hwip login
+
+# 6. 작업 레포 clone
+./workspace/sync.sh
+
+# 7. codegraph 설치와 첫 인덱스
+curl -fsSL https://raw.githubusercontent.com/colbymchenry/codegraph/main/install.sh | sh
+task dot:index
+
+# 8. install.sh 재실행. 보류됐던 단계가 이제 돈다
+./install.sh
+
+# 9. 주기 작업(launchd)은 8번이 등록한다. 상태는 10번의 검사가 보여 준다
+
+# 10. 셸 다시 읽기, 프롬프트 설정, 검사
+source ~/.zshrc
+p10k configure
+task dot:check
+
+# 11. pi 에이전트 인증과 첫 실행. 절차는 에이전트 설정 레포의 pi 가이드에 있다
+```
+
+원래 순서에는 개인 API 키 파일 하나를 넣는 단계가 더 있다. 여기서는 뺐다.
+
+레포 경로는 `~/workspace/tak-bro/dotfiles` 로 고정한다. 심링크와 launchd 잡이 이 경로를 가리키고, 검사 스크립트는 심링크가 이 체크아웃을 가리키는지까지 대조한다.
+
+### install.sh 가 하는 일
+
+| 단계 | 내용 |
+|---|---|
+| 업데이트 | dotfiles·에이전트 설정 레포 pull. 기본 브랜치일 때만 |
+| 기본 도구 | Xcode Command Line Tools 확인, Homebrew 설치·shellenv |
+| 패키지 | `brew bundle` 로 Brewfile 전체 설치(오래된 것은 업그레이드) |
+| 셸 | Oh My Zsh, zsh-syntax-highlighting·zsh-autosuggestions, Powerlevel10k |
+| 런타임 | NVM + Node LTS + 전역 npm 패키지, Bun |
+| 설정 연결 | 심링크, 시크릿 템플릿 복사, pyenv 전역 버전 |
+| 에이전트 | `~/.claude`·`~/.agents`·`~/.pi` 를 에이전트 설정 레포에 연결(SSH 필요 — 새 맥에서는 보류) |
+| 주기 작업 | 레포에 있는 launchd plist 등록 |
+| 확장 | gh 확장, fzf 키바인딩 |
+| macOS | `macos-defaults.sh` 실행 |
+
+`install.sh` 원문은 회사 계정 이름이 들어 있어 여기에 싣지 않는다.
+
+### 시크릿은 레포 밖에 둔다
+
+레포에는 실제 값이 없다. 실제 값은 gitignore 된 머신 로컬 파일에 넣는다.
+
+| 파일 | 출처 | 담는 것 |
+|---|---|---|
+| `~/.zshrc.local` | 템플릿을 `install.sh` 가 복사 | 이 머신 전용 PATH·별칭·환경변수 |
+| `~/.npmrc` | 템플릿 | npm 토큰 |
+| `~/.aicommit2`·`~/.aipick` | 템플릿 | LLM API 키 |
+| `~/.aws/credentials` | 직접 작성 | AWS 자격증명 |
+| `~/.gitconfig.local` | 직접 작성 | 머신별 git user (`.gitconfig` 가 include 한다) |
+
+### 패키지
+
+<include lang="ruby" meta='title="Brewfile"'>../snippets/dotfiles/Brewfile</include>
+
+### macOS 기본값
+
+[mathiasbynens/dotfiles](https://github.com/mathiasbynens/dotfiles/blob/main/.macos) 의 `.macos` 를 바탕으로 내 취향을 더했다. 키보드 부분은 [키맵](./keymaps.mdx) 가이드에서 설명한다.
+
+<include lang="sh" meta='title="macos-defaults.sh"'>../snippets/dotfiles/macos-defaults.sh</include>
+
+## 확인
+
+1. `task dot:check` 를 돌린다. 최종 판정은 이 명령이다. Warn 이 남은 줄이 실제로 빠진 단계다.
+2. 심링크가 레포를 가리키는지 본다.
+
+```sh
+readlink ~/.config/ghostty/config   # <dotfiles 체크아웃>/ghostty/config
+```
+
+3. macOS 기본값 하나를 읽어 본다.
+
+```sh
+defaults read com.apple.finder ShowPathbar   # 1
+```

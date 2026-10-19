@@ -1,6 +1,6 @@
 # tak-bro.github.io
 
-Source of [tak-bro.github.io](https://tak-bro.github.io): guides to my coding-agent setup, workflow, Herdr, and keymaps. Korean is the default language; English lives under `/en`.
+Source of [tak-bro.github.io](https://tak-bro.github.io): guides to my coding-agent setup, workflow, Herdr, keymaps, and Mac setup. Korean is the default language; English lives under `/en`.
 
 Built with [fumadocs](https://fumadocs.dev) on React Router 7 as a fully prerendered static site.
 

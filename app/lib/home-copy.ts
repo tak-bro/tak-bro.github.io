@@ -24,7 +24,7 @@ const en: HomeCopy = {
   description: 'How I set up coding agents, terminals, and keymaps, written so you can copy it.',
   heading: 'My development setup, written down',
   intro:
-    'Agent configuration, the workflow I run it with, Herdr, and keymaps. Each guide explains how a piece works, shows my config, and ends with a way to check it.',
+    'Agent configuration, the workflow I run it with, Herdr, keymaps, and Mac setup. Each guide explains how a piece works, shows my config, and ends with a way to check it.',
   docsCta: 'Read the docs',
   guidesHeading: 'Guides',
   recentPostsHeading: 'Recent posts (Korean)',
@@ -43,7 +43,7 @@ const ko: HomeCopy = {
   description: '코딩 에이전트·터미널·키맵 설정을 그대로 가져다 쓸 수 있게 정리한 곳.',
   heading: '내 개발 환경을 글로 남긴다',
   intro:
-    '에이전트 설정, 그걸 굴리는 워크플로우, Herdr, 키맵. 가이드마다 동작 원리와 내 설정, 확인 방법을 차례로 적었다.',
+    '에이전트 설정, 그걸 굴리는 워크플로우, Herdr, 키맵, 맥 셋업. 가이드마다 동작 원리와 내 설정, 확인 방법을 차례로 적었다.',
   docsCta: '문서 보기',
   guidesHeading: '가이드',
   recentPostsHeading: '최근 글',

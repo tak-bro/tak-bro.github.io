@@ -2,5 +2,7 @@
   { "repo": "dotfiles", "from": "herdr/config.toml", "to": "herdr/config.toml" },
   { "repo": "dotfiles", "from": "herdr/pane-branch.sh", "to": "herdr/pane-branch.sh" },
   { "repo": "dotfiles", "from": "ghostty/config", "to": "ghostty/config" },
-  { "repo": "dotfiles", "from": "nvim/config/lua/config/settings.lua", "to": "nvim/settings.lua" }
+  { "repo": "dotfiles", "from": "nvim/config/lua/config/settings.lua", "to": "nvim/settings.lua" },
+  { "repo": "dotfiles", "from": "Brewfile", "to": "Brewfile" },
+  { "repo": "dotfiles", "from": "macos-defaults.sh", "to": "macos-defaults.sh" }
 ]
