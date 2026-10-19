@@ -1,4 +1,5 @@
 export const APP_NAME = 'Tak';
+export const GITHUB_URL = 'https://github.com/tak-bro';
 export const DOCS_ROUTE = '/docs';
 
 // Kept in sync by hand with the `dir` literal in source.ts, which the
