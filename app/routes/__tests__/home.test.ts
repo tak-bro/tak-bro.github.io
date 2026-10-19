@@ -13,9 +13,9 @@ describe('home loader', () => {
   });
 
   it('lists only guides whose docs page exists', () => {
-    // Herdr is the only guide written so far; the other cards would link to a 404.
-    expect(call('/').publishedGuides).toEqual(['herdr']);
-    expect(call('/en').publishedGuides).toEqual(['herdr']);
+    // Only the Herdr and keymaps guides are written so far; other cards would link to a 404.
+    expect(call('/').publishedGuides).toEqual(['herdr', 'keymaps']);
+    expect(call('/en').publishedGuides).toEqual(['herdr', 'keymaps']);
   });
 });
 

@@ -33,7 +33,7 @@ const en: HomeCopy = {
     { slug: 'agent-config', title: 'Agent config', blurb: 'Rules, hooks, and skills for Claude Code, pi, and opencode.' },
     { slug: 'workflow', title: 'Workflow', blurb: 'How a task goes from plan to merged PR.' },
     { slug: 'herdr', title: 'Herdr', blurb: 'Terminal workspace setup and its keyboard shortcuts.' },
-    { slug: 'keymaps', title: 'Keymaps', blurb: 'Karabiner, Ghostty, and Neovim bindings.' },
+    { slug: 'keymaps', title: 'Keymaps', blurb: 'macOS keyboard defaults, Ghostty keys, Karabiner, and LazyVim.' },
     { slug: 'setup', title: 'Mac setup', blurb: 'The order I set up a new Mac in.' },
   ],
 };
@@ -52,7 +52,7 @@ const ko: HomeCopy = {
     { slug: 'agent-config', title: '에이전트 설정', blurb: 'Claude Code·pi·opencode 의 규칙·훅·스킬.' },
     { slug: 'workflow', title: '워크플로우', blurb: '작업 하나가 계획에서 머지까지 가는 길.' },
     { slug: 'herdr', title: 'Herdr', blurb: '터미널 작업 공간 설정과 단축키.' },
-    { slug: 'keymaps', title: '키맵', blurb: 'Karabiner·Ghostty·Neovim 바인딩.' },
+    { slug: 'keymaps', title: '키맵', blurb: 'macOS 키보드 기본값·Ghostty 키·Karabiner·LazyVim.' },
     { slug: 'setup', title: '맥 셋업', blurb: '새 맥을 세팅하는 순서.' },
   ],
 };
