@@ -34,5 +34,8 @@ export default (async () => [
   ...homeRoutes,
   ...(await docsRoutes()),
 
+  // Prerendered and copied to 404.html (scripts/write-404.mjs) for GitHub Pages;
+  // the catch-all below cannot be prerendered.
+  route('404', 'routes/not-found.tsx', { id: 'not-found-page' }),
   route('*', 'routes/not-found.tsx', { id: 'not-found' }),
 ])() satisfies RouteConfig;

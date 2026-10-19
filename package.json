@@ -8,10 +8,11 @@
   },
   "scripts": {
     "dev": "react-router dev --port 5175",
-    "build": "react-router build --mode prod",
+    "build": "react-router build --mode prod && node scripts/write-404.mjs",
     "typecheck": "react-router typegen --mode prod && tsc --noEmit",
     "test": "vitest run",
-    "check:links": "node scripts/check-docs-links.mjs"
+    "check:links": "node scripts/check-docs-links.mjs",
+    "check:required": "node scripts/check-required-files.mjs"
   },
   "dependencies": {
     "@react-router/node": "7.18.2",

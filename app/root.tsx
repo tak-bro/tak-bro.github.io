@@ -6,6 +6,7 @@ import {
   Scripts,
   ScrollRestoration,
   useLocation,
+  useMatches,
   useNavigate,
 } from 'react-router';
 import { RootProvider } from 'fumadocs-ui/provider/react-router';
@@ -25,6 +26,8 @@ import {
 } from './lib';
 import NotFound from './routes/not-found';
 
+const NOT_FOUND_ROUTE_IDS = new Set(['not-found', 'not-found-page']);
+
 export const Layout = ({ children }: { children: React.ReactNode }) => {
   const { pathname } = useLocation();
   // From the path, not useParams: the catch-all 404 has no `lang` param, and an
@@ -35,6 +38,9 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
   // Trailing slashes are dropped so `/docs/cli/` and `/docs/cli` name one URL.
   const path = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname;
   const canonical = canonicalUrl(path);
+  // The /404 page is also served as 404.html for every unknown URL, so it must
+  // neither be indexed nor claim a canonical or translated counterpart.
+  const notFound = useMatches().some((match) => NOT_FOUND_ROUTE_IDS.has(match.id));
 
   return (
     <html lang={lang} suppressHydrationWarning>
@@ -42,16 +48,20 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="canonical" href={canonical} />
-        {alternateLinks(path, lang).map((alternate) => (
-          <link
-            key={alternate.hreflang}
-            rel="alternate"
-            hrefLang={alternate.hreflang}
-            href={canonicalUrl(alternate.path)}
-          />
-        ))}
-        <meta property="og:url" content={canonical} />
+        {notFound ? null : (
+          <>
+            <link rel="canonical" href={canonical} />
+            {alternateLinks(path, lang).map((alternate) => (
+              <link
+                key={alternate.hreflang}
+                rel="alternate"
+                hrefLang={alternate.hreflang}
+                href={canonicalUrl(alternate.path)}
+              />
+            ))}
+            <meta property="og:url" content={canonical} />
+          </>
+        )}
         <meta property="og:site_name" content={APP_NAME} />
         <meta property="og:locale" content={ogLocale(lang)} />
         {/*
@@ -59,7 +69,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
           the published site. `og:type` is not here — it differs per route, and
           these literal tags are invisible to <Meta />'s dedup.
         */}
-        {IS_PROD ? null : <meta name="robots" content="noindex, nofollow" />}
+        {IS_PROD && !notFound ? null : <meta name="robots" content="noindex, nofollow" />}
         <Meta />
         <Links />
       </head>
