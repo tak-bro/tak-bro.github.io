@@ -1,0 +1,84 @@
+---
+title: Workflow
+description: How one task goes from plan to merge — steps by size, the plan file, and a review gate for every slice.
+---
+
+When I hand work to a coding agent, it goes down the same path every time. The size of the task picks the steps, a plan file holds the work and the checks, every slice passes a review gate, and it stops at a draft PR. I do the merge. Each step is a skill (a slash command) in the [Agent config](./agent-config.mdx) repo. That repo is private, so you cannot use it as is. The size table and the review loop rules are shown in full below.
+
+## How it works
+
+### Size picks the steps
+
+Not every task runs every step. The number of files that change sets the size, and each size has its own steps.
+
+| Size | When | Steps |
+|---|---|---|
+| S | 1–2 files | Implement → review → ship (for a bug, investigate first) |
+| M | 3–10 files | Explore → plan → slice loop → ship |
+| L | 10+ files | M, plus a scope review before and an architecture pass after |
+| XL | I don't yet know what to decide | Settle the decisions with questions first, then plan → same as L |
+
+Even with few files, a change that touches authentication, authorization, user input, DB queries, file paths, external APIs, cryptography, secrets, or a public API or contract is at least M.
+
+With `/orch`, the agent makes this choice. Its first line declares the kind of task (add, change, fix, refine), the size, the done criterion, and the command that measures it. Then it runs the steps through to the end. If the declaration is wrong, I correct that line.
+
+### The plan is a file
+
+For M and up, the plan is written to `.claude/<date>/PLAN-<time>.md` in the repo. That file is the whole state of the task. If the session breaks or the context is compacted, the agent reads the file again and continues.
+
+- **Slice queue** — a table that splits the work into vertical slices. A slice is not one layer of the stack but a narrow path that works end to end, and it can be checked on its own. The checkboxes are the progress.
+- **Acceptance contract** — one line per done criterion, each tied to the command that measures it. Before implementing, the agent runs these commands to confirm they actually fail. A check that passes from the start measures nothing. Once implementation starts, the contract is frozen with a hash. The implementing model only fills in the pass/fail columns, and a script checks that record again at each slice review and just before ship.
+
+### Every slice passes a review gate
+
+When one slice is implemented and its checks pass, the agent starts a reviewer subagent in the same turn (for a slice that changes only docs or config, the main session reads the diff itself). The reviewer does not see the main session's conversation. It reads only the plan and the diff, and returns findings. If there is a Critical or Important finding, the agent fixes it, runs the checks again, and sends it back to the same reviewer. This loop runs at most 3 times per slice. If the same issue comes back twice in a row, or all 3 rounds are used, it stops and reports to me.
+
+When the gate passes, the slice is committed, its box is ticked, and the agent moves on to the next slice. It does not ask me between slices.
+
+### It stops at a draft PR
+
+With `/orch`, once the queue is empty the whole branch is reviewed once more. The slice gate only sees one slice at a time, so problems that cross slices are caught here. Then `/ship` runs the closing gate. If code that draws a screen changed, it runs screen QA (a browser for web). If logic changed and no test changed with it, it has the missing tests written. Then it pushes the commits and opens a draft PR.
+
+I start the merge with `/land`. It marks a draft ready, squash merges (in my personal repos), moves the base of stacked PRs, and cleans up the worktree in one go.
+
+## My config
+
+### Size table
+
+<include lang="md" meta='title="claude/skills/_shared/task-sizing.md"'>../snippets/agent-config/skills/task-sizing.md</include>
+
+### Review loop
+
+{/* Keep lang="text": with lang="md" this file highlights differently in SSR and on the client, which breaks hydration (#418) */}
+
+<include lang="text" meta='title="claude/skills/_shared/review-loop.md"'>../snippets/agent-config/skills/review-loop.md</include>
+
+### One contract line
+
+```text
+- AC-1 · s01 · WHEN `pnpm build` finishes THE <file> SHALL <expected result> · check: s01-ac1 · status: FAIL · evidence: —
+```
+
+`check:` names a command in the plan's verification commands section. Only the `status` and `evidence` columns change during implementation. Evidence is the command that was actually run plus the one output line that backs the verdict.
+
+## Check
+
+The two scripts below live in `claude/hooks/` of the agent config repo, so they run only on a Mac linked to that repo.
+
+1. Run every check in the plan. All of them must be green.
+
+```sh
+bash ~/.claude/hooks/verify-check.sh --plan .claude/<date>/PLAN-<time>.md --all   # verify-check: N/N green
+```
+
+2. Check that the contract's PASS records match the real run records.
+
+```sh
+python3 ~/.claude/hooks/ac-contract.py audit .claude/<date>/PLAN-<time>.md   # audit: ok
+```
+
+3. Check that the PR is open as a draft and not merged yet.
+
+```sh
+gh pr view --json isDraft,state   # {"isDraft":true,"state":"OPEN"}
+```
