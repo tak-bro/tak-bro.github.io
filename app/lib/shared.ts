@@ -10,5 +10,10 @@ export const BLOG_ROUTE = '/blog';
 // Kept in sync by hand with the `dir` literal in source.ts.
 export const BLOG_CONTENT_DIR = 'content/blog';
 
+// Korean only, like the blog.
+export const PROJECTS_ROUTE = '/projects';
+// Kept in sync by hand with the `dir` literal in source.ts.
+export const PROJECTS_CONTENT_DIR = 'content/projects';
+
 /** The `<title>` of a page other than the home, which already names the site. */
 export const pageTitle = (title: string): string => `${title} — ${APP_NAME}`;

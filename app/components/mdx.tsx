@@ -22,3 +22,15 @@ export const docsMdxComponents = (slugs: string[], lang: string | undefined): MD
     Card: ({ href, ...props }) => <DefaultCard href={resolve(href)} {...props} />,
   };
 };
+
+/** A 16:9 video player for the iframes the old Jekyll project pages embedded. */
+export const VideoEmbed = ({ src, title }: { src: string; title: string }) => (
+  <iframe
+    src={src}
+    title={title}
+    className="my-6 aspect-video w-full rounded-lg border"
+    loading="lazy"
+    allow="fullscreen; picture-in-picture"
+    allowFullScreen
+  />
+);

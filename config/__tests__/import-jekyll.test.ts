@@ -42,8 +42,9 @@ describe('import-jekyll', () => {
         }));
     const blogFiles = async () => (await readdir(join(out, 'content/blog'))).sort();
     const read = (slug: string) => readFile(join(out, 'content/blog', `${slug}.mdx`), 'utf8');
+    const readProject = (name: string) => readFile(join(out, 'content/projects', `${name}.mdx`), 'utf8');
 
-    return { importPosts, blogFiles, read };
+    return { importPosts, blogFiles, read, readProject, out };
   };
 
   afterEach(async () => {
@@ -216,6 +217,82 @@ describe('import-jekyll', () => {
     expect(mdx).toContain('패킷');
     await expect(readFile(join(dir!, 'site/public/assets/img/blog/topology.gif'), 'utf8')).resolves.toBe('GIF89a');
     await expect(readFile(join(dir!, 'site/public/assets/img/blog/unused.png'))).rejects.toThrow();
+  });
+
+  it('imports _projects with an ISO date, links, a screenshot, and video embeds', async () => {
+    const { importPosts, readProject, out } = await setup({
+      'swift/_posts/2015-03-19-basic-swift01.md': post('스위프트 기초', '본문'),
+      '_projects/buzzler.md': [
+        '---',
+        'layout: project',
+        'title: Buzzler',
+        'date: 15 Apr 2018',
+        'type: side',
+        'screenshot: /assets/img/projects/buzzler/01.png',
+        'links:',
+        '  - title: Github',
+        '    url: https://github.com/tak-bro/Buzzler',
+        '  - title: Demo',
+        '    url: https://example.com/demo ',
+        'caption: 캡션',
+        'description: >',
+        '    블록체인 SNS',
+        '---',
+        '',
+        '**NOTE**: Side Project',
+        '{:.lead}',
+        '',
+        '<div class="videoWrapper">',
+        '    <iframe width="560" height="349" src="https://drive.google.com/file/d/X/preview" frameborder="0" allowfullscreen></iframe>',
+        '</div>',
+        '',
+      ].join('\n'),
+      'assets/img/projects/buzzler/01.png': 'png',
+    });
+
+    expect((await importPosts()).code).toBe(0);
+    const mdx = await readProject('buzzler');
+    expect(mdx).toContain('title: "Buzzler"');
+    expect(mdx).toContain('description: "블록체인 SNS"');
+    expect(mdx).toContain('date: "2018-04-15"');
+    expect(mdx).toContain('type: "side"');
+    expect(mdx).toContain('screenshot: "/assets/img/projects/buzzler/01.png"');
+    expect(mdx).toContain('links: [{"title":"Github","url":"https://github.com/tak-bro/Buzzler"},{"title":"Demo","url":"https://example.com/demo"}]');
+    expect(mdx).toMatch(/^\*\*NOTE\*\*: Side Project$/m);
+    expect(mdx).toContain('<VideoEmbed src="https://drive.google.com/file/d/X/preview" title="Buzzler" />');
+    expect(mdx).not.toMatch(/videoWrapper|iframe|\{:/);
+    await expect(readFile(join(out, 'public/assets/img/projects/buzzler/01.png'), 'utf8')).resolves.toBe('png');
+  });
+
+  it('refuses a project date it cannot read', async () => {
+    const { importPosts } = await setup({
+      'swift/_posts/2015-03-19-basic-swift01.md': post('스위프트 기초', '본문'),
+      '_projects/odd.md': ['---', 'title: Odd', 'date: sometime', 'type: side', 'description: x', '---', ''].join('\n'),
+    });
+
+    const result = await importPosts();
+    expect(result.code).toBe(1);
+    expect(result.output).toContain('odd.md');
+  });
+
+  it('refuses a project whose screenshot the source lacks', async () => {
+    const { importPosts } = await setup({
+      'swift/_posts/2015-03-19-basic-swift01.md': post('스위프트 기초', '본문'),
+      '_projects/bare.md': [
+        '---',
+        'title: Bare',
+        'date: 1 Jan 2016',
+        'type: side',
+        'screenshot: /assets/img/projects/bare/01.png',
+        'description: x',
+        '---',
+        '',
+      ].join('\n'),
+    });
+
+    const result = await importPosts();
+    expect(result.code).toBe(1);
+    expect(result.output).toContain('screenshot /assets/img/projects/bare/01.png is missing');
   });
 
   it('produces identical output when run twice', async () => {

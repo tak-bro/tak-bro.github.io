@@ -18,3 +18,11 @@ export const blogFrontmatterSchema = frontmatterSchema.extend({
   date: z.iso.date(),
   tags: z.array(text).min(1),
 });
+
+/** A project page: the screenshot heads its card on /projects. */
+export const projectFrontmatterSchema = frontmatterSchema.extend({
+  date: z.iso.date(),
+  type: text,
+  screenshot: text.startsWith('/'),
+  links: z.array(z.object({ title: text, url: z.url() })).optional(),
+});

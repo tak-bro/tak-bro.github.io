@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// Imports the old Jekyll blog (a private repo) into content/blog as MDX.
+// Imports the old Jekyll blog (a private repo) into content/blog and its
+// _projects into content/projects as MDX.
 //
 //   node scripts/import-jekyll.mjs <jekyll root> [--out <site root>]
 //
@@ -31,7 +32,7 @@ const parseArgs = (argv) => {
   return { source: resolve(source), out: resolve(out) };
 };
 
-/** Scalars and `key: >` folded blocks — the only shapes the old posts use. */
+/** Scalars, `key: >` folded blocks, and lists of flat maps (project `links`). */
 const parseFrontmatter = (text) => {
   const match = /^---\n([\s\S]*?)\n---\n?/.exec(text);
   if (!match) return { data: {}, body: text };
@@ -41,7 +42,16 @@ const parseFrontmatter = (text) => {
     const field = /^(\w+):\s*(.*)$/.exec(lines[index]);
     if (!field) continue;
     const [, key, value] = field;
-    if (value === '>' || value === '|') {
+    if (value === '' && /^\s+- /.test(lines[index + 1] ?? '')) {
+      const items = [];
+      while (index + 1 < lines.length && /^\s+\S/.test(lines[index + 1])) {
+        const entry = /^\s+(- )?(\w+):\s*(.*)$/.exec(lines[(index += 1)]);
+        if (!entry) continue;
+        if (entry[1]) items.push({});
+        items.at(-1)[entry[2]] = entry[3].trim();
+      }
+      data[key] = items;
+    } else if (value === '>' || value === '|') {
       const block = [];
       while (index + 1 < lines.length && /^\s+\S|^\s*$/.test(lines[index + 1]) && !/^\w+:/.test(lines[index + 1])) {
         block.push(lines[(index += 1)].trim());
@@ -68,7 +78,7 @@ const MASKS = [
 const mask = (text) => MASKS.reduce((result, [pattern, replacement]) => result.replace(pattern, replacement), text);
 
 // Tags MDX accepts as JSX; any other `<` in prose is text and gets escaped.
-const HTML_TAG = /^<\/?(a|b|br|center|code|del|details|div|em|font|h[1-6]|hr|i|iframe|img|kbd|li|ol|p|pre|span|strong|sub|summary|sup|table|tbody|td|th|thead|tr|u|ul)\b[^<>]*>/i;
+const HTML_TAG = /^<\/?(a|b|br|center|code|del|details|div|em|font|h[1-6]|hr|i|iframe|img|kbd|li|ol|p|pre|span|strong|sub|summary|sup|table|tbody|td|th|thead|tr|u|ul|VideoEmbed)\b[^<>]*>/i;
 
 const JSX_ATTRIBUTES = [
   [/\bclass=/g, 'className='],
@@ -193,6 +203,52 @@ const renderPost = async ({ path, tag, date }, source, assets) => {
   return `${frontmatter}${content}\n`;
 };
 
+const listProjects = async (source) => {
+  const dir = join(source, '_projects');
+  const files = await readdir(dir).catch(() => []);
+
+  return files
+    .filter((file) => file.endsWith('.md'))
+    .sort()
+    .map((file) => ({ path: join(dir, file), name: file.slice(0, -'.md'.length) }));
+};
+
+// `15 Apr 2018`, read as a UTC calendar date so no timezone shifts the day.
+const isoDate = (text) => {
+  const time = Date.parse(`${text} UTC`);
+  return Number.isNaN(time) ? undefined : new Date(time).toISOString().slice(0, 10);
+};
+
+const VIDEO = /<div class="videoWrapper">\s*<iframe[^>]*\bsrc="([^"]+)"[^>]*><\/iframe>\s*<\/div>/g;
+
+const renderProject = async ({ path }, source, assets) => {
+  const { data, body } = parseFrontmatter(mask(await readFile(path, 'utf8')));
+  for (const key of ['title', 'type', 'screenshot']) if (!data[key]) fail(`${path}: no ${key}`);
+  const date = isoDate(data.date);
+  if (!date) fail(`${path}: cannot read date "${data.date}"`);
+  // The /projects card needs it, so a project without a copyable one stops the import.
+  if (!data.screenshot.startsWith(IMAGE_DIR) || !(await exists(join(source, data.screenshot)))) {
+    fail(`${path}: screenshot ${data.screenshot} is missing`);
+  }
+  assets.add(data.screenshot);
+  const title = data.title.replaceAll('"', '&quot;');
+  const frontmatter = [
+    '---',
+    `title: ${yamlString(data.title)}`,
+    `description: ${yamlString(data.description || data.caption || data.title)}`,
+    `date: ${yamlString(date)}`,
+    `type: ${yamlString(data.type)}`,
+    `screenshot: ${yamlString(data.screenshot)}`,
+    ...(data.links ? [`links: ${JSON.stringify(data.links)}`] : []),
+    '---',
+    '',
+  ].join('\n');
+  const embedded = body.replace(VIDEO, (_, src) => `<VideoEmbed src="${src}" title="${title}" />`);
+  const content = await resolveImages(convertBody(embedded).trim(), source, assets);
+
+  return `${frontmatter}${content}\n`;
+};
+
 // Staged next to the target so the final rename stays on one filesystem.
 const stageDir = async (target, files) => {
   await mkdir(dirname(target), { recursive: true });
@@ -242,12 +298,16 @@ for (const post of posts) {
 
 const assets = new Set();
 const files = await Promise.all(posts.map(async (post) => [`${post.slug}.mdx`, await renderPost(post, source, assets)]));
+const projects = await Promise.all(
+  (await listProjects(source)).map(async (project) => [`${project.name}.mdx`, await renderProject(project, source, assets)]),
+);
 const images = await Promise.all(
   [...assets].sort().map(async (url) => [url.slice(IMAGE_DIR.length), await readFile(join(source, url))]),
 );
 const written = await replaceDirs([
   [join(out, 'content/blog'), files],
+  [join(out, 'content/projects'), projects],
   [join(out, `public${IMAGE_DIR.slice(0, -1)}`), images],
 ]);
 if (!written) process.exit(1);
-console.log(`OK: imported ${files.length} posts and ${images.length} images`);
+console.log(`OK: imported ${files.length} posts, ${projects.length} projects, and ${images.length} images`);

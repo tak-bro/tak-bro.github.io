@@ -5,8 +5,17 @@ export { llmsFullTxt, llmsTxt } from './llms';
 export { resolveDocsHref } from './relative-href';
 export { requestPath } from './request-path';
 export { robotsTxt } from './robots';
-export { APP_NAME, BLOG_CONTENT_DIR, BLOG_ROUTE, DOCS_CONTENT_DIR, DOCS_ROUTE, pageTitle } from './shared';
+export {
+  APP_NAME,
+  BLOG_CONTENT_DIR,
+  BLOG_ROUTE,
+  DOCS_CONTENT_DIR,
+  DOCS_ROUTE,
+  pageTitle,
+  PROJECTS_CONTENT_DIR,
+  PROJECTS_ROUTE,
+} from './shared';
 export { canonicalUrl, IS_PROD, ogLocale, SITE_URL } from './site';
 export { sitemapEntries, sitemapXml, type SitemapEntry } from './sitemap';
-export { blog, blogPosts, blogSource, docs, source } from './source';
+export { blog, blogPosts, blogSource, docs, projectPages, projects, projectsSource, source } from './source';
 export { translations } from './translations';

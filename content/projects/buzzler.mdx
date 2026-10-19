@@ -1,0 +1,135 @@
+---
+title: "Buzzler"
+description: "대학생을 위한 블록체인 기반의 SNS 어플리케이션"
+date: "2018-04-15"
+type: "side"
+screenshot: "/assets/img/projects/buzzler/01.png"
+links: [{"title":"Github","url":"https://github.com/tak-bro/Buzzler"}]
+---
+**NOTE**: Side Project with 5 team members
+
+## 1. Description
+
+- 진행기간: 2018.04 ~ 2018.10
+- 프로젝트 내용: 대학생을 위한 블록체인 기반의 SNS 어플리케이션
+- 역할: iOS 앱 개발
+- 사용한 Skill: `Swift`, `MVVM`, `RxSwift`
+
+## 2. Code Snippet
+
+- Github: [https://github.com/tak-bro/Buzzler](https://github.com/tak-bro/Buzzler)
+
+```swift
+//
+//  LoginViewModel.swift
+//  Buzzler
+//
+//  Created by 진형탁 on 2018. 4. 18..
+//  Copyright © 2018년 Buzzler. All rights reserved.
+//
+import UIKit
+...
+
+private let disposeBag = DisposeBag()
+
+public protocol LoginViewModelInputs {
+    var email: PublishSubject<String?> { get}
+    var password: PublishSubject<String?> { get }
+    var loginTaps: PublishSubject<Void> { get }
+}
+
+public protocol LoginViewModelOutputs {
+    var validatedEmail: Driver<ValidationResult> { get }
+    var validatedPassword: Driver<ValidationResult> { get }
+    var enableLogin: Driver<Bool>{ get }
+    var signedIn: Driver<LoginResponse> { get }
+    var isLoading: Driver<Bool> { get }
+}
+
+public protocol LoginViewModelType {
+    var inputs: LoginViewModelInputs { get }
+    var outputs: LoginViewModelOutputs { get }
+}
+
+class LoginViewModel: LoginViewModelType, LoginViewModelInputs, LoginViewModelOutputs {
+    
+    public var validatedEmail: Driver<ValidationResult>
+    public var validatedPassword: Driver<ValidationResult>
+    public var enableLogin: Driver<Bool>
+    
+    public var loginTaps: PublishSubject<Void>
+    public var password: PublishSubject<String?>
+    public var email: PublishSubject<String?>
+    public var signedIn: Driver<LoginResponse>
+    public var isLoading: Driver<Bool>
+    
+    public var inputs: LoginViewModelInputs { return self }
+    public var outputs: LoginViewModelOutputs { return self }
+    
+    // Private
+    fileprivate let provider: RxMoyaProvider<Buzzler>
+    
+    public init(provider: RxMoyaProvider<Buzzler>) {
+        self.provider = provider
+        
+        self.email = PublishSubject<String?>()
+        self.password = PublishSubject<String?>()
+        self.loginTaps = PublishSubject<Void>()
+        
+        let validationService = BuzzlerDefaultValidationService.sharedValidationService
+        
+        self.validatedEmail = self.email
+            .asDriver(onErrorJustReturn: nil)
+            .flatMapLatest { email in
+                return validationService.validateUserId(email!)
+                    .asDriver(onErrorJustReturn: .failed(message: "Error contacting server"))
+        }
+        
+        self.validatedPassword = self.password
+            .asDriver(onErrorJustReturn: nil)
+            .map{ password in
+                return validationService.validateTextString(password!)
+        }
+        
+        self.enableLogin = Driver
+            .combineLatest(validatedEmail, validatedPassword) { email, password in
+                return email.isValid && password.isValid
+        }
+        
+        let emailAndPassword = Driver.combineLatest(self.email.asDriver(onErrorJustReturn: nil),
+                                                    self.password.asDriver(onErrorJustReturn: nil)) { ($0,$1)  }
+        
+        let isLoading = ActivityIndicator()
+        self.isLoading = isLoading.asDriver()
+        
+        self.signedIn = self.loginTaps
+            .asDriver(onErrorJustReturn:())
+            .withLatestFrom(emailAndPassword)
+            .flatMapLatest{ tuple in
+                return API.sharedAPI
+                    .signIn(email: tuple.0!, password: tuple.1!)
+                    .trackActivity(isLoading)
+                    .asDriver(onErrorJustReturn: LoginResponse(error: ErrorResponse(code: 500, message: "Server Error!"), result: nil))
+            }
+            .flatMapLatest{ loginResult in
+                return API.sharedAPI
+                    .getUserInfo(loginResult: loginResult)
+                    .trackActivity(isLoading)
+                    .asDriver(onErrorJustReturn: LoginResponse(error: ErrorResponse(code: 500, message: "Server Error!"), result: nil))
+        }
+    }
+}
+```
+
+## 3. Demo
+
+<VideoEmbed src="https://drive.google.com/file/d/18OC_xVa4NTwBgdx01YQw6_JR7IkmgTc8/preview" title="Buzzler" />
+
+## 4. Images
+
+- Landing Page
+![](/assets/img/projects/buzzler/01.png)
+
+- 앱 스크린샷
+![](/assets/img/projects/buzzler/02.png)
+![](/assets/img/projects/buzzler/03.png)

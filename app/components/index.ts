@@ -1,2 +1,2 @@
-export { docsMdxComponents } from './mdx';
+export { docsMdxComponents, VideoEmbed } from './mdx';
 export { DocsSearchDialog } from './search';

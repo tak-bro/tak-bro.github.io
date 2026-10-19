@@ -1,0 +1,133 @@
+---
+title: "StockChecker Extension"
+description: "루이비통 상품 구매 가능 여부를 체크하는 크롬 익스텐션"
+date: "2019-11-14"
+type: "side"
+screenshot: "/assets/img/projects/stock_checker/01.png"
+links: [{"title":"Github","url":"https://github.com/tak-bro/stock-checker-extension"}]
+---
+**NOTE**: Side Project
+
+## 1. Description
+
+- 진행기간: 2019.11(약 일주일)
+- 프로젝트 내용: 루이비통 홈페이지에서 상품 구매 가능 여부를 체크하여 슬랙 메세지를 보내는 크롬 익스텐션
+- 역할: 크롬 익스텐션 개발
+- 사용한 Skill: `Angular7`, `RxJS`, `Chrome API`
+
+## 2. Code Snippet
+
+- Github: [https://github.com/tak-bro/stock-checker-extension](https://github.com/tak-bro/stock-checker-extension/commits?author=tak-bro)
+
+```typescript
+// contentPage.ts
+
+import { of } from 'rxjs';
+import { delay, filter, map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+
+const ALLOWED_MESSAGE = ['CONTENT_CHECK_PRODUCT_FORM', 'CONTENT_CHECK_CART_FORM'];
+
+chrome.runtime.onMessage.addListener((request, sender, respond) => {
+    if (!request) {
+        respond('request is empty');
+    }
+
+    const { tabId, message } = request;
+    const isNotAllowedMessage = !ALLOWED_MESSAGE.includes(message);
+    if (isNotAllowedMessage) {
+        console.log(`Message: ${message}, TabId: ${tabId}`);
+        respond('Unknown message from ContentPage');
+    }
+
+    const isProductMessage$ = of(message).pipe(filter(message => message === 'CONTENT_CHECK_PRODUCT_FORM'));
+    const isCartMessage$ = of(message).pipe(filter(message => message === 'CONTENT_CHECK_CART_FORM'));
+    const nameInProductPage$ = of(document.getElementById('productName')).pipe(map(ele => ele.innerText));
+    const nameInCartPage$ = of(document.getElementsByClassName('productName')).pipe(
+        map((elements: any) => elements.length > 0 ? elements[0].innerText : null)
+    );
+
+    let cartFormElement = document.getElementById('addToCartFormHolder');
+    let proceedToCheckoutButton = document.getElementById('proceedToCheckoutButton');
+
+    // STEP 1 Observable
+    const checkCartFormElement$ = isProductMessage$.pipe(
+        switchMap(() => of(cartFormElement)),
+        tap(cartForm => {
+            if (!cartForm) {
+                cartFormElement = document.getElementById('addToCartFormHolder');
+            }
+        }),
+        filter(cartForm => cartForm.classList ? true : false),
+        map(cartForm => cartForm.classList.contains('hide')) // check form element
+    );
+
+    const addToCart$ = checkCartFormElement$.pipe(
+        filter(outOfStock => !outOfStock), // in stock
+        switchMap(() => of(document.getElementById('addToCartSubmit'))),
+        tap(addToCartButtonElement => addToCartButtonElement.click()),
+        // switchMap(addToCartButtonElement => fromEvent(addToCartButtonElement, 'click')), // TODO: add clicked event listener
+        delay(500),
+        switchMap(() => nameInProductPage$),
+        map(productName => `SUCCESS_${productName}`)
+    );
+
+    const refreshPage$ = checkCartFormElement$.pipe(
+        filter(outOfStock => outOfStock),
+        map(() => 'REFRESH')
+    );
+
+    // STEP 2 Observable
+    const proceedCheckoutButton$ = isCartMessage$.pipe(
+        switchMap(() => of(proceedToCheckoutButton)),
+        tap(checkoutButton => {
+            if (!checkoutButton) {
+                proceedToCheckoutButton = document.getElementById('proceedToCheckoutButton');
+            }
+        }),
+        filter(button => button ? true : false)
+    );
+
+    const cannotProceedToCheckout$ = proceedCheckoutButton$.pipe(
+        withLatestFrom(nameInCartPage$),
+        filter(([checkoutButton, productName]) => checkoutButton['disabled'] && productName !== null),
+        map(() => 'REFRESH')
+    );
+
+    const canProceedToCheckout$ = proceedCheckoutButton$.pipe(
+        withLatestFrom(nameInCartPage$),
+        filter(([checkoutButton, productName]) => !checkoutButton['disabled'] && productName !== null),
+        map(([checkoutButton, productName]) => productName),
+        map(productName => `SUCCESS_${productName}`)
+    );
+
+    const shouldLogin$ = proceedCheckoutButton$.pipe(
+        switchMap(() => nameInCartPage$),
+        filter(name => name === null ? true : false),
+        map(() => 'ERROR_SHOULD_LOGIN')
+    );
+
+    // STEP 1
+    addToCart$.subscribe(res => respond(res));
+    refreshPage$.subscribe(res => respond(res));
+
+    // STEP 2
+    canProceedToCheckout$.subscribe(res => respond(res));
+    cannotProceedToCheckout$.subscribe(res => respond(res));
+    shouldLogin$.subscribe(res => respond(res));
+
+    return true;
+});
+```
+
+## 3. Demo
+
+<VideoEmbed src="https://drive.google.com/file/d/1saf0SsyALzr9zmG88CcRpFdeT2PfN6ir/preview" title="StockChecker Extension" />
+
+## 4. Images
+
+- Chrome Extension
+![](/assets/img/projects/stock_checker/01.png)
+![](/assets/img/projects/stock_checker/02.png)
+
+- Slack Notification
+![](/assets/img/projects/stock_checker/03.png)
