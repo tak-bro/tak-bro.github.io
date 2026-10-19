@@ -1,0 +1,26 @@
+@import 'tailwindcss';
+@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/preset.css';
+/* Pretendard (OFL, from npm) covers Hangul and Latin; the dynamic subset loads only the glyphs a page uses. */
+@import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';
+
+@source '../app';
+@source '../content';
+
+@theme {
+  --font-sans: 'Pretendard Variable', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Korean words break whole instead of mid-syllable. */
+html:lang(ko) body {
+  word-break: keep-all;
+}
+
+html {
+  scrollbar-gutter: stable;
+}
+
+html > body[data-scroll-locked] {
+  margin-right: 0px !important;
+  --removed-body-scroll-bar-size: 0px !important;
+}

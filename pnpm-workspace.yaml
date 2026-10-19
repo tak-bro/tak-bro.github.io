@@ -1,0 +1,7 @@
+# pnpm 10 blocks install scripts by default; esbuild needs its platform binary (vite, vitest).
+onlyBuiltDependencies:
+  - esbuild
+
+overrides:
+  # fumadocs-core 16.15's Markdown serializer overflows the stack on **bold** with 2.2.0.
+  mdast-util-to-markdown: 2.1.2
