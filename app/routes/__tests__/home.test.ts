@@ -12,10 +12,10 @@ describe('home loader', () => {
     expect(call('/en').lang).toBe('en');
   });
 
-  it('lists only guides whose docs folder exists', () => {
-    // content/docs has no guide folders yet, so no card may link anywhere.
-    expect(call('/').publishedGuides).toEqual([]);
-    expect(call('/en').publishedGuides).toEqual([]);
+  it('lists only guides whose docs page exists', () => {
+    // Herdr is the only guide written so far; the other cards would link to a 404.
+    expect(call('/').publishedGuides).toEqual(['herdr']);
+    expect(call('/en').publishedGuides).toEqual(['herdr']);
   });
 });
 
