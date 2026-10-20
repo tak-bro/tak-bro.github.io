@@ -1,5 +1,5 @@
 import { HomeLayout } from 'fumadocs-ui/layouts/home';
-import { ArrowRight, ArrowUpRight, BookOpen, Bot, FileText, GitPullRequest, Keyboard, Laptop, SquareTerminal, type LucideIcon } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, BookOpen, Bot, FileText, GitPullRequest, Keyboard, Laptop, Plug, SquareTerminal, type LucideIcon } from 'lucide-react';
 import { Link } from 'react-router';
 import type { Route } from './+types/home';
 import {
@@ -27,6 +27,7 @@ export const meta = ({ location }: Route.MetaArgs) => {
 const GUIDE_ICONS: Record<string, LucideIcon> = {
   'agent-config': Bot,
   workflow: GitPullRequest,
+  plugins: Plug,
   herdr: SquareTerminal,
   keymaps: Keyboard,
   setup: Laptop,
