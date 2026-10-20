@@ -1,6 +1,6 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 import { i18n } from './i18n';
-import { APP_NAME, BLOG_ROUTE, PROJECTS_ROUTE } from './shared';
+import { APP_NAME, BLOG_ROUTE, GITHUB_URL, PROJECTS_ROUTE } from './shared';
 
 const NAV_LABELS: Record<string, { blog: string; projects: string }> = {
   ko: { blog: '블로그', projects: '프로젝트' },
@@ -32,7 +32,7 @@ export const baseOptions = ({ lang = i18n.defaultLanguage, localized = true }: L
     links: [
       { text: labels.blog, url: BLOG_ROUTE },
       { text: labels.projects, url: PROJECTS_ROUTE },
-      { text: 'GitHub', url: 'https://github.com/tak-bro', external: true },
+      { text: 'GitHub', url: GITHUB_URL, external: true },
     ],
     i18n: localized ? i18n : false,
   };

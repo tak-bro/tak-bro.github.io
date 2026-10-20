@@ -1,0 +1,37 @@
+{
+  "qmd": {
+    "type": "http",
+    "url": "http://127.0.0.1:8181/mcp"
+  },
+  "context7": {
+    "type": "stdio",
+    "command": "npx",
+    "args": ["-y", "@upstash/context7-mcp@latest"]
+  },
+  "playwright": {
+    "type": "stdio",
+    "command": "npx",
+    "args": ["-y", "@playwright/mcp@latest"]
+  },
+  "chrome-devtools": {
+    "type": "stdio",
+    "command": "chrome-devtools-mcp",
+    "args": ["--headless", "--isolated", "--no-usage-statistics", "--redactNetworkHeaders", "--screenshotFormat", "webp", "--screenshotMaxWidth", "1280"]
+  },
+  "figma-desktop": {
+    "type": "http",
+    "url": "http://127.0.0.1:3845/mcp"
+  },
+  "mobile-mcp": {
+    "type": "stdio",
+    "command": "mcp-server-mobile",
+    "args": [],
+    "env": { "MOBILEMCP_DISABLE_TELEMETRY": "1" }
+  },
+  "codegraph": {
+    "type": "stdio",
+    "command": "__HOME__/.local/bin/codegraph",
+    "args": ["serve", "--mcp"],
+    "env": { "CODEGRAPH_TELEMETRY": "0" }
+  }
+}

@@ -1,8 +1,16 @@
 import { HomeLayout } from 'fumadocs-ui/layouts/home';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, BookOpen, Bot, FileText, GitPullRequest, Keyboard, Laptop, Plug, SquareTerminal, type LucideIcon } from 'lucide-react';
 import { Link } from 'react-router';
 import type { Route } from './+types/home';
-import { baseOptions, BLOG_ROUTE, blogPosts, homeCopy, localeFromPath, localizedDocsHref, requestPath, source } from '../lib';
+import {
+  baseOptions,
+  GITHUB_URL,
+  homeCopy,
+  localeFromPath,
+  localizedDocsHref,
+  requestPath,
+  source,
+} from '../lib';
 
 export const meta = ({ location }: Route.MetaArgs) => {
   const copy = homeCopy(localeFromPath(location.pathname));
@@ -16,7 +24,16 @@ export const meta = ({ location }: Route.MetaArgs) => {
   ];
 };
 
-const RECENT_POSTS = 5;
+const GUIDE_ICONS: Record<string, LucideIcon> = {
+  'agent-config': Bot,
+  workflow: GitPullRequest,
+  plugins: Plug,
+  herdr: SquareTerminal,
+  keymaps: Keyboard,
+  setup: Laptop,
+};
+
+const REPO_URL = `${GITHUB_URL}/tak-bro.github.io`;
 
 // Cards only for guides that exist; check:links fails on a card to an unwritten one.
 export const loader = ({ request }: Route.LoaderArgs) => {
@@ -27,10 +44,6 @@ export const loader = ({ request }: Route.LoaderArgs) => {
     publishedGuides: homeCopy(lang)
       .guides.map((guide) => guide.slug)
       .filter((slug) => source.getPage([slug], lang) !== undefined),
-    // Korean only, so the English home links the same Korean posts.
-    recentPosts: blogPosts()
-      .slice(0, RECENT_POSTS)
-      .map((post) => ({ url: post.url, title: post.data.title, date: post.data.date })),
   };
 };
 
@@ -38,61 +51,87 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
   const copy = homeCopy(loaderData.lang);
   const docsHref = localizedDocsHref(loaderData.lang);
   const guides = copy.guides.filter((guide) => loaderData.publishedGuides.includes(guide.slug));
+  const groups = copy.guideGroups
+    .map((group) => ({ ...group, guides: guides.filter((guide) => guide.group === group.id) }))
+    .filter((group) => group.guides.length > 0);
 
   return (
     <HomeLayout {...baseOptions({ lang: loaderData.lang })}>
-      <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-12 px-4 py-16">
-        <section className="flex flex-col gap-4">
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{copy.heading}</h1>
-          <p className="max-w-2xl text-fd-muted-foreground">{copy.intro}</p>
-          <Link
-            className="inline-flex w-fit items-center gap-2 rounded-lg bg-fd-primary px-4 py-2.5 text-sm font-medium text-fd-primary-foreground"
-            to={docsHref}
-          >
-            {copy.docsCta}
-            <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
-          </Link>
+      <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-16 px-4 py-16">
+        <section className="flex flex-col gap-5">
+          <h1 className="text-3xl font-bold tracking-tight break-keep sm:text-4xl">{copy.heading}</h1>
+          <p className="max-w-2xl text-fd-muted-foreground break-keep">{copy.intro}</p>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              className="inline-flex items-center gap-2 rounded-lg bg-fd-primary px-4 py-2.5 text-sm font-medium text-fd-primary-foreground"
+              to={docsHref}
+            >
+              {copy.docsCta}
+              <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
+            </Link>
+            <a
+              className="inline-flex items-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors hover:bg-fd-accent"
+              href={GITHUB_URL}
+              rel="noreferrer noopener"
+              target="_blank"
+            >
+              GitHub
+              <span className="sr-only">{copy.newTabLabel}</span>
+              <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
+            </a>
+            <a
+              className="inline-flex items-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors hover:bg-fd-accent"
+              href={copy.resumeHref}
+            >
+              {copy.resumeLabel}
+              <FileText className="size-4" strokeWidth={1.5} aria-hidden />
+            </a>
+          </div>
         </section>
-        {guides.length > 0 ? (
-          <section className="flex flex-col gap-4">
+        {groups.length > 0 ? (
+          <section className="flex flex-col gap-6">
             <h2 className="text-xl font-semibold">{copy.guidesHeading}</h2>
-            <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {guides.map((guide) => (
-                <li key={guide.slug}>
-                  <Link
-                    className="flex h-full flex-col gap-1 rounded-lg border bg-fd-card p-4 transition-colors hover:bg-fd-accent"
-                    to={`${docsHref}/${guide.slug}`}
-                  >
-                    <span className="font-medium">{guide.title}</span>
-                    <span className="text-sm text-fd-muted-foreground">{guide.blurb}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            {groups.map((group) => (
+              <div key={group.id} className="flex flex-col gap-3">
+                <h3 className="text-sm font-medium text-fd-muted-foreground">{group.heading}</h3>
+                <ul className={`grid gap-4 sm:grid-cols-2 ${group.guides.length > 2 ? 'lg:grid-cols-3' : ''}`}>
+                  {group.guides.map((guide) => {
+                    const Icon = GUIDE_ICONS[guide.slug] ?? BookOpen;
+
+                    return (
+                      <li key={guide.slug}>
+                        <Link
+                          className="group flex h-full gap-3 rounded-lg border bg-fd-card p-4 transition-colors hover:bg-fd-accent"
+                          to={`${docsHref}/${guide.slug}`}
+                        >
+                          <Icon className="mt-0.5 size-5 shrink-0 text-fd-muted-foreground" strokeWidth={1.5} aria-hidden />
+                          <span className="flex flex-col gap-1">
+                            <span className="font-medium group-hover:underline">{guide.title}</span>
+                            <span className="text-sm text-fd-muted-foreground break-keep">{guide.blurb}</span>
+                          </span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
           </section>
         ) : null}
-        <section className="flex flex-col gap-4">
-          <h2 className="text-xl font-semibold">{copy.recentPostsHeading}</h2>
-          <ul className="flex flex-col divide-y">
-            {loaderData.recentPosts.map((post) => (
-              <li key={post.url}>
-                <Link to={post.url} className="group flex items-baseline justify-between gap-4 py-3">
-                  <span lang="ko" className="font-medium break-keep group-hover:underline">
-                    {post.title}
-                  </span>
-                  <time dateTime={post.date} className="shrink-0 text-sm text-fd-muted-foreground">
-                    {post.date}
-                  </time>
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <Link to={BLOG_ROUTE} className="inline-flex w-fit items-center gap-1 text-sm font-medium underline-offset-4 hover:underline">
-            {copy.allPostsLabel}
-            <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
-          </Link>
-        </section>
       </div>
+      <footer className="border-t">
+        <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-2 px-4 py-6 text-sm text-fd-muted-foreground">
+          <span>© 2026 tak-bro</span>
+          <span className="flex gap-3">
+            <a href={`${REPO_URL}/blob/main/LICENSE`} className="underline-offset-4 hover:underline">
+              {copy.codeLicense}
+            </a>
+            <a href={`${REPO_URL}/blob/main/LICENSE-CONTENT`} className="underline-offset-4 hover:underline">
+              {copy.contentLicense}
+            </a>
+          </span>
+        </div>
+      </footer>
     </HomeLayout>
   );
 };

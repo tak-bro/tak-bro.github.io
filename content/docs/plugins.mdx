@@ -1,0 +1,83 @@
+---
+title: 플러그인·MCP
+description: 켜 두고 쓰는 Claude Code 플러그인과 MCP 서버, 그리고 새 맥에 그대로 다시 붙이는 방법.
+---
+
+Claude Code 에는 내가 만든 규칙·훅·스킬 말고도 남이 만든 확장을 두 가지 방식으로 붙인다. 플러그인과 MCP 서버다. 이 페이지는 무엇을 켜 두는지, 왜 켜 두는지, 새 맥에서 같은 목록을 어떻게 다시 받는지 적는다. 내가 만든 쪽은 [에이전트 설정](./agent-config.mdx)에서 다룬다.
+
+## 동작 원리
+
+### 플러그인과 MCP 는 사는 곳이 다르다
+
+| | 플러그인 | MCP 서버 |
+|---|---|---|
+| 담는 것 | 스킬·명령·훅·에이전트 묶음 | 모델이 부르는 툴을 내놓는 별도 프로세스 |
+| 켜고 끄는 곳 | `~/.claude/settings.json` 의 `enabledPlugins` | `~/.claude.json` 의 `mcpServers` |
+| 내 정본 | 에이전트 설정 레포의 `settings.json` | dotfiles 레포의 `claude/mcp-servers.json` |
+
+`settings.json` 에는 플러그인 목록과 켜짐 여부만 있다. 실제 설치본은 `~/.claude/plugins` 아래 머신 로컬 파일이라, 복사만으로는 설치되지 않는다. MCP 목록은 아예 `settings.json` 에 없다. 그래서 두 목록 모두 설치 스크립트가 다시 붙인다.
+
+### 설치 스크립트가 없는 것만 붙인다
+
+dotfiles 의 `install.sh` 가 두 목록을 읽어 새 맥에 다시 붙인다.
+
+- **플러그인** — `settings.json` 의 마켓플레이스 목록을 먼저 추가하고, `enabledPlugins` 에서 `true` 인 것만 설치한다. 이미 설치된 것은 건너뛴다.
+- **MCP 서버** — `mcp-servers.json` 에서 `~/.claude.json` 에 없는 이름만 더한다. 이미 있는 항목은 고치지 않는다. VS Code 가 깔려 있고 `mcp.json` 이 없으면 같은 목록으로 만든다.
+
+pi 와 opencode 에는 이 목록 중 `qmd` 하나만 넣는다. 나머지는 Claude Code 에서만 쓴다.
+
+목록에서 지운 서버는 등록이 풀리지 않는다. 추가만 하기 때문이다. 그래서 뺀 서버는 설치 스크립트에 해제 명령을 따로 적는다.
+
+## 내 설정
+
+### 켜 둔 플러그인
+
+| 플러그인 | 쓰는 곳 |
+|---|---|
+| `claude-mem` | 세션 사이 기억. 지난 작업 검색과 작업 목록 |
+| `caveman` | 채팅 답을 짧게 줄이는 응답 모드 |
+| `hwip` | 폰으로 알림·파일을 보내고, 폰에서 답을 받는다 |
+| `frontend-design` | 랜딩·포트폴리오 화면 제작 |
+| `impeccable` | 제품 UI 화면 제작과 수정 |
+| `humanize-korean` | 한국어 문서 윤문 |
+| `last30days` | 최근 30일 여론·트렌드 리서치 |
+| `watch` | 영상 분석. `ffmpeg`·`yt-dlp` 가 먼저 있어야 한다 |
+| `swift-lsp`·`clangd-lsp` | Swift·C/C++ 코드의 언어 서버 |
+
+이 밖에 7개는 `false` 로 꺼 둔다. 켜 두면 스킬 목록과 프롬프트가 그만큼 길어지므로 필요할 때만 켠다. 꺼 둔 플러그인은 설치 스크립트가 설치하지 않는다.
+
+### MCP 서버
+
+| 서버 | 하는 일 |
+|---|---|
+| `codegraph` | 코드 심볼·호출 관계를 미리 색인한 그래프. 파일을 하나씩 읽는 대신 한 번에 묻는다 |
+| `context7` | 라이브러리·프레임워크의 현재 문서 조회 |
+| `playwright` | 브라우저를 몰아 화면을 확인한다 |
+| `chrome-devtools` | 콘솔·네트워크·성능 트레이스로 원인을 찾는다. 화면을 모는 것은 playwright 쪽이다 |
+| `mobile-mcp` | iOS 시뮬레이터·Android 에뮬레이터 조작 |
+| `figma-desktop` | Figma 데스크톱 앱이 로컬에 여는 HTTP 서버 |
+| `qmd` | 내 메모·문서 저장소 검색. 로컬 데몬이 HTTP 로 띄워 두어 세션마다 임베딩 모델을 올리지 않는다 |
+
+실행 경로의 홈 디렉터리는 `__HOME__` 으로 적어 두고, 설치 스크립트가 등록할 때 바꾼다.
+
+<include lang="json" meta='title="claude/mcp-servers.json"'>../snippets/dotfiles/claude/mcp-servers.json</include>
+
+## 확인
+
+1. 붙은 MCP 서버와 연결 상태를 본다. 위 목록의 7개가 모두 보여야 한다.
+
+```sh
+claude mcp list
+```
+
+2. Claude Code 안에서 플러그인 목록을 연다. 위 표의 플러그인이 켜져 있어야 한다.
+
+```text
+/plugin
+```
+
+3. dotfiles 검사를 돌린다. 목록의 서버가 `~/.claude.json` 에 없으면 경고, 등록됐는데 실행 파일이 없으면 실패로 남는다.
+
+```sh
+task dot:check
+```
