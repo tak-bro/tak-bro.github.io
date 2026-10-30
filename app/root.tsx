@@ -18,6 +18,10 @@ import {
   alternateLinks,
   APP_NAME,
   canonicalUrl,
+  HOME_CONTENT_ID,
+  homeCopy,
+  homeRouteId,
+  i18n,
   IS_PROD,
   localeFromPath,
   localeSwitchPath,
@@ -27,6 +31,7 @@ import {
 import NotFound from './routes/not-found';
 
 const NOT_FOUND_ROUTE_IDS = new Set(['not-found', 'not-found-page']);
+const HOME_ROUTE_IDS = new Set(i18n.languages.map(homeRouteId));
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
   const { pathname } = useLocation();
@@ -40,7 +45,10 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
   const canonical = canonicalUrl(path);
   // The /404 page is also served as 404.html for every unknown URL, so it must
   // neither be indexed nor claim a canonical or translated counterpart.
-  const notFound = useMatches().some((match) => NOT_FOUND_ROUTE_IDS.has(match.id));
+  const matches = useMatches();
+  const notFound = matches.some((match) => NOT_FOUND_ROUTE_IDS.has(match.id));
+  // The skip link must come before the nav, so only the root can place it.
+  const home = matches.some((match) => HOME_ROUTE_IDS.has(match.id));
 
   return (
     <html lang={lang} suppressHydrationWarning>
@@ -78,6 +86,14 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         <Links />
       </head>
       <body className="flex flex-col min-h-screen">
+        {home ? (
+          <a
+            href={`#${HOME_CONTENT_ID}`}
+            className="fixed top-3 left-3 z-50 -translate-y-24 rounded-md bg-fd-foreground px-4 py-2 text-sm font-semibold text-fd-background focus:translate-y-0"
+          >
+            {homeCopy(lang).skipLabel}
+          </a>
+        ) : null}
         <RootProvider
           search={{ SearchDialog: DocsSearchDialog }}
           i18n={{

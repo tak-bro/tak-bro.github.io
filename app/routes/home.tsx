@@ -7,6 +7,7 @@ import {
   baseOptions,
   blogPosts,
   GITHUB_URL,
+  HOME_CONTENT_ID,
   homeCopy,
   localeFromPath,
   localizedDocsHref,
@@ -19,10 +20,10 @@ export const meta = ({ location }: Route.MetaArgs) => {
   const copy = homeCopy(localeFromPath(location.pathname));
 
   return [
-    { title: copy.title },
+    { title: copy.documentTitle },
     { name: 'description', content: copy.description },
     { property: 'og:type', content: 'website' },
-    { property: 'og:title', content: copy.title },
+    { property: 'og:title', content: copy.documentTitle },
     { property: 'og:description', content: copy.description },
   ];
 };
@@ -51,12 +52,13 @@ const pad = (index: number) => String(index + 1).padStart(2, '0');
 const Stages = ({ label, stages }: { label: string; stages: readonly HomeStage[] }) => {
   const [active, setActive] = useState(0);
   const steps = useRef<(HTMLLIElement | null)[]>([]);
+  const section = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (entry.isIntersecting) setActive(steps.current.indexOf(entry.target as HTMLLIElement));
+          if (entry.isIntersecting) setActive(steps.current.findIndex((step) => step === entry.target));
         }
       },
       { rootMargin: '-45% 0px -45% 0px' },
@@ -65,9 +67,26 @@ const Stages = ({ label, stages }: { label: string; stages: readonly HomeStage[]
     return () => observer.disconnect();
   }, []);
 
+  // rootMargin keeps only the top ~6% of the viewport: the band under the sticky header.
+  useEffect(() => {
+    const root = document.documentElement;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) root.dataset.homeNight = '';
+        else delete root.dataset.homeNight;
+      },
+      { rootMargin: '0px 0px -94% 0px' },
+    );
+    if (section.current) observer.observe(section.current);
+    return () => {
+      observer.disconnect();
+      delete root.dataset.homeNight;
+    };
+  }, []);
+
   return (
-    <section aria-labelledby="stages-heading" className="home-night">
-      <div className="mx-auto grid w-full max-w-6xl gap-x-10 px-5 py-24 sm:py-32 lg:grid-cols-12">
+    <section ref={section} aria-labelledby="stages-heading" className="home-night">
+      <div className="mx-auto grid w-full max-w-6xl gap-x-10 px-5 pt-24 pb-12 sm:py-32 lg:grid-cols-12">
         <div className="lg:col-span-5">
           <div className="flex flex-col gap-10 lg:sticky lg:top-[calc(50vh-9rem)]">
             <h2 id="stages-heading" className="text-sm font-medium text-(--night-muted)">
@@ -96,9 +115,10 @@ const Stages = ({ label, stages }: { label: string; stages: readonly HomeStage[]
               ref={(node) => {
                 steps.current[index] = node;
               }}
-              className={`flex flex-col gap-5 border-t border-(--night-line) py-12 transition-opacity duration-500 lg:min-h-[60vh] lg:justify-center ${index === active ? '' : 'lg:opacity-35'}`}
+              data-active={index === active}
+              className="home-step flex flex-col gap-5 border-t border-(--night-line) py-12 lg:min-h-[60vh] lg:justify-center"
             >
-              <p className="home-stage-word lg:hidden">{stage.word}</p>
+              <p className="home-stage-word lg:sr-only">{stage.word}</p>
               <p className="flex gap-3 font-mono text-sm">
                 <span className="tabular-nums text-(--night-muted)">{pad(index)}</span>
                 <span className="text-(--night-accent)" aria-hidden>
@@ -125,7 +145,7 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
 
   return (
     <HomeLayout {...baseOptions({ lang: loaderData.lang })}>
-      <section className="mx-auto flex w-full max-w-6xl flex-col px-5 pt-14 pb-20 sm:pt-20">
+      <section id={HOME_CONTENT_ID} className="mx-auto flex w-full max-w-6xl flex-col px-5 pt-14 pb-20 sm:pt-20">
         <div className="home-rise [--i:0] flex items-start justify-between gap-6 text-sm">
           <p className="flex flex-col">
             <span className="font-semibold">{copy.name}</span>
@@ -140,7 +160,7 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
         </div>
         <h1 className="home-mega mt-16 sm:mt-24">
           {copy.heroLines.map((line, index) => (
-            <span key={line} className="home-rise block" style={{ '--i': index + 1 } as React.CSSProperties}>
+            <span key={line} className={`home-rise block ${index === 0 ? '[--i:1]' : '[--i:2]'}`}>
               {line}
             </span>
           ))}
@@ -157,7 +177,7 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
           </p>
           <Link
             to={`${docsHref}/workflow`}
-            className="group inline-flex shrink-0 items-center gap-2 self-start rounded-full bg-fd-foreground px-5 py-3 text-sm font-semibold text-fd-background transition-transform active:scale-[0.97] sm:self-auto"
+            className="group inline-flex shrink-0 items-center gap-2 self-start rounded-full bg-fd-foreground px-5 py-3 text-sm font-semibold text-fd-background transition-[background-color,scale] duration-300 hover:bg-brand active:scale-[0.97] sm:self-auto"
           >
             {copy.promptCta}
             <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={1.75} aria-hidden />
@@ -228,10 +248,10 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
         <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-2 px-5 py-6 text-sm text-fd-muted-foreground">
           <span>© 2026 tak-bro</span>
           <span className="flex gap-3">
-            <a href={`${REPO_URL}/blob/main/LICENSE`} className="underline-offset-4 hover:underline">
+            <a href={`${REPO_URL}/blob/main/LICENSE`} className="inline-block py-1 underline-offset-4 hover:underline">
               {copy.codeLicense}
             </a>
-            <a href={`${REPO_URL}/blob/main/LICENSE-CONTENT`} className="underline-offset-4 hover:underline">
+            <a href={`${REPO_URL}/blob/main/LICENSE-CONTENT`} className="inline-block py-1 underline-offset-4 hover:underline">
               {copy.contentLicense}
             </a>
           </span>

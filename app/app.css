@@ -56,10 +56,24 @@ html > body[data-scroll-locked] {
 .home-night {
   --night-ink: #f1efea;
   --night-muted: #a3a6a2;
+  --night-dim: #80837f;
   --night-line: rgba(241, 239, 234, 0.16);
   --night-accent: #ff8a6b;
   background: #101110;
   color: var(--night-ink);
+}
+
+/* Steps away from the middle dim by color, not opacity, so they keep 4.5:1. */
+.home-step {
+  transition: color 0.5s var(--ease-out-expo);
+}
+
+@media (width >= 64rem) {
+  .home-step[data-active='false'] {
+    --night-muted: var(--night-dim);
+    --night-accent: var(--night-dim);
+    color: var(--night-dim);
+  }
 }
 
 .home-night ::selection {
@@ -109,7 +123,43 @@ html > body[data-scroll-locked] {
   translate: 3px 0;
 }
 
+/* Set by home.tsx while the stage section is under the sticky header. */
+html[data-home-night] #nd-nav {
+  --color-fd-background: #101110;
+  --color-fd-foreground: #f1efea;
+  --color-fd-muted-foreground: #a3a6a2;
+  --color-fd-secondary: #191a19;
+  --color-fd-accent: #262726;
+  --color-fd-accent-foreground: #f1efea;
+  --color-fd-primary: #f1efea;
+  --color-fd-border: rgba(241, 239, 234, 0.16);
+  --color-brand: oklch(0.76 0.14 55);
+  color: var(--color-fd-foreground);
+}
+
+#nd-nav nav > a:first-child > span,
+#nd-nav nav ul a {
+  background: linear-gradient(var(--color-brand), var(--color-brand)) no-repeat left bottom / 0 1.5px;
+  background-origin: content-box;
+}
+
+#nd-nav nav > a:first-child:hover > span,
+#nd-nav nav ul a:hover {
+  background-size: 100% 1.5px;
+}
+
+#nd-nav [data-theme-toggle]:hover {
+  background-color: var(--color-fd-accent);
+}
+
 @media (prefers-reduced-motion: no-preference) {
+  #nd-nav nav > a:first-child > span,
+  #nd-nav nav ul a {
+    transition:
+      background-size 0.35s var(--ease-out-expo),
+      color 0.15s;
+  }
+
   .home-rise {
     animation: home-rise 0.9s var(--ease-out-expo) both;
     animation-delay: calc(var(--i, 0) * 70ms + 80ms);
@@ -124,9 +174,9 @@ html > body[data-scroll-locked] {
   }
 }
 
+/* Transform only, so the hero text is painted on the first frame. */
 @keyframes home-rise {
   from {
-    opacity: 0;
     translate: 0 0.4em;
   }
 }

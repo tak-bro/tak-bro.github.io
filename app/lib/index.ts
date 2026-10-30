@@ -1,5 +1,5 @@
 export { filterByTag, groupByYear, tagCounts, type BlogListItem } from './blog-list';
-export { homeCopy, type HomeCopy, type HomeGuide, type HomeStage } from './home-copy';
+export { HOME_CONTENT_ID, homeCopy, type HomeCopy, type HomeGuide, type HomeStage } from './home-copy';
 export { alternateLinks, i18n, isLocalizedPath, localeFromPath, localeSwitchPath, localizedDocsHref, type AlternateLink } from './i18n';
 export { baseOptions } from './layout.shared';
 export { llmsFullTxt, llmsTxt } from './llms';
@@ -13,6 +13,7 @@ export {
   DOCS_CONTENT_DIR,
   DOCS_ROUTE,
   GITHUB_URL,
+  homeRouteId,
   pageTitle,
   PROJECTS_CONTENT_DIR,
   PROJECTS_ROUTE,

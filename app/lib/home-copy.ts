@@ -24,6 +24,8 @@ export interface HomeStage {
 
 export interface HomeCopy {
   readonly title: string;
+  /** The document and og:title: the claim, then who, ending in the site name like other pages. */
+  readonly documentTitle: string;
   readonly description: string;
   /** Who writes this: name, then role, shown above the heading. */
   readonly name: string;
@@ -46,11 +48,13 @@ export interface HomeCopy {
   readonly codeLicense: string;
   readonly contentLicense: string;
   readonly newTabLabel: string;
+  readonly skipLabel: string;
   readonly guides: readonly HomeGuide[];
 }
 
 const en: HomeCopy = {
   title: 'Tak',
+  documentTitle: 'One line in, a draft PR out — Hyungtak Jin · Tak',
   description: 'How I set up coding agents, terminals, and keymaps, written so you can copy it.',
   name: 'Hyungtak Jin',
   role: 'Frontend engineer',
@@ -101,6 +105,7 @@ const en: HomeCopy = {
   codeLicense: 'Code: MIT',
   contentLicense: 'Content: CC BY 4.0',
   newTabLabel: '(opens in a new tab)',
+  skipLabel: 'Skip to content',
   guides: [
     { slug: 'agent-config', group: 'agents', title: 'Agent config', blurb: 'Rules, hooks, and subagents for Claude Code, pi, and opencode.' },
     { slug: 'workflow', group: 'agents', title: 'Workflow', blurb: 'How a task goes from plan to merged PR.' },
@@ -113,7 +118,8 @@ const en: HomeCopy = {
 
 const ko: HomeCopy = {
   title: 'Tak',
-  description: '코딩 에이전트·터미널·키맵 설정을 그대로 가져다 쓸 수 있게 정리한 곳.',
+  documentTitle: '한 줄을 맡기면 draft PR 이 온다 — 진형탁 · Tak',
+  description: '코딩 에이전트·터미널·키맵 설정을 그대로 가져다 쓸 수 있게 정리한 곳. 가이드마다 동작 원리와 확인 방법을 적었다.',
   name: '진형탁',
   role: '프론트엔드 개발자',
   heroLines: ['한 줄을 맡기면', 'draft PR 이 온다.'],
@@ -163,17 +169,21 @@ const ko: HomeCopy = {
   codeLicense: '코드: MIT',
   contentLicense: '글: CC BY 4.0',
   newTabLabel: '(새 탭)',
+  skipLabel: '본문으로 건너뛰기',
   guides: [
-    { slug: 'agent-config', group: 'agents', title: '에이전트 설정', blurb: 'Claude Code·pi·opencode 의 규칙·훅·서브에이전트.' },
+    { slug: 'agent-config', group: 'agents', title: '에이전트 설정', blurb: 'Claude Code, pi, opencode 의 규칙, 훅, 서브에이전트.' },
     { slug: 'workflow', group: 'agents', title: '워크플로우', blurb: '작업 하나가 계획에서 머지까지 가는 길.' },
     { slug: 'plugins', group: 'agents', title: '플러그인·MCP', blurb: '켜 두고 쓰는 Claude Code 플러그인과 MCP 서버.' },
     { slug: 'herdr', group: 'machine', title: 'Herdr', blurb: '터미널 작업 공간 설정과 단축키.' },
-    { slug: 'keymaps', group: 'machine', title: '키맵', blurb: 'macOS 키보드 기본값·Ghostty 키·Karabiner·LazyVim.' },
+    { slug: 'keymaps', group: 'machine', title: '키맵', blurb: 'macOS 키보드 기본값, Ghostty 키, Karabiner, LazyVim.' },
     { slug: 'setup', group: 'machine', title: '맥 셋업', blurb: '새 맥을 세팅하는 순서.' },
   ],
 };
 
 const HOME_COPY: Record<string, HomeCopy> = { en, ko };
+
+/** The skip link's target, rendered by the root ahead of the nav. */
+export const HOME_CONTENT_ID = 'home-content';
 
 export const homeCopy = (locale: string | undefined): HomeCopy =>
   HOME_COPY[locale ?? i18n.defaultLanguage] ?? HOME_COPY[i18n.defaultLanguage];

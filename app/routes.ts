@@ -3,14 +3,14 @@ import { index, route, type RouteConfig } from '@react-router/dev/routes';
 // barrel's source.ts (`defineDocs` macro) does not resolve.
 import { docsPrerenderPaths, listMdxFiles } from '../config';
 import { i18n } from './lib/i18n';
-import { BLOG_CONTENT_DIR, BLOG_ROUTE, DOCS_CONTENT_DIR, PROJECTS_CONTENT_DIR, PROJECTS_ROUTE } from './lib/shared';
+import { BLOG_CONTENT_DIR, BLOG_ROUTE, DOCS_CONTENT_DIR, homeRouteId, PROJECTS_CONTENT_DIR, PROJECTS_ROUTE } from './lib/shared';
 
 // One static route per real page: in a static build a pattern route (`:lang?`,
 // `docs/*`) has no loader data for unknown URLs, so those must reach the 404.
 const homeRoutes = i18n.languages.map((lang) =>
   lang === i18n.defaultLanguage
-    ? index('routes/home.tsx', { id: `home-${lang}` })
-    : route(lang, 'routes/home.tsx', { id: `home-${lang}` }),
+    ? index('routes/home.tsx', { id: homeRouteId(lang) })
+    : route(lang, 'routes/home.tsx', { id: homeRouteId(lang) }),
 );
 
 const docsRoutes = async () =>

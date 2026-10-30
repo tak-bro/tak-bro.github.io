@@ -1,7 +1,9 @@
 # Home design
 
 Scope: the home route only (`app/routes/home.tsx`, copy in `app/lib/home-copy.ts`). Docs, blog and
-projects keep the fumadocs layout.
+projects keep the fumadocs layout. Two pieces reach outside it: the skip link sits in `app/root.tsx`
+(it must come before the nav, and renders on the home routes only), and the nav hover treatment
+applies to the shared home-layout header on every page that uses it.
 
 ## Brief
 
@@ -41,7 +43,9 @@ workflow is a sticky stage section, not feature cards; guides are an index, not 
 ## System
 
 - Palette: ground and ink follow the fumadocs light and dark tokens. Stage section ground
-  `#101110`, ink `#f1efea`, muted `#a3a6a2`. Accent dot `#ff5a36`; accent text `--color-brand`
+  `#101110`, ink `#f1efea`, muted `#a3a6a2`, dimmed steps `#80837f` (4.9:1; steps dim by color,
+  never by opacity, so they keep contrast). While the section is under the sticky header, the
+  header takes the same night tokens. Accent dot `#ff5a36`; accent text `--color-brand`
   (5:1 on light ground, light orange on dark).
 - Type: Pretendard Variable for everything; mono = system mono with Pretendard for Hangul.
   Mega `clamp(3.2rem, 1rem + 8.6vw, 9rem)`, tracking -0.045em, leading 0.98. Stage word
@@ -49,9 +53,12 @@ workflow is a sticky stage section, not feature cards; guides are an index, not 
 - Grid: one column of max 72rem with a 12-column split in the hero bar and the stage section
   (5 / 7). Section rhythm: tall hero, taller stage section, compact index.
 - Shape: radius 0 except the pill CTA (full).
-- Motion: one ease `cubic-bezier(0.16, 1, 0.3, 1)`. Hero lines rise 0.9s staggered 70ms. Stage
+- Motion: one ease `cubic-bezier(0.16, 1, 0.3, 1)`. Hero lines rise 0.9s staggered 70ms, by
+  transform only, so the text is painted on the first frame. Stage
   word swaps by a short upward step (240ms). Cursor blinks at 1.1s. All of it is off under
   reduced motion; content is fully visible without it.
+- Hover: the pill CTA floods with the accent; nav links and the logo draw an accent underline
+  from the left; guide rows shift and turn accent. No primary target changes color alone.
 - Idle: the cursor blink is the idle state. The stage section is still at rest by decision.
 
 ## Sections
