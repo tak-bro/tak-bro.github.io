@@ -29,6 +29,10 @@ describe('home copy', () => {
     }
   });
 
+  it('walks the same /orch stages in both languages', () => {
+    expect(homeCopy('en').stages).toHaveLength(homeCopy('ko').stages.length);
+  });
+
   it('links the resume in the page language', () => {
     expect(homeCopy('ko').resumeHref).toBe('/assets/resume.pdf');
     expect(homeCopy('en').resumeHref).toBe('/assets/resume_eng.pdf');

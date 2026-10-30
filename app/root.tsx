@@ -64,6 +64,10 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         )}
         <meta property="og:site_name" content={APP_NAME} />
         <meta property="og:locale" content={ogLocale(lang)} />
+        <meta property="og:image" content={canonicalUrl('/og.png')} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta name="twitter:card" content="summary_large_image" />
         {/*
           Only the production build may be indexed; a local or preview build is not
           the published site. `og:type` is not here — it differs per route, and
