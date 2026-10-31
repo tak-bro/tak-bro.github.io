@@ -14,9 +14,9 @@ describe('home loader', () => {
   });
 
   it('lists only guides whose docs page exists', () => {
-    // All six guides are written; a card without a docs page would link to a 404.
-    expect(call('/').publishedGuides).toEqual(['agent-config', 'workflow', 'plugins', 'herdr', 'keymaps', 'setup']);
-    expect(call('/en').publishedGuides).toEqual(['agent-config', 'workflow', 'plugins', 'herdr', 'keymaps', 'setup']);
+    // All five guides are written; a card without a docs page would link to a 404.
+    expect(call('/').publishedGuides).toEqual(['agent-config', 'workflow', 'plugins', 'herdr', 'keymaps']);
+    expect(call('/en').publishedGuides).toEqual(['agent-config', 'workflow', 'plugins', 'herdr', 'keymaps']);
   });
 });
 
