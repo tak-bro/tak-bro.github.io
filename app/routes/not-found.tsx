@@ -41,6 +41,13 @@ const NotFound = () => {
   const lang = localeFromPath(path);
   const copy = notFoundCopy(lang);
 
+  // root.tsx's <html lang> and meta title were rendered for the router's /404, so they
+  // stay Korean after the address swap unless the page sets them to its own language.
+  useEffect(() => {
+    document.documentElement.lang = lang;
+    document.title = copy.title;
+  }, [lang, copy.title]);
+
   return (
     <HomeLayout {...baseOptions({ lang, localized: isLocalizedPath(path) })}>
       <section id={CONTENT_ID} className="home-frame flex flex-1 flex-col justify-center gap-6 py-24">

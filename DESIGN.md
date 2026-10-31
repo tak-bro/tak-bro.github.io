@@ -80,7 +80,7 @@ TEAM      field band: heading, three practices          |  ladder card: six laye
           a team can take over                          |  All principles →
 GUIDES    heading + one line                            |  index rows: title →, line, last commit date
 CLOSE     field: contact line set large, one line, [Resume ↗] LinkedIn ↗
-          about line, links (LinkedIn, GitHub, hwip, resume, older posts, source), licences
+          about line, links (LinkedIn, GitHub, hwip, resume, source), licences
 ```
 
 Phone (390px): name, headline (two lines), lede and the buttons fill the first screen; the profile

@@ -174,7 +174,7 @@ const en: HomeCopy = {
     },
     {
       title: 'Hooks for what must hold',
-      body: 'When review keeps flagging the same thing, stop writing it down and block it before the commit. In a team the same script runs in CI too.',
+      body: 'When review keeps flagging the same thing, stop writing it down and block it before the commit.',
     },
     {
       title: 'Agents stop at a draft PR',
@@ -211,7 +211,6 @@ const en: HomeCopy = {
     { name: 'GitHub', href: GITHUB_URL },
     { name: 'hwip', href: 'https://hwip.app' },
     { name: 'Resume', href: RESUME_HREF.en },
-    { name: 'Older posts', href: '/blog' },
     { name: 'Site source', href: `${GITHUB_URL}/tak-bro.github.io` },
   ],
   codeLicense: 'Code: MIT',
@@ -276,7 +275,7 @@ const ko: HomeCopy = {
     },
     {
       title: '꼭 지킬 것은 훅으로',
-      body: '리뷰에서 같은 지적이 반복되면 문서에 더 쓰지 않고 커밋 전에 막는다. 팀에서는 같은 스크립트를 CI 에도 건다.',
+      body: '리뷰에서 같은 지적이 반복되면 문서에 더 쓰지 않고 커밋 전에 막는다.',
     },
     {
       title: '에이전트는 draft PR 까지',
@@ -313,7 +312,6 @@ const ko: HomeCopy = {
     { name: 'GitHub', href: GITHUB_URL },
     { name: 'hwip', href: 'https://hwip.app' },
     { name: '이력서', href: RESUME_HREF.ko },
-    { name: '예전 글', href: '/blog' },
     { name: '사이트 소스', href: `${GITHUB_URL}/tak-bro.github.io` },
   ],
   codeLicense: '코드: MIT',
