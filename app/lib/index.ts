@@ -1,5 +1,6 @@
 export { filterByTag, groupByYear, listedPosts, recentPosts, tagCounts, type BlogListItem } from './blog-list';
 export { listedProjects } from './project-list';
+export { heldPathAt, NotFoundPathContext, takeNotFoundPath, type HeldPath, type NotFoundHold } from './not-found-hold';
 export { sameOriginPath } from './same-origin-path';
 export { homeCopy, type HomeCopy, type HomeListCopy } from './home-copy';
 export { alternateLinks, i18n, isLocalizedPath, localeFromPath, localeSwitchPath, localizedDocsHref, resumeHref, type AlternateLink } from './i18n';

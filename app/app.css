@@ -172,3 +172,12 @@ html > body[data-scroll-locked] {
     translate: 0 0.5em;
   }
 }
+
+/* Reduced motion stops every transition, the ones fumadocs puts on its nav and sidebar included. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    transition-duration: 0s !important;
+  }
+}

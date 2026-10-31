@@ -9,6 +9,7 @@ import {
   useMatches,
   useNavigate,
 } from 'react-router';
+import { useCallback, useMemo, useState } from 'react';
 import { RootProvider } from 'fumadocs-ui/provider/react-router';
 import { i18nProvider } from 'fumadocs-ui/i18n';
 import type { Route } from './+types/root';
@@ -20,10 +21,13 @@ import {
   canonicalUrl,
   CONTENT_ID,
   DOCS_ROUTE_ID_PREFIX,
+  heldPathAt,
+  type HeldPath,
   homeCopy,
   IS_PROD,
   localeFromPath,
   localeSwitchPath,
+  NotFoundPathContext,
   ogLocale,
   translations,
 } from './lib';
@@ -32,10 +36,17 @@ import NotFound from './routes/not-found';
 const NOT_FOUND_ROUTE_IDS = new Set(['not-found', 'not-found-page']);
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
-  const { pathname } = useLocation();
+  const { pathname, key } = useLocation();
+  // The 404 page restores the visitor's address after hydration while the router stays on /404;
+  // the document then speaks for that address until the router moves on.
+  const [held, setHeld] = useState<HeldPath | null>(null);
+  const heldPath = heldPathAt(key, held);
+  const documentPath = heldPath ?? pathname;
+  const holdPath = useCallback((path: string) => setHeld({ key, path }), [key]);
+  const notFoundPath = useMemo(() => ({ heldPath, holdPath }), [heldPath, holdPath]);
   // From the path, not useParams: the catch-all 404 has no `lang` param, and an
   // unknown first segment (/nope-x) must not become the document language.
-  const lang = localeFromPath(pathname);
+  const lang = localeFromPath(documentPath);
   const navigate = useNavigate();
   // Every page is prerendered to its own HTML file, so each gets its own canonical.
   // Trailing slashes are dropped so `/docs/cli/` and `/docs/cli` name one URL.
@@ -96,10 +107,11 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
             ...i18nProvider(translations, lang),
             // Without this, fumadocs swaps the first path segment for the locale
             // code and sends Korean readers to /ko/docs, which does not exist.
-            onLocaleChange: (next) => navigate(localeSwitchPath(pathname, lang, next)),
+            // From the held path on a restored 404, so the switch keeps the visitor's address.
+            onLocaleChange: (next) => navigate(localeSwitchPath(documentPath, lang, next)),
           }}
         >
-          {children}
+          <NotFoundPathContext value={notFoundPath}>{children}</NotFoundPathContext>
         </RootProvider>
         <ScrollRestoration />
         <Scripts />
