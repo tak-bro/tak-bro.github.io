@@ -2,10 +2,10 @@ import { HomeLayout } from 'fumadocs-ui/layouts/home';
 import { useState } from 'react';
 import { Link } from 'react-router';
 import type { Route } from './+types/blog';
-import { baseOptions, blogPosts, filterByTag, groupByYear, pageTitle, tagCounts } from '../lib';
+import { baseOptions, blogPosts, DOCS_ROUTE, filterByTag, groupByYear, listedPosts, pageTitle, tagCounts } from '../lib';
 
 const TITLE = '블로그';
-const DESCRIPTION = '2015년부터 쓴 개발 글.';
+const DESCRIPTION = '코딩 에이전트를 쓰며 남기는 사고와 규칙 기록.';
 
 export const meta = () => [
   { title: pageTitle(TITLE) },
@@ -16,13 +16,15 @@ export const meta = () => [
 ];
 
 export const loader = () => ({
-  posts: blogPosts().map((post) => ({
-    url: post.url,
-    title: post.data.title,
-    description: post.data.description,
-    date: post.data.date,
-    tags: post.data.tags,
-  })),
+  posts: listedPosts(
+    blogPosts().map((post) => ({
+      url: post.url,
+      title: post.data.title,
+      description: post.data.description,
+      date: post.data.date,
+      tags: post.data.tags,
+    })),
+  ),
 });
 
 const chipClass =
@@ -42,22 +44,32 @@ const Blog = ({ loaderData }: Route.ComponentProps) => {
           <h1 className="text-3xl font-bold tracking-tight">{TITLE}</h1>
           <p className="text-fd-muted-foreground">{DESCRIPTION}</p>
         </header>
-        <div role="group" aria-label="태그로 거르기" className="flex flex-wrap gap-2">
-          <button type="button" className={chipClass} aria-pressed={tag === null} onClick={() => setTag(null)}>
-            전체 <span className="tabular-nums opacity-70">{loaderData.posts.length}</span>
-          </button>
-          {tags.map(({ tag: name, count }) => (
-            <button
-              key={name}
-              type="button"
-              className={chipClass}
-              aria-pressed={tag === name}
-              onClick={() => setTag(tag === name ? null : name)}
-            >
-              #{name} <span className="tabular-nums opacity-70">{count}</span>
+        {loaderData.posts.length === 0 ? (
+          <p className="text-fd-muted-foreground">
+            아직 글이 없다. 지금까지의 기록은{' '}
+            <Link to={`${DOCS_ROUTE}/principles`} className="text-fd-foreground underline underline-offset-4">
+              원칙
+            </Link>{' '}
+            가이드에 모았다.
+          </p>
+        ) : (
+          <div role="group" aria-label="태그로 거르기" className="flex flex-wrap gap-2">
+            <button type="button" className={chipClass} aria-pressed={tag === null} onClick={() => setTag(null)}>
+              전체 <span className="tabular-nums opacity-70">{loaderData.posts.length}</span>
             </button>
-          ))}
-        </div>
+            {tags.map(({ tag: name, count }) => (
+              <button
+                key={name}
+                type="button"
+                className={chipClass}
+                aria-pressed={tag === name}
+                onClick={() => setTag(tag === name ? null : name)}
+              >
+                #{name} <span className="tabular-nums opacity-70">{count}</span>
+              </button>
+            ))}
+          </div>
+        )}
         <div className="flex flex-col gap-6">
           {years.map(({ year, posts }) => (
             <section key={year} aria-labelledby={`year-${year}`} className="grid gap-2 md:grid-cols-[5rem_1fr] md:gap-6">

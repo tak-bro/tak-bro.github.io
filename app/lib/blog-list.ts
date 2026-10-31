@@ -44,3 +44,9 @@ export const tagCounts = (posts: readonly BlogListItem[]): BlogTag[] => {
 /** `null` means no filter. */
 export const filterByTag = (posts: readonly BlogListItem[], tag: string | null): readonly BlogListItem[] =>
   tag === null ? posts : posts.filter((post) => post.tags.includes(tag));
+
+/** Posts older than this keep their URLs but leave the list: the blog restarts as agent notes. */
+const LISTED_SINCE = '2026-01-01';
+
+export const listedPosts = <Post extends { readonly date: string }>(posts: readonly Post[]): Post[] =>
+  posts.filter((post) => post.date >= LISTED_SINCE);

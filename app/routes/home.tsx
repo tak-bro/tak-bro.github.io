@@ -5,7 +5,6 @@ import { Link } from 'react-router';
 import type { Route } from './+types/home';
 import {
   baseOptions,
-  blogPosts,
   GITHUB_URL,
   HOME_CONTENT_ID,
   homeCopy,
@@ -36,14 +35,13 @@ export const loader = ({ request }: Route.LoaderArgs) => {
 
   return {
     lang,
-    postCount: blogPosts().length,
     publishedGuides: homeCopy(lang)
       .guides.map((guide) => guide.slug)
       .filter((slug) => source.getPage([slug], lang) !== undefined),
   };
 };
 
-const pad = (index: number) => String(index + 1).padStart(2, '0');
+const pad = (n: number) => String(n).padStart(2, '0');
 
 /**
  * The /orch path as a sticky stage: the left column shows the stage whose step sits in the
@@ -120,7 +118,7 @@ const Stages = ({ label, stages }: { label: string; stages: readonly HomeStage[]
             >
               <p className="home-stage-word lg:sr-only">{stage.word}</p>
               <p className="flex gap-3 font-mono text-sm">
-                <span className="tabular-nums text-(--night-muted)">{pad(index)}</span>
+                <span className="tabular-nums text-(--night-muted)">{pad(index + 1)}</span>
                 <span className="text-(--night-accent)" aria-hidden>
                   &gt;
                 </span>
@@ -146,18 +144,10 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
   return (
     <HomeLayout {...baseOptions({ lang: loaderData.lang })}>
       <section id={HOME_CONTENT_ID} className="mx-auto flex w-full max-w-6xl flex-col px-5 pt-14 pb-20 sm:pt-20">
-        <div className="home-rise [--i:0] flex items-start justify-between gap-6 text-sm">
-          <p className="flex flex-col">
-            <span className="font-semibold">{copy.name}</span>
-            <span className="text-fd-muted-foreground">{copy.role}</span>
-          </p>
-          <p className="text-right text-fd-muted-foreground tabular-nums">
-            {copy.statGuides} <span className="text-fd-foreground">{guides.length}</span>
-            <span className="hidden sm:inline" aria-hidden> · </span>
-            <br className="sm:hidden" />
-            {copy.statPosts} <span className="text-fd-foreground">{loaderData.postCount}</span>
-          </p>
-        </div>
+        <p className="home-rise [--i:0] flex flex-col text-sm">
+          <span className="font-semibold">{copy.name}</span>
+          <span className="text-fd-muted-foreground">{copy.role}</span>
+        </p>
         <h1 className="home-mega mt-16 sm:mt-24">
           {copy.heroLines.map((line, index) => (
             <span key={line} className={`home-rise block ${index === 0 ? '[--i:1]' : '[--i:2]'}`}>

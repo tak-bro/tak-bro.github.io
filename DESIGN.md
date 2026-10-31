@@ -64,7 +64,7 @@ workflow is a sticky stage section, not feature cards; guides are an index, not 
 ## Sections
 
 ```
-HERO     name / role                         guides 6 · posts 42
+HERO     name / role
          MEGA LINE ONE
          MEGA LINE TWO.
          ───────────────────────────────────────────────
@@ -77,7 +77,8 @@ STAGES   (dark, sticky left)
                                  |    body
                                  | 02 …
 
-INDEX    Guides ────────────────────────────── 6
+INDEX    Guides ────────────────────────────── 7
+         00  Principles                 →
          01  Title                      →
 ```
 

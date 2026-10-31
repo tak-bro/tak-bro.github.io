@@ -1,6 +1,6 @@
 # tak-bro.github.io
 
-Source of [tak-bro.github.io](https://tak-bro.github.io): guides to my coding-agent setup, workflow, plugins and MCP servers, Herdr, keymaps, and Mac setup. Korean is the default language; English lives under `/en`.
+Source of [tak-bro.github.io](https://tak-bro.github.io): guides to my coding-agent principles, setup, workflow, plugins and MCP servers, Herdr, keymaps, and Mac setup. Korean is the default language; English lives under `/en`.
 
 Built with [fumadocs](https://fumadocs.dev) on React Router 7 as a fully prerendered static site.
 
@@ -30,7 +30,7 @@ It runs, in order: sensitive pattern scan, typecheck, tests, production build, i
 ## Content
 
 - Docs pages live in `content/docs/`. Each page has a Korean file `x.mdx` and an English file `x.en.mdx`, and each `meta.json` has a `meta.en.json`. A test fails if either side is missing.
-- Blog posts (`content/blog/`) and projects (`content/projects/`) are Korean only. They are served at `/blog/<slug>` and `/projects/<name>`, with no English page, no hreflang, and no language switcher. They are generated from the old Jekyll repo, so do not edit them by hand. To regenerate them, run `node scripts/import-jekyll.mjs <jekyll repo>`. It also replaces `public/assets/img/blog/` and `public/assets/img/projects/` with the referenced images, and masks keys and local paths. If any output still matches a sensitive pattern, nothing is written.
+- Blog posts (`content/blog/`) and projects (`content/projects/`) are Korean only. They are served at `/blog/<slug>` and `/projects/<name>`, with no English page, no hreflang, and no language switcher. Neither is in the nav, and `/blog` lists only posts dated 2026 or later (`LISTED_SINCE` in `app/lib/blog-list.ts`); older posts keep their URLs. They are generated from the old Jekyll repo, so do not edit them by hand. To regenerate them, run `node scripts/import-jekyll.mjs <jekyll repo>`. It also replaces `public/assets/img/blog/` and `public/assets/img/projects/` with the referenced images, and masks keys and local paths. If any output still matches a sensitive pattern, nothing is written.
 - Config snippets in `content/snippets/` are copied from my private repos by `just sync-configs`. Only the files listed in `config/sync-allowlist.json` are copied. If any file matches a sensitive pattern, nothing is written. Docs show a snippet only through `<include>../snippets/<repo>/<path></include>`, and a test fails if an include points anywhere but an allowlisted snippet.
 
 ## License
