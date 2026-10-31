@@ -27,4 +27,4 @@ export {
 export { canonicalUrl, IS_PROD, ogLocale, SITE_URL } from './site';
 export { sitemapEntries, sitemapXml, type SitemapEntry } from './sitemap';
 export { blog, blogPosts, blogSource, docs, projectPages, projects, projectsSource, source } from './source';
-export { translations } from './translations';
+export { tocLabel, translations } from './translations';
