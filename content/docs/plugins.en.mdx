@@ -1,9 +1,9 @@
 ---
 title: Plugins and MCP
-description: The Claude Code plugins and MCP servers I keep on, and how a new Mac gets the same list back.
+description: The Claude Code plugins and MCP servers I keep on, and how the install script puts the same list back.
 ---
 
-Besides the rules, hooks, and skills I write myself, Claude Code also takes extensions other people wrote, in two forms: plugins and MCP servers. This page lists what I keep on, why, and how a new Mac gets the same list back. What I write myself is covered in [Agent config](./agent-config.mdx).
+Besides the rules, hooks, and skills I write myself, Claude Code also takes extensions other people wrote, in two forms: plugins and MCP servers. This page lists what I keep on, why, and how the install script puts the same list back. What I write myself is covered in [Agent config](./agent-config.mdx).
 
 ## How it works
 
@@ -19,14 +19,14 @@ Besides the rules, hooks, and skills I write myself, Claude Code also takes exte
 
 ### The install script adds only what is missing
 
-`install.sh` in dotfiles reads both lists and adds them back on a new Mac.
+`install.sh` in dotfiles reads both lists and adds them back. Running it again skips anything already there.
 
-- **Plugins** — it adds the marketplaces listed in `settings.json` first, then installs only the entries in `enabledPlugins` that are `true`. Anything already installed is skipped.
+- **Plugins** — it reads the real `~/.claude/settings.json`. That file is copied once from the agent config repo's copy, and after that a session start hook reports any difference. It adds the marketplaces first, then installs only the entries in `enabledPlugins` that are `true`.
 - **MCP servers** — it adds only the names from `mcp-servers.json` that are not in `~/.claude.json` yet. Existing entries are left as they are. If VS Code is installed and has no `mcp.json`, it writes one from the same list.
 
-pi and opencode get only `qmd` from this list. The rest are for Claude Code only.
+pi and opencode get only `qmd` from this list (`mcp` in `opencode.json`, and `~/.pi/agent/mcp.json`). The rest are for Claude Code only.
 
-Removing a server from the list does not unregister it, because the script only adds. So a removed server gets its own unregister command in the install script.
+Removing a server from the list does not unregister it, because the script only adds. So a removed server gets its own unregister command in the install script. Right now that is how the two browser-driving servers (`playwright` and `chrome-devtools`) are removed. Browser checks now go through one CLI, `agent-browser`, instead of MCP.
 
 ## My config
 
@@ -37,14 +37,13 @@ Removing a server from the list does not unregister it, because the script only 
 | `claude-mem` | Memory between sessions: searching past work and keeping to-do lists |
 | `caveman` | A reply mode that keeps chat answers short |
 | `hwip` | Sends notifications and files to my phone, and takes my answers from it |
-| `frontend-design` | Building landing and portfolio pages |
 | `impeccable` | Building and fixing product UI screens |
 | `humanize-korean` | Polishing Korean prose |
 | `last30days` | Researching opinion and trends from the last 30 days |
 | `watch` | Video analysis. Needs `ffmpeg` and `yt-dlp` first |
 | `swift-lsp`, `clangd-lsp` | Language servers for Swift and C/C++ code |
 
-Seven more are set to `false`. Each one I turn on makes the skill list and the prompt longer, so I turn them on only when I need them. The install script does not install plugins that are off.
+Nine more are set to `false`. Each one I turn on makes the skill list and the prompt longer, so I turn them on only when I need them. The install script does not install plugins that are off.
 
 ### MCP servers
 
@@ -52,8 +51,6 @@ Seven more are set to `false`. Each one I turn on makes the skill list and the p
 |---|---|
 | `codegraph` | A pre-built graph of code symbols and call relations. I ask it once instead of reading files one by one |
 | `context7` | Looks up current docs for libraries and frameworks |
-| `playwright` | Drives a browser to check screens |
-| `chrome-devtools` | Finds causes through the console, network, and performance traces. Driving the screen is playwright's job |
 | `mobile-mcp` | Drives the iOS Simulator and the Android Emulator |
 | `figma-desktop` | The local HTTP server that the Figma desktop app opens |
 | `qmd` | Search over my notes and documents. A local daemon serves it over HTTP, so no session has to load the embedding model again |
@@ -64,7 +61,7 @@ The home directory in command paths is written as `__HOME__`, and the install sc
 
 ## Check
 
-1. List the MCP servers and their connection state. All 7 from the list above must be there.
+1. List the MCP servers and their connection state. All 5 from the list above must be there.
 
 ```sh
 claude mcp list

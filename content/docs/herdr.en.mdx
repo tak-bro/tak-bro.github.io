@@ -55,7 +55,9 @@ To show each pane's git branch on the second line of an agent row, I use a custo
 | lazygit popup | — | `Cmd+Shift+G` |
 | Switch agent account | — | `Cmd+Shift+A` |
 
-`prefix` is `ctrl+space`. The last two rows are herdr user commands (`[[keys.command]]`). The account switch uses the `rcosteira.account-switch` plugin to change the Claude Code and Codex login.
+`prefix` is `ctrl+space`. The last two rows are herdr user commands (`[[keys.command]]`). The account switch uses `tak-bro.account-switch`, a plugin I wrote, to change the Claude Code and Codex login.
+
+`Cmd+Ctrl+arrow` collides with default shortcuts of the window manager Rectangle (`⌃⌘←` and `⌃⌘→` move a window to the top left and top right corners). Left as is, Rectangle takes the key and herdr never gets it. `macos-defaults.sh` in my dotfiles clears Rectangle's four corner shortcuts.
 
 ### herdr config
 

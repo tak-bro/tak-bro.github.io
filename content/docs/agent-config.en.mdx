@@ -1,9 +1,9 @@
 ---
 title: Agent config
-description: How Claude Code, pi, and opencode share the rules, hooks, and subagents in one repo.
+description: How Claude Code, pi, and opencode share the rules, hooks, skills, and subagents in one repo.
 ---
 
-I keep my coding agent config in one repo, `agent-config`. Three harnesses read it through symlinks: Claude Code, pi, and opencode. The repo is private, so you cannot clone it as is. The install script, the command denylist, and the review subagent definition are shown in full below. The skill pipeline that takes one task from plan to merge is covered separately in the [Workflow](./workflow.mdx) guide.
+I keep my coding agent config in one repo, `agent-config`. Three harnesses read it through symlinks: Claude Code, pi, and opencode. The repo is private, so you cannot clone it as is. The install script and the review subagent definition are shown in full below. The skill pipeline that takes one task from plan to merge is covered separately in the [Workflow](./workflow.mdx) guide.
 
 ## How it works
 
@@ -14,64 +14,83 @@ I keep my coding agent config in one repo, `agent-config`. Three harnesses read 
 | Repo | Linked to | Harness |
 |---|---|---|
 | `claude/<item>` | `~/.claude/<item>` | Claude Code |
-| `agent-skills/*` | `~/.agents/skills/<name>` | pi, opencode |
+| `agent-skills/*` | `~/.agents/skills/<name>` | all three (see below) |
 | `pi/home/*` | `~/.pi/agent/*` | pi |
 | `opencode/*` | `~/.config/opencode/*` | opencode (only when that directory exists) |
+| `external-skills.txt` | `~/.agents/skills/<skill>` | skills written by others. `npx skills add -g` fetches only the missing ones |
 
 It links `~/.claude` item by item, not as a whole. `~/.claude` also holds machine state that Claude Code writes itself (session history, credentials). Linking the whole directory would put that state inside the repo.
 
-`settings.json` is not linked. It is copied once, the first time. Claude Code rewrites this file in place. Instead, a hook reports the difference between the repo copy and the real file when a session starts.
+`settings.json`, `settings.local.json`, `config.json`, and `.mcp.json` are not linked. Each is copied once, when it is missing. Claude Code rewrites these files in place. Instead, a hook reports the difference between the repo copy and the real `settings.json` when a session starts.
+
+### One skill body, harness differences kept apart
+
+The skills all three harnesses share (plan, implement, review, ship, and so on) have their body in one place, `agent-skills/<name>/SKILL.md`, written in English. pi and opencode read that file as is. On the Claude Code side, `claude/skills/<name>/SKILL.md` holds a line that says "read the canonical body first" and a table of only what differs in Claude Code (tool names, how skills are called, hook paths). This way a rule is not edited three times. A script checks the shape of the canonical files and the delta files.
 
 ### Rules ask, hooks block
 
-Rule files are instructions the model reads. Shared rules (git, commit messages, how to reply, coding discipline) live in one harness-neutral file. Claude Code imports that file from `CLAUDE.md`, and opencode reads the same file through `instructions` in `opencode.json`. pi keeps a summary of the same rules in its own system prompt addendum. Only what differs per harness (tool names, how skills are called) goes in a per-harness file.
+Rule files are instructions the model reads. Shared rules (git, commit messages, how to reply, coding discipline) live in one harness-neutral file, `RULES.md`. Claude Code imports that file from `CLAUDE.md`, and opencode reads the same file through `instructions` in `opencode.json`. pi keeps a summary of the same rules in its own system prompt addendum. Only what differs per harness goes in a per-harness file. Rules such as when to clear the context and when to hand work to a subagent are split into files under `rules/`.
 
-The model can break a rule. What must not happen is blocked by a hook. A hook is a script that runs before or after a tool call. If a hook that runs before the call exits with 2, the call does not run. For example, "commit messages follow Conventional Commits" is a rule, and a hook also blocks a `git commit` with the wrong format.
+The model can break a rule. What must not happen is blocked by a hook. A hook is a script that runs before or after a tool call. If a hook that runs before the call exits with 2, the call does not run. For example, "work that will be committed happens in a `git worktree`, not in the original checkout" is a rule, and a hook also blocks `git checkout -b` that creates a branch in the original checkout. On the other hand, what a hook cannot judge stays a rule only, such as "open the PR as a draft, and merge only when the request says to merge".
 
 ### Subagents pin their model
 
-Exploring, reviewing, and performance analysis go to subagents. Each subagent definition sets `model:`. Only `reviewer`, which gives the verdict, is `opus`. The other 8 (exploring, simplifying, performance, design, and so on) are `sonnet`. Changing the main session's model does not change the subagents' cost or behavior.
+Exploring, reviewing, and performance analysis go to subagents. Each of the 9 subagent definitions sets `model:`. Only `reviewer`, which gives the verdict, is `opus`. The other 8 (exploring, simplifying, performance, design, and so on) are `sonnet`. Changing the main session's model does not change the subagents' cost or behavior.
+
+The caller can override the pinned model for one call. The whole-branch review (`/review --full`) starts `reviewer` once as `opus` and once as `sonnet` with the same brief, then merges the two results. The point is for one model to catch the defects the other missed.
 
 ## My config
 
 ### Install script
 
-The header comment sums up the link policy. A correct link is left alone, a broken link is replaced, and any other file is moved to `<item>.bak-<time>` before linking. So running it again is safe.
+The header comment sums up the link policy. A correct link is left alone, a broken link is replaced, and any other file is moved to `<item>.bak-<time>` before linking. So running it again is safe. `--claude-only` skips the pi and opencode side. Then the `~/.agents/skills` links are not made either, and Claude Code reads `agent-skills/` from the repo checkout directly.
 
 <include lang="sh" meta='title="install.sh"'>../snippets/agent-config/install.sh</include>
 
 ### Hooks
 
-These are the main hooks wired in the Claude Code `settings.json`.
+These are the main hooks set in Claude Code's `settings.json`.
 
 | Event | Hook | What it does |
 |---|---|---|
-| PreToolUse (Bash, Monitor) | `deny-dangerous.sh` | Blocks irreversible commands (denylist below). Also blocks the hook bypass flag `git commit --no-verify` |
+| PreToolUse (Bash, Monitor) | `deny-dangerous.sh` | Blocks commands that cannot be undone (see the denylist below). Also blocks the hook bypass flag `git commit --no-verify` |
 | PreToolUse (Bash, Monitor) | `commit-convention.py` | Blocks a commit that is not in Conventional Commits format or has an AI co-author trailer |
-| PreToolUse (Bash) | `rtk-guarded.sh` | Rewrites commands to forms with shorter output, then checks the rewritten command against the denylist again |
+| PreToolUse (Bash) | `worktree-guard.py` | Blocks creating a branch with `git checkout -b` or `git switch -c` in the original checkout of a repo with an `origin`. Worktrees and subagents pass |
+| PreToolUse (Bash) | `rtk-guarded.sh` | Rewrites a command into a form with shorter output, then checks the rewritten command against the denylist again |
 | PreToolUse (Read, Bash) | `read-guard.sh` | Blocks reading a very large file whole. Reads with a range and subagents pass |
-| PostToolUse | `tool-output-trim.sh` | Shrinks tool output over 1 KB |
-| PostToolUse, PostToolUseFailure, Stop | `completion-gate.py` | Catches a "done" claim when no test, lint, or typecheck has passed since the last code edit |
-| PreCompact | `compact-gate.py` | Allows automatic context compaction only at a phase boundary (PR created, merged, and so on). It makes an exception when the context is about to overflow |
-| SessionStart | `settings-sync.py` | Reports the difference between the repo's `settings.json` and the real file |
+| PostToolUse | `tool-output-trim.sh` | Trims tool output over 1 KB |
+| PostToolUse, PostToolUseFailure, Stop | `completion-gate.py` | Catches a "done" after code edits when no test, lint, or type check has passed |
+| Stop | `review-gate.py` | Blocks a UX or UI review report that says "review complete" without evidence that the steps ran |
+| PreCompact | `compact-gate.py` | Allows automatic context compaction only at a phase boundary (PR creation, merge, right after a slice passes review, and so on). Allows it anyway when the context is about to overflow |
+| SessionStart | `settings-sync.py` | Reports the difference between the repo's `settings.json` and the real file. `--diff` shows it, and `--apply` backs up the real file and writes the repo's values over it |
 
-In opencode, one plugin runs some of the same hook scripts (the denylist, commit format, output trimming, and others) with the same input and the same exit 2 rule. In pi, its own extension runs a copy of the hooks.
+In opencode, one plugin runs part of the same hook scripts (the denylist, commit format, output trimming, and so on) with the same input and the same exit 2 rule. pi runs copies of the hooks from its own extension.
 
 ### Command denylist
 
-This is the regex list that `deny-dangerous.sh` reads. It blocks only commands that cannot be undone, such as losing data, wiping a disk, or overwriting a protected branch. Recoverable commands such as `rm -rf node_modules` and `git clean` are not blocked, because blocking too much makes the agent useless. The list is a seatbelt, not a sandbox. It cannot block a command written to get around the regexes.
+`deny-dangerous.sh` reads one file of regular expressions. It blocks only commands that cannot be undone, such as losing data, wiping a disk, or overwriting a protected branch. It does not block commands you can recover from, like `rm -rf node_modules` or `git clean`. Blocking too much makes the agent useless. This list is a seat belt, not a sandbox. It cannot stop a command written to slip past the patterns.
 
-<include lang="sh" meta='title="claude/hooks/dangerous-patterns.txt"'>../snippets/agent-config/hooks/dangerous-patterns.txt</include>
+These are the categories it blocks now.
+
+- `rm` aimed at root, the whole home folder, the whole `/Users` tree, or the root of a system directory (`/etc`, `/Library`, and so on). Deleting one file below them is not blocked
+- The same deletion written another way: `find <root> -delete`, and `rmtree` or `rmSync` inside `python -c` or `node -e`
+- Writing to raw disks, formatting, and erasing
+- Fork bombs
+- A force push that names a protected branch, and a force push with `--all`, `--tags`, or `--branches`
+- Changing permissions or ownership across the whole system
+- Deleting a repo with `gh` (API calls included), deleting secrets, SSH keys, or GPG keys, and making a repo public
+
+Some things it used to block are now allowed: a force push to a branch that is not protected (the remote keeps the old commit, so it can be undone), piping an install script from the internet into a shell, local cleanup like `reflog expire`, and `gh release delete`. The list file keeps the reason for each in a comment. That file has a local path in an example comment, so it is not shown in full on this site.
 
 ### Review subagent
 
-`reviewer` is the subagent that runs reviews. The caller says what to look at, and this file holds only the execution constraints. It does not change the code under review. It returns findings only, and the caller decides whether the change passes.
+`reviewer` is the subagent that runs reviews. It is called from three places: the pre-landing review `/review`, the finder of the per-slice review gate, and the cross-model finder of `/review --full`. The caller's brief says what to look at, and this file only holds the constraints on how it runs. It does not change the code under review and only returns findings. The caller decides pass or fail.
 
 <include lang="text" meta='title="claude/agents/reviewer.md"'>../snippets/agent-config/agents/reviewer.md</include>
 
 ## Check
 
-1. See what would be linked without changing anything.
+1. See what would be linked, without changing anything.
 
 ```sh
 bash install.sh --dry-run
@@ -80,11 +99,17 @@ bash install.sh --dry-run
 2. Check that the items in `~/.claude` point into the repo.
 
 ```sh
-ls -l ~/.claude   # hooks, agents, skills, CLAUDE.md, and others point to <agent-config checkout>/claude/...
+ls -l ~/.claude   # hooks, agents, skills, CLAUDE.md, and so on point to <agent-config checkout>/claude/...
 ```
 
-3. Run the command guard's regression test. The last line must be `failed: 0`.
+3. Run the regression tests for the command guard hook. The last line must be `failed: 0`.
 
 ```sh
 bash ~/.claude/hooks/test-guard.sh
+```
+
+4. See the difference between the repo's `settings.json` and the real file. When they match, it prints one line ending in `전부 일치` ("all match").
+
+```sh
+python3 ~/.claude/hooks/settings-sync.py --diff
 ```

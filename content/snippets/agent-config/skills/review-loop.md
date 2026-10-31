@@ -1,43 +1,72 @@
-# Review Verify-Fix Loop
+# Review verify-fix loop
 
-`03-review` 에서 이슈 발견 시 자동 루프. 사용자 재지시 없이 진행. 루프 3요소(goal/max/budget) 정본:
-`skills/_shared/loop-engineering.md`. **정지 조건 정본 = 아래 Exit 표.** 근거 = `docs/CONTRACT-EVIDENCE.md` § review-loop.
+When `03-review` finds issues, this loop runs on its own — no fresh instruction from the user. **The stop conditions'
+canonical home is § Exit + § Stops outside the loop below** — other files only point at these two sections.
 
 ## Loop
 
-1. 리뷰 완료 → Fix Checklist 생성 (Review Output 템플릿)
-2. [Critical] 또는 [Important] 있으면 → 즉시 `/04-fix` (Fix Checklist 전달).
-   - 예외 — **Axis-B Important(scope-creep)**: 코드 수정 아님. 사용자 게이트 — revert 또는 plan `## Decisions` 수락 기록.
-3. 수정 후 재검증:
-   - **결정적 체크 먼저**(Verification Commands) — 실패면 재리뷰 없이 fix 로 복귀.
-   - 통과 시 **같은 파인더 재사용**(`stages/03-review.md` § After findings **Fail**: `SendMessage` 에 `- mode: re-review` +
-     `- delta:`). 이전 판정·finding 목록은 다시 보내지 않는다. 폴백(agentId 없음·에러)은 fresh 재스폰 + Outcome 관측 행.
-   - **동일 이슈 재발 판별**은 메인이 iteration 간 Fix Checklist 를 대조해서 한다.
-4. 반복. **max 3 iterations — 슬라이스마다 독립.** 카운트는 plan `## Outcome` 에 `- fix-loop: <slice> iteration N/3`
-   한 줄 **in-place 갱신**(compact 생존). 종료 시 이 행은 남기고(`/compound` 입력) review 행만 output-templates 최종 형식으로 갱신.
+1. Review done → Fix Checklist (the Review Output in `SKILL.md`).
+2. Any [Critical] or [Important] → straight to `04-fix` with the Fix Checklist.
+   - Exception — **Axis-B Important (scope-creep)**: not a code fix. A user gate — revert, or record acceptance in the
+     plan's `## Decisions`.
 
-   **fix 라운드 경계마다 카운터를 명령으로 읽는다 — 모드 무관.** 경계 = 구현 verify red 재시도 · `04-fix` 진입 · 재리뷰.
-   **올리는 곳은 셋** — red 재시도 · `04-fix` 진입 · 리턴 없이 죽은 재리뷰의 재스폰(죽은 라운드도 한 회, 근거: CONTRACT-EVIDENCE
-   § review-loop-dead-round). 정상 재리뷰는 읽기 전용. plan 이 있으면:
+### Loop 3 — Re-verify
+- **Deterministic checks first** (the repo's verification commands) — failing → back to fix without a re-review (a new
+  fix round — § Loop 4).
+- Passing → **reuse the same finder** (`SKILL.md` § After findings **Fail**: re-send with `- mode: re-review` +
+  `- delta:`). Earlier verdicts and finding lists are not sent again. Fallback (no agent id, an error, a harness that
+  cannot re-address a subagent) = a fresh spawn + an Outcome observation row.
+- **Same-issue recurrence** is judged by the main session comparing Fix Checklists across iterations.
 
-   ```bash
-   S=$(printf '%s' "$SLICE" | sed 's/[][\.*^$+?(){}|]/\\&/g')   # `04+05` 같은 병합 id 의 메타문자 이스케이프
-   N=$(grep -E "fix-loop: (slice )?${S}([^0-9]|$)" "$PLAN" | grep -oiE 'iteration +[0-9]+' \
-       | grep -oE '[0-9]+' | sort -n | tail -1)
-   echo "fix-loop N=${N:-0}"
-   ```
+### Loop 4 — Iterations and the counter
+**Max 3 iterations — independently per slice.** One iteration = one fix round + that round's re-review — the third fix
+gets its re-review too. The count lives in the plan's `## Outcome` as one line `- fix-loop: <slice> iteration N/3`,
+**updated in place** (survives compaction). On exit this row stays (`compound` reads it) and only the review row is
+updated to the final Review Output form.
 
-   `N` 이 3 이상이면 **고치지도 스폰하지도 않고** Exit 표 "3회 소진". `- plan: none` 단독 호출은 Output 리포트에서 같은 턴 안에서만
-   센다. (근거: CONTRACT-EVIDENCE § review-loop-counter)
+**The counter is read and raised only where a fix round opens — in every mode.** Three places open one: an
+implementation verify-red retry · entering `04-fix` · respawning a re-review that died without a return (a dead round
+counts once too). There, read N first: `N` ≥ 3 → **neither fix nor spawn**, go to Exit "3 exhausted"; otherwise rewrite
+the row to `iteration N+1/3` (open it when absent) and start the round. A normal re-review neither reads nor raises the
+counter — it belongs to the round just opened. With a plan:
+
+```bash
+S=$(printf '%s' "$SLICE" | sed 's/[][\.*^$+?(){}|]/\\&/g')   # escape metacharacters of merged ids such as `04+05`
+N=$(grep -E "fix-loop: (slice )?${S}([^0-9]|$)" "$PLAN" | grep -oiE 'iteration +[0-9]+' \
+    | grep -oE '[0-9]+' | sort -n | tail -1)
+echo "fix-loop N=${N:-0}"
+```
+
+A standalone `- plan: none` call counts in the Output report, within the same turn only.
 
 ## Exit
 
-| 조건 | 행동 |
+| Condition | Action |
 |------|------|
-| [Critical] 0 + [Important] 0 ([Nice-to-have]만 잔존 포함) | 슬라이스 통과 → 큐 남으면 **다음 frontier 자동 전진**(`02-implement`), 소진 시 루프 종료 — 마무리는 사용자 호출. `/orch` 경유면 같은 턴에 갈래의 마무리로 잇는다(`skills/orch/SKILL.md` Phase 1) |
-| Axis-B Important(scope-creep) 잔존 | 자동루프 정지 → **사용자 게이트**(revert or `## Decisions` 수락). 해소 후 재리뷰. `/orch` 경유면 멈추지 않고 수락으로 기록(`skills/orch/SKILL.md` Phase 1) |
-| 동일 이슈 2회 연속 재발 | 즉시 정지 — 접근 변경 or 보고 |
-| 3회 소진 (리뷰 FAIL·verify red 합산) | 정지 + 보고 — 잔여 이슈·시도한 수정 전부. 판단은 사용자 |
+| [Critical] 0 + [Important] 0 (Nice-to-have only left included) | Slice passes → queue rows left: **advance to the next frontier automatically** (`02-implement`); drained: the loop ends — the finish is the user's call (in autonomous mode, continue to the chain's finish in the same turn) |
+| Axis-B Important (scope-creep) left | Stop the auto-loop → **user gate** (revert, or accept in `## Decisions`). Re-review after it is resolved. In autonomous mode, do not stop — record it as accepted |
+| The same issue recurs twice in a row | Stop now — change approach, or report |
+| 3 exhausted (review FAIL and verify red counted together) | Stop + report — every remaining issue and every fix tried. The user decides |
 
-`[b]` 는 위 Exit 표의 exit 이 아니다 — 구현 시점의 경계(코드 밖 권한)이지 리뷰 결과가 아니다. FAIL 을 `[b]` 로 빠져나가는 것은 금지,
-그 경로는 skip 하나뿐.
+Autonomous mode (a chain `orch` drives — with a plan, its header `Orch:` line): the exceptions' canonical home is
+`../orch/SKILL.md` (its autonomous-mode rules).
+
+## Stops outside the loop
+
+The Exit table stops on review results. Below are the places this session cannot judge, whatever the review said — it
+neither stops nor asks outside these two sections. Autonomous mode stops here too (except where a row says otherwise).
+
+| Place | Condition | Action |
+|---|---|---|
+| `02-implement` pre-implementation (plan lookup) | the session has no plan path and there is not exactly one unfinished plan candidate | ask the user |
+| `02-implement` pre-implementation (tree check) | a tracked change outside the plan's Files table | stop and report — a change of unknown ownership does not ride a slice commit |
+| `02-implement` frontier loop | the slice is blocked on permission outside the code (credentials, an external console, a human approval) | stop and report — a human marks `[b]` (below) |
+| `SKILL.md` § Finder spawn 3 | the respawned finder's return is invalid too | stop and report |
+| TDD seam confirmation | the plan has no `## Seams`, or there is no plan | confirm the seam once. Autonomous mode: no question, the recommended seam |
+| language pack detection | ambiguous (ask) | one question. Autonomous mode: no question, `none` |
+
+`[b]` is not an exit of the Exit table — it is an implementation-time boundary (permission outside the code), not a
+review result. Escaping a FAIL through `[b]` is forbidden. A human-marked `[b]` row leaves the frontier and its criteria
+are skipped as BLOCKED — nothing more.
+
+Source: `claude/skills/_shared/review-loop.md`.

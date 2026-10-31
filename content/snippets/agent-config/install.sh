@@ -6,6 +6,7 @@
 #   agent-skills/*    → ~/.agents/skills/<name>  (pi/install.sh)
 #   pi/home/*         → ~/.pi/agent/*            (pi/install.sh)
 #   opencode/*        → ~/.config/opencode/*     (opencode/install.sh — only when that directory exists)
+#   external-skills.txt → ~/.agents/skills/<skill> via `npx skills add -g`, linked as claude/skills/<skill>
 #
 # Why per item: ~/.claude also holds machine state Claude Code writes itself
 # (projects/, sessions/, .credentials.json). Linking the whole directory would
@@ -26,6 +27,9 @@
 #   bash install.sh                 # apply
 #   bash install.sh --dry-run       # print what would change, change nothing
 #   bash install.sh --claude-only   # skip the pi and opencode harnesses
+#
+# AGENT_CONFIG_EXTERNAL_SKILLS=0 skips external-skills.txt (install.test.sh sets it: no network in tests).
+# AGENT_CONFIG_EXTERNAL_LIST / AGENT_CONFIG_EXTERNAL_LINKS point it at another list and link directory (tests).
 #
 set -uo pipefail
 log(){ echo "[agent-config] $*"; }
@@ -96,13 +100,68 @@ EOF
   return $rc
 }
 
+# `npx skills add -g` links claude/skills/<skill> relative to ~/.claude/skills, which resolves inside
+# this checkout and dangles — so the link is always rewritten as an absolute one.
+link_external_skills(){
+  local list="${AGENT_CONFIG_EXTERNAL_LIST:-$ROOT/external-skills.txt}" links="${AGENT_CONFIG_EXTERNAL_LINKS:-$SRC/skills}"
+  local store="$HOME/.agents/skills" cmds="$DST/commands" src skill dst f cmd out rc=0 n=0
+  [ "${AGENT_CONFIG_EXTERNAL_SKILLS:-1}" = 0 ] && return 0
+  [ -f "$list" ] || return 0
+  while read -r src skill _ <&3; do
+    case "$src" in ''|'#'*) continue ;; esac
+    dst="$links/$skill"
+    # checked before npx: `skills add -g` deletes a real directory of the same name
+    if [ -e "$dst" ] && [ ! -L "$dst" ]; then
+      log "WARN: claude/skills/$skill is a real directory — left alone; remove it to link $store/$skill"; continue
+    fi
+    if [ ! -f "$store/$skill/SKILL.md" ]; then
+      log "install external skill: $skill ($src)"
+      if ! command -v npx >/dev/null 2>&1; then
+        log "WARN: npx not found — external skill $skill skipped"; rc=1; continue
+      fi
+      if ! $DRY && ! out="$(npx -y skills add "$src" -g -s "$skill" -y </dev/null 2>&1)"; then
+        log "WARN: npx skills add $src -s $skill failed:"; printf '%s\n' "$out" | tail -n 5; rc=1; continue
+      fi
+    fi
+    if [ "$(readlink "$dst" 2>/dev/null)" != "$store/$skill" ]; then
+      log "link: claude/skills/$skill → $store/$skill"
+      $DRY || ln -sfn "$store/$skill" "$dst" || { log "ERROR: could not link $skill"; rc=1; }
+    fi
+    for f in "$store/$skill"/commands/*.md; do
+      [ -f "$f" ] || continue
+      cmd="$cmds/${f##*/}"
+      [ "$(readlink "$cmd" 2>/dev/null)" = "$f" ] && continue
+      if [ -e "$cmd" ] && ! [ -L "$cmd" ] && ! cmp -s "$f" "$cmd"; then
+        log "WARN: ~/.claude/commands/${f##*/} differs from $f — left alone"; continue
+      fi
+      log "link: ~/.claude/commands/${f##*/}"
+      $DRY || { mkdir -p "$cmds" && ln -sfn "$f" "$cmd"; } || { log "ERROR: could not link ${f##*/}"; rc=1; }
+    done
+    n=$((n+1))
+  done 3< "$list"
+  log "external skills: $n ready"
+  return $rc
+}
+
+# Hard requirements, checked before anything is linked. deny-dangerous.sh fails closed without
+# jq (every Bash call is blocked), the python hooks (commit-convention, worktree-guard/-rescue,
+# completion-gate, compact-gate) cannot start without python3, and the links come from git ls-files.
+require_tools(){
+  local t missing=""
+  for t in git jq python3; do
+    command -v "$t" >/dev/null 2>&1 || missing="$missing $t"
+  done
+  [ -z "$missing" ] && return 0
+  log "ERROR: required tool(s) missing:$missing — the Bash guard blocks every command without jq and the python hooks cannot run. Install them, then re-run."
+  return 1
+}
+
 # Read-only. Nothing here is required to link; each missing tool only turns off
 # the hooks or skills that call it.
 check_tools(){
   local t
-  for t in git jq python3 node; do
-    command -v "$t" >/dev/null 2>&1 || log "WARN: $t not found — most hooks need it"
-  done
+  command -v node >/dev/null 2>&1 || log "WARN: node not found — tool-output-trim passes tool results through untouched"
+  command -v bun >/dev/null 2>&1 || log "WARN: bun not found (optional) — the team-lead mod hooks do nothing; see README § Tools"
   for t in gh rtk codegraph; do
     command -v "$t" >/dev/null 2>&1 || log "WARN: $t not found (optional) — see README § Tools"
   done
@@ -135,12 +194,14 @@ verify(){
   return $rc
 }
 
+require_tools || exit 1
 link_claude || exit 1
 if $PI; then
   if $DRY; then bash "$ROOT/pi/install.sh" --dry-run; else bash "$ROOT/pi/install.sh"; fi || exit 1
   # opencode half: skips itself when ~/.config/opencode is absent
   if $DRY; then bash "$ROOT/opencode/install.sh" --dry-run; else bash "$ROOT/opencode/install.sh"; fi || exit 1
 fi
+link_external_skills || log "WARN: some external skills were not installed — re-run once the cause is fixed"
 check_tools
 $DRY || verify || exit 1
 log "done$($DRY && echo ' (dry run — nothing changed)')"

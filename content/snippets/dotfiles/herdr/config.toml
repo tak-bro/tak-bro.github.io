@@ -103,6 +103,7 @@ focus_pane_right = ["prefix+l", "cmd+alt+right"]
 cycle_pane_next = ["prefix+tab", "cmd+]"]
 cycle_pane_previous = ["prefix+shift+tab", "cmd+["]
 zoom = ["prefix+z", "cmd+shift+enter"]
+# Rectangle defaults bind cmd+ctrl+left/right to topLeft/topRight; macos-defaults.sh clears them.
 resize_pane_left = "cmd+ctrl+left"
 resize_pane_down = "cmd+ctrl+down"
 resize_pane_up = "cmd+ctrl+up"
@@ -124,9 +125,9 @@ description = "lazygit"
 width = "90%"
 height = "90%"
 
-# Account picker (plugin rcosteira.account-switch): swaps the Claude Code / Codex login.
+# Account picker (plugin tak-bro.account-switch): swaps the Claude Code / Codex login.
 [[keys.command]]
 key = "cmd+shift+a"
 type = "shell"
-command = "herdr plugin action invoke open --plugin rcosteira.account-switch"
+command = "herdr plugin action invoke open --plugin tak-bro.account-switch"
 description = "accounts"
