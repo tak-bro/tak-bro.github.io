@@ -9,12 +9,11 @@ import {
   useMatches,
   useNavigate,
 } from 'react-router';
-import { useCallback, useMemo, useState } from 'react';
+import { lazy, useCallback, useMemo, useState } from 'react';
 import { RootProvider } from 'fumadocs-ui/provider/react-router';
 import { i18nProvider } from 'fumadocs-ui/i18n';
 import type { Route } from './+types/root';
 import './app.css';
-import { DocsSearchDialog } from './components';
 import {
   alternateLinks,
   APP_NAME,
@@ -32,6 +31,12 @@ import {
   translations,
 } from './lib';
 import NotFound from './routes/not-found';
+
+// A separate chunk, so the Orama client is not in the modulepreload set of every page.
+// SearchProvider preloads the closed dialog, so the chunk still loads right after hydration.
+const DocsSearchDialog = lazy(() =>
+  import('./components/search').then((m) => ({ default: m.DocsSearchDialog })),
+);
 
 const NOT_FOUND_ROUTE_IDS = new Set(['not-found', 'not-found-page']);
 
