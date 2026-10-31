@@ -1,11 +1,11 @@
 import { HomeLayout } from 'fumadocs-ui/layouts/home';
 import { Link } from 'react-router';
 import type { Route } from './+types/projects';
-import { PageHeader } from '../components';
-import { baseOptions, CONTENT_ID, pageTitle, projectPages, screenshotThumb } from '../lib';
+import { PageHeader, Session } from '../components';
+import { baseOptions, CONTENT_ID, listedProjects, pageTitle, projectPages, screenshotThumb } from '../lib';
 
 const TITLE = '프로젝트';
-const DESCRIPTION = '학생 때와 사이드로 만든 것들.';
+const DESCRIPTION = '코딩 에이전트와 일하려고 만든 것들.';
 
 export const meta = () => [
   { title: pageTitle(TITLE) },
@@ -16,13 +16,17 @@ export const meta = () => [
 ];
 
 export const loader = () => ({
-  projects: projectPages().map((project) => ({
-    url: project.url,
-    title: project.data.title,
-    description: project.data.description,
-    date: project.data.date,
-    screenshot: project.data.screenshot,
-  })),
+  projects: listedProjects(
+    projectPages().map((project) => ({
+      url: project.url,
+      title: project.data.title,
+      description: project.data.description,
+      date: project.data.date,
+      type: project.data.type,
+      screenshot: project.data.screenshot,
+      sample: project.data.sample,
+    })),
+  ),
 });
 
 const Projects = ({ loaderData }: Route.ComponentProps) => (
@@ -36,15 +40,21 @@ const Projects = ({ loaderData }: Route.ComponentProps) => (
               to={project.url}
               className="flex h-full flex-col overflow-hidden rounded-md bg-fd-card transition-colors hover:bg-fd-accent"
             >
-              <img
-                src={screenshotThumb(project.screenshot)}
-                alt=""
-                width={800}
-                height={450}
-                loading="lazy"
-                decoding="async"
-                className="aspect-video w-full object-cover object-top"
-              />
+              {project.screenshot ? (
+                <img
+                  src={screenshotThumb(project.screenshot)}
+                  alt=""
+                  width={800}
+                  height={450}
+                  loading="lazy"
+                  decoding="async"
+                  className="aspect-video w-full object-cover object-top"
+                />
+              ) : project.sample ? (
+                <span className="block p-5 pb-0">
+                  <Session lines={project.sample} decorative />
+                </span>
+              ) : null}
               <span className="flex flex-col gap-1 p-5">
                 <span className="text-[17px] font-semibold">{project.title}</span>
                 <span className="text-[15px] text-fd-muted-foreground break-keep">{project.description}</span>

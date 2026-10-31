@@ -1,0 +1,20 @@
+---
+title: "agent-config"
+description: "Claude Code·pi·opencode 세 하네스가 같은 규칙·훅·스킬로 일하게 하는 설정 레포"
+date: "2026-10-08"
+type: "agent"
+sample:
+  - '$ git commit -m "feat(site): refocus the site on the guides…"'
+  - "[commit-convention] 커밋 차단 — AI co-author 트레일러"
+  - "  줄: Co-Authored-By: Claude …"
+  - '$ git commit -m "feat(site): refocus the site on the guides…"'
+  - "c53c335 feat(site): refocus the site on the guides and add a principles guide"
+---
+세 코딩 에이전트([Claude Code](https://claude.com/claude-code)·[pi](https://github.com/earendil-works/pi)·[opencode](https://opencode.ai))에 붙이는 스킬·훅·규칙·서브에이전트·확장을 한 레포에 두고 심볼릭 링크로 건다. 아직 공개하지 않은 레포라 링크는 없다. 설정의 내용은 이 사이트의 [가이드](/docs/agent-config)에 있다.
+
+## 무엇을 하나
+
+- **크기에 맞춘 파이프라인 하나.** `/orch` 가 요청을 종류(add·change·fix·refine)와 크기(S/M/L)로 나누고 그에 맞는 갈래를 돈다. 플랜 → TDD 구현(슬라이스마다 리뷰 게이트) → 리뷰 → draft PR 에서 멈춘다.
+- **팀.** `/team` 은 지금 Claude Code 세션을 팀장으로 두고 Claude·pi·opencode 워커를 [herdr](https://github.com/herdrdev/herdr) 창에 띄운다.
+- **밤 실행.** `/night` 는 마감 시각까지 레포를 렌즈 하나씩 읽고, 작은 것은 `/orch` 로 커밋해 draft PR 하나로 연다. 머지하지 않는다.
+- **가드.** 훅이 위험한 셸 명령을 막고, Conventional Commits 를 강제하고, 큰 파일 통째 읽기를 막는다. 위 출력은 그 훅이 AI co-author 줄이 든 커밋을 막은 실제 기록이다.

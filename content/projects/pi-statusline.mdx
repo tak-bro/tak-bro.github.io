@@ -1,0 +1,23 @@
+---
+title: "pi-statusline"
+description: "pi 의 기본 footer 를 tak-cc-statusline 과 같은 모양으로 바꾸는 확장"
+date: "2026-09-21"
+type: "agent"
+sample:
+  - "GLM-5.3 · high | proj • feat/x"
+  - "█████░░░░░ 50% | 1.2k · $0.50"
+links:
+  - title: "GitHub"
+    url: "https://github.com/tak-bro/pi-statusline"
+---
+[pi](https://github.com/earendil-works/pi) 의 footer 확장이다. Claude Code 에서 쓰던 tak-cc-statusline 을 pi 에서도 같은 모양으로 본다. 설치는 `pi install @tak-bro/pi-statusline` 이다.
+
+## 보이는 것
+
+- **모델 · effort** — 지금 모델과 thinking 단계
+- **폴더 • 브랜치** — 작업 폴더 이름과 git 브랜치
+- **컨텍스트 막대** — 컨텍스트 사용량 10칸
+- **구독 한도** — 지금 모델의 provider 한도(5시간·주간)와 리셋까지 남은 시간. Z.ai coding plan, Claude 구독, ChatGPT 구독을 읽는다
+- **토큰 · 비용** — 세션 합계. 캐시 읽기·쓰기까지 센 토큰과, pi 가 알려 주는 단가로 낸 비용
+
+넓으면 한 줄, 좁으면 정확히 두 줄로 그리고 줄을 감싸지 않는다.

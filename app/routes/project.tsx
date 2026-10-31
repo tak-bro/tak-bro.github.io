@@ -4,7 +4,7 @@ import { DocsBody } from 'fumadocs-ui/layouts/docs/page';
 import defaultMdxComponents from 'fumadocs-ui/mdx';
 import { ArrowUpRight } from 'lucide-react';
 import type { Route } from './+types/project';
-import { PageHeader, VideoEmbed } from '../components';
+import { PageHeader, Session, VideoEmbed } from '../components';
 import { baseOptions, CONTENT_ID, pageTitle, projects, PROJECTS_ROUTE, projectsSource, requestPath, screenshotWebp } from '../lib';
 
 // One route per project (routes.ts), so the name is the last path segment.
@@ -52,10 +52,17 @@ const Content = ({ path }: { path: string }) => {
           </ul>
         ) : null}
       </PageHeader>
-      <picture>
-        <source srcSet={screenshotWebp(page.screenshot)} type="image/webp" />
-        <img src={page.screenshot} alt={`${page.title} 스크린샷`} fetchPriority="high" className="w-full rounded-md bg-fd-card" />
-      </picture>
+      {page.screenshot ? (
+        <picture>
+          <source srcSet={screenshotWebp(page.screenshot)} type="image/webp" />
+          <img src={page.screenshot} alt={`${page.title} 스크린샷`} fetchPriority="high" className="w-full rounded-md bg-fd-card" />
+        </picture>
+      ) : page.sample ? (
+        <figure className="rounded-md bg-fd-card p-4 sm:p-5 lg:p-7">
+          <figcaption id="project-sample" className="sr-only">{`${page.title} 출력`}</figcaption>
+          <Session lines={page.sample} labelledBy="project-sample" />
+        </figure>
+      ) : null}
       <DocsBody>
         <Mdx components={components} />
       </DocsBody>

@@ -1,9 +1,9 @@
 import { HomeLayout } from 'fumadocs-ui/layouts/home';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
-import { useEffect, type CSSProperties } from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router';
 import type { Route } from './+types/home';
-import { primaryButton } from '../components';
+import { primaryButton, Session } from '../components';
 import {
   baseOptions,
   GITHUB_URL,
@@ -58,34 +58,6 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
     publishedGuides: pages.map(({ slug }) => slug),
     updated: Object.fromEntries(updated) as Record<string, string | null>,
   };
-};
-
-/** A `[hook]` line and its indented continuation lines. */
-const hookLines = (lines: readonly string[]) =>
-  lines.reduce<boolean[]>((flags, line) => [...flags, line.startsWith('[') || (flags.at(-1) === true && line.startsWith('  '))], []);
-
-/**
- * A fragment of real output. Each line carries its index so the lines print one after another when the
- * fragment enters (app.css `.home-line`); hook output reads as an error. Lines wrap on a phone and keep
- * their columns from `sm` up, where a long line scrolls sideways, hence focusable.
- */
-const Session = ({ lines }: { lines: readonly string[] }) => {
-  const hook = hookLines(lines);
-  return (
-    <pre tabIndex={0} className="home-focus overflow-x-auto text-[12.5px] leading-relaxed whitespace-pre-wrap [overflow-wrap:anywhere] sm:text-[13px] sm:whitespace-pre sm:[overflow-wrap:normal]">
-      <code className="font-mono">
-        {lines.map((line, index) => (
-          <span
-            key={index}
-            style={{ '--l': index } as CSSProperties}
-            className={`home-line block min-h-[1lh] ${hook[index] ? 'text-red-700 dark:text-red-300' : ''}`}
-          >
-            {line}
-          </span>
-        ))}
-      </code>
-    </pre>
-  );
 };
 
 /** Every section heading sits on the same left edge at the same size. */
