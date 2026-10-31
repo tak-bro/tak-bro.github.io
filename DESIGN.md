@@ -49,7 +49,7 @@ rest. The fumadocs header keeps its bottom border because the docs pages share i
 - Shape: radius 4px on buttons, 6px on fields and fragments.
 - Motion: one ease `cubic-bezier(0.16, 1, 0.3, 1)`. The first screen rises by transform only (painted
   on the first frame). Sections below the fold rise in once
-  (opacity and 24px). The layer example settles in when it changes. The herdr recording plays muted only while on screen. All of it is off under reduced motion (the recording waits on its poster with controls), and nothing is hidden without script.
+  (opacity and 24px). The layer example settles in when it changes. All of it is off under reduced motion, and nothing is hidden without script.
 - Hover: the primary button inverts; text links darken their underline and nudge the arrow; layers take the field tone, cards the accent tone; nav links draw an accent underline.
 
 ## Sections
@@ -57,7 +57,6 @@ rest. The fumadocs header keeps its bottom border because the docs pages share i
 ```
 HERO     title, one-line lede, tool chips, [See the setup]  GitHub ↗  |  field: hook block
 WORK     four cards: /orch, hwip, /team, draft PR, each a line and a fragment
-DEMO     one line, Herdr guide →, full-width herdr recording (keys captioned in the frame)
 LAYERS   six layers, bar length = strength, one line each        |  example of the picked layer
 GUIDES   cards: title, one line, last-commit date
 FOOTER   colour field: one about line, links (GitHub, hwip, resume, source), licences

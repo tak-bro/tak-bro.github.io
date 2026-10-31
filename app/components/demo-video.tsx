@@ -52,7 +52,7 @@ export const DemoVideo = ({
   );
 };
 
-/** The herdr recording, shared by the home and the herdr guide; only the accessible name changes. */
+/** The herdr recording for the herdr guide; each language passes its own accessible name. */
 export const HerdrDemo = ({ label }: { label: string }) => (
   <DemoVideo src="/assets/video/herdr.mp4" poster="/assets/video/herdr-poster.webp" width={1440} height={860} label={label} />
 );
