@@ -1,11 +1,11 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 import { i18n, localizedDocsHref, resumeHref } from './i18n';
-import { APP_NAME, GITHUB_URL, LINKEDIN_URL } from './shared';
+import { APP_NAME, BLOG_ROUTE, GITHUB_URL, PROJECTS_ROUTE } from './shared';
 
-// The blog and projects stay reachable by URL but are off the nav.
-const NAV_LABELS: Record<string, { guides: string; resume: string }> = {
-  ko: { guides: '가이드', resume: '이력서' },
-  en: { guides: 'Guides', resume: 'Resume' },
+// The posts and projects are Korean only, so both languages link the same pages. LinkedIn sits in the home footer.
+const NAV_LABELS: Record<string, { posts: string; projects: string; guides: string; resume: string }> = {
+  ko: { posts: '글', projects: '프로젝트', guides: '가이드', resume: '이력서' },
+  en: { posts: 'Posts', projects: 'Projects', guides: 'Guides', resume: 'Resume' },
 };
 
 interface LayoutOptions {
@@ -30,9 +30,10 @@ export const baseOptions = ({ lang = i18n.defaultLanguage, localized = true }: L
       ),
     },
     links: [
+      { text: labels.posts, url: BLOG_ROUTE },
+      { text: labels.projects, url: PROJECTS_ROUTE },
       { text: labels.guides, url: localizedDocsHref(lang) },
       { text: labels.resume, url: resumeHref(lang), external: true },
-      { text: 'LinkedIn', url: LINKEDIN_URL, external: true },
       { text: 'GitHub', url: GITHUB_URL, external: true },
     ],
     i18n: localized ? i18n : false,

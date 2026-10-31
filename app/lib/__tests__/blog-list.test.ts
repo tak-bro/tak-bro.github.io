@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { filterByTag, groupByYear, listedPosts, tagCounts, type BlogListItem } from '../blog-list';
+import { filterByTag, groupByYear, listedPosts, recentPosts, tagCounts, type BlogListItem } from '../blog-list';
 
 const post = (date: string, tags: string[]): BlogListItem => ({
   url: `/blog/${date}`,
@@ -52,5 +52,13 @@ describe('listedPosts', () => {
       '2026-11-02',
       '2026-01-01',
     ]);
+  });
+});
+
+describe('recentPosts', () => {
+  it('takes the newest listed posts and never reaches back before the listed range', () => {
+    const mixed = [post('2026-10-31', ['agents']), post('2026-03-01', ['agents']), post('2025-12-31', ['old']), post('2021-03-10', ['old'])];
+    expect(recentPosts(mixed, 3).map((item) => item.date)).toEqual(['2026-10-31', '2026-03-01']);
+    expect(recentPosts(mixed, 1).map((item) => item.date)).toEqual(['2026-10-31']);
   });
 });

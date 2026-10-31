@@ -13,8 +13,29 @@ describe('home loader', () => {
     expect((await call('/en')).lang).toBe('en');
   });
 
+  it('lists the three newest posts from the listed range, newest first', async () => {
+    const { posts } = await call('/');
+    expect(posts).toHaveLength(3);
+    for (const post of posts) expect(post.date >= '2026-01-01').toBe(true);
+    expect(posts.map((post) => post.date)).toEqual([...posts.map((post) => post.date)].sort().reverse());
+  });
+
+  it('lists only the agent-side projects, with the statusline output to print', async () => {
+    const { projects, sample } = await call('/');
+    expect(projects.map((project) => project.url).sort()).toEqual(
+      ['agent-config', 'aicommit2', 'hwip', 'pi-statusline', 'tak-cc-statusline'].map((name) => `/projects/${name}`),
+    );
+    expect(sample?.length).toBeGreaterThan(0);
+  });
+
+  it('shows the same posts and projects in both languages', async () => {
+    const [ko, en] = await Promise.all([call('/'), call('/en')]);
+    expect(en.posts).toEqual(ko.posts);
+    expect(en.projects).toEqual(ko.projects);
+  });
+
   it('lists only guides whose docs page exists', async () => {
-    // All six guides are written; a card without a docs page would link to a 404.
+    // All six guides are written; a row without a docs page would link to a 404.
     expect((await call('/')).publishedGuides).toEqual(['principles', 'agent-config', 'workflow', 'plugins', 'herdr', 'keymaps']);
     expect((await call('/en')).publishedGuides).toEqual(['principles', 'agent-config', 'workflow', 'plugins', 'herdr', 'keymaps']);
   });
@@ -29,39 +50,19 @@ describe('home copy', () => {
   const shape = (lang: string) => {
     const copy = homeCopy(lang);
     return {
-      profile: copy.profile?.map((item) => item.href ?? null),
-      evidence: copy.evidence?.map((item) => [item.source, item.guide]),
-      team: copy.team?.length,
-      ladder: copy.ladder?.length,
+      guides: copy.guides.map((guide) => guide.slug),
+      links: copy.links.map((link) => (link.href.startsWith('/assets/') ? 'resume' : link.href)),
     };
   };
 
-  it('carries the same sections in the same order in both languages', () => {
-    expect(shape('ko').evidence).toBeDefined();
+  it('carries the same guides and links in the same order in both languages', () => {
+    expect(shape('ko').guides).toHaveLength(6);
     expect(shape('en')).toEqual(shape('ko'));
   });
 
-  it('backs the claim with exactly three pieces of real output', () => {
-    for (const lang of ['ko', 'en']) {
-      const evidence = homeCopy(lang).evidence ?? [];
-      expect(evidence).toHaveLength(3);
-      for (const item of evidence) expect(item.output.length).toBeGreaterThan(0);
-    }
-  });
-
-  it('lists three things a team can take over and the six enforcement layers', () => {
-    for (const lang of ['ko', 'en']) {
-      expect(homeCopy(lang).team ?? []).toHaveLength(3);
-      expect(homeCopy(lang).ladder ?? []).toHaveLength(6);
-    }
-  });
-
-  it('points the resume buttons at the page language', () => {
+  it('points the resume links at the page language', () => {
     expect(resumeHref('ko')).toBe('/assets/resume.pdf');
     expect(resumeHref('en')).toBe('/assets/resume_eng.pdf');
-  });
-
-  it('links the resume in the page language', () => {
     const resume = (lang: string) => homeCopy(lang).links.find((link) => link.href.startsWith('/assets/'))?.href;
     expect(resume('ko')).toBe('/assets/resume.pdf');
     expect(resume('en')).toBe('/assets/resume_eng.pdf');

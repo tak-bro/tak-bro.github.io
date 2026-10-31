@@ -50,3 +50,7 @@ const LISTED_SINCE = '2026-01-01';
 
 export const listedPosts = <Post extends { readonly date: string }>(posts: readonly Post[]): Post[] =>
   posts.filter((post) => post.date >= LISTED_SINCE);
+
+/** The home's few newest posts: only listed ones, from a newest-first list (`blogPosts`). */
+export const recentPosts = <Post extends { readonly date: string }>(posts: readonly Post[], count: number): Post[] =>
+  listedPosts(posts).slice(0, count);

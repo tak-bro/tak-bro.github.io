@@ -1,6 +1,6 @@
-export { filterByTag, groupByYear, listedPosts, tagCounts, type BlogListItem } from './blog-list';
+export { filterByTag, groupByYear, listedPosts, recentPosts, tagCounts, type BlogListItem } from './blog-list';
 export { listedProjects } from './project-list';
-export { homeCopy, type HomeCopy, type HomeEvidence } from './home-copy';
+export { homeCopy, type HomeCopy, type HomeListCopy } from './home-copy';
 export { alternateLinks, i18n, isLocalizedPath, localeFromPath, localeSwitchPath, localizedDocsHref, resumeHref, type AlternateLink } from './i18n';
 export { baseOptions } from './layout.shared';
 export { llmsFullTxt, llmsTxt } from './llms';
