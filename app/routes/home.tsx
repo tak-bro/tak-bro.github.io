@@ -211,7 +211,7 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
         <ul className="home-rise flex flex-wrap gap-x-7 gap-y-3 [--i:2]">
           {heroLinks.map((link) => (
             <li key={link.name}>
-              <a href={link.href} {...external(link)} className="home-link text-[15px] font-medium">
+              <a href={link.href} rel="noreferrer noopener" target="_blank" className="home-link text-[15px] font-medium">
                 <span>{link.name}</span>
                 <ExternalMark label={copy.newTabLabel} />
               </a>

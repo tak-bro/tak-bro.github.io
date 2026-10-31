@@ -3,7 +3,7 @@ import { ArrowRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router';
 import { PageHeader, primaryButton } from '../components';
-import { baseOptions, CONTENT_ID, i18n, isLocalizedPath, localeFromPath, localizedDocsHref } from '../lib';
+import { baseOptions, CONTENT_ID, i18n, isLocalizedPath, localeFromPath, localizedDocsHref, sameOriginPath } from '../lib';
 
 declare global {
   interface Window {
@@ -34,8 +34,10 @@ const NotFound = () => {
     const original = window.__notFoundPath;
     if (!original) return;
     delete window.__notFoundPath;
-    window.history.replaceState(window.history.state, '', original);
-    setPath(new URL(original, window.location.origin).pathname);
+    const restored = sameOriginPath(original, window.location.origin);
+    if (!restored) return;
+    window.history.replaceState(window.history.state, '', restored);
+    setPath(new URL(restored, window.location.origin).pathname);
   }, []);
 
   const lang = localeFromPath(path);
