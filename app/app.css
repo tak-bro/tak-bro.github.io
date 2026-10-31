@@ -17,7 +17,7 @@
   /* Hangul has no glyphs in the system mono fonts; Pretendard keeps it from falling back to a wide CJK mono. */
   /* taste-skill-ignore: the code face, used only inside <pre>/<code>. */
   --font-mono: ui-monospace, SFMono-Regular, Menlo, 'Pretendard Variable', monospace;
-  /* The one accent: the primary button, the top enforcement layer, link underlines in the nav. 5:1 on the light background. */
+  /* The one accent: the primary button, link underlines in the nav. 5:1 on the light background. */
   --color-brand: oklch(0.52 0.16 42);
 }
 

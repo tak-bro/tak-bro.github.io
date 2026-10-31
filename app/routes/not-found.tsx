@@ -2,7 +2,7 @@ import { HomeLayout } from 'fumadocs-ui/layouts/home';
 import { ArrowRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router';
-import { primaryButton } from '../components';
+import { PageHeader, primaryButton } from '../components';
 import { baseOptions, CONTENT_ID, i18n, isLocalizedPath, localeFromPath, localizedDocsHref } from '../lib';
 
 declare global {
@@ -50,23 +50,19 @@ const NotFound = () => {
 
   return (
     <HomeLayout {...baseOptions({ lang, localized: isLocalizedPath(path) })}>
-      <section id={CONTENT_ID} className="home-frame flex flex-1 flex-col justify-center gap-6 py-24">
-        <p className="text-[15px] font-semibold tabular-nums text-brand">404</p>
-        <h1 className="text-[clamp(2.25rem,5vw,4rem)] leading-[1.08] font-semibold tracking-tight break-keep">{copy.title}</h1>
-        <p className="text-[17px] text-fd-muted-foreground break-keep">{copy.body}</p>
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-          <Link
-            to={lang === i18n.defaultLanguage ? '/' : `/${lang}`}
-            className={primaryButton}
-          >
-            {copy.home}
-            <ArrowRight className="size-4" strokeWidth={1.75} aria-hidden />
-          </Link>
-          <Link to={localizedDocsHref(lang)} className="home-link text-[15px] font-medium">
-            <span>{copy.guides}</span>
-            <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
-          </Link>
-        </div>
+      <section id={CONTENT_ID} className="home-frame flex flex-1 flex-col justify-center py-24">
+        <PageHeader title={copy.title} description={copy.body}>
+          <div className="mt-2 flex flex-wrap items-center gap-x-6 gap-y-3">
+            <Link to={lang === i18n.defaultLanguage ? '/' : `/${lang}`} className={`${primaryButton} min-h-11`}>
+              {copy.home}
+              <ArrowRight className="size-4" strokeWidth={1.75} aria-hidden />
+            </Link>
+            <Link to={localizedDocsHref(lang)} className="home-link text-[15px] font-medium">
+              <span>{copy.guides}</span>
+              <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
+            </Link>
+          </div>
+        </PageHeader>
       </section>
     </HomeLayout>
   );
