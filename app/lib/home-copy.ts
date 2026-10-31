@@ -41,11 +41,6 @@ export interface HomeLink {
   readonly href: string;
 }
 
-/** Something I built: a link with the one line that says what it does. */
-export interface HomeBuilt extends HomeLink {
-  readonly line: string;
-}
-
 export interface HomeCopy {
   /** The site name, for llms.txt. */
   readonly title: string;
@@ -65,8 +60,6 @@ export interface HomeCopy {
   readonly principlesLink: string;
   readonly guidesHeading: string;
   readonly guides: readonly HomeGuide[];
-  readonly builtHeading: string;
-  readonly built: readonly HomeBuilt[];
   readonly about: string;
   readonly links: readonly HomeLink[];
   readonly codeLicense: string;
@@ -143,14 +136,10 @@ const en: HomeCopy = {
     { slug: 'keymaps', title: 'Keymaps', blurb: 'macOS, Ghostty, Karabiner, LazyVim.' },
     { slug: 'setup', title: 'Mac setup', blurb: 'A new Mac, in order.' },
   ],
-  builtHeading: 'Things I built',
-  built: [
-    { name: 'hwip', line: 'Answer coding agents from your phone.', href: 'https://hwip.app' },
-    { name: 'tak-cc-statusline', line: 'A one-line status bar for Claude Code.', href: `${GITHUB}/tak-cc-statusline` },
-  ],
   about: 'Tak · Hyungtak Jin · web, React Native and Electron since 2018',
   links: [
     { name: 'GitHub', href: GITHUB },
+    { name: 'hwip', href: 'https://hwip.app' },
     { name: 'Resume', href: '/assets/resume_eng.pdf' },
     { name: 'Site source', href: `${GITHUB}/tak-bro.github.io` },
   ],
@@ -209,14 +198,10 @@ const ko: HomeCopy = {
     { slug: 'keymaps', title: '키맵', blurb: 'macOS, Ghostty, Karabiner, LazyVim.' },
     { slug: 'setup', title: '맥 셋업', blurb: '새 맥을 세팅하는 순서.' },
   ],
-  builtHeading: '만든 것',
-  built: [
-    { name: 'hwip', line: '폰에서 코딩 에이전트에 답한다.', href: 'https://hwip.app' },
-    { name: 'tak-cc-statusline', line: 'Claude Code 한 줄 상태바.', href: `${GITHUB}/tak-cc-statusline` },
-  ],
   about: 'Tak · 진형탁 · 2018년부터 웹, React Native, Electron',
   links: [
     { name: 'GitHub', href: GITHUB },
+    { name: 'hwip', href: 'https://hwip.app' },
     { name: '이력서', href: '/assets/resume.pdf' },
     { name: '사이트 소스', href: `${GITHUB}/tak-bro.github.io` },
   ],

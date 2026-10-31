@@ -173,7 +173,9 @@ const ExternalMark = ({ label }: { label: string }) => (
   </>
 );
 
-const external = (link: { href: string }) => (link.href.startsWith('http') ? { rel: 'noreferrer noopener', target: '_blank' } : {});
+const isExternal = (href: string) => href.startsWith('http');
+
+const external = (link: { href: string }) => (isExternal(link.href) ? { rel: 'noreferrer noopener', target: '_blank' } : {});
 
 /** Elements below the fold rise in once as they enter; anything already on screen is left alone. */
 const useReveal = () => {
@@ -289,42 +291,21 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
         </section>
       ) : null}
 
-      <div className="mt-32 bg-fd-card">
-        <section aria-labelledby="built-heading" className="home-frame flex flex-col gap-8 pt-24">
-          <SectionHead id="built-heading" heading={copy.builtHeading} />
-          <ul className="grid gap-4 sm:grid-cols-2">
-            {copy.built.map((item) => (
-              <li key={item.name} className="home-reveal">
-                <a
-                  href={item.href}
-                  {...external(item)}
-                  className="flex h-full flex-col gap-2 rounded-md bg-fd-background p-6 transition-colors hover:bg-fd-accent"
-                >
-                  <span className="flex items-center gap-1.5 text-2xl font-semibold tracking-tight">
-                    {item.name}
-                    <ExternalMark label={copy.newTabLabel} />
-                  </span>
-                  <span className="text-[17px] break-keep">{item.line}</span>
+      <footer className="home-frame mt-32 flex flex-col gap-10 bg-fd-card pt-14 pb-8">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3 text-[15px]">
+          <p>{copy.about}</p>
+          <ul className="flex flex-wrap gap-x-6 gap-y-1">
+            {copy.links.map((link) => (
+              <li key={link.name}>
+                <a href={link.href} {...external(link)} className="home-link font-medium">
+                  <span>{link.name}</span>
+                  {isExternal(link.href) ? <ExternalMark label={copy.newTabLabel} /> : null}
                 </a>
               </li>
             ))}
           </ul>
-          <div className="home-reveal flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3 text-[15px]">
-            <p className="text-fd-muted-foreground">{copy.about}</p>
-            <ul className="flex flex-wrap gap-x-6 gap-y-1">
-              {copy.links.map((link) => (
-                <li key={link.name}>
-                  <a href={link.href} {...external(link)} className="home-link font-medium">
-                    <span>{link.name}</span>
-                    {link.href.startsWith('http') ? <ExternalMark label={copy.newTabLabel} /> : null}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-
-        <footer className="home-frame flex flex-wrap justify-between gap-x-6 gap-y-2 pt-24 pb-8 text-sm text-fd-muted-foreground">
+        </div>
+        <div className="flex flex-wrap justify-between gap-x-6 gap-y-2 text-sm text-fd-muted-foreground">
           <span className="flex flex-wrap gap-x-6 gap-y-1">
             <a href={`${REPO_URL}/blob/main/LICENSE`} className="inline-block py-1 underline-offset-4 hover:underline">
               {copy.codeLicense}
@@ -334,8 +315,8 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
             </a>
           </span>
           <span className="py-1">© 2026 tak-bro</span>
-        </footer>
-      </div>
+        </div>
+      </footer>
     </HomeLayout>
   );
 };

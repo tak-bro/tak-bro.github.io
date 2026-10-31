@@ -56,7 +56,7 @@ HERO     title, one-line lede, tool chips, [See the setup]  GitHub ↗  |  field
 WORK     four cards: /orch, hwip, /team, draft PR, each a line and a fragment
 LAYERS   six layers, bar length = strength, one line each        |  example of the picked layer
 GUIDES   cards: title, one line, last-commit date
-BUILT    colour field: hwip and tak-cc-statusline cards, one about line, links, licences
+FOOTER   colour field: one about line, links (GitHub, hwip, resume, source), licences
 ```
 
 Phone (390px): the title comes first, the hook block under it; cards stack; the picked layer shows its
