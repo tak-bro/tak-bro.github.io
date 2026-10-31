@@ -1,5 +1,8 @@
 export const APP_NAME = 'Tak';
 export const GITHUB_URL = 'https://github.com/tak-bro';
+export const LINKEDIN_URL = 'https://www.linkedin.com/in/hyungtak/';
+/** The resume in each language. */
+export const RESUME_HREF: Record<string, string> = { ko: '/assets/resume.pdf', en: '/assets/resume_eng.pdf' };
 export const DOCS_ROUTE = '/docs';
 /** Route ids of docs pages start with this; the root aims the skip link at fumadocs' own page. */
 export const DOCS_ROUTE_ID_PREFIX = 'docs:';

@@ -1,5 +1,5 @@
 import { defineI18n } from 'fumadocs-core/i18n';
-import { DOCS_ROUTE } from './shared';
+import { DOCS_ROUTE, RESUME_HREF } from './shared';
 
 // `hideLocale: 'default-locale'` puts Korean at the root and English under /en.
 export const i18n = defineI18n({
@@ -90,3 +90,5 @@ export const alternateLinks = (pathname: string, currentLocale: string): Alterna
     { hreflang: 'x-default', path: defaultPath },
   ];
 };
+
+export const resumeHref = (lang: string): string => RESUME_HREF[lang] ?? RESUME_HREF[i18n.defaultLanguage];

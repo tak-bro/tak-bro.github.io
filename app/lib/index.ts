@@ -1,6 +1,6 @@
 export { filterByTag, groupByYear, listedPosts, tagCounts, type BlogListItem } from './blog-list';
 export { homeCopy, type HomeCopy, type HomePhone, type HomeWork } from './home-copy';
-export { alternateLinks, i18n, isLocalizedPath, localeFromPath, localeSwitchPath, localizedDocsHref, type AlternateLink } from './i18n';
+export { alternateLinks, i18n, isLocalizedPath, localeFromPath, localeSwitchPath, localizedDocsHref, resumeHref, type AlternateLink } from './i18n';
 export { baseOptions } from './layout.shared';
 export { llmsFullTxt, llmsTxt } from './llms';
 export { resolveDocsHref } from './relative-href';
@@ -15,6 +15,7 @@ export {
   DOCS_ROUTE,
   DOCS_ROUTE_ID_PREFIX,
   GITHUB_URL,
+  LINKEDIN_URL,
   pageTitle,
   PROJECTS_CONTENT_DIR,
   PROJECTS_ROUTE,

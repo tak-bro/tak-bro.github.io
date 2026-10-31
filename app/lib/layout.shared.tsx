@@ -1,11 +1,11 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
-import { i18n, localizedDocsHref } from './i18n';
-import { APP_NAME, GITHUB_URL } from './shared';
+import { i18n, localizedDocsHref, resumeHref } from './i18n';
+import { APP_NAME, GITHUB_URL, LINKEDIN_URL } from './shared';
 
-// The blog and projects stay reachable by URL but are off the nav: the site is the guides.
-const NAV_LABELS: Record<string, { guides: string }> = {
-  ko: { guides: '가이드' },
-  en: { guides: 'Guides' },
+// The blog and projects stay reachable by URL but are off the nav.
+const NAV_LABELS: Record<string, { guides: string; resume: string }> = {
+  ko: { guides: '가이드', resume: '이력서' },
+  en: { guides: 'Guides', resume: 'Resume' },
 };
 
 interface LayoutOptions {
@@ -31,6 +31,8 @@ export const baseOptions = ({ lang = i18n.defaultLanguage, localized = true }: L
     },
     links: [
       { text: labels.guides, url: localizedDocsHref(lang) },
+      { text: labels.resume, url: resumeHref(lang), external: true },
+      { text: 'LinkedIn', url: LINKEDIN_URL, external: true },
       { text: 'GitHub', url: GITHUB_URL, external: true },
     ],
     i18n: localized ? i18n : false,

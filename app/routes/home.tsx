@@ -7,11 +7,13 @@ import { primaryButton } from '../components';
 import {
   baseOptions,
   GITHUB_URL,
+  LINKEDIN_URL,
   CONTENT_ID,
   homeCopy,
   localeFromPath,
   localizedDocsHref,
   requestPath,
+  resumeHref,
   source,
   type HomeCopy,
   type HomePhone,
@@ -31,6 +33,10 @@ export const meta = ({ location }: Route.MetaArgs) => {
 };
 
 const REPO_URL = `${GITHUB_URL}/tak-bro.github.io`;
+const PROFILE_LINKS = [
+  { name: 'LinkedIn', href: LINKEDIN_URL },
+  { name: 'GitHub', href: GITHUB_URL },
+];
 
 // Cards only for guides that exist; check:links fails on a card to an unwritten one.
 export const loader = async ({ request }: Route.LoaderArgs) => {
@@ -226,17 +232,16 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
             ))}
           </ul>
           <div className="home-rise flex flex-wrap items-center gap-x-6 gap-y-3 [--i:3]">
-            <a
-              href="#guides"
-              className={primaryButton}
-            >
+            <a href={resumeHref(loaderData.lang)} rel="noreferrer noopener" target="_blank" className={primaryButton}>
               {copy.primaryCta}
-              <ArrowRight className="size-4" strokeWidth={1.75} aria-hidden />
-            </a>
-            <a href={GITHUB_URL} rel="noreferrer noopener" target="_blank" className="home-link text-[15px] font-medium">
-              <span>GitHub</span>
               <ExternalMark label={copy.newTabLabel} />
             </a>
+            {PROFILE_LINKS.map((link) => (
+              <a key={link.name} href={link.href} rel="noreferrer noopener" target="_blank" className="home-link text-[15px] font-medium">
+                <span>{link.name}</span>
+                <ExternalMark label={copy.newTabLabel} />
+              </a>
+            ))}
           </div>
         </div>
         <div className="home-frame flex items-end justify-center bg-fd-card py-12 lg:pb-16">

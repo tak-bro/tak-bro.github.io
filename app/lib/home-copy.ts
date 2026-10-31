@@ -1,4 +1,5 @@
 import { i18n } from './i18n';
+import { GITHUB_URL, LINKEDIN_URL, RESUME_HREF } from './shared';
 
 /** One guide card: `slug` is the top-level page under content/docs. */
 export interface HomeGuide {
@@ -68,7 +69,6 @@ export interface HomeCopy {
   readonly skipLabel: string;
 }
 
-const GITHUB = 'https://github.com/tak-bro';
 
 const hookSession = (blocked: string, line: string) => [
   '$ git commit -m "feat(site): refocus the site on the guides…"',
@@ -92,7 +92,7 @@ const en: HomeCopy = {
   documentTitle: 'Coding agents, run on structure — Tak',
   description: 'The coding agent setup of Tak (Hyungtak Jin): Claude Code, pi and opencode on one config, answered from the phone with hwip.',
   headline: 'Coding agents, run on structure',
-  lede: 'The setup of Tak, a frontend engineer. Claude Code, pi and opencode on one config, answered from the phone with hwip.',
+  lede: 'Tak (Hyungtak Jin), building web, React Native and Electron since 2018. I put Claude Code, pi and opencode on one config and enforce it with hooks and gates, so code an agent writes is code a team can trust.',
   tools: [
     { name: 'Claude Code', role: 'full set' },
     { name: 'pi', role: 'shared skills' },
@@ -100,7 +100,7 @@ const en: HomeCopy = {
     { name: 'herdr', role: 'panes' },
     { name: 'hwip', role: 'phone' },
   ],
-  primaryCta: 'See the setup',
+  primaryCta: 'Resume',
   heroSession: HOOK_SESSION_EN,
   heroCaption: 'A commit a hook actually blocked.',
   workHeading: 'How I work',
@@ -138,10 +138,12 @@ const en: HomeCopy = {
   ],
   about: 'Tak · Hyungtak Jin · web, React Native and Electron since 2018',
   links: [
-    { name: 'GitHub', href: GITHUB },
+    { name: 'LinkedIn', href: LINKEDIN_URL },
+    { name: 'GitHub', href: GITHUB_URL },
     { name: 'hwip', href: 'https://hwip.app' },
-    { name: 'Resume', href: '/assets/resume_eng.pdf' },
-    { name: 'Site source', href: `${GITHUB}/tak-bro.github.io` },
+    { name: 'Resume', href: RESUME_HREF.en },
+    { name: 'Older posts', href: '/blog' },
+    { name: 'Site source', href: `${GITHUB_URL}/tak-bro.github.io` },
   ],
   codeLicense: 'Code: MIT',
   contentLicense: 'Content: CC BY 4.0',
@@ -154,7 +156,7 @@ const ko: HomeCopy = {
   documentTitle: '코딩 에이전트를 구조로 굴린다 — Tak',
   description: 'Tak(진형탁)의 코딩 에이전트 셋업. Claude Code·pi·opencode 를 설정 하나로 묶고, 폰에서는 hwip 으로 답한다.',
   headline: '코딩 에이전트를 구조로 굴린다',
-  lede: '프론트엔드 개발자 Tak 의 셋업. Claude Code·pi·opencode 를 설정 하나로 묶고, 폰에서는 hwip 으로 답한다.',
+  lede: 'Tak(진형탁). 2018년부터 웹·React Native·Electron 을 만들었다. 지금은 Claude Code·pi·opencode 를 설정 하나로 묶고 훅과 게이트로 강제해, 에이전트가 쓴 코드도 팀이 믿을 수 있게 만든다.',
   tools: [
     { name: 'Claude Code', role: '전체 세트' },
     { name: 'pi', role: '공유 스킬' },
@@ -162,7 +164,7 @@ const ko: HomeCopy = {
     { name: 'herdr', role: 'pane' },
     { name: 'hwip', role: '폰' },
   ],
-  primaryCta: '셋업 보기',
+  primaryCta: '이력서',
   heroSession: HOOK_SESSION_KO,
   heroCaption: '훅이 실제로 막은 커밋.',
   workHeading: '이렇게 쓴다',
@@ -200,10 +202,12 @@ const ko: HomeCopy = {
   ],
   about: 'Tak · 진형탁 · 2018년부터 웹, React Native, Electron',
   links: [
-    { name: 'GitHub', href: GITHUB },
+    { name: 'LinkedIn', href: LINKEDIN_URL },
+    { name: 'GitHub', href: GITHUB_URL },
     { name: 'hwip', href: 'https://hwip.app' },
-    { name: '이력서', href: '/assets/resume.pdf' },
-    { name: '사이트 소스', href: `${GITHUB}/tak-bro.github.io` },
+    { name: '이력서', href: RESUME_HREF.ko },
+    { name: '예전 글', href: '/blog' },
+    { name: '사이트 소스', href: `${GITHUB_URL}/tak-bro.github.io` },
   ],
   codeLicense: '코드: MIT',
   contentLicense: '글: CC BY 4.0',
