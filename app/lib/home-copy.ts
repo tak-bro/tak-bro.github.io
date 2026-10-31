@@ -126,7 +126,7 @@ const en: HomeCopy = {
   ],
   demo: {
     heading: 'Three agents, one screen',
-    line: 'Claude Code, opencode and pi in herdr. The sidebar shows who is working and who needs me; the keys are along the bottom.',
+    line: 'Claude Code, opencode and pi in herdr. The sidebar shows who is working and who needs me; the Cmd keys are along the bottom.',
     label: 'Screen recording of herdr: splitting panes, starting Claude Code, opencode and pi, switching projects, zooming a pane and hiding the sidebar.',
     guideLink: 'Herdr guide',
   },
@@ -194,7 +194,7 @@ const ko: HomeCopy = {
   ],
   demo: {
     heading: '에이전트 셋, 한 화면',
-    line: 'herdr 안에서 Claude Code·opencode·pi 를 같이 굴린다. 사이드바가 누가 일하고 누가 나를 기다리는지 보여 준다. 누른 키는 화면 아래에.',
+    line: 'herdr 안에서 Claude Code·opencode·pi 를 같이 굴린다. 사이드바가 누가 일하고 누가 나를 기다리는지 보여 준다. 누른 Cmd 키는 화면 아래에.',
     label: 'herdr 화면 녹화: pane 을 나누고 Claude Code·opencode·pi 를 띄운 뒤, 프로젝트를 오가고 pane 을 확대하고 사이드바를 접는다.',
     guideLink: 'Herdr 가이드',
   },
