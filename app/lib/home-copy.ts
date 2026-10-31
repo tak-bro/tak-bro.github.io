@@ -213,8 +213,5 @@ const ko: HomeCopy = {
 
 const HOME_COPY: Record<string, HomeCopy> = { en, ko };
 
-/** The skip link's target, rendered by the root ahead of the nav. */
-export const HOME_CONTENT_ID = 'home-content';
-
 export const homeCopy = (locale: string | undefined): HomeCopy =>
   HOME_COPY[locale ?? i18n.defaultLanguage] ?? HOME_COPY[i18n.defaultLanguage];

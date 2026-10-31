@@ -2,10 +2,10 @@ import { use } from 'react';
 import { HomeLayout } from 'fumadocs-ui/layouts/home';
 import { DocsBody } from 'fumadocs-ui/layouts/docs/page';
 import defaultMdxComponents from 'fumadocs-ui/mdx';
-import { Link } from 'react-router';
+import { ArrowUpRight } from 'lucide-react';
 import type { Route } from './+types/project';
-import { VideoEmbed } from '../components';
-import { baseOptions, pageTitle, projects, PROJECTS_ROUTE, projectsSource, requestPath } from '../lib';
+import { PageHeader, VideoEmbed } from '../components';
+import { baseOptions, CONTENT_ID, pageTitle, projects, PROJECTS_ROUTE, projectsSource, requestPath, screenshotWebp } from '../lib';
 
 // One route per project (routes.ts), so the name is the last path segment.
 export const loader = ({ request }: Route.LoaderArgs) => {
@@ -26,34 +26,36 @@ const Content = ({ path }: { path: string }) => {
   const Mdx = page.body;
 
   return (
-    <article className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-16">
+    <article id={CONTENT_ID} className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-12 px-6 py-20">
       <title>{pageTitle(page.title)}</title>
       <meta name="description" content={page.description} />
       <meta property="og:type" content="article" />
       <meta property="og:title" content={page.title} />
       <meta property="og:description" content={page.description} />
-      <Link to={PROJECTS_ROUTE} className="w-fit text-sm text-fd-muted-foreground hover:text-fd-foreground">
-        ← 프로젝트
-      </Link>
-      <header className="flex flex-col gap-3 border-b pb-6">
-        <h1 className="text-3xl font-bold tracking-tight">{page.title}</h1>
-        <p className="text-fd-muted-foreground">{page.description}</p>
+      <PageHeader back={{ to: PROJECTS_ROUTE, label: '프로젝트' }} title={page.title} description={page.description}>
         <p className="text-sm text-fd-muted-foreground">
-          <time dateTime={page.date}>{page.date}</time>
+          <time dateTime={page.date} className="tabular-nums">
+            {page.date}
+          </time>
         </p>
         {page.links ? (
-          <ul className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+          <ul className="flex flex-wrap gap-x-6 gap-y-1 text-[15px]">
             {page.links.map((link) => (
               <li key={link.url}>
-                <a href={link.url} className="underline underline-offset-4" rel="noreferrer" target="_blank">
-                  {link.title}
+                <a href={link.url} className="home-link font-medium" rel="noreferrer noopener" target="_blank">
+                  <span>{link.title}</span>
+                  <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
+                  <span className="sr-only">(새 탭)</span>
                 </a>
               </li>
             ))}
           </ul>
         ) : null}
-        <img src={page.screenshot} alt={`${page.title} 스크린샷`} className="mt-2 w-full rounded-lg border" />
-      </header>
+      </PageHeader>
+      <picture>
+        <source srcSet={screenshotWebp(page.screenshot)} type="image/webp" />
+        <img src={page.screenshot} alt={`${page.title} 스크린샷`} fetchPriority="high" className="w-full rounded-md bg-fd-card" />
+      </picture>
       <DocsBody>
         <Mdx components={components} />
       </DocsBody>

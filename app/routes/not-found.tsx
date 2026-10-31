@@ -1,10 +1,20 @@
 import { HomeLayout } from 'fumadocs-ui/layouts/home';
+import { ArrowRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router';
-import { baseOptions, i18n, isLocalizedPath, localeFromPath, localizedDocsHref } from '../lib';
+import { primaryButton } from '../components';
+import { baseOptions, CONTENT_ID, i18n, isLocalizedPath, localeFromPath, localizedDocsHref } from '../lib';
 
-const COPY: Record<string, { title: string; body: string; back: string }> = {
-  ko: { title: '페이지를 찾을 수 없습니다', body: '주소가 바뀌었거나 없는 페이지입니다.', back: '문서로 돌아가기' },
-  en: { title: 'Not Found', body: 'This page could not be found.', back: 'Back to Docs' },
+declare global {
+  interface Window {
+    /** The address a visitor asked for; 404.html swaps it for /404 so the page hydrates as rendered. */
+    __notFoundPath?: string;
+  }
+}
+
+const COPY: Record<string, { title: string; body: string; home: string; guides: string }> = {
+  ko: { title: '없는 페이지다', body: '주소가 바뀌었거나 지워졌다.', home: '홈으로', guides: '가이드' },
+  en: { title: 'This page does not exist', body: 'The address changed or the page was removed.', home: 'Home', guides: 'Guides' },
 };
 
 const notFoundCopy = (lang: string) => COPY[lang] ?? COPY[i18n.defaultLanguage];
@@ -17,21 +27,40 @@ export const meta = ({ location }: { location: { pathname: string } }) => [
 // no `lang` param, so the locale comes from the path itself.
 const NotFound = () => {
   const { pathname } = useLocation();
-  const lang = localeFromPath(pathname);
+  const [path, setPath] = useState(pathname);
+
+  // After hydration, put the visitor's own address back and speak its language.
+  useEffect(() => {
+    const original = window.__notFoundPath;
+    if (!original) return;
+    delete window.__notFoundPath;
+    window.history.replaceState(window.history.state, '', original);
+    setPath(new URL(original, window.location.origin).pathname);
+  }, []);
+
+  const lang = localeFromPath(path);
   const copy = notFoundCopy(lang);
 
   return (
-    <HomeLayout {...baseOptions({ lang, localized: isLocalizedPath(pathname) })}>
-      <div className="p-4 flex flex-col items-center justify-center text-center flex-1">
-        <h1 className="text-xl font-bold mb-2">{copy.title}</h1>
-        <p className="text-fd-muted-foreground mb-4">{copy.body}</p>
-        <Link
-          className="text-sm bg-fd-primary text-fd-primary-foreground rounded-full font-medium px-4 py-2.5"
-          to={localizedDocsHref(lang)}
-        >
-          {copy.back}
-        </Link>
-      </div>
+    <HomeLayout {...baseOptions({ lang, localized: isLocalizedPath(path) })}>
+      <section id={CONTENT_ID} className="home-frame flex flex-1 flex-col justify-center gap-6 py-24">
+        <p className="text-[15px] font-semibold tabular-nums text-brand">404</p>
+        <h1 className="text-[clamp(2.25rem,5vw,4rem)] leading-[1.08] font-semibold tracking-tight break-keep">{copy.title}</h1>
+        <p className="text-[17px] text-fd-muted-foreground break-keep">{copy.body}</p>
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+          <Link
+            to={lang === i18n.defaultLanguage ? '/' : `/${lang}`}
+            className={primaryButton}
+          >
+            {copy.home}
+            <ArrowRight className="size-4" strokeWidth={1.75} aria-hidden />
+          </Link>
+          <Link to={localizedDocsHref(lang)} className="home-link text-[15px] font-medium">
+            <span>{copy.guides}</span>
+            <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
+          </Link>
+        </div>
+      </section>
     </HomeLayout>
   );
 };

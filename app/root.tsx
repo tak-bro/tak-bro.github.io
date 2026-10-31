@@ -18,10 +18,9 @@ import {
   alternateLinks,
   APP_NAME,
   canonicalUrl,
-  HOME_CONTENT_ID,
+  CONTENT_ID,
+  DOCS_ROUTE_ID_PREFIX,
   homeCopy,
-  homeRouteId,
-  i18n,
   IS_PROD,
   localeFromPath,
   localeSwitchPath,
@@ -31,7 +30,6 @@ import {
 import NotFound from './routes/not-found';
 
 const NOT_FOUND_ROUTE_IDS = new Set(['not-found', 'not-found-page']);
-const HOME_ROUTE_IDS = new Set(i18n.languages.map(homeRouteId));
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
   const { pathname } = useLocation();
@@ -47,8 +45,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
   // neither be indexed nor claim a canonical or translated counterpart.
   const matches = useMatches();
   const notFound = matches.some((match) => NOT_FOUND_ROUTE_IDS.has(match.id));
-  // The skip link must come before the nav, so only the root can place it.
-  const home = matches.some((match) => HOME_ROUTE_IDS.has(match.id));
+  const docsPage = matches.some((match) => match.id.startsWith(DOCS_ROUTE_ID_PREFIX));
 
   return (
     <html lang={lang} suppressHydrationWarning>
@@ -86,14 +83,13 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         <Links />
       </head>
       <body className="flex flex-col min-h-screen">
-        {home ? (
-          <a
-            href={`#${HOME_CONTENT_ID}`}
-            className="fixed top-3 left-3 z-50 -translate-y-24 rounded-md bg-fd-foreground px-4 py-2 text-sm font-semibold text-fd-background focus:translate-y-0"
-          >
-            {homeCopy(lang).skipLabel}
-          </a>
-        ) : null}
+        {/* The skip link must come before the nav, so only the root can place it. */}
+        <a
+          href={`#${docsPage ? 'nd-page' : CONTENT_ID}`}
+          className="fixed top-3 left-3 z-50 -translate-y-24 rounded-md bg-fd-foreground px-4 py-2 text-sm font-semibold text-fd-background focus:translate-y-0"
+        >
+          {homeCopy(lang).skipLabel}
+        </a>
         <RootProvider
           search={{ SearchDialog: DocsSearchDialog }}
           i18n={{

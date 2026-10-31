@@ -2,7 +2,8 @@ import { HomeLayout } from 'fumadocs-ui/layouts/home';
 import { useState } from 'react';
 import { Link } from 'react-router';
 import type { Route } from './+types/blog';
-import { baseOptions, blogPosts, DOCS_ROUTE, filterByTag, groupByYear, listedPosts, pageTitle, tagCounts } from '../lib';
+import { PageHeader, primaryButton } from '../components';
+import { baseOptions, blogPosts, CONTENT_ID, DOCS_ROUTE, filterByTag, groupByYear, listedPosts, pageTitle, tagCounts } from '../lib';
 
 const TITLE = '블로그';
 const DESCRIPTION = '코딩 에이전트를 쓰며 남기는 사고와 규칙 기록.';
@@ -28,7 +29,7 @@ export const loader = () => ({
 });
 
 const chipClass =
-  'rounded-full border px-3 py-1 text-xs transition-colors aria-pressed:border-fd-primary aria-pressed:bg-fd-primary aria-pressed:text-fd-primary-foreground hover:bg-fd-accent aria-pressed:hover:bg-fd-primary';
+  'min-h-8 rounded-sm bg-fd-card px-3 py-1 text-sm transition-colors hover:bg-fd-accent aria-pressed:bg-fd-foreground aria-pressed:text-fd-background';
 
 const Blog = ({ loaderData }: Route.ComponentProps) => {
   // Client-side only: the prerendered page lists every post, and a URL-driven
@@ -39,19 +40,18 @@ const Blog = ({ loaderData }: Route.ComponentProps) => {
 
   return (
     <HomeLayout {...baseOptions({ localized: false })}>
-      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-10 px-4 py-16">
-        <header className="flex flex-col gap-2">
-          <h1 className="text-3xl font-bold tracking-tight">{TITLE}</h1>
-          <p className="text-fd-muted-foreground">{DESCRIPTION}</p>
-        </header>
+      <div id={CONTENT_ID} className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-12 px-6 py-20">
+        <PageHeader title={TITLE} description={DESCRIPTION} />
         {loaderData.posts.length === 0 ? (
-          <p className="text-fd-muted-foreground">
-            아직 글이 없다. 지금까지의 기록은{' '}
-            <Link to={`${DOCS_ROUTE}/principles`} className="text-fd-foreground underline underline-offset-4">
-              원칙
-            </Link>{' '}
-            가이드에 모았다.
-          </p>
+          <div className="flex flex-col items-start gap-4 rounded-md bg-fd-card p-6">
+            <p className="text-[17px] break-keep">아직 글이 없다. 지금까지의 기록은 원칙 가이드에 모았다.</p>
+            <Link
+              to={`${DOCS_ROUTE}/principles`}
+              className={primaryButton}
+            >
+              원칙 읽기
+            </Link>
+          </div>
         ) : (
           <div role="group" aria-label="태그로 거르기" className="flex flex-wrap gap-2">
             <button type="button" className={chipClass} aria-pressed={tag === null} onClick={() => setTag(null)}>
@@ -75,17 +75,17 @@ const Blog = ({ loaderData }: Route.ComponentProps) => {
             <section key={year} aria-labelledby={`year-${year}`} className="grid gap-2 md:grid-cols-[5rem_1fr] md:gap-6">
               <h2
                 id={`year-${year}`}
-                className="text-sm font-semibold tabular-nums text-fd-muted-foreground md:sticky md:top-20 md:self-start md:pt-4"
+                className="text-[15px] font-semibold tabular-nums text-fd-muted-foreground md:sticky md:top-20 md:self-start md:pt-4"
               >
                 {year}
               </h2>
-              <ul className="flex flex-col divide-y">
+              <ul className="flex flex-col gap-1">
                 {posts.map((post) => (
-                  <li key={post.url} className="py-4">
-                    <Link to={post.url} className="group flex flex-col gap-1">
-                      <span className="font-medium group-hover:underline">{post.title}</span>
-                      <span className="text-sm text-fd-muted-foreground">{post.description}</span>
-                      <span className="flex gap-2 text-xs text-fd-muted-foreground">
+                  <li key={post.url}>
+                    <Link to={post.url} className="-mx-3 flex flex-col gap-1 rounded-md px-3 py-4 transition-colors hover:bg-fd-card">
+                      <span className="text-[17px] font-semibold">{post.title}</span>
+                      <span className="text-[15px] text-fd-muted-foreground break-keep">{post.description}</span>
+                      <span className="flex gap-2 text-sm text-fd-muted-foreground">
                         <time dateTime={post.date} className="tabular-nums">
                           {post.date}
                         </time>

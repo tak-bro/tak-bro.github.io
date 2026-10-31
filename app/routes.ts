@@ -3,7 +3,7 @@ import { index, route, type RouteConfig } from '@react-router/dev/routes';
 // barrel's source.ts (`defineDocs` macro) does not resolve.
 import { docsPrerenderPaths, listMdxFiles } from '../config';
 import { i18n } from './lib/i18n';
-import { BLOG_CONTENT_DIR, BLOG_ROUTE, DOCS_CONTENT_DIR, homeRouteId, PROJECTS_CONTENT_DIR, PROJECTS_ROUTE } from './lib/shared';
+import { BLOG_CONTENT_DIR, BLOG_ROUTE, DOCS_CONTENT_DIR, DOCS_ROUTE_ID_PREFIX, homeRouteId, PROJECTS_CONTENT_DIR, PROJECTS_ROUTE } from './lib/shared';
 
 // One static route per real page: in a static build a pattern route (`:lang?`,
 // `docs/*`) has no loader data for unknown URLs, so those must reach the 404.
@@ -15,7 +15,7 @@ const homeRoutes = i18n.languages.map((lang) =>
 
 const docsRoutes = async () =>
   docsPrerenderPaths(await listMdxFiles(DOCS_CONTENT_DIR)).map((path) =>
-    route(path.slice(1), 'routes/docs.tsx', { id: `docs:${path}` }),
+    route(path.slice(1), 'routes/docs.tsx', { id: `${DOCS_ROUTE_ID_PREFIX}${path}` }),
   );
 
 // A list page plus one route per file, for the Korean-only collections.

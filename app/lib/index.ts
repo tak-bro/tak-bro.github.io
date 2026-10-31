@@ -1,5 +1,5 @@
 export { filterByTag, groupByYear, listedPosts, tagCounts, type BlogListItem } from './blog-list';
-export { HOME_CONTENT_ID, homeCopy, type HomeCopy, type HomePhone, type HomeWork } from './home-copy';
+export { homeCopy, type HomeCopy, type HomePhone, type HomeWork } from './home-copy';
 export { alternateLinks, i18n, isLocalizedPath, localeFromPath, localeSwitchPath, localizedDocsHref, type AlternateLink } from './i18n';
 export { baseOptions } from './layout.shared';
 export { llmsFullTxt, llmsTxt } from './llms';
@@ -10,13 +10,16 @@ export {
   APP_NAME,
   BLOG_CONTENT_DIR,
   BLOG_ROUTE,
+  CONTENT_ID,
   DOCS_CONTENT_DIR,
   DOCS_ROUTE,
+  DOCS_ROUTE_ID_PREFIX,
   GITHUB_URL,
-  homeRouteId,
   pageTitle,
   PROJECTS_CONTENT_DIR,
   PROJECTS_ROUTE,
+  screenshotThumb,
+  screenshotWebp,
 } from './shared';
 export { canonicalUrl, IS_PROD, ogLocale, SITE_URL } from './site';
 export { sitemapEntries, sitemapXml, type SitemapEntry } from './sitemap';

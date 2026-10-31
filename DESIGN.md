@@ -1,9 +1,12 @@
 # Home design
 
-Scope: the home route only (`app/routes/home.tsx`, copy in `app/lib/home-copy.ts`). Docs, blog and
-projects keep the fumadocs layout. Two pieces reach outside it: the skip link sits in `app/root.tsx`
-(it must come before the nav, and renders on the home routes only), and the nav hover treatment
-applies to the shared home-layout header on every page that uses it.
+Scope: the home route (`app/routes/home.tsx`, copy in `app/lib/home-copy.ts`), and the same type,
+links and buttons on the other pages that use the home layout. Blog, projects, blog posts, projects
+and the 404 open with `PageHeader` (`app/components/page-header.tsx`): an optional way back, the
+title at `clamp(2rem, 3.5vw, 2.75rem)` and one line under it; rows and cards take the field tone on
+hover, with no rules between them. Blog posts carry their table of contents in a right rail from
+64rem. The docs keep the fumadocs layout. The skip link sits in `app/root.tsx` on every page (it must
+come before the nav); it jumps to `#content`, or to fumadocs' `#nd-page` on the docs.
 
 ## Brief
 

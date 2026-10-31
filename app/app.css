@@ -62,19 +62,28 @@ html > body[data-scroll-locked] {
   min-height: 24px;
 }
 
-.home-link > span:first-child {
+.home-link > span:not(.sr-only) {
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 6px;
   text-decoration-color: var(--color-fd-muted-foreground);
 }
 
-.home-link:hover > span:first-child {
+.home-link:hover > span:not(.sr-only) {
   text-decoration-color: currentColor;
 }
 
 .home-link:hover > svg {
   translate: 3px 0;
+}
+
+.home-link:hover > svg:first-child {
+  translate: -3px 0;
+}
+
+/* Shiki's light colours are tuned for white; on fumadocs' grey card they fall to about 4:1. */
+:root:not(.dark) figure.shiki {
+  background-color: var(--shiki-light-bg);
 }
 
 #nd-nav nav > a:first-child > span,
@@ -101,7 +110,7 @@ html > body[data-scroll-locked] {
       color 0.15s;
   }
 
-  .home-link > span:first-child {
+  .home-link > span:not(.sr-only) {
     transition: text-decoration-color 0.3s;
   }
 

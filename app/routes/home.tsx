@@ -3,10 +3,11 @@ import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link } from 'react-router';
 import type { Route } from './+types/home';
+import { primaryButton } from '../components';
 import {
   baseOptions,
   GITHUB_URL,
-  HOME_CONTENT_ID,
+  CONTENT_ID,
   homeCopy,
   localeFromPath,
   localizedDocsHref,
@@ -211,7 +212,7 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
 
   return (
     <HomeLayout {...baseOptions({ lang: loaderData.lang })}>
-      <section id={HOME_CONTENT_ID} className="grid lg:min-h-[66svh] lg:grid-cols-2">
+      <section id={CONTENT_ID} className="grid lg:min-h-[66svh] lg:grid-cols-2">
         <div className="home-frame flex flex-col justify-end gap-6 py-14 lg:pr-12 lg:pb-16">
           <h1 className="home-rise max-w-[18ch] text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.08] font-semibold tracking-tight break-keep">
             {copy.headline}
@@ -227,7 +228,7 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
           <div className="home-rise flex flex-wrap items-center gap-x-6 gap-y-3 [--i:3]">
             <a
               href="#guides"
-              className="home-press inline-flex items-center gap-2 rounded-sm bg-brand px-4 py-2.5 text-[15px] font-semibold text-fd-background hover:bg-fd-foreground hover:text-fd-background"
+              className={primaryButton}
             >
               {copy.primaryCta}
               <ArrowRight className="size-4" strokeWidth={1.75} aria-hidden />
