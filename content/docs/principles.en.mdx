@@ -1,9 +1,26 @@
 ---
 title: Principles
-description: The principles under my whole agent setup — give a criterion that can be checked first, let the model fill in only the verdict, and fix a mistake in the layer that caused it.
+description: The principles under my whole agent setup — enforce rules with structure instead of requests, give a criterion that can be checked first, let the model fill in only the verdict, and fix a mistake in the layer that caused it.
 ---
 
-The other guides cover what I set up and how. This one covers why. The principles come from the design notes (`docs/SKILL-PHILOSOPHY.md`) and working principles (`skills/_shared/principles/`) in the [agent config](./agent-config.mdx) repo, and from the incident log I keep for each rule (`docs/RULES-EVIDENCE.md`).
+The other guides cover what I set up and how. This one covers why. The principles come from the design notes (`docs/SKILL-PHILOSOPHY.md`, `docs/HARNESS-ENGINEERING.md`, `docs/MODEL-ERA-AUDIT.md`) and working principles (`skills/_shared/principles/`) in the [agent config](./agent-config.mdx) repo, and from the incident log I keep for each rule (`docs/RULES-EVIDENCE.md`).
+
+## Structure, not requests
+
+A sentence like "never do this" is forgotten once the context grows long; structure is not. So the first decision about a rule is which layer it lives in. The higher the layer, the less it can be broken.
+
+| Layer | How | Example |
+|---|---|---|
+| No permission | The tool is never given | The explorer agent (`agents/explorer.md`) has no Edit or Write |
+| Hard block | `settings.json` deny and ask | Editing `CLAUDE.md`, `RULES.md`, `CONTEXT.md` or `AGENTS.md` needs approval |
+| Conditional block | A hook exits 2 | Dangerous commands, force pushes to protected branches, `--no-verify`, AI co-author trailers, broken Conventional Commits |
+| Owned verdict | Gates and deterministic verifiers | A slice passes = tests green + review PASS |
+| Injection and isolation | SessionStart hook, forked context | Commits and the branch go back in after a compact; reviews run in a separate context |
+| Request | `CLAUDE.md` | Guidance only. When a line has to hold, it moves up a layer |
+
+Where a permission cannot stop something, a verifier checks afterwards. A subagent with write access gets a list of allowed paths, and when it returns, `git diff --name-only` reverts any file outside that list. "Only touch your own folder" written as a sentence is not a verifier.
+
+Bash blocking lives in one guard hook. A `settings.json` deny matches by prefix, so it misses chained commands like `cd x && <command>`. And a deny added only to the repo copy never reached the live settings, so it blocked nothing.
 
 ## A command instead of "done"
 
@@ -49,6 +66,29 @@ The test is not line count but a deletion test. If removing something leaves the
 - I merged the three plan review lenses (product, design, engineering) into one, then split them again. Their personas, checklists, and verdict scales all differed, so removing one changed the result. The merged version measured a median of 46 turns and 22.4k output tokens, against 26 turns and 9.8k for a single lens.
 - Call counts were weak evidence for deleting a skill. Most skills are not called by me; another skill points to them in its body. So I look at the reference graph. A skill that a live execution path points to stays; one only a catalog page points to goes.
 - `package.json` scripts, config files, and `--help` output are the source of truth themselves. A document that restates them becomes a cache, and caches go stale. Docs hold only what an agent cannot look up: unwritten conventions, why a choice was made, and traps no setting reveals.
+
+## One source of truth
+
+When the same content lives in two places, the copies drift apart. Keep one source and record only the differences elsewhere.
+
+- The pipeline's shape lives in a shared contract (base), language differences in packs (react, ts, nodejs), and the calls in routers.
+- A skill that Claude Code, pi and opencode share has one English body. The Claude Code file keeps only a table of what differs per harness, such as tool names and availability. When the policy differs, the source changes, not the delta. The checker that kept two copies in sync is gone; there are no two copies left to sync.
+- Two documents that name each other as the source mean there is no source.
+- A skill body stays small and moves detail into references read on demand, one level deep. When a reference points to another reference, the agent reads the first part and moves on.
+
+## Delete steps as models improve
+
+A step added for an older model is only cost once the model improves. Steps fall into five kinds.
+
+| Kind | Example | Verdict |
+|---|---|---|
+| Making up for model limits | "one concern per pass", splitting roles | Delete or merge |
+| Double evaluation | Scoring the same thing twice | Keep one |
+| Unused decomposition | A skill no execution path points to | Delete along the reference graph |
+| Deterministic verifiers and structural separation | Tests, hooks, a separate reviewer | Keep; they do not depend on model ability |
+| Specs for weak implementers | Documents a cheap worker model reads | Keep while the reader is weak |
+
+Before deleting, three questions: what was it added to stop; does it still fire (recent logs); does deleting it change the result. If what changes is that a defect gets caught, the step is a verifier after all.
 
 ## Working principles
 
