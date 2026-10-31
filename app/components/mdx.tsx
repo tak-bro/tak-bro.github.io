@@ -1,10 +1,11 @@
 import defaultMdxComponents from 'fumadocs-ui/mdx';
 import { resolveDocsHref } from '../lib';
+import { HerdrDemo } from './demo-video';
 
 // Typed off fumadocs' own component map rather than `mdx/types`: that specifier
 // resolves to a .d.ts-only package, and vite's dev dependency optimizer tries to
 // bundle it, which kills `react-router dev`.
-type MDXComponentMap = typeof defaultMdxComponents;
+type MDXComponentMap = typeof defaultMdxComponents & { HerdrDemo: typeof HerdrDemo };
 
 /**
  * The MDX components for one docs page. Links are bound to the page they are
@@ -18,6 +19,7 @@ export const docsMdxComponents = (slugs: string[], lang: string | undefined): MD
 
   return {
     ...defaultMdxComponents,
+    HerdrDemo,
     a: ({ href, ...props }) => <DefaultLink href={resolve(href)} {...props} />,
     Card: ({ href, ...props }) => <DefaultCard href={resolve(href)} {...props} />,
   };

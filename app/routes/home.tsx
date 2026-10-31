@@ -3,7 +3,7 @@ import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link } from 'react-router';
 import type { Route } from './+types/home';
-import { primaryButton } from '../components';
+import { HerdrDemo, primaryButton } from '../components';
 import {
   baseOptions,
   GITHUB_URL,
@@ -256,6 +256,19 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
             <WorkCard key={work.name} work={work} />
           ))}
         </ul>
+      </section>
+
+      <section aria-labelledby="demo-heading" className="home-frame flex flex-col gap-8 pt-32">
+        <SectionHead id="demo-heading" heading={copy.demo.heading}>
+          <Link to={`${docsHref}/herdr`} className="home-link text-[15px] font-medium">
+            <span>{copy.demo.guideLink}</span>
+            <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
+          </Link>
+        </SectionHead>
+        <p className="home-reveal -mt-4 max-w-[60ch] text-[17px] leading-relaxed break-keep">{copy.demo.line}</p>
+        <div data-ui className="home-reveal">
+          <HerdrDemo label={copy.demo.label} />
+        </div>
       </section>
 
       <Layers copy={copy} docsHref={docsHref} />

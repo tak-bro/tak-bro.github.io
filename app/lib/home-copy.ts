@@ -41,6 +41,14 @@ export interface HomeLink {
   readonly href: string;
 }
 
+/** The herdr screen recording: a heading, one line under it, and the video's accessible name. */
+export interface HomeDemo {
+  readonly heading: string;
+  readonly line: string;
+  readonly label: string;
+  readonly guideLink: string;
+}
+
 export interface HomeCopy {
   /** The site name, for llms.txt. */
   readonly title: string;
@@ -54,6 +62,7 @@ export interface HomeCopy {
   readonly heroCaption: string;
   readonly workHeading: string;
   readonly work: readonly HomeWork[];
+  readonly demo: HomeDemo;
   readonly layersHeading: string;
   readonly layersLede: string;
   readonly layers: readonly HomeLayer[];
@@ -115,6 +124,12 @@ const en: HomeCopy = {
     { name: '/team', line: 'Three workers side by side in herdr.', session: TEAM },
     { name: 'draft PR', line: 'It stops here. I merge.', session: DRAFT_PR },
   ],
+  demo: {
+    heading: 'Three agents, one screen',
+    line: 'Claude Code, opencode and pi in herdr. The sidebar shows who is working and who needs me; the keys are along the bottom.',
+    label: 'Screen recording of herdr: splitting panes, starting Claude Code, opencode and pi, switching projects, zooming a pane and hiding the sidebar.',
+    guideLink: 'Herdr guide',
+  },
   layersHeading: 'Rules as structure, not requests',
   layersLede: 'The higher the layer, the harder to break.',
   layers: [
@@ -177,6 +192,12 @@ const ko: HomeCopy = {
     { name: '/team', line: '워커 셋이 herdr 에서 동시에 일한다.', session: TEAM },
     { name: 'draft PR', line: '여기서 멈춘다. 머지는 내가 한다.', session: DRAFT_PR },
   ],
+  demo: {
+    heading: '에이전트 셋, 한 화면',
+    line: 'herdr 안에서 Claude Code·opencode·pi 를 같이 굴린다. 사이드바가 누가 일하고 누가 나를 기다리는지 보여 준다. 누른 키는 화면 아래에.',
+    label: 'herdr 화면 녹화: pane 을 나누고 Claude Code·opencode·pi 를 띄운 뒤, 프로젝트를 오가고 pane 을 확대하고 사이드바를 접는다.',
+    guideLink: 'Herdr 가이드',
+  },
   layersHeading: '규칙은 부탁 말고 구조로',
   layersLede: '위로 갈수록 어길 수 없다.',
   layers: [
