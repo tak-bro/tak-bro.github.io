@@ -29,8 +29,15 @@ describe('home copy', () => {
     }
   });
 
-  it('walks the same /orch stages in both languages', () => {
-    expect(homeCopy('en').stages).toHaveLength(homeCopy('ko').stages.length);
+  it('shows the same layers and scenes in both languages', () => {
+    expect(homeCopy('en').layers.map((layer) => layer.source)).toEqual(homeCopy('ko').layers.map((layer) => layer.source));
+    expect(homeCopy('en').scenes.map((scene) => Boolean(scene.phone))).toEqual(homeCopy('ko').scenes.map((scene) => Boolean(scene.phone)));
+  });
+
+  it('gives every layer an example to show', () => {
+    for (const lang of ['ko', 'en']) {
+      for (const layer of homeCopy(lang).layers) expect(layer.example.length).toBeGreaterThan(0);
+    }
   });
 
   it('links the resume in the page language', () => {
@@ -40,10 +47,6 @@ describe('home copy', () => {
         .find((record) => record.href.startsWith('/assets/'))?.href;
     expect(resume('ko')).toBe('/assets/resume.pdf');
     expect(resume('en')).toBe('/assets/resume_eng.pdf');
-  });
-
-  it('checks the same criteria in both languages', () => {
-    expect(homeCopy('en').checks.map((check) => check.id)).toEqual(homeCopy('ko').checks.map((check) => check.id));
   });
 
   it('dates every published guide by its last commit', async () => {

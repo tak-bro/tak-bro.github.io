@@ -12,11 +12,12 @@ import {
   localizedDocsHref,
   requestPath,
   source,
-  type HomeCheckId,
   type HomeCopy,
   type HomeGuide,
   type HomeGuideGroup,
-  type HomeStage,
+  type HomeLayer,
+  type HomePhone,
+  type HomeScene,
 } from '../lib';
 
 export const meta = ({ location }: Route.MetaArgs) => {
@@ -74,139 +75,109 @@ const textOf = (node: ReactNode): string => {
   return '';
 };
 
-type Rgba = readonly [number, number, number, number];
-type Verdict = { readonly pass: boolean; readonly evidence: string };
+/** A `[hook]` line and its indented continuation lines. */
+const hookLines = (lines: readonly string[]) =>
+  lines.reduce<boolean[]>((flags, line) => [...flags, line.startsWith('[') || (flags.at(-1) === true && line.startsWith('  '))], []);
 
-/** Paints any CSS colour (oklch included) to a pixel and reads it back as sRGB. */
-const toRgba = (color: string): Rgba => {
-  const context = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
-  if (!context) return [0, 0, 0, 0];
-  context.fillStyle = color;
-  context.fillRect(0, 0, 1, 1);
-  const [r = 0, g = 0, b = 0, a = 0] = context.getImageData(0, 0, 1, 1).data;
-  return [r, g, b, a];
-};
-
-const luminance = ([r, g, b]: Rgba) => {
-  const linear = (channel: number) => {
-    const c = channel / 255;
-    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
-  };
-  return 0.2126 * linear(r) + 0.7152 * linear(g) + 0.0722 * linear(b);
-};
-
-const hex = ([r, g, b]: Rgba) => `#${[r, g, b].map((c) => c.toString(16).padStart(2, '0')).join('')}`;
-
-/** The first opaque background behind an element: the ground its text is read on. */
-const groundOf = (element: Element): Rgba => {
-  for (let node: Element | null = element; node; node = node.parentElement) {
-    const background = toRgba(getComputedStyle(node).backgroundColor);
-    if (background[3] === 255) return background;
-  }
-  return [255, 255, 255, 255];
-};
-
-/** Each criterion measured on the live page, so the verdict follows the theme and the viewport. */
-const measure = (copy: HomeCopy, published: readonly string[]): Record<HomeCheckId, Verdict> => {
-  const h1 = document.querySelector('h1');
-  const lines = h1 ? Math.round(h1.getBoundingClientRect().height / parseFloat(getComputedStyle(h1).lineHeight)) : 0;
-
-  const lede = document.querySelector('[data-check="lede"]');
-  const ink = lede ? toRgba(getComputedStyle(lede).color) : groundOf(document.body);
-  const ground = lede ? groundOf(lede) : groundOf(document.body);
-  const [light = 0, dark = 0] = [luminance(ink), luminance(ground)].sort((a, b) => b - a);
-  const ratio = (light + 0.05) / (dark + 0.05);
-
-  const guideLinks = [...document.querySelectorAll<HTMLAnchorElement>('a[data-guide]')];
-  const resolved = guideLinks.filter((link) => published.includes(link.dataset.guide ?? ''));
-
-  const navLinks = [...new Set([...document.querySelectorAll('#nd-nav a')].map((link) => link.textContent?.trim()).filter(Boolean))];
-
-  return {
-    headline: { pass: lines > 0 && lines <= 2, evidence: `h1 → ${copy.lineCount(lines)}` },
-    contrast: { pass: ratio >= 4.5, evidence: `${hex(ink)} / ${hex(ground)} → ${ratio.toFixed(1)}:1` },
-    guides: {
-      pass: guideLinks.length > 0 && resolved.length === guideLinks.length,
-      evidence: `${resolved.length}/${guideLinks.length} ${copy.pagesExist}`,
-    },
-    nav: { pass: navLinks.length <= 3, evidence: navLinks.join(' · ') },
-  };
-};
-
-/** The hero's working fragment: this page's own acceptance contract, measured when asked. */
-const Checks = ({ copy, published }: { copy: HomeCopy; published: readonly string[] }) => {
-  const [verdicts, setVerdicts] = useState<Record<HomeCheckId, Verdict> | null>(null);
-  const [runs, setRuns] = useState(0);
-  const run = () => {
-    setVerdicts(measure(copy, published));
-    setRuns((count) => count + 1);
-  };
-
-  useEffect(() => {
-    let live = true;
-    void document.fonts.ready.then(() => {
-      if (live) setVerdicts(measure(copy, published));
-    });
-    return () => {
-      live = false;
-    };
-  }, [copy, published]);
-
+/** A terminal-sized fragment of a session; hook output reads as an error. */
+const Session = ({ lines, className = '' }: { lines: readonly string[]; className?: string }) => {
+  const hook = hookLines(lines);
   return (
-    <div data-ui className="w-full max-w-[32rem] rounded-md bg-fd-background text-fd-foreground">
-      <div className="flex items-center justify-between gap-4 px-5 pt-4 pb-2">
-        <p className="text-[15px] font-semibold">{copy.checksTitle}</p>
-        <button
-          type="button"
-          className="home-press rounded-sm bg-fd-secondary px-3 py-1.5 text-sm font-medium hover:bg-fd-accent"
-          onClick={run}
-        >
-          {copy.checksRun}
-        </button>
-      </div>
-      <ol className="flex flex-col px-5 pb-4" aria-live="polite">
-        {copy.checks.map((check, index) => {
-          const verdict = verdicts?.[check.id];
-          const status = verdict ? (verdict.pass ? 'PASS' : 'FAIL') : copy.checksPending;
-          return (
-            <li
-              key={`${check.id}-${runs}`}
-              className="home-rise grid grid-cols-[1fr_auto] gap-x-4 gap-y-1 py-2.5"
-              style={{ '--i': index } as React.CSSProperties}
-            >
-              <span className="text-[15px] leading-snug">{check.claim}</span>
-              <span
-                className={`text-sm font-semibold tabular-nums ${verdict?.pass === false ? 'text-red-700 dark:text-red-300' : verdict ? '' : 'text-fd-muted-foreground'}`}
-              >
-                {status}
-              </span>
-              <code className="col-span-2 font-mono text-[13px] text-fd-muted-foreground break-all">{verdict ? verdict.evidence : '—'}</code>
-            </li>
-          );
-        })}
-      </ol>
-    </div>
+    <pre className={`overflow-x-auto rounded-md bg-fd-background p-5 text-[13px] leading-relaxed whitespace-pre-wrap ${className}`}>
+      <code className="font-mono">
+        {lines.map((line, index) => (
+          <span key={index} className={`block ${hook[index] ? 'text-red-700 dark:text-red-300' : ''}`}>
+            {line}
+          </span>
+        ))}
+      </code>
+    </pre>
   );
 };
 
-/** A terminal-sized fragment of a session. Hook output (indented or bracketed) reads as an error. */
-const Session = ({ lines, className = '' }: { lines: readonly string[]; className?: string }) => (
-  <pre className={`overflow-x-auto rounded-md bg-fd-background p-5 text-[13px] leading-relaxed whitespace-pre-wrap ${className}`}>
-    <code className="font-mono">
-      {lines.map((line, index) => (
-        <span key={index} className={`block ${line.startsWith('[') || line.startsWith('  ') ? 'text-red-700 dark:text-red-300' : ''}`}>
-          {line}
-        </span>
-      ))}
-    </code>
-  </pre>
+/** The enforcement ladder, strongest layer first; the picked layer shows its real example. */
+const Layers = ({ copy }: { copy: HomeCopy }) => {
+  const [picked, setPicked] = useState(0);
+  const layer: HomeLayer | undefined = copy.layers[picked];
+
+  return (
+    <section aria-labelledby="layers-heading" className="home-frame grid gap-x-16 gap-y-10 pt-32 lg:grid-cols-2">
+      <div className="flex flex-col gap-6">
+        <h2 id="layers-heading" className="home-reveal text-2xl font-semibold tracking-tight break-keep">
+          {copy.layersHeading}
+        </h2>
+        <p className="home-reveal max-w-[40ch] text-[17px] leading-relaxed break-keep">{copy.layersIntro}</p>
+        <div className="home-reveal flex flex-col gap-1">
+          <p className="text-sm text-fd-muted-foreground">↑ {copy.layersStrong}</p>
+          <ol className="flex flex-col">
+            {copy.layers.map((item, index) => (
+              <li key={item.name}>
+                <button
+                  type="button"
+                  aria-pressed={index === picked}
+                  onClick={() => setPicked(index)}
+                  onPointerEnter={() => setPicked(index)}
+                  onFocus={() => setPicked(index)}
+                  className="group -mx-3 grid w-[calc(100%+1.5rem)] grid-cols-[3.5rem_1fr] items-baseline gap-x-4 rounded-md px-3 py-3 text-left transition-colors hover:bg-fd-card aria-pressed:bg-fd-card"
+                >
+                  <span
+                    className="h-2 -translate-y-px justify-self-end rounded-full bg-fd-muted-foreground/60 transition-colors group-aria-pressed:bg-brand"
+                    style={{ width: `${(copy.layers.length - index) * 0.5 + 0.5}rem` }}
+                    aria-hidden
+                  />
+                  <span className="flex flex-col gap-0.5">
+                    <span className="text-[17px] font-semibold">{item.name}</span>
+                    <span className="text-[15px] text-fd-muted-foreground break-keep">{item.body}</span>
+                  </span>
+                </button>
+                {index === picked ? <Session lines={item.example} className="mt-2 mb-3 bg-fd-card lg:hidden" /> : null}
+              </li>
+            ))}
+          </ol>
+          <p className="text-sm text-fd-muted-foreground">↓ {copy.layersWeak}</p>
+        </div>
+      </div>
+      {layer ? (
+        <div className="hidden lg:block" aria-hidden>
+          <div data-ui key={layer.name} className="home-swap sticky top-24 flex min-h-[24rem] flex-col gap-4 rounded-md bg-fd-card p-6">
+            <p className="text-sm text-fd-muted-foreground">
+              {layer.name} · {layer.source}
+            </p>
+            <Session lines={layer.example} className="!text-[15px]" />
+          </div>
+        </div>
+      ) : null}
+    </section>
+  );
+};
+
+/** A push as the hwip app shows it: the session it came from, the question and its buttons. */
+const Phone = ({ phone }: { phone: HomePhone }) => (
+  <div className="mx-auto flex w-full max-w-[18rem] flex-col rounded-[2rem] bg-fd-foreground p-3">
+    <div className="flex min-h-[26rem] flex-col gap-3 rounded-[1.5rem] bg-fd-background p-4 pt-10">
+      <div className="flex flex-col gap-3 rounded-xl bg-fd-card p-4">
+        <p className="text-[13px] text-fd-muted-foreground">hwip · {phone.app}</p>
+        <p className="text-[15px] leading-snug font-semibold break-keep">{phone.question}</p>
+        <div className="grid grid-cols-2 gap-2">
+          {phone.actions.map((action, index) => (
+            <span
+              key={action}
+              className={`rounded-md px-2 py-2 text-center text-[13px] font-semibold ${index === 0 ? 'bg-brand text-fd-background' : 'bg-fd-secondary'}`}
+            >
+              {action}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
 );
 
-/**
- * The /orch path: the statement nearest the middle of the viewport is the active one,
- * and the pinned session beside it crossfades to that stage.
- */
-const Stages = ({ heading, stages }: { heading: string; stages: readonly HomeStage[] }) => {
+const SceneFragment = ({ scene, className = '' }: { scene: HomeScene; className?: string }) =>
+  scene.phone ? <Phone phone={scene.phone} /> : <Session lines={scene.session} className={className} />;
+
+/** A working day; the scene nearest the viewport's middle drives the pinned fragment. */
+const Scenes = ({ heading, scenes }: { heading: string; scenes: readonly HomeScene[] }) => {
   const [active, setActive] = useState(0);
   const steps = useRef<(HTMLLIElement | null)[]>([]);
 
@@ -224,36 +195,36 @@ const Stages = ({ heading, stages }: { heading: string; stages: readonly HomeSta
   }, []);
 
   return (
-    <section aria-labelledby="stages-heading" className="home-frame grid gap-x-16 pt-32 lg:grid-cols-2">
+    <section aria-labelledby="scenes-heading" className="home-frame grid gap-x-16 pt-32 lg:grid-cols-2">
       <div className="flex flex-col">
-        <h2 id="stages-heading" className="home-reveal text-2xl font-semibold tracking-tight">
+        <h2 id="scenes-heading" className="home-reveal text-2xl font-semibold tracking-tight">
           {heading}
         </h2>
         <ol className="flex flex-col">
-          {stages.map((stage, index) => (
+          {scenes.map((scene, index) => (
             <li
-              key={stage.statement}
+              key={scene.statement}
               ref={(node) => {
                 steps.current[index] = node;
               }}
               data-active={index === active}
               className="home-step flex flex-col justify-center gap-3 py-10 lg:min-h-[42vh]"
             >
-              <p className="text-2xl font-semibold tracking-tight break-keep">{stage.statement}</p>
-              <p className="max-w-md text-[17px] leading-relaxed break-keep">{stage.body}</p>
-              <Session lines={stage.session} className="mt-3 bg-fd-card lg:hidden" />
+              <p className="text-2xl font-semibold tracking-tight break-keep">{scene.statement}</p>
+              <p className="max-w-md text-[17px] leading-relaxed break-keep">{scene.body}</p>
+              <div className="mt-3 lg:hidden">
+                <SceneFragment scene={scene} className="bg-fd-card" />
+              </div>
             </li>
           ))}
         </ol>
       </div>
       <div className="hidden lg:block" aria-hidden>
         <div data-ui className="sticky top-[calc(50vh-12rem)] grid min-h-[24rem] content-center rounded-md bg-fd-card p-6">
-          {stages.map((stage, index) => (
-            <Session
-              key={stage.statement}
-              lines={stage.session}
-              className={`home-state min-h-[20rem] !text-[15px] [grid-area:1/1] ${index === active ? 'opacity-100' : 'opacity-0'}`}
-            />
+          {scenes.map((scene, index) => (
+            <div key={scene.statement} className={`home-state grid content-center [grid-area:1/1] ${index === active ? 'opacity-100' : 'opacity-0'}`}>
+              <SceneFragment scene={scene} className="min-h-[20rem] !text-[15px]" />
+            </div>
           ))}
         </div>
       </div>
@@ -386,14 +357,19 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
   return (
     <HomeLayout {...baseOptions({ lang: loaderData.lang })}>
       <section id={HOME_CONTENT_ID} className="grid lg:min-h-[66svh] lg:grid-cols-2">
-        <div className="home-frame order-2 flex flex-col justify-end gap-6 py-14 lg:order-1 lg:pr-12 lg:pb-16">
+        <div className="home-frame flex flex-col justify-end gap-6 py-14 lg:pr-12 lg:pb-16">
           <h1 className="home-rise max-w-[18ch] text-[clamp(2rem,3.2vw,2.75rem)] leading-[1.1] font-semibold tracking-tight break-keep">
             {copy.headline}
           </h1>
-          <p data-check="lede" className="home-rise max-w-[44ch] text-[17px] leading-relaxed break-keep [--i:1]">
-            {copy.lede}
-          </p>
-          <div className="home-rise flex flex-wrap items-center gap-x-6 gap-y-3 [--i:2]">
+          <p className="home-rise max-w-[44ch] text-[17px] leading-relaxed break-keep [--i:1]">{copy.lede}</p>
+          <ul className="home-rise flex flex-wrap gap-2 [--i:2]">
+            {copy.tools.map((tool) => (
+              <li key={tool.name} className="rounded-sm bg-fd-card px-2.5 py-1 text-sm">
+                <span className="font-semibold">{tool.name}</span> <span className="text-fd-muted-foreground">{tool.role}</span>
+              </li>
+            ))}
+          </ul>
+          <div className="home-rise flex flex-wrap items-center gap-x-6 gap-y-3 [--i:3]">
             <Link
               to={`${docsHref}/principles`}
               className="home-press inline-flex items-center gap-2 rounded-sm bg-brand px-4 py-2.5 text-[15px] font-semibold text-fd-background hover:bg-fd-foreground hover:text-fd-background"
@@ -407,41 +383,63 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
             </a>
           </div>
         </div>
-        <div className="home-frame order-1 flex items-end justify-center bg-fd-card py-12 lg:order-2 lg:pb-16">
-          <Checks copy={copy} published={loaderData.publishedGuides} />
+        <div className="home-frame flex items-end justify-center bg-fd-card py-12 lg:pb-16">
+          <figure className="flex w-full max-w-[34rem] flex-col gap-3">
+            <div data-ui className="rounded-md bg-fd-background">
+              <Session lines={copy.heroSession} className="min-h-[13rem]" />
+            </div>
+            <figcaption className="text-[15px] text-fd-muted-foreground break-keep">{copy.heroCaption}</figcaption>
+          </figure>
         </div>
       </section>
 
-      <section aria-labelledby="intro-heading" className="home-frame grid gap-x-16 gap-y-10 pt-32 lg:grid-cols-2">
-        <div className="flex max-w-[34rem] flex-col gap-5">
-          <h2 id="intro-heading" className="home-reveal text-2xl font-semibold tracking-tight break-keep">
-            {copy.introHeading}
+      <Layers copy={copy} />
+
+      <Scenes heading={copy.scenesHeading} scenes={copy.scenes} />
+
+      <section aria-labelledby="principles-heading" className="home-frame flex flex-col gap-10 pt-32">
+        <div className="flex flex-wrap items-baseline justify-between gap-4">
+          <h2 id="principles-heading" className="home-reveal text-2xl font-semibold tracking-tight break-keep">
+            {copy.principlesHeading}
           </h2>
-          {copy.intro.map((paragraph, index) => (
-            <p key={paragraph} className={`home-reveal text-[17px] leading-relaxed break-keep ${index === 0 ? 'font-semibold' : ''}`}>
-              {paragraph}
-            </p>
-          ))}
-          <Link to={`${docsHref}/principles`} className="home-reveal home-link self-start text-[15px] font-medium">
-            <span>{copy.introLink}</span>
+          <Link to={`${docsHref}/principles`} className="home-reveal home-link text-[15px] font-medium">
+            <span>{copy.principlesLink}</span>
             <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
           </Link>
         </div>
-        <figure className="home-reveal flex flex-col gap-3 self-end">
-          <div data-ui className="rounded-md bg-fd-card p-6">
-            <Session lines={copy.hookSession} className="min-h-[12rem]" />
-          </div>
-          <figcaption className="text-[15px] text-fd-muted-foreground break-keep">{copy.hookCaption}</figcaption>
-        </figure>
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {copy.principles.map((principle) => (
+            <li key={principle.title} className="home-reveal flex flex-col gap-3 rounded-md bg-fd-card p-6">
+              <p className="text-[19px] font-semibold tracking-tight break-keep">{principle.title}</p>
+              <p className="text-base leading-relaxed break-keep">{principle.body}</p>
+            </li>
+          ))}
+        </ul>
       </section>
 
-      <Stages heading={copy.stagesHeading} stages={copy.stages} />
+      <section aria-labelledby="try-heading" className="home-frame grid gap-x-16 gap-y-8 pt-32 lg:grid-cols-2">
+        <div className="flex flex-col gap-4">
+          <h2 id="try-heading" className="home-reveal text-2xl font-semibold tracking-tight break-keep">
+            {copy.tryHeading}
+          </h2>
+          <p className="home-reveal text-[17px] leading-relaxed break-keep">{copy.tryIntro}</p>
+        </div>
+        <ol className="flex flex-col gap-6">
+          {copy.trySteps.map((step, index) => (
+            <li key={step} className="home-reveal grid grid-cols-[2.5rem_1fr] items-baseline">
+              <span className="text-2xl font-semibold tabular-nums text-brand">{index + 1}</span>
+              <span className="text-[19px] leading-snug tracking-tight break-keep">{step}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
 
       {groups.length > 0 ? (
         <Guides heading={copy.guidesHeading} groups={groups} docsHref={docsHref} outlines={loaderData.outlines} />
       ) : null}
 
-      <section aria-labelledby="about-heading" className="home-frame grid gap-x-16 gap-y-12 pt-32 lg:grid-cols-[10rem_1fr]">
+      <div className="mt-32 bg-fd-card">
+      <section aria-labelledby="about-heading" className="home-frame grid gap-x-16 gap-y-12 pt-24 lg:grid-cols-[10rem_1fr]">
         <h2 id="about-heading" className="home-reveal text-2xl font-semibold tracking-tight lg:col-span-2">
           {copy.aboutHeading}
         </h2>
@@ -460,7 +458,7 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
               <div key={group.word} className="home-reveal flex flex-col gap-1 text-[15px]">
                 <h3 className="pb-1 text-fd-muted-foreground">{group.word}</h3>
                 {group.records.map((record) => {
-                  const className = '-mx-2 flex items-baseline justify-between gap-4 rounded-sm px-2 py-1.5 transition-colors hover:bg-fd-card';
+                  const className = '-mx-2 flex items-baseline justify-between gap-4 rounded-sm px-2 py-1.5 transition-colors hover:bg-fd-background';
                   const value = <span className="text-fd-muted-foreground">{record.value}</span>;
                   if (record.guide) {
                     return (
@@ -497,7 +495,7 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
         </div>
       </section>
 
-      <footer className="home-frame grid gap-2 pt-[20svh] pb-8 text-sm sm:grid-cols-[1fr_auto_1fr] sm:items-baseline sm:gap-6">
+      <footer className="home-frame grid gap-2 pt-24 pb-8 text-sm sm:grid-cols-[1fr_auto_1fr] sm:items-baseline sm:gap-6">
         <span className="text-fd-muted-foreground">{copy.footerWhat}</span>
         <span className="flex flex-wrap gap-x-6 gap-y-1">
           <a href={`${REPO_URL}/blob/main/LICENSE`} className="inline-block py-1 underline-offset-4 hover:underline">
@@ -509,6 +507,7 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
         </span>
         <span className="text-fd-muted-foreground sm:text-right">© 2026 tak-bro</span>
       </footer>
+      </div>
     </HomeLayout>
   );
 };
