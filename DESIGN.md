@@ -1,5 +1,7 @@
 # Home design
 
+This records the current build. The brief a redesign starts from is [SITE-BRIEF.md](SITE-BRIEF.md).
+
 Scope: the home route (`app/routes/home.tsx`, copy in `app/lib/home-copy.ts`), and the same type,
 links and buttons on the other pages that use the home layout. Blog, projects, blog posts, projects
 and the 404 open with `PageHeader` (`app/components/page-header.tsx`): an optional way back, the

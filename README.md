@@ -4,7 +4,7 @@ Source of [tak-bro.github.io](https://tak-bro.github.io): guides to my coding-ag
 
 Built with [fumadocs](https://fumadocs.dev) on React Router 7 as a fully prerendered static site.
 
-The home page has its own design (concept, palette, type scale, motion) recorded in [DESIGN.md](DESIGN.md); docs, blog and projects use the fumadocs layout.
+The home page has its own design (concept, palette, type scale, motion) recorded in [DESIGN.md](DESIGN.md); docs, blog and projects use the fumadocs layout. What the site is for, who reads it and what a redesign must keep are in [SITE-BRIEF.md](SITE-BRIEF.md).
 
 ## Develop
 
