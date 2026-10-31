@@ -2,7 +2,7 @@ import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 import { i18n, localizedDocsHref, resumeHref } from './i18n';
 import { APP_NAME, BLOG_ROUTE, GITHUB_URL, PROJECTS_ROUTE } from './shared';
 
-// The posts and projects are Korean only, so both languages link the same pages. LinkedIn sits in the home footer.
+// The posts and projects are Korean only, so both languages link the same pages.
 const NAV_LABELS: Record<string, { posts: string; projects: string; guides: string; resume: string }> = {
   ko: { posts: '글', projects: '프로젝트', guides: '가이드', resume: '이력서' },
   en: { posts: 'Posts', projects: 'Projects', guides: 'Guides', resume: 'Resume' },

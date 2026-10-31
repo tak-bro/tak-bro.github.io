@@ -16,17 +16,14 @@ export const meta = () => [
 ];
 
 export const loader = () => ({
-  projects: listedProjects(
-    projectPages().map((project) => ({
-      url: project.url,
-      title: project.data.title,
-      description: project.data.description,
-      date: project.data.date,
-      type: project.data.type,
-      screenshot: project.data.screenshot,
-      sample: project.data.sample,
-    })),
-  ),
+  projects: listedProjects(projectPages()).map((project) => ({
+    url: project.url,
+    title: project.data.title,
+    description: project.data.description,
+    date: project.data.date,
+    screenshot: project.data.screenshot,
+    sample: project.data.sample,
+  })),
 });
 
 const Projects = ({ loaderData }: Route.ComponentProps) => (

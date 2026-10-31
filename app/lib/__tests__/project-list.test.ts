@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { listedProjects } from '../project-list';
 import { projectPages } from '../source';
 
-const project = (name: string, type: string) => ({ name, type });
+const project = (name: string, type: string) => ({ name, data: { type } });
 
 describe('listedProjects', () => {
   it('keeps only the agent-side projects, in the given order', () => {
@@ -11,7 +11,7 @@ describe('listedProjects', () => {
   });
 
   it('lists the five harness projects and none of the older side projects', () => {
-    const names = listedProjects(projectPages().map((page) => ({ name: page.slugs[0], type: page.data.type }))).map((item) => item.name);
+    const names = listedProjects(projectPages()).map((page) => page.slugs[0]);
     expect([...names].sort()).toEqual(['agent-config', 'aicommit2', 'hwip', 'pi-statusline', 'tak-cc-statusline']);
   });
 });

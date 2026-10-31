@@ -1,8 +1,12 @@
 import type { CSSProperties } from 'react';
 
 /** A `[hook]` line and its indented continuation lines. */
-const hookLines = (lines: readonly string[]) =>
-  lines.reduce<boolean[]>((flags, line) => [...flags, line.startsWith('[') || (flags.at(-1) === true && line.startsWith('  '))], []);
+const hookLines = (lines: readonly string[]) => {
+  let inHook = false;
+  return lines.map((line) => (inHook = line.startsWith('[') || (inHook && line.startsWith('  '))));
+};
+
+const WRAPPED = 'text-[12.5px] leading-relaxed whitespace-pre-wrap [overflow-wrap:anywhere]';
 
 /**
  * A fragment of real output. Each line carries its index so the lines print one after another when the
@@ -26,9 +30,7 @@ export const Session = ({
       aria-labelledby={labelledBy}
       aria-hidden={decorative || undefined}
       className={
-        decorative
-          ? 'text-[12.5px] leading-relaxed whitespace-pre-wrap [overflow-wrap:anywhere]'
-          : 'home-focus overflow-x-auto text-[12.5px] leading-relaxed whitespace-pre-wrap [overflow-wrap:anywhere] sm:text-[13px] sm:whitespace-pre sm:[overflow-wrap:normal]'
+        decorative ? WRAPPED : `home-focus overflow-x-auto ${WRAPPED} sm:text-[13px] sm:whitespace-pre sm:[overflow-wrap:normal]`
       }
     >
       <code className="font-mono">

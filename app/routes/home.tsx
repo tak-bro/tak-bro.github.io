@@ -11,6 +11,7 @@ import {
   CONTENT_ID,
   GITHUB_URL,
   homeCopy,
+  i18n,
   listedProjects,
   localeFromPath,
   localizedDocsHref,
@@ -40,8 +41,6 @@ const REPO_URL = `${GITHUB_URL}/tak-bro.github.io`;
 const RECENT_POSTS = 3;
 /** The one project whose output prints next to the list: a statusline is its own picture. */
 const SAMPLE_PROJECT = 'tak-cc-statusline';
-/** Posts and project pages are Korean only. */
-const CONTENT_LANG = 'ko';
 
 // Guide rows only for guides that exist; check:links fails on a link to an unwritten one.
 export const loader = async ({ request }: Route.LoaderArgs) => {
@@ -60,23 +59,13 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
     blogPosts().map((post) => ({ url: post.url, title: post.data.title, line: post.data.description, date: post.data.date })),
     RECENT_POSTS,
   );
-  const projects = listedProjects(
-    projectPages().map((project) => ({
-      url: project.url,
-      slug: project.slugs[0],
-      title: project.data.title,
-      line: project.data.description,
-      date: project.data.date,
-      type: project.data.type,
-      sample: project.data.sample,
-    })),
-  );
+  const projects = listedProjects(projectPages());
 
   return {
     lang,
     posts,
-    projects: projects.map(({ url, title, line, date }) => ({ url, title, line, date })),
-    sample: projects.find((project) => project.slug === SAMPLE_PROJECT)?.sample ?? null,
+    projects: projects.map((project) => ({ url: project.url, title: project.data.title, line: project.data.description, date: project.data.date })),
+    sample: projects.find((project) => project.slugs[0] === SAMPLE_PROJECT)?.data.sample ?? null,
     publishedGuides: pages.map(({ slug }) => slug),
     updated: Object.fromEntries(updated) as Record<string, string | null>,
   };
@@ -173,9 +162,8 @@ const IndexSection = ({ id, copy, allHref, children, aside }: { id: string; copy
 const useReveal = () => {
   useEffect(() => {
     if (!window.matchMedia('(prefers-reduced-motion: no-preference)').matches) return;
-    const pending = [...document.querySelectorAll<HTMLElement>('.home-reveal')].filter(
-      (element) => element.getBoundingClientRect().top > window.innerHeight,
-    );
+    const fold = window.innerHeight;
+    const pending = [...document.querySelectorAll<HTMLElement>('.home-reveal')].filter((element) => element.getBoundingClientRect().top > fold);
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -199,7 +187,8 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
   const { lang } = loaderData;
   const copy = homeCopy(lang);
   const docsHref = localizedDocsHref(lang);
-  const contentLang = lang === CONTENT_LANG ? undefined : CONTENT_LANG;
+  // Posts and project pages are Korean only.
+  const contentLang = lang === i18n.defaultLanguage ? undefined : i18n.defaultLanguage;
   const guides = copy.guides.filter((guide) => loaderData.publishedGuides.includes(guide.slug));
   const heroLinks = [
     { name: copy.resumeLabel, href: resumeHref(lang) },
@@ -222,7 +211,7 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
         <ul className="home-rise flex flex-wrap gap-x-7 gap-y-3 [--i:2]">
           {heroLinks.map((link) => (
             <li key={link.name}>
-              <a href={link.href} rel="noreferrer noopener" target="_blank" className="home-link text-[15px] font-medium">
+              <a href={link.href} {...external(link)} className="home-link text-[15px] font-medium">
                 <span>{link.name}</span>
                 <ExternalMark label={copy.newTabLabel} />
               </a>
