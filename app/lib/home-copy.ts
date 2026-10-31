@@ -113,7 +113,7 @@ const harnessTable = (rules: string, summary: string, hooks: string) => [
   'pi           extension         copies of the hooks',
 ];
 
-const GUIDE_SLUGS = ['principles', 'agent-config', 'workflow', 'plugins', 'herdr', 'keymaps', 'setup'] as const;
+const GUIDE_SLUGS = ['principles', 'agent-config', 'workflow', 'plugins', 'herdr', 'keymaps'] as const;
 
 const guides = (lines: Record<(typeof GUIDE_SLUGS)[number], readonly [string, string]>): HomeGuide[] =>
   GUIDE_SLUGS.map((slug) => ({ slug, title: lines[slug][0], blurb: lines[slug][1] }));
@@ -201,7 +201,6 @@ const en: HomeCopy = {
     plugins: ['Plugins and MCP', 'What stays on, and why.'],
     herdr: ['Herdr', 'The terminal workspace and its keys.'],
     keymaps: ['Keymaps', 'macOS, Ghostty, Karabiner, LazyVim.'],
-    setup: ['Mac setup', 'A new Mac, in order.'],
   }),
   contactHeading: 'For hiring, message me on LinkedIn.',
   contactBody: 'Experience and projects are in the resume.',
@@ -302,7 +301,6 @@ const ko: HomeCopy = {
     plugins: ['플러그인·MCP', '켜 두는 것과 그 이유.'],
     herdr: ['Herdr', '터미널 작업 공간과 단축키.'],
     keymaps: ['키맵', 'macOS, Ghostty, Karabiner, LazyVim.'],
-    setup: ['맥 셋업', '새 맥을 세팅하는 순서.'],
   }),
   contactHeading: '채용 이야기는 LinkedIn 으로.',
   contactBody: '경력과 프로젝트는 이력서에 있다.',

@@ -8,16 +8,6 @@
     "command": "npx",
     "args": ["-y", "@upstash/context7-mcp@latest"]
   },
-  "playwright": {
-    "type": "stdio",
-    "command": "npx",
-    "args": ["-y", "@playwright/mcp@latest"]
-  },
-  "chrome-devtools": {
-    "type": "stdio",
-    "command": "chrome-devtools-mcp",
-    "args": ["--headless", "--isolated", "--no-usage-statistics", "--redactNetworkHeaders", "--screenshotFormat", "webp", "--screenshotMaxWidth", "1280"]
-  },
   "figma-desktop": {
     "type": "http",
     "url": "http://127.0.0.1:3845/mcp"

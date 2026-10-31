@@ -14,11 +14,11 @@ Not every task runs every step. The number of files that change sets the size, a
 | Size | When | Steps |
 |---|---|---|
 | S | 1–2 files | Implement → review → ship (for a bug, investigate first) |
-| M | 3–10 files | Explore → plan → slice loop → ship |
-| L | 10+ files | M, plus a scope review before and an architecture pass after |
+| M | 3–10 files | Explore → plan → slice loop → whole-branch review → ship |
+| L | 10+ files | M, plus a scope review before and one cleanup pass (`/simplify`) after the slice loop (as `/orch` runs it. The size table below recommends an architecture pass, `/improve-architecture`, that I pick myself) |
 | XL | I don't yet know what to decide | Settle the decisions with questions first, then plan → same as L |
 
-Even with few files, a change that touches authentication, authorization, user input, DB queries, file paths, external APIs, cryptography, secrets, or a public API or contract is at least M.
+Even with few files, a change that touches authentication, authorization, user input, DB queries, file paths, external APIs, cryptography, secrets, or a public API or contract is at least M. When the plan has 3 or more slices, or creates a new module, service, or package, one more review with an engineering lens (`/plan-eng-review`) runs after the plan. Catching slice boundaries and failure cases before any code is cheaper.
 
 With `/orch`, the agent makes this choice. Its first line declares the kind of task (add, change, fix, refine), the size, the done criterion, and the command that measures it. Then it runs the steps through to the end. If the declaration is wrong, I correct that line.
 
@@ -31,15 +31,23 @@ For M and up, the plan is written to `.claude/<date>/PLAN-<time>.md` in the repo
 
 ### Every slice passes a review gate
 
-When one slice is implemented and its checks pass, the agent starts a reviewer subagent in the same turn (for a slice that changes only docs or config, the main session reads the diff itself). The reviewer does not see the main session's conversation. It reads only the plan and the diff, and returns findings. If there is a Critical or Important finding, the agent fixes it, runs the checks again, and sends it back to the same reviewer. This loop runs at most 3 times per slice. If the same issue comes back twice in a row, or all 3 rounds are used, it stops and reports to me.
+When one slice is implemented and its checks pass, the agent starts a reviewer subagent in the same turn (for a slice that changes only doc files, `.md` or `.txt`, the main session reads the diff itself. Config files change behavior, so they get a reviewer). The reviewer does not see the main session's conversation. It reads only the plan and the diff, and returns findings. If there is a Critical or Important finding, the agent fixes it, runs the checks again, and sends it back to the same reviewer. This loop runs at most 3 times per slice. The count is kept as one line in the plan file, `- fix-loop: <slice> iteration N/3`, so it keeps counting after the context is compacted. If the same issue comes back twice in a row, or all 3 rounds are used, it stops and reports to me.
 
 When the gate passes, the slice is committed, its box is ticked, and the agent moves on to the next slice. It does not ask me between slices.
 
 ### It stops at a draft PR
 
-With `/orch`, once the queue is empty the whole branch is reviewed once more. The slice gate only sees one slice at a time, so problems that cross slices are caught here. Then `/ship` runs the closing gate. If code that draws a screen changed, it runs screen QA (a browser for web). If logic changed and no test changed with it, it has the missing tests written. Then it pushes the commits and opens a draft PR.
+With `/orch`, once the queue is empty the whole branch is reviewed once more (`/review --full`). The slice gate only sees one slice at a time, so problems that cross slices are caught here. This review starts `opus` and `sonnet` separately with the same brief and merges the two results. A finding that only one side reported is marked with the model that found it.
 
-I start the merge with `/land`. It marks a draft ready, squash merges (in my personal repos), moves the base of stacked PRs, and cleans up the worktree in one go.
+Then `/ship` runs the closing gate. It runs every check in the plan again and checks the PASS records in the contract. If code that draws a screen changed, it runs screen QA (a browser for web). If logic changed and no test changed with it, it has the missing tests written. Just before the commit, it writes down the decisions and lessons from this work worth keeping (`/harvest`). Then it pushes the commits and opens a draft PR. The PR body lists each contract line with its verdict and evidence.
+
+I start the merge with `/land`. It marks a draft ready, squash merges (in my personal repos), moves the base of stacked PRs, and cleans up the worktree in one go. If my request says "merge too" ("머지까지"), that phrase is the approval given in advance, so `/ship` merges right after it opens the PR. In my personal repos, when GitHub's checks could not run for a reason other than the code, a PR can be merged if the same CI steps pass locally. If the checks did run and failed because of the code, this exception is not used.
+
+### When several agents run
+
+When there are two or more independent tasks, I use `/team`. The current Claude Code session becomes the lead and starts workers (Claude, pi, opencode, and a tester if needed) in [Herdr](./herdr.mdx) panes, giving each one task. Each worker walks the same path above on its own. A Claude worker merges its own S-size PRs. The lead merges PRs of size M and up, and every PR from a pi or opencode worker. For a Claude worker's M-and-up PR, the lead merges on the verdict of the whole-branch review the worker ran. For a pi or opencode PR, or a PR with no verdict, the lead starts a fresh review. An idle worker reads the repo through a lens such as security, logic, tests, CI, or performance to find the next task.
+
+`/night` is the single-session, overnight version of those lenses. Until a deadline it reads the repo one lens at a time and writes down findings, then fixes only the qualifying S- and M-size ones with `/orch` and commits them to one night branch. When the run ends, it opens one draft PR from that branch. It does not merge, and it does not turn findings that look like security issues into PRs.
 
 ## My config
 
@@ -49,9 +57,11 @@ I start the merge with `/land`. It marks a draft ready, squash merges (in my per
 
 ### Review loop
 
+The canonical loop rules live in a shared skill file that all three harnesses read, so it is written in English. The stop conditions are only in two places in this file: the Exit table and the table of stops outside the loop.
+
 {/* Keep lang="text": with lang="md" this file highlights differently in SSR and on the client, which breaks hydration (#418) */}
 
-<include lang="text" meta='title="claude/skills/_shared/review-loop.md"'>../snippets/agent-config/skills/review-loop.md</include>
+<include lang="text" meta='title="agent-skills/03-review/LOOP.md"'>../snippets/agent-config/skills/review-loop.md</include>
 
 ### One contract line
 
