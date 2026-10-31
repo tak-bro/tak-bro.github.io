@@ -26,7 +26,7 @@ const NotFound = () => {
 
   // After hydration, put the visitor's own address back. The router stays on /404 (it matches
   // paths case-insensitively and a host 404 like /DOCS/x must not become /docs/x); the root takes
-  // the held path for the document language, the title and the skip link.
+  // the held path for the document language and the skip link.
   useEffect(() => {
     const restored = takeNotFoundPath(window, window.location.origin);
     if (!restored) return;
