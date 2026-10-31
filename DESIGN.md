@@ -10,7 +10,8 @@ and the 404 open with `PageHeader` (`app/components/page-header.tsx`): an option
 title at `clamp(2rem, 3.5vw, 2.75rem)` and one line under it; rows and cards take the field tone on
 hover, with no rules between them. A project card without a screenshot shows its output sample
 (`Session`, `app/components/session.tsx`, decorative inside the link). Blog posts carry their table of
-contents in a right rail from 64rem. The docs keep the fumadocs layout. The skip link sits in
+contents in a right rail from 64rem. The docs keep the fumadocs layout; their table of contents is a
+named nav (`app/components/toc.tsx`) and each table scrolls in a focusable wrapper. The skip link sits in
 `app/root.tsx` on every page (it must come before the nav); it jumps to `#content`, or to fumadocs'
 `#nd-page` on the docs.
 
@@ -61,7 +62,8 @@ At rest:     Still. Nothing moves while the pointer is still; hovers and the pri
 - Motion: one ease `cubic-bezier(0.16, 1, 0.3, 1)`. The first screen rises by transform only (painted
   on the first frame). Below the fold, blocks rise in once (opacity and 24px) and output lines print
   70ms apart. All of it lives inside `prefers-reduced-motion: no-preference`; the reveal script does
-  not run under reduced motion, and nothing is hidden without script. No motion library.
+  not run under reduced motion, and nothing is hidden without script. Under reduced motion every
+  transition is 0s too (`app.css`), the fumadocs nav and sidebar included. No motion library.
 - Hover: text links darken their underline and nudge the arrow; index rows take the field tone and
   nudge the arrow; nav links draw an accent underline. The output fragment takes focus (it scrolls
   sideways from `sm` up), shows a brand outline, and is named by its caption.
