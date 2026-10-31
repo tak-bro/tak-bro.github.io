@@ -8,15 +8,15 @@ const call = (pathname: string) =>
   loader({ request: new Request(`https://example.test${pathname}`) } as LoaderArgs);
 
 describe('home loader', () => {
-  it('takes the language from the path', () => {
-    expect(call('/').lang).toBe('ko');
-    expect(call('/en').lang).toBe('en');
+  it('takes the language from the path', async () => {
+    expect((await call('/')).lang).toBe('ko');
+    expect((await call('/en')).lang).toBe('en');
   });
 
-  it('lists only guides whose docs page exists', () => {
+  it('lists only guides whose docs page exists', async () => {
     // All seven guides are written; a card without a docs page would link to a 404.
-    expect(call('/').publishedGuides).toEqual(['principles', 'agent-config', 'workflow', 'plugins', 'herdr', 'keymaps', 'setup']);
-    expect(call('/en').publishedGuides).toEqual(['principles', 'agent-config', 'workflow', 'plugins', 'herdr', 'keymaps', 'setup']);
+    expect((await call('/')).publishedGuides).toEqual(['principles', 'agent-config', 'workflow', 'plugins', 'herdr', 'keymaps', 'setup']);
+    expect((await call('/en')).publishedGuides).toEqual(['principles', 'agent-config', 'workflow', 'plugins', 'herdr', 'keymaps', 'setup']);
   });
 });
 
@@ -34,14 +34,30 @@ describe('home copy', () => {
   });
 
   it('links the resume in the page language', () => {
-    expect(homeCopy('ko').resumeHref).toBe('/assets/resume.pdf');
-    expect(homeCopy('en').resumeHref).toBe('/assets/resume_eng.pdf');
+    const resume = (lang: string) =>
+      homeCopy(lang)
+        .recordGroups.flatMap((group) => group.records)
+        .find((record) => record.href.startsWith('/assets/'))?.href;
+    expect(resume('ko')).toBe('/assets/resume.pdf');
+    expect(resume('en')).toBe('/assets/resume_eng.pdf');
+  });
+
+  it('checks the same criteria in both languages', () => {
+    expect(homeCopy('en').checks.map((check) => check.id)).toEqual(homeCopy('ko').checks.map((check) => check.id));
+  });
+
+  it('dates every published guide by its last commit', async () => {
+    const { publishedGuides, outlines } = await call('/');
+    for (const slug of publishedGuides) {
+      expect(outlines[slug]?.updated).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(outlines[slug]?.headings.length).toBeGreaterThan(0);
+    }
   });
 });
 
 describe('home loader on a data request', () => {
-  it('reads the language the same way as for the document', () => {
-    expect(call('/en.data').lang).toBe('en');
-    expect(call('/_.data').lang).toBe('ko');
+  it('reads the language the same way as for the document', async () => {
+    expect((await call('/en.data')).lang).toBe('en');
+    expect((await call('/_.data')).lang).toBe('ko');
   });
 });
