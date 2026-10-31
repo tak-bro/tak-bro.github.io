@@ -1,0 +1,41 @@
+---
+title: "규칙 파일 하나를 세 하네스가 읽는다"
+description: "Claude Code·opencode·pi 를 같이 쓰면서 규칙을 세 번 고치지 않으려고 정본을 하나로 둔 방법. 규칙은 부탁하고, 훅은 막는다."
+date: "2026-10-31"
+tags: ["agents", "harness"]
+---
+코딩 에이전트를 셋 쓴다. Claude Code, opencode, pi 다. 하네스마다 규칙을 읽는 파일이 다르다. 같은 규칙을 세 파일에 따로 적으면 하나를 고칠 때 나머지가 낡는다.
+
+그래서 공유 규칙(git, 커밋 메시지, 응답 방식, 코딩 규율)은 하네스와 상관없는 파일 `RULES.md` 하나에 두고, 하네스마다 그 파일을 가리키게 했다.
+
+```text title="규칙 한 곳, 하네스 셋"
+RULES.md  공유 규칙 한 곳
+Claude Code  CLAUDE.md         @RULES.md
+opencode     opencode.json     "instructions": ["…/RULES.md"]
+pi           APPEND_SYSTEM.md  같은 규칙의 요약
+
+hooks  막는 것
+Claude Code  settings.json     commit-convention.py → exit 2
+opencode     plugin            some of the same scripts → exit 2
+pi           extension         copies of the hooks
+```
+
+## 읽는 방법이 하네스마다 다르다
+
+- **Claude Code** 는 `CLAUDE.md` 에서 `@RULES.md` 로 그 파일을 import 한다. `CLAUDE.md` 에는 Claude Code 에서만 맞는 규칙만 남는다.
+- **opencode** 는 `opencode.json` 의 `instructions` 에 같은 파일 경로를 넣는다.
+- **pi** 는 자기 시스템 프롬프트 덧붙임 파일(`APPEND_SYSTEM.md`)에 같은 규칙의 요약을 둔다.
+
+하네스마다 다른 것만 하네스별 파일에 적는다. 이 구분이 흐려지면 같은 규칙이 다시 두 곳에 생긴다.
+
+## 스킬도 같은 방식이다
+
+세 하네스가 같이 쓰는 스킬(계획, 구현, 리뷰, ship)의 본문은 `agent-skills/<이름>/SKILL.md` 한 곳에 영어로 쓴다. pi 와 opencode 는 그 파일을 그대로 읽는다. Claude Code 쪽 스킬 파일에는 "정본을 먼저 읽어라"는 줄과, Claude Code 에서 달라지는 것(툴 이름, 스킬 호출 표기, 훅 경로)만 표로 둔다.
+
+## 막는 것은 규칙이 아니라 훅이다
+
+규칙 파일은 모델이 읽는 지시라서 어길 수 있다. 어기면 안 되는 것은 훅으로 막는다. Claude Code 는 `settings.json` 에 훅을 걸고, opencode 는 플러그인 하나가 같은 훅 스크립트 일부(차단 목록, 커밋 형식, 출력 줄이기 등)를 같은 입력과 exit 2 규칙으로 돌린다. pi 는 훅 사본을 자기 확장이 돌린다.
+
+그래서 셋의 강제 수준은 같지 않다. 표의 "some of the same scripts" 와 "copies" 가 그 차이다. 규칙은 한 곳에서 같이 바뀌지만, 막는 쪽은 하네스마다 따로 확인해야 한다.
+
+레포 구조와 설치 스크립트, 훅 목록은 [에이전트 설정 가이드](/docs/agent-config)에 있다.

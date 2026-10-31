@@ -1,0 +1,39 @@
+---
+title: "에이전트 작업은 draft PR 에서 멈춘다"
+description: "홈 재설계를 /orch 에 통째로 맡긴 날의 기록. 슬라이스 게이트와 마무리 리뷰가 잡은 것, 그리고 draft PR 에서 사람이 내린 판단."
+date: "2026-10-31"
+tags: ["agents", "workflow"]
+---
+이 사이트의 홈을 채용용 포트폴리오로 다시 설계하는 일을 `/orch` 한 번에 맡겼다. 요청에는 정해진 것과 열린 것을 나눠 적었고, 멈출 곳은 PR 로 정했다. 아래 출력은 그날 플랜 파일의 `## Outcome` 에 남은 줄을 그대로 옮긴 것이다.
+
+```text title="PLAN-16-31-30.md — Outcome 발췌"
+- contract: frozen 455d2935
+- fix-loop: 01 iteration 1/3 (closed)
+- review[01]: FAIL → PASS (fix 루프 1회) — Critical 0, Important 0 2026-10-31
+- fix-loop: 02 iteration 1/3 (closed)
+- review[02]: FAIL → PASS (fix 루프 1회) — Critical 0, Important 0 2026-10-31
+- review: --full FAIL — Critical 1 (contract audit), Important 3 (빈 /blog 링크, 출처 없는 CI 문장, en 404 lang) · cross-model: sonnet · merged 2 · only opus 1 · only sonnet 1 · 2026-10-31
+- contract: audit ok (3 checked rows at ab6fdec)
+- status: shipped
+```
+
+## 게이트가 잡은 것
+
+슬라이스 두 개가 각각 리뷰 게이트에서 한 번씩 떨어졌다. 리뷰어 서브에이전트는 내 대화를 모른 채 플랜과 diff 만 본다. 걸린 것을 고치고 같은 리뷰어에게 다시 보내 통과했다.
+
+큐가 빈 뒤에는 브랜치 전체를 한 번 더 봤다. 같은 지시서로 `opus` 와 `sonnet` 을 따로 띄웠고, 둘이 같이 찾은 것이 둘, 한쪽만 찾은 것이 하나씩이었다. 합친 네 건은 이랬다.
+
+- 계약 기록이 마지막 커밋의 검증 기록과 맞지 않았다
+- 푸터의 "예전 글" 링크가 빈 목록으로 갔다
+- 영어 404 가 `<html lang="ko">` 로 남았다. 같은 브랜치의 앞선 수정이 만든 회귀였다
+- 팀 항목의 한 문장이 가이드 어디에도 출처가 없었다
+
+넷 다 고친 뒤 검증 명령을 다시 돌렸고, 계약 감사가 통과한 뒤에야 draft PR 이 갱신됐다.
+
+## 사람이 본 것
+
+draft PR 을 열어 본 내 판단은, 이 사이트의 주제를 모르겠다는 것이었다. 게이트는 문장이 출처에 맞는지, 링크가 살아 있는지, 테스트가 초록인지를 잴 수 있다. 홈이 누구에게 무슨 말을 하는 페이지인지는 재지 못한다. 그 판단이 draft PR 에서 멈추는 이유다.
+
+그래서 그 홈은 배포하지 않았고, 같은 PR 위에서 이 블로그와 지금의 홈으로 방향을 바꿨다. 에이전트가 한 번에 끝까지 갔어도, 아직 배포 전이라 방향을 바꾸는 비용은 커밋 몇 개를 다시 쓰는 것으로 끝났다.
+
+갈래와 게이트 규칙은 [워크플로우 가이드](/docs/workflow)에 있다.
