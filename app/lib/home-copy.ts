@@ -36,7 +36,7 @@ const en: HomeCopy = {
   description: 'How I set up coding agents, terminals, and keymaps, written so you can copy it.',
   heading: 'My development setup, written down',
   intro:
-    'Agent configuration, the workflow I run it with, plugins and MCP servers, Herdr, keymaps, and Mac setup. Each guide explains how a piece works, shows my config, and ends with a way to check it.',
+    'Agent configuration, the workflow I run it with, plugins and MCP servers, Herdr, and keymaps. Each guide explains how a piece works, shows my config, and ends with a way to check it.',
   docsCta: 'Read the guides',
   resumeLabel: 'Resume',
   resumeHref: '/assets/resume_eng.pdf',
@@ -54,7 +54,6 @@ const en: HomeCopy = {
     { slug: 'plugins', group: 'agents', title: 'Plugins and MCP', blurb: 'The Claude Code plugins and MCP servers I keep on, and why.' },
     { slug: 'herdr', group: 'machine', title: 'Herdr', blurb: 'Terminal workspace setup and its keyboard shortcuts.' },
     { slug: 'keymaps', group: 'machine', title: 'Keymaps', blurb: 'macOS keyboard defaults, Ghostty keys, Karabiner, and LazyVim.' },
-    { slug: 'setup', group: 'machine', title: 'Mac setup', blurb: 'The order I set up a new Mac in.' },
   ],
 };
 
@@ -63,7 +62,7 @@ const ko: HomeCopy = {
   description: '코딩 에이전트·터미널·키맵 설정을 그대로 가져다 쓸 수 있게 정리한 곳.',
   heading: '내 개발 환경을 글로 남긴다',
   intro:
-    '에이전트 설정, 그걸 굴리는 워크플로우, 플러그인·MCP, Herdr, 키맵, 맥 셋업. 가이드마다 동작 원리와 내 설정, 확인 방법을 차례로 적었다.',
+    '에이전트 설정, 그걸 굴리는 워크플로우, 플러그인·MCP, Herdr, 키맵. 가이드마다 동작 원리와 내 설정, 확인 방법을 차례로 적었다.',
   docsCta: '가이드 읽기',
   resumeLabel: '이력서',
   resumeHref: '/assets/resume.pdf',
@@ -81,7 +80,6 @@ const ko: HomeCopy = {
     { slug: 'plugins', group: 'agents', title: '플러그인·MCP', blurb: '켜 두고 쓰는 Claude Code 플러그인과 MCP 서버.' },
     { slug: 'herdr', group: 'machine', title: 'Herdr', blurb: '터미널 작업 공간 설정과 단축키.' },
     { slug: 'keymaps', group: 'machine', title: '키맵', blurb: 'macOS 키보드 기본값·Ghostty 키·Karabiner·LazyVim.' },
-    { slug: 'setup', group: 'machine', title: '맥 셋업', blurb: '새 맥을 세팅하는 순서.' },
   ],
 };
 
