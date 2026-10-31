@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { homeCopy } from '../../lib';
+import { homeCopy, resumeHref } from '../../lib';
 import { loader } from '../home';
 
 type LoaderArgs = Parameters<typeof loader>[0];
@@ -26,15 +26,39 @@ describe('home loader', () => {
 });
 
 describe('home copy', () => {
-  it('shows the same work and layers in both languages', () => {
-    expect(homeCopy('en').work.map((work) => work.name)).toEqual(homeCopy('ko').work.map((work) => work.name));
-    expect(homeCopy('en').layers.map((layer) => layer.source)).toHaveLength(homeCopy('ko').layers.length);
+  const shape = (lang: string) => {
+    const copy = homeCopy(lang);
+    return {
+      profile: copy.profile?.map((item) => item.href ?? null),
+      evidence: copy.evidence?.map((item) => [item.source, item.guide]),
+      team: copy.team?.length,
+      ladder: copy.ladder?.length,
+    };
+  };
+
+  it('carries the same sections in the same order in both languages', () => {
+    expect(shape('ko').evidence).toBeDefined();
+    expect(shape('en')).toEqual(shape('ko'));
   });
 
-  it('gives every layer an example to show', () => {
+  it('backs the claim with exactly three pieces of real output', () => {
     for (const lang of ['ko', 'en']) {
-      for (const layer of homeCopy(lang).layers) expect(layer.example.length).toBeGreaterThan(0);
+      const evidence = homeCopy(lang).evidence ?? [];
+      expect(evidence).toHaveLength(3);
+      for (const item of evidence) expect(item.output.length).toBeGreaterThan(0);
     }
+  });
+
+  it('lists three things a team can take over and the six enforcement layers', () => {
+    for (const lang of ['ko', 'en']) {
+      expect(homeCopy(lang).team ?? []).toHaveLength(3);
+      expect(homeCopy(lang).ladder ?? []).toHaveLength(6);
+    }
+  });
+
+  it('points the resume buttons at the page language', () => {
+    expect(resumeHref('ko')).toBe('/assets/resume.pdf');
+    expect(resumeHref('en')).toBe('/assets/resume_eng.pdf');
   });
 
   it('links the resume in the page language', () => {

@@ -1,5 +1,5 @@
 export { filterByTag, groupByYear, listedPosts, tagCounts, type BlogListItem } from './blog-list';
-export { homeCopy, type HomeCopy, type HomePhone, type HomeWork } from './home-copy';
+export { homeCopy, type HomeCopy, type HomeEvidence } from './home-copy';
 export { alternateLinks, i18n, isLocalizedPath, localeFromPath, localeSwitchPath, localizedDocsHref, resumeHref, type AlternateLink } from './i18n';
 export { baseOptions } from './layout.shared';
 export { llmsFullTxt, llmsTxt } from './llms';
