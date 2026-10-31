@@ -1,6 +1,7 @@
 # Home design
 
-This records the current build. The brief a redesign starts from is [SITE-BRIEF.md](SITE-BRIEF.md).
+This records the current build: the home as a hiring portfolio. The brief it was built from is
+[SITE-BRIEF.md](SITE-BRIEF.md); positioning lives in [.agents/product-marketing.md](.agents/product-marketing.md).
 
 Scope: the home route (`app/routes/home.tsx`, copy in `app/lib/home-copy.ts`), and the same type,
 links and buttons on the other pages that use the home layout. Blog, projects, blog posts, projects
@@ -12,57 +13,84 @@ come before the nav); it jumps to `#content`, or to fumadocs' `#nd-page` on the 
 
 ## Brief
 
-- Subject: Hyungtak Jin (진형탁), frontend engineer. Web, React Native and Electron since 2018, after
-  C++ ultrasound software. No employer names (the sensitive gate blocks them).
-- Audience: developers who run coding agents.
-- Job: show who this developer is and how they run agents (Claude Code, pi and opencode on one
-  setup, hwip on the phone), then send the reader to the principles guide or the guide index.
-- Concept: a setup showcase. One screen says whose setup this is; every section below is cards with a
-  title and one line, and the long explanations live in the guides. It is neither a blog nor a docs
-  index. Same chrome, tokens and type as the docs.
+- Subject: Tak (Hyungtak Jin, 진형탁), AI and DX engineer. Web, React Native and Electron since 2018.
+  No employer names (the sensitive gate blocks them).
+- Audience: people hiring, who arrive from the resume or LinkedIn and decide within five minutes. A
+  recruiter wants who, what and the resume; a frontend lead wants to know AI code will not pile up
+  unreviewed; a CTO or EM wants to know the practice spreads to a team.
+- Job: one question answered, "does this person ship faster with AI and still control quality?",
+  then the resume opened and a LinkedIn message sent.
+- Not a blog, not a docs index, not a setup showcase (SITE-BRIEF §7 has why each was dropped).
 
-## Direction
-
-Dealt by the tasteskill draw (`quiet-instrument`, seed 803265346, sector dev-tool, palette and type
-kept from the brand). Two earlier builds were rejected: a docs landing with a self-checking panel read
-as a guide index, and a long philosophy page read as an essay. The copy is now cut to one line per item.
+## Concept
 
 ```
-Idea:        The enforcement spectrum of the agent setup (permission, deny, hook, gate,
-             isolation, request) becomes the page's ladder.
-Live thing:  Picking a layer shows the real file or output behind it.
-Pictures:    Interface fragments only (`data-ui`): the hook block in the hero, a fragment per
-             way of working (terminal sessions and a hwip push on a phone), the layer example.
+Idea:        Every claim stands next to the real output it rests on.
+Material:    Terminal output, rule files, the enforcement ladder: what an agent setup actually prints.
+Signature:   An output fragment prints line by line when it enters, like a terminal; the line a hook
+             blocked is red.
+Motion verb: print. Lines step in, short and linear; nothing bounces.
+Live thing:  None. The page is quiet on purpose: a recruiter reads it in five minutes, and the
+             guides are where someone goes to dig.
+At rest:     Still. Nothing moves while the pointer is still; hovers and the print carry the life.
 ```
 
-House rules from the skill that this page follows: no eyebrows, no index numbers (the guides are no
-longer numbered), no monospace outside `<pre>`/`<code>`, no hairlines, no gradients, no shadows at
-rest. The fumadocs header keeps its bottom border because the docs pages share it.
+The evidence is framed as the questions a hiring lead would ask (product-marketing's objections), not
+as feature names, so the page answers a reader instead of listing tools.
 
 ## System
 
-- Palette: the fumadocs light and dark tokens. Fields step by tone only: page `--color-fd-background`,
-  field `--color-fd-card`, fragments back on `--color-fd-background`. One accent, `--color-brand`, on
-  the primary button and on the picked layer's bar.
-- Type: Pretendard Variable; code face = system mono with Pretendard for Hangul, inside fragments only.
-  Sizes: title `clamp(2rem, 3.2vw, 2.75rem)`, headings and statements 24px, body 17px, secondary 15px,
-  code 13–15px.
-- Frame: one pair of outer margins (`.home-frame`: 24px, 40px from 64rem). Sections 128px apart.
-- Shape: radius 4px on buttons, 6px on fields and fragments.
+- Palette: the fumadocs light and dark tokens. One ground `--color-fd-background`, one ink
+  `--color-fd-foreground`, the field tone `--color-fd-card` for the profile, the output fragments,
+  the team band and the close. Muted text `--color-fd-muted-foreground` (35% grey in light, 4.5:1+)
+  for questions, terms and secondary lines only. One accent, `--color-brand`, on the primary button
+  and the strongest layer's bar. Hook lines in the output use red-700 / red-300.
+- Type: Pretendard Variable; code face = system mono with Pretendard for Hangul, inside `<pre>` only.
+  Sizes: headline `clamp(2rem, 6.2vw, 6rem)` at tracking -0.035em, contact line `clamp(2rem, 4.5vw, 4rem)`,
+  section headings `clamp(1.75rem, 3vw, 2.5rem)`, claims `clamp(1.5rem, 2.2vw, 2rem)`, body 17px,
+  secondary 15px, code 12.5–13px. Headlines balance (`text-wrap: balance`) and stay within two lines
+  at 390, 1440 and in both languages.
+- Frame: one pair of outer margins (`.home-frame`: 24px, 40px from 64rem) and a 12-column grid with a
+  40px gutter from 64rem. Two left edges on the whole page: the margin, and column 7 for every
+  second column (profile, output fragments, the ladder, the guide rows).
+- Rhythm: about 128–192px between sections on desktop, 80–112px on a phone. Section grounds alternate:
+  page, page, field band, page, field close.
+- Shape: radius 4px on buttons, 6px on fields and fragments. No rules, shadows, gradients, eyebrows,
+  index numbers or monospace outside code.
 - Motion: one ease `cubic-bezier(0.16, 1, 0.3, 1)`. The first screen rises by transform only (painted
-  on the first frame). Sections below the fold rise in once
-  (opacity and 24px). The layer example settles in when it changes. All of it is off under reduced motion, and nothing is hidden without script.
-- Hover: the primary button inverts; text links darken their underline and nudge the arrow; layers take the field tone, cards the accent tone; nav links draw an accent underline.
+  on the first frame). Below the fold, blocks rise in once (opacity and 24px) and output lines print
+  70ms apart. All of it lives inside `prefers-reduced-motion: no-preference`; the reveal script does
+  not run under reduced motion, and nothing is hidden without script. No motion library.
+- Hover: the primary button inverts and presses; text links darken their underline and nudge the
+  arrow; guide rows take the field tone and nudge the arrow; nav links draw an accent underline.
+  Output fragments take focus (they scroll sideways from `sm` up) and show a brand outline.
 
 ## Sections
 
 ```
-HERO     title, one-line lede, tool chips, [See the setup]  GitHub ↗  |  field: hook block
-WORK     four cards: /orch, hwip, /team, draft PR, each a line and a fragment
-LAYERS   six layers, bar length = strength, one line each        |  example of the picked layer
-GUIDES   cards: title, one line, last-commit date
-FOOTER   colour field: one about line, links (GitHub, hwip, resume, source), licences
+HERO      h1 = name + role / headline (full width, two lines)
+          lede + [Resume ↗] LinkedIn ↗ GitHub ↗        |  profile field: experience, position,
+                                                          harnesses, built (hwip ↗)
+EVIDENCE  heading                                      |  one line on the same baseline
+          × 3 rows: question · claim · body · guide →  |  output fragment (source name + terminal)
+            1 What if an agent breaks a rule?  → the blocked commit (commit-convention.py)
+            2 Won't unreviewed code pile up?   → /orch → slice gates → gh pr create --draft
+            3 Doesn't it stay personal?        → RULES.md read by three harnesses, and their hooks
+TEAM      field band: heading, three practices          |  ladder card: six layers, bar = strength,
+          a team can take over                          |  All principles →
+GUIDES    heading + one line                            |  index rows: title →, line, last commit date
+CLOSE     field: contact line set large, one line, [Resume ↗] LinkedIn ↗
+          about line, links (LinkedIn, GitHub, hwip, resume, older posts, source), licences
 ```
 
-Phone (390px): the title comes first, the hook block under it; cards stack; the picked layer shows its
-example under the row.
+Phone (390px): name, headline (two lines), lede and the buttons fill the first screen; the profile
+field follows. Evidence rows stack the text over the fragment, and the fragment's lines wrap instead
+of scrolling. The ladder drops the third column under the layer name. Guide rows put the line under
+the title with the date at the right.
+
+## Checks
+
+- `node .claude/20261031/site-ui-rebuild/hero-qa.mjs` (build served on :4400): first screen at 1440
+  and 390 in Korean and 1440 in English, and page errors. The folder is local, not in git.
+- `pnpm check`: sensitive words, types, tests (home copy symmetry, three pieces of evidence, resume
+  per language), build, links.

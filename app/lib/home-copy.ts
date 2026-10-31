@@ -123,7 +123,7 @@ const en: HomeCopy = {
   documentTitle: 'Tak (Hyungtak Jin) — AI and DX engineer',
   description:
     'Agent-written code a team can trust. Portfolio of Tak (Hyungtak Jin), an AI and DX engineer who enforces the rules for coding agents with hooks, gates and draft PRs.',
-  name: 'Tak · Hyungtak Jin',
+  name: 'Tak (Hyungtak Jin)',
   role: 'AI and DX engineer',
   headline: 'Agent-written code a team can trust',
   lede: 'The rules I give coding agents are not requests: hooks, gates and draft PRs enforce them. Building web, React Native and Electron apps since 2018.',
@@ -132,8 +132,8 @@ const en: HomeCopy = {
   profile: [
     { term: 'Experience', detail: 'Web, React Native and Electron since 2018' },
     { term: 'Position', detail: 'AI and DX: agent adoption, dev environment, workflow' },
-    { term: 'Harnesses', detail: 'Claude Code · opencode · pi' },
-    { term: 'Built', detail: 'hwip: answer agent questions from the phone', href: 'https://hwip.app' },
+    { term: 'Harnesses', detail: 'Claude Code, opencode and pi' },
+    { term: 'Built', detail: 'hwip, agent questions on the phone', href: 'https://hwip.app' },
   ],
   evidenceHeading: 'Three things you would ask',
   evidenceLede: 'Each answer comes with the real config or output.',
@@ -205,7 +205,7 @@ const en: HomeCopy = {
   }),
   contactHeading: 'For hiring, message me on LinkedIn.',
   contactBody: 'Experience and projects are in the resume.',
-  about: 'Tak · Hyungtak Jin · AI and DX engineer',
+  about: 'Tak (Hyungtak Jin), AI and DX engineer',
   links: [
     { name: 'LinkedIn', href: LINKEDIN_URL },
     { name: 'GitHub', href: GITHUB_URL },
@@ -225,7 +225,7 @@ const ko: HomeCopy = {
   documentTitle: 'Tak(진형탁) — AI·DX 엔지니어',
   description:
     '에이전트가 쓴 코드도 팀이 믿을 수 있게. 코딩 에이전트의 규칙을 훅·게이트·draft PR 로 강제하는 AI·DX 엔지니어 Tak(진형탁)의 포트폴리오.',
-  name: 'Tak · 진형탁',
+  name: 'Tak(진형탁)',
   role: 'AI·DX 엔지니어',
   headline: '에이전트가 쓴 코드도 팀이 믿을 수 있게',
   lede: '코딩 에이전트에게 주는 규칙을 부탁으로 두지 않는다. 훅·게이트·draft PR 로 강제한다. 2018년부터 웹·React Native·Electron 을 만들어 왔다.',
@@ -233,9 +233,9 @@ const ko: HomeCopy = {
   profileLabel: '프로필',
   profile: [
     { term: '경력', detail: '2018년부터 웹·React Native·Electron' },
-    { term: '포지션', detail: 'AI·DX — 에이전트 도입, 개발 환경, 워크플로우' },
-    { term: '쓰는 하네스', detail: 'Claude Code · opencode · pi' },
-    { term: '만든 것', detail: 'hwip — 에이전트 질문을 폰으로 받아 답하는 앱', href: 'https://hwip.app' },
+    { term: '포지션', detail: 'AI·DX: 에이전트 도입, 개발 환경, 워크플로우' },
+    { term: '쓰는 하네스', detail: 'Claude Code, opencode, pi' },
+    { term: '만든 것', detail: 'hwip, 에이전트 질문을 폰으로 받아 답하는 앱', href: 'https://hwip.app' },
   ],
   evidenceHeading: '물어볼 만한 것 세 가지',
   evidenceLede: '답마다 실제 설정과 출력을 붙였다.',
@@ -307,7 +307,7 @@ const ko: HomeCopy = {
   }),
   contactHeading: '채용 이야기는 LinkedIn 으로.',
   contactBody: '경력과 프로젝트는 이력서에 있다.',
-  about: 'Tak · 진형탁 · AI·DX 엔지니어',
+  about: 'Tak(진형탁), AI·DX 엔지니어',
   links: [
     { name: 'LinkedIn', href: LINKEDIN_URL },
     { name: 'GitHub', href: GITHUB_URL },
