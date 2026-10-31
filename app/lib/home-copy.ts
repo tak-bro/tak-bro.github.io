@@ -1,18 +1,10 @@
 import { i18n } from './i18n';
 
-export type HomeGuideGroupId = 'agents' | 'machine';
-
-/** One guide row: `slug` is the top-level page under content/docs. */
+/** One guide card: `slug` is the top-level page under content/docs. */
 export interface HomeGuide {
   readonly slug: string;
-  readonly group: HomeGuideGroupId;
   readonly title: string;
   readonly blurb: string;
-}
-
-export interface HomeGuideGroup {
-  readonly id: HomeGuideGroupId;
-  readonly heading: string;
 }
 
 /** One harness or tool in the hero, with the part it plays in the setup. */
@@ -21,7 +13,22 @@ export interface HomeTool {
   readonly role: string;
 }
 
-/** One layer of enforcement, strongest first; `example` is the real file or output that shows it. */
+/** A push on the phone: the session it came from, the question and its buttons. */
+export interface HomePhone {
+  readonly app: string;
+  readonly question: string;
+  readonly actions: readonly string[];
+}
+
+/** One way of working: a command or tool, one line, and the terminal or phone fragment that shows it. */
+export interface HomeWork {
+  readonly name: string;
+  readonly line: string;
+  readonly session: readonly string[];
+  readonly phone?: HomePhone;
+}
+
+/** One layer of enforcement, strongest first; `example` is the real file or output behind it. */
 export interface HomeLayer {
   readonly name: string;
   readonly body: string;
@@ -29,42 +36,14 @@ export interface HomeLayer {
   readonly example: readonly string[];
 }
 
-/** A push on the phone: the question an agent asks and the buttons it offers. */
-export interface HomePhone {
-  readonly app: string;
-  readonly question: string;
-  readonly actions: readonly string[];
-}
-
-/** One scene of a working day; it shows a terminal session or, with `phone`, a push. */
-export interface HomeScene {
-  readonly statement: string;
-  readonly body: string;
-  readonly session: readonly string[];
-  readonly phone?: HomePhone;
-}
-
-export interface HomePrinciple {
-  readonly title: string;
-  readonly body: string;
-}
-
-export interface HomeFact {
-  readonly label: string;
-  readonly value: string;
-}
-
-/** A row in the about lists; `href` is a guide slug when `guide` is set, else a URL. */
-export interface HomeRecord {
+export interface HomeLink {
   readonly name: string;
-  readonly value: string;
   readonly href: string;
-  readonly guide?: boolean;
 }
 
-export interface HomeRecordGroup {
-  readonly word: string;
-  readonly records: readonly HomeRecord[];
+/** Something I built: a link with the one line that says what it does. */
+export interface HomeBuilt extends HomeLink {
+  readonly line: string;
 }
 
 export interface HomeCopy {
@@ -76,41 +55,28 @@ export interface HomeCopy {
   readonly lede: string;
   readonly tools: readonly HomeTool[];
   readonly primaryCta: string;
-  readonly allGuides: string;
   readonly heroSession: readonly string[];
   readonly heroCaption: string;
+  readonly workHeading: string;
+  readonly work: readonly HomeWork[];
   readonly layersHeading: string;
-  readonly layersIntro: string;
-  readonly layersStrong: string;
-  readonly layersWeak: string;
+  readonly layersLede: string;
   readonly layers: readonly HomeLayer[];
-  readonly scenesHeading: string;
-  readonly scenes: readonly HomeScene[];
-  readonly principlesHeading: string;
-  readonly principles: readonly HomePrinciple[];
   readonly principlesLink: string;
-  readonly tryHeading: string;
-  readonly tryIntro: string;
-  readonly trySteps: readonly string[];
   readonly guidesHeading: string;
-  readonly guideGroups: readonly HomeGuideGroup[];
   readonly guides: readonly HomeGuide[];
-  readonly aboutHeading: string;
-  readonly facts: readonly HomeFact[];
-  readonly bio: string;
-  readonly recordGroups: readonly HomeRecordGroup[];
-  readonly footerWhat: string;
+  readonly builtHeading: string;
+  readonly built: readonly HomeBuilt[];
+  readonly about: string;
+  readonly links: readonly HomeLink[];
   readonly codeLicense: string;
   readonly contentLicense: string;
   readonly newTabLabel: string;
   readonly skipLabel: string;
 }
 
-const SITE_SOURCE = 'https://github.com/tak-bro/tak-bro.github.io';
-const HWIP_URL = 'https://hwip.app';
-const STATUSLINE_URL = 'https://github.com/tak-bro/tak-cc-statusline';
+const GITHUB = 'https://github.com/tak-bro';
 
-/** The commit a hook stopped while this page was being built. */
 const hookSession = (blocked: string, line: string) => [
   '$ git commit -m "feat(site): refocus the site on the guides…"',
   `[commit-convention] ${blocked}`,
@@ -122,140 +88,72 @@ const HOOK_SESSION_EN = hookSession('commit blocked — AI co-author trailer', '
 const HOOK_SESSION_KO = hookSession('커밋 차단 — AI co-author 트레일러', '줄');
 
 const EXPLORER_AGENT = ['agents/explorer.md', '---', 'name: explorer', 'model: sonnet', 'tools: Read, Bash', '---'];
-
-const SETTINGS_ASK = [
-  'settings.json',
-  '"ask": [',
-  '  "Edit(**/CLAUDE.md)",',
-  '  "Edit(**/RULES.md)",',
-  '  "Edit(**/CONTEXT.md)",',
-  '  "Edit(**/AGENTS.md)",',
-];
-
-const SESSION_START = ['SessionStart:compact', '=== 세션 컨텍스트 ===', '--- 최근 커밋 ---', 'dfa1e75 feat(home): rebuild the home as a docs landing page', '--- 브랜치 ---', 'feat/ui-refresh'];
+const SETTINGS_ASK = ['settings.json', '"ask": [', '  "Edit(**/CLAUDE.md)",', '  "Edit(**/RULES.md)",', '  "Edit(**/CONTEXT.md)",', '  "Edit(**/AGENTS.md)",'];
+const GATE = ['03-review · slice s01', 'verify: pnpm test → passed', 'review: PASS', '- [x] s01'];
+const SESSION_START = ['SessionStart:compact', '--- 최근 커밋 ---', 'c53c335 feat(site): refocus the site on the guides…', '--- 브랜치 ---', 'feat/ui-refresh'];
+const TEAM = ['> /team', 'worker-1  claude    blog-tags', 'worker-2  pi        rss-fix', 'worker-3  opencode  tests'];
+const DRAFT_PR = ['$ gh pr create --draft', 'feat(blog): filter posts by tag', 'Auto-decided:', '- filter is client state'];
 
 const en: HomeCopy = {
   title: 'Tak',
-  documentTitle: 'Structure, not requests — Tak',
-  description:
-    'Hyungtak Jin, frontend engineer. One setup for Claude Code, pi and opencode, answered from the phone through hwip, with rules kept as hooks and gates instead of sentences.',
-  headline: 'Structure, not requests',
-  lede: 'I’m Hyungtak Jin, a frontend engineer. I run Claude Code, pi and opencode from one setup, answer them from my phone with hwip, which I build, and keep the rules as hooks and gates instead of sentences.',
+  documentTitle: 'Coding agents, run on structure — Tak',
+  description: 'The coding agent setup of Tak (Hyungtak Jin): Claude Code, pi and opencode on one config, answered from the phone with hwip.',
+  headline: 'Coding agents, run on structure',
+  lede: 'The setup of Tak, a frontend engineer. Claude Code, pi and opencode on one config, answered from the phone with hwip.',
   tools: [
-    { name: 'Claude Code', role: 'the full set' },
+    { name: 'Claude Code', role: 'full set' },
     { name: 'pi', role: 'shared skills' },
-    { name: 'opencode', role: 'the same guard hooks' },
-    { name: 'herdr', role: 'worker panes' },
-    { name: 'hwip', role: 'answers from the phone' },
+    { name: 'opencode', role: 'same hooks' },
+    { name: 'herdr', role: 'panes' },
+    { name: 'hwip', role: 'phone' },
   ],
-  primaryCta: 'Read the principles',
-  allGuides: 'All guides',
+  primaryCta: 'See the setup',
   heroSession: HOOK_SESSION_EN,
-  heroCaption: 'A rule asks; a hook blocks. A hook stopped this commit while this page was being built.',
-  layersHeading: 'The strongest layer first',
-  layersIntro:
-    '“Never do this” is forgotten once the context grows long; structure is not. The higher the layer, the less it can be broken, so a rule moves up when it keeps being broken.',
-  layersStrong: 'cannot be broken',
-  layersWeak: 'only asks',
-  layers: [
-    { name: 'No permission', body: 'The explorer agent has no Edit or Write tool at all.', source: 'agents/explorer.md', example: EXPLORER_AGENT },
-    { name: 'Hard block', body: 'Editing the files that steer the agents needs my approval.', source: 'settings.json', example: SETTINGS_ASK },
-    { name: 'Hook, exit 2', body: 'Dangerous commands, force pushes to protected branches, AI co-author trailers and malformed commits stop here.', source: 'hooks/commit-convention.py', example: HOOK_SESSION_EN },
+  heroCaption: 'A commit a hook actually blocked.',
+  workHeading: 'How I work',
+  work: [
+    { name: '/orch', line: 'One line in, a draft PR out.', session: ['> /orch add a tag filter to the blog', 'orch: add · M · check: `pnpm test` · stop: pr'] },
     {
-      name: 'Gate',
-      body: 'A slice passes when its tests are green and a reviewer that never saw the conversation says PASS.',
-      source: '03-review',
-      example: ['03-review · slice s01', 'finder: new subagent, plan and diff only', 'verify: pnpm test → passed', '- [x] s01', '- AC-1 · status: PASS · evidence: `pnpm test` → passed'],
-    },
-    { name: 'Injection and isolation', body: 'A hook puts the commits and the branch back after every compact; reviews run in a separate context.', source: 'hooks · SessionStart', example: SESSION_START },
-    {
-      name: 'Request',
-      body: 'CLAUDE.md is guidance. When a line in it has to hold, it moves up a layer.',
-      source: 'RULES.md',
-      example: ['RULES.md', '## Chat Response Rules', '- First sentence = the conclusion. The reasons follow.', '- No summary or recap that was not asked for.'],
-    },
-  ],
-  scenesHeading: 'How a day goes',
-  scenes: [
-    {
-      statement: 'One line hands over the task.',
-      body: '/orch declares the kind, the size, what done means and the command that measures it, then carries the task to a draft PR.',
-      session: ['> /orch add a tag filter to the blog list', 'orch: add · M · 4 files · done: picking a tag leaves only its posts · check: `pnpm test` · stop: pr'],
-    },
-    {
-      statement: 'When it needs a call, the phone buzzes.',
-      body: 'hwip pushes the question to my phone. A tap on a button goes straight back into the live session, so it keeps going while I am away from the desk.',
+      name: 'hwip',
+      line: 'Questions reach my phone. One tap and it goes on.',
       session: [],
-      phone: { app: 'Claude Code · feat/blog-tags', question: 'Slice s02 adds year groups too. Keep it in this PR?', actions: ['Keep it', 'Next PR'] },
+      phone: { app: 'Claude Code', question: 'Keep year groups in this PR?', actions: ['Keep', 'Next PR'] },
     },
-    {
-      statement: 'Bigger work gets a team.',
-      body: '/team makes the session the lead and starts Claude, pi and opencode workers in herdr panes. The lead merges the larger PRs after a fresh review.',
-      session: ['> /team', 'lead: this session', 'worker-1  claude    feat/blog-tags', 'worker-2  pi        fix/rss-dates', 'worker-3  opencode  lens: tests'],
-    },
-    {
-      statement: 'Everything stops at a draft PR.',
-      body: 'Choices made without asking go into the PR body. Design and scope are mine to judge there, and the merge is mine too.',
-      session: ['$ gh pr create --draft', 'feat(blog): group posts by year and filter by tag', 'Auto-decided:', '- The filter is client state, not the URL.'],
-    },
+    { name: '/team', line: 'Three workers side by side in herdr.', session: TEAM },
+    { name: 'draft PR', line: 'It stops here. I merge.', session: DRAFT_PR },
   ],
-  principlesHeading: 'What the setup is built on',
-  principles: [
-    { title: 'One source of truth', body: 'A skill the three harnesses share has one English body; each harness keeps only a table of what differs. With no second copy, nothing has to be kept in sync.' },
-    { title: 'Hide the passing bar', body: 'A reviewer told “zero Criticals passes” softens severities until it passes. The gate is read only after the findings are in.' },
-    { title: 'Proof, not claims', body: 'A loop ends on tests, lint and type checks. “Looks done” is not a verifier.' },
-    { title: 'Context is the scarcest thing', body: 'Reviews run apart from the session that wrote the code; wide reading goes to a subagent that returns only its conclusion.' },
-    { title: 'Delete as models improve', body: 'Steps that made up for a weaker model go; deterministic verifiers stay. Before deleting, the logs say whether it still fires.' },
-    { title: 'Fix the system, not only the diff', body: 'Fixing only the code means the next run makes the same mistake. The layer that allowed it gets fixed, and every rule records the incident behind it.' },
+  layersHeading: 'Rules as structure, not requests',
+  layersLede: 'The higher the layer, the harder to break.',
+  layers: [
+    { name: 'No permission', body: 'Explorers have no Edit or Write.', source: 'agents/explorer.md', example: EXPLORER_AGENT },
+    { name: 'Hard block', body: 'Editing the rule files needs my approval.', source: 'settings.json', example: SETTINGS_ASK },
+    { name: 'Hook', body: 'Bad commands and commits exit 2.', source: 'hooks/commit-convention.py', example: HOOK_SESSION_EN },
+    { name: 'Gate', body: 'Tests green and a fresh reviewer’s PASS.', source: '03-review', example: GATE },
+    { name: 'Isolation', body: 'State reinjected; reviews in a fork.', source: 'SessionStart hook', example: SESSION_START },
+    { name: 'Request', body: 'CLAUDE.md. If it must hold, move it up.', source: 'RULES.md', example: ['RULES.md', '- First sentence = the conclusion.', '- No unrequested recap.'] },
   ],
-  principlesLink: 'Read the principles in full',
-  tryHeading: 'Three things to try today',
-  tryIntro: 'Each one moves a rule from asking to structure.',
-  trySteps: [
-    'Take the rule in your CLAUDE.md that is broken most often and turn it into a hook that exits 2.',
-    'Remove Edit and Write from the subagent you use for exploring.',
-    'Run reviews in a fork or a fresh session, not in the one that wrote the code.',
-  ],
-  guidesHeading: 'The setup, written down',
-  guideGroups: [
-    { id: 'agents', heading: 'Coding agents' },
-    { id: 'machine', heading: 'Terminal and Mac' },
-  ],
+  principlesLink: 'All principles',
+  guidesHeading: 'Setup guides',
   guides: [
-    { slug: 'principles', group: 'agents', title: 'Principles', blurb: 'Checkable criteria first, the model fills in only the verdict, and why each rule exists.' },
-    { slug: 'agent-config', group: 'agents', title: 'Agent config', blurb: 'Rules, hooks, and subagents for Claude Code, pi, and opencode.' },
-    { slug: 'workflow', group: 'agents', title: 'Workflow', blurb: 'How a task goes from plan to merged PR.' },
-    { slug: 'plugins', group: 'agents', title: 'Plugins and MCP', blurb: 'The Claude Code plugins and MCP servers I keep on, and why.' },
-    { slug: 'herdr', group: 'machine', title: 'Herdr', blurb: 'Terminal workspace setup and its keyboard shortcuts.' },
-    { slug: 'keymaps', group: 'machine', title: 'Keymaps', blurb: 'macOS keyboard defaults, Ghostty keys, Karabiner, and LazyVim.' },
-    { slug: 'setup', group: 'machine', title: 'Mac setup', blurb: 'The order I set up a new Mac in.' },
+    { slug: 'principles', title: 'Principles', blurb: 'Why the setup looks the way it does.' },
+    { slug: 'agent-config', title: 'Agent config', blurb: 'Rules, hooks and subagents for three harnesses.' },
+    { slug: 'workflow', title: 'Workflow', blurb: 'From one line to a merged PR.' },
+    { slug: 'plugins', title: 'Plugins and MCP', blurb: 'What stays on, and why.' },
+    { slug: 'herdr', title: 'Herdr', blurb: 'The terminal workspace and its keys.' },
+    { slug: 'keymaps', title: 'Keymaps', blurb: 'macOS, Ghostty, Karabiner, LazyVim.' },
+    { slug: 'setup', title: 'Mac setup', blurb: 'A new Mac, in order.' },
   ],
-  aboutHeading: 'Who builds this',
-  facts: [
-    { label: 'Name', value: 'Hyungtak Jin' },
-    { label: 'Work', value: 'Frontend engineer' },
-    { label: 'Since', value: '2018, on the web' },
+  builtHeading: 'Things I built',
+  built: [
+    { name: 'hwip', line: 'Answer coding agents from your phone.', href: 'https://hwip.app' },
+    { name: 'tak-cc-statusline', line: 'A one-line status bar for Claude Code.', href: `${GITHUB}/tak-cc-statusline` },
   ],
-  bio: 'I started on C++ ultrasound software and have built web, React Native and Electron products since 2018. Now I shape how work is handed to coding agents, and build hwip so I can answer them from my phone.',
-  recordGroups: [
-    {
-      word: 'Built',
-      records: [
-        { name: 'hwip', value: 'hwip.app', href: HWIP_URL },
-        { name: 'tak-cc-statusline', value: 'GitHub', href: STATUSLINE_URL },
-        { name: 'Agent config', value: 'Guide', href: 'agent-config', guide: true },
-      ],
-    },
-    {
-      word: 'Elsewhere',
-      records: [
-        { name: 'GitHub', value: 'tak-bro', href: 'https://github.com/tak-bro' },
-        { name: 'Resume', value: 'PDF', href: '/assets/resume_eng.pdf' },
-        { name: 'Site source', value: 'MIT', href: SITE_SOURCE },
-      ],
-    },
+  about: 'Tak · Hyungtak Jin · web, React Native and Electron since 2018',
+  links: [
+    { name: 'GitHub', href: GITHUB },
+    { name: 'Resume', href: '/assets/resume_eng.pdf' },
+    { name: 'Site source', href: `${GITHUB}/tak-bro.github.io` },
   ],
-  footerWhat: 'Tak, structure over requests',
   codeLicense: 'Code: MIT',
   contentLicense: 'Content: CC BY 4.0',
   newTabLabel: '(opens in a new tab)',
@@ -264,125 +162,64 @@ const en: HomeCopy = {
 
 const ko: HomeCopy = {
   title: 'Tak',
-  documentTitle: '부탁하지 않고, 구조로 강제한다 — Tak',
-  description:
-    '프론트엔드 개발자 진형탁. Claude Code·pi·opencode 를 설정 하나로 묶어 쓰고, 폰에서는 hwip 으로 답하고, 규칙은 문장 대신 훅과 게이트로 둔다.',
-  headline: '부탁하지 않고, 구조로 강제한다',
-  lede: '프론트엔드 개발자 진형탁이다. Claude Code·pi·opencode 를 설정 하나로 묶어 쓰고, 폰에서는 직접 만든 hwip 으로 답한다. 규칙은 문장 대신 훅과 게이트로 둔다.',
+  documentTitle: '코딩 에이전트를 구조로 굴린다 — Tak',
+  description: 'Tak(진형탁)의 코딩 에이전트 셋업. Claude Code·pi·opencode 를 설정 하나로 묶고, 폰에서는 hwip 으로 답한다.',
+  headline: '코딩 에이전트를 구조로 굴린다',
+  lede: '프론트엔드 개발자 Tak 의 셋업. Claude Code·pi·opencode 를 설정 하나로 묶고, 폰에서는 hwip 으로 답한다.',
   tools: [
     { name: 'Claude Code', role: '전체 세트' },
     { name: 'pi', role: '공유 스킬' },
-    { name: 'opencode', role: '같은 가드 훅' },
-    { name: 'herdr', role: '워커 pane' },
-    { name: 'hwip', role: '폰에서 답하기' },
+    { name: 'opencode', role: '같은 훅' },
+    { name: 'herdr', role: 'pane' },
+    { name: 'hwip', role: '폰' },
   ],
-  primaryCta: '원칙 읽기',
-  allGuides: '전체 가이드',
+  primaryCta: '셋업 보기',
   heroSession: HOOK_SESSION_KO,
-  heroCaption: '규칙은 부탁하고, 훅은 막는다. 이 페이지를 만드는 동안 훅이 막은 커밋이다.',
-  layersHeading: '강제는 센 층부터',
-  layersIntro: '"절대 하지 마세요"는 컨텍스트가 길어지면 잊힌다. 구조는 잊히지 않는다. 위층일수록 어길 수 없고, 자꾸 어겨지는 규칙은 한 층 위로 올린다.',
-  layersStrong: '어길 수 없다',
-  layersWeak: '부탁할 뿐',
-  layers: [
-    { name: '권한 없음', body: '탐색 에이전트에는 Edit·Write 도구가 아예 없다.', source: 'agents/explorer.md', example: EXPLORER_AGENT },
-    { name: '하드 차단', body: '에이전트를 조종하는 파일을 고치려면 내 승인을 거친다.', source: 'settings.json', example: SETTINGS_ASK },
-    { name: '훅 exit 2', body: '위험한 명령, 보호 브랜치 force push, AI 공동저자 트레일러, 형식이 틀린 커밋이 여기서 멈춘다.', source: 'hooks/commit-convention.py', example: HOOK_SESSION_KO },
+  heroCaption: '훅이 실제로 막은 커밋.',
+  workHeading: '이렇게 쓴다',
+  work: [
+    { name: '/orch', line: '한 줄로 맡기면 draft PR 까지 간다.', session: ['> /orch 블로그에 태그 필터 추가', 'orch: add · M · check: `pnpm test` · 멈춤: pr'] },
     {
-      name: '게이트',
-      body: '슬라이스는 테스트가 green 이고, 대화를 본 적 없는 리뷰어가 PASS 를 줘야 통과한다.',
-      source: '03-review',
-      example: ['03-review · slice s01', 'finder: 새 서브에이전트, 플랜과 diff 만', 'verify: pnpm test → passed', '- [x] s01', '- AC-1 · status: PASS · evidence: `pnpm test` → passed'],
-    },
-    { name: '주입과 격리', body: 'compact 뒤마다 훅이 커밋과 브랜치를 다시 넣고, 리뷰는 분리된 컨텍스트에서 돈다.', source: 'hooks · SessionStart', example: SESSION_START },
-    {
-      name: '부탁',
-      body: 'CLAUDE.md 는 가이드다. 꼭 지켜져야 하는 줄은 위층으로 올린다.',
-      source: 'RULES.md',
-      example: ['RULES.md', '## Chat Response Rules', '- 첫 문장 = 결론. 근거는 뒤에.', '- 요청 안 한 요약·recap 금지.'],
-    },
-  ],
-  scenesHeading: '하루는 이렇게 간다',
-  scenes: [
-    {
-      statement: '한 줄로 맡긴다.',
-      body: '/orch 가 작업 종류, 크기, 완료 기준과 그것을 재는 명령을 첫 줄에 선언하고 draft PR 까지 잇는다.',
-      session: ['> /orch 블로그 목록에 태그 필터 추가', 'orch: add · M · 파일 4개 · 완료: 태그를 고르면 그 태그 글만 남는다 · check: `pnpm test` · 멈춤: pr'],
-    },
-    {
-      statement: '판단이 필요하면 폰이 울린다.',
-      body: 'hwip 이 질문을 폰으로 보낸다. 버튼을 누르면 답이 살아 있는 세션으로 바로 들어가서, 자리를 비워도 작업이 이어진다.',
+      name: 'hwip',
+      line: '판단할 일은 폰으로 온다. 탭 한 번이면 이어진다.',
       session: [],
-      phone: { app: 'Claude Code · feat/blog-tags', question: '슬라이스 s02 에 연도 묶음도 들어간다. 이번 PR 에 둘까?', actions: ['이번에 둔다', '다음 PR'] },
+      phone: { app: 'Claude Code', question: '연도 묶음도 이번 PR 에 둘까?', actions: ['둔다', '다음 PR'] },
     },
-    {
-      statement: '큰 일은 팀을 꾸린다.',
-      body: '/team 은 이 세션을 리드로 두고 herdr pane 에 Claude·pi·opencode 워커를 띄운다. 큰 PR 은 리드가 새 리뷰를 거쳐 머지한다.',
-      session: ['> /team', 'lead: 이 세션', 'worker-1  claude    feat/blog-tags', 'worker-2  pi        fix/rss-dates', 'worker-3  opencode  lens: tests'],
-    },
-    {
-      statement: '모든 일은 draft PR 에서 멈춘다.',
-      body: '묻지 않고 정한 것은 PR 본문에 적는다. 설계와 스코프는 거기서 내가 판단하고, 머지도 내가 한다.',
-      session: ['$ gh pr create --draft', 'feat(blog): group posts by year and filter by tag', 'Auto-decided:', '- 필터는 URL 이 아니라 클라이언트 상태다.'],
-    },
+    { name: '/team', line: '워커 셋이 herdr 에서 동시에 일한다.', session: TEAM },
+    { name: 'draft PR', line: '여기서 멈춘다. 머지는 내가 한다.', session: DRAFT_PR },
   ],
-  principlesHeading: '설정 밑에 깔린 것',
-  principles: [
-    { title: '정본은 하나', body: '세 하네스가 같이 쓰는 스킬은 영어 정본 하나이고, 하네스마다 다른 점만 표로 둔다. 두 벌이 없으니 맞출 일도 없다.' },
-    { title: '통과선은 숨긴다', body: '"Critical 0 이면 통과"를 아는 리뷰어는 심각도를 깎아 통과를 만든다. 게이트 기준은 파인딩이 끝난 뒤에만 읽는다.' },
-    { title: '주장 말고 증명', body: '루프는 테스트·lint·typecheck 로만 끝난다. "된 것 같다"는 verifier 가 아니다.' },
-    { title: '컨텍스트가 가장 비싸다', body: '리뷰는 코드를 쓴 세션과 분리해서 돌리고, 넓게 읽는 일은 서브에이전트에게 맡겨 결론만 받는다.' },
-    { title: '모델이 좋아지면 지운다', body: '약한 모델을 메우던 절차는 지우고 결정적 verifier 는 남긴다. 지우기 전에 지금도 발화하는지 로그로 본다.' },
-    { title: '실수는 시스템에서 고친다', body: '코드만 고치면 다음 런이 같은 실수를 한다. 실수를 허용한 층을 고치고, 규칙마다 생긴 사고와 날짜를 남긴다.' },
+  layersHeading: '규칙은 부탁 말고 구조로',
+  layersLede: '위로 갈수록 어길 수 없다.',
+  layers: [
+    { name: '권한 없음', body: '탐색 에이전트엔 Edit·Write 가 없다.', source: 'agents/explorer.md', example: EXPLORER_AGENT },
+    { name: '하드 차단', body: '규칙 파일 편집은 내 승인을 거친다.', source: 'settings.json', example: SETTINGS_ASK },
+    { name: '훅', body: '위험한 명령과 틀린 커밋은 exit 2.', source: 'hooks/commit-convention.py', example: HOOK_SESSION_KO },
+    { name: '게이트', body: '테스트 green, 새 리뷰어의 PASS.', source: '03-review', example: GATE },
+    { name: '격리', body: '상태는 다시 주입, 리뷰는 fork 에서.', source: 'SessionStart 훅', example: SESSION_START },
+    { name: '부탁', body: 'CLAUDE.md. 꼭 지킬 건 위로 올린다.', source: 'RULES.md', example: ['RULES.md', '- 첫 문장 = 결론.', '- 요청 안 한 요약 금지.'] },
   ],
-  principlesLink: '원칙 전체 읽기',
-  tryHeading: '오늘 해 볼 세 가지',
-  tryIntro: '셋 다 규칙 하나를 부탁에서 구조로 옮긴다.',
-  trySteps: [
-    'CLAUDE.md 에서 가장 자주 어겨지는 규칙 하나를 exit 2 로 끝나는 훅으로 만든다.',
-    '탐색에 쓰는 서브에이전트에서 Edit·Write 를 뺀다.',
-    '리뷰를 코드를 쓴 세션이 아니라 fork 나 새 세션에서 돌린다.',
-  ],
-  guidesHeading: '그 설정을 적은 가이드',
-  guideGroups: [
-    { id: 'agents', heading: '코딩 에이전트' },
-    { id: 'machine', heading: '터미널과 맥' },
-  ],
+  principlesLink: '원칙 전체',
+  guidesHeading: '셋업 가이드',
   guides: [
-    { slug: 'principles', group: 'agents', title: '원칙', blurb: '검증할 수 있는 기준을 먼저 주고 모델은 판정 칸만 채운다. 규칙마다 생긴 이유.' },
-    { slug: 'agent-config', group: 'agents', title: '에이전트 설정', blurb: 'Claude Code, pi, opencode 의 규칙, 훅, 서브에이전트.' },
-    { slug: 'workflow', group: 'agents', title: '워크플로우', blurb: '작업 하나가 계획에서 머지까지 가는 길.' },
-    { slug: 'plugins', group: 'agents', title: '플러그인·MCP', blurb: '켜 두고 쓰는 Claude Code 플러그인과 MCP 서버.' },
-    { slug: 'herdr', group: 'machine', title: 'Herdr', blurb: '터미널 작업 공간 설정과 단축키.' },
-    { slug: 'keymaps', group: 'machine', title: '키맵', blurb: 'macOS 키보드 기본값, Ghostty 키, Karabiner, LazyVim.' },
-    { slug: 'setup', group: 'machine', title: '맥 셋업', blurb: '새 맥을 세팅하는 순서.' },
+    { slug: 'principles', title: '원칙', blurb: '셋업이 이렇게 생긴 이유.' },
+    { slug: 'agent-config', title: '에이전트 설정', blurb: '세 하네스의 규칙, 훅, 서브에이전트.' },
+    { slug: 'workflow', title: '워크플로우', blurb: '한 줄에서 머지까지.' },
+    { slug: 'plugins', title: '플러그인·MCP', blurb: '켜 두는 것과 그 이유.' },
+    { slug: 'herdr', title: 'Herdr', blurb: '터미널 작업 공간과 단축키.' },
+    { slug: 'keymaps', title: '키맵', blurb: 'macOS, Ghostty, Karabiner, LazyVim.' },
+    { slug: 'setup', title: '맥 셋업', blurb: '새 맥을 세팅하는 순서.' },
   ],
-  aboutHeading: '만드는 사람',
-  facts: [
-    { label: '이름', value: '진형탁' },
-    { label: '하는 일', value: '프론트엔드 개발자' },
-    { label: '시작', value: '2018년, 웹' },
+  builtHeading: '만든 것',
+  built: [
+    { name: 'hwip', line: '폰에서 코딩 에이전트에 답한다.', href: 'https://hwip.app' },
+    { name: 'tak-cc-statusline', line: 'Claude Code 한 줄 상태바.', href: `${GITHUB}/tak-cc-statusline` },
   ],
-  bio: 'C++ 초음파 소프트웨어로 시작해 2018년부터 웹, React Native, Electron 제품을 만들었다. 지금은 코딩 에이전트에게 일을 맡기는 구조를 다듬고, 폰에서 에이전트에게 답하는 hwip 을 만든다.',
-  recordGroups: [
-    {
-      word: '만든 것',
-      records: [
-        { name: 'hwip', value: 'hwip.app', href: HWIP_URL },
-        { name: 'tak-cc-statusline', value: 'GitHub', href: STATUSLINE_URL },
-        { name: '에이전트 설정', value: '가이드', href: 'agent-config', guide: true },
-      ],
-    },
-    {
-      word: '다른 곳',
-      records: [
-        { name: 'GitHub', value: 'tak-bro', href: 'https://github.com/tak-bro' },
-        { name: '이력서', value: 'PDF', href: '/assets/resume.pdf' },
-        { name: '사이트 소스', value: 'MIT', href: SITE_SOURCE },
-      ],
-    },
+  about: 'Tak · 진형탁 · 2018년부터 웹, React Native, Electron',
+  links: [
+    { name: 'GitHub', href: GITHUB },
+    { name: '이력서', href: '/assets/resume.pdf' },
+    { name: '사이트 소스', href: `${GITHUB}/tak-bro.github.io` },
   ],
-  footerWhat: 'Tak, 부탁 대신 구조',
   codeLicense: '코드: MIT',
   contentLicense: '글: CC BY 4.0',
   newTabLabel: '(새 탭)',

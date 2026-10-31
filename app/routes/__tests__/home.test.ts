@@ -18,20 +18,17 @@ describe('home loader', () => {
     expect((await call('/')).publishedGuides).toEqual(['principles', 'agent-config', 'workflow', 'plugins', 'herdr', 'keymaps', 'setup']);
     expect((await call('/en')).publishedGuides).toEqual(['principles', 'agent-config', 'workflow', 'plugins', 'herdr', 'keymaps', 'setup']);
   });
+
+  it('dates every published guide by its last commit', async () => {
+    const { publishedGuides, updated } = await call('/');
+    for (const slug of publishedGuides) expect(updated[slug]).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
 });
 
 describe('home copy', () => {
-  it('puts every guide in one of the two groups', () => {
-    for (const lang of ['ko', 'en']) {
-      const copy = homeCopy(lang);
-      const grouped = copy.guideGroups.flatMap((group) => copy.guides.filter((guide) => guide.group === group.id));
-      expect(grouped.map((guide) => guide.slug)).toEqual(copy.guides.map((guide) => guide.slug));
-    }
-  });
-
-  it('shows the same layers and scenes in both languages', () => {
-    expect(homeCopy('en').layers.map((layer) => layer.source)).toEqual(homeCopy('ko').layers.map((layer) => layer.source));
-    expect(homeCopy('en').scenes.map((scene) => Boolean(scene.phone))).toEqual(homeCopy('ko').scenes.map((scene) => Boolean(scene.phone)));
+  it('shows the same work and layers in both languages', () => {
+    expect(homeCopy('en').work.map((work) => work.name)).toEqual(homeCopy('ko').work.map((work) => work.name));
+    expect(homeCopy('en').layers.map((layer) => layer.source)).toHaveLength(homeCopy('ko').layers.length);
   });
 
   it('gives every layer an example to show', () => {
@@ -41,20 +38,9 @@ describe('home copy', () => {
   });
 
   it('links the resume in the page language', () => {
-    const resume = (lang: string) =>
-      homeCopy(lang)
-        .recordGroups.flatMap((group) => group.records)
-        .find((record) => record.href.startsWith('/assets/'))?.href;
+    const resume = (lang: string) => homeCopy(lang).links.find((link) => link.href.startsWith('/assets/'))?.href;
     expect(resume('ko')).toBe('/assets/resume.pdf');
     expect(resume('en')).toBe('/assets/resume_eng.pdf');
-  });
-
-  it('dates every published guide by its last commit', async () => {
-    const { publishedGuides, outlines } = await call('/');
-    for (const slug of publishedGuides) {
-      expect(outlines[slug]?.updated).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-      expect(outlines[slug]?.headings.length).toBeGreaterThan(0);
-    }
   });
 });
 

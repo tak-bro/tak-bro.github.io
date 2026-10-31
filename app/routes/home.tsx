@@ -1,6 +1,6 @@
 import { HomeLayout } from 'fumadocs-ui/layouts/home';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
-import { isValidElement, useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { Link } from 'react-router';
 import type { Route } from './+types/home';
 import {
@@ -13,11 +13,8 @@ import {
   requestPath,
   source,
   type HomeCopy,
-  type HomeGuide,
-  type HomeGuideGroup,
-  type HomeLayer,
   type HomePhone,
-  type HomeScene,
+  type HomeWork,
 } from '../lib';
 
 export const meta = ({ location }: Route.MetaArgs) => {
@@ -34,45 +31,25 @@ export const meta = ({ location }: Route.MetaArgs) => {
 
 const REPO_URL = `${GITHUB_URL}/tak-bro.github.io`;
 
-// Rows only for guides that exist; check:links fails on a row to an unwritten one.
+// Cards only for guides that exist; check:links fails on a card to an unwritten one.
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const lang = localeFromPath(requestPath(request));
   const pages = homeCopy(lang).guides.flatMap((guide) => {
     const page = source.getPage([guide.slug], lang);
     return page ? [{ slug: guide.slug, page }] : [];
   });
-  const outlines = await Promise.all(
+  const updated = await Promise.all(
     pages.map(async ({ slug, page }) => {
-      const { lastModified, toc } = await page.data.load();
-      const outline: GuideOutline = {
-        updated: lastModified ? lastModified.toISOString().slice(0, 10) : null,
-        description: page.data.description,
-        headings: toc.flatMap((item) => (item.depth === 2 ? [textOf(item.title)] : [])),
-      };
-      return [slug, outline] as const;
+      const { lastModified } = await page.data.load();
+      return [slug, lastModified ? lastModified.toISOString().slice(0, 10) : null] as const;
     }),
   );
 
   return {
     lang,
     publishedGuides: pages.map(({ slug }) => slug),
-    outlines: Object.fromEntries(outlines),
+    updated: Object.fromEntries(updated) as Record<string, string | null>,
   };
-};
-
-/** What the guide preview shows: the page's own description and its section headings. */
-interface GuideOutline {
-  readonly updated: string | null;
-  readonly description: string;
-  readonly headings: readonly string[];
-}
-
-/** A TOC title is rendered MDX; the preview needs its plain text. */
-const textOf = (node: ReactNode): string => {
-  if (typeof node === 'string' || typeof node === 'number') return String(node);
-  if (Array.isArray(node)) return node.map(textOf).join('');
-  if (isValidElement<{ children?: ReactNode }>(node)) return textOf(node.props.children);
-  return '';
 };
 
 /** A `[hook]` line and its indented continuation lines. */
@@ -95,74 +72,18 @@ const Session = ({ lines, className = '' }: { lines: readonly string[]; classNam
   );
 };
 
-/** The enforcement ladder, strongest layer first; the picked layer shows its real example. */
-const Layers = ({ copy }: { copy: HomeCopy }) => {
-  const [picked, setPicked] = useState(0);
-  const layer: HomeLayer | undefined = copy.layers[picked];
-
-  return (
-    <section aria-labelledby="layers-heading" className="home-frame grid gap-x-16 gap-y-10 pt-32 lg:grid-cols-2">
-      <div className="flex flex-col gap-6">
-        <h2 id="layers-heading" className="home-reveal text-2xl font-semibold tracking-tight break-keep">
-          {copy.layersHeading}
-        </h2>
-        <p className="home-reveal max-w-[40ch] text-[17px] leading-relaxed break-keep">{copy.layersIntro}</p>
-        <div className="home-reveal flex flex-col gap-1">
-          <p className="text-sm text-fd-muted-foreground">↑ {copy.layersStrong}</p>
-          <ol className="flex flex-col">
-            {copy.layers.map((item, index) => (
-              <li key={item.name}>
-                <button
-                  type="button"
-                  aria-pressed={index === picked}
-                  onClick={() => setPicked(index)}
-                  onPointerEnter={() => setPicked(index)}
-                  onFocus={() => setPicked(index)}
-                  className="group -mx-3 grid w-[calc(100%+1.5rem)] grid-cols-[3.5rem_1fr] items-baseline gap-x-4 rounded-md px-3 py-3 text-left transition-colors hover:bg-fd-card aria-pressed:bg-fd-card"
-                >
-                  <span
-                    className="h-2 -translate-y-px justify-self-end rounded-full bg-fd-muted-foreground/60 transition-colors group-aria-pressed:bg-brand"
-                    style={{ width: `${(copy.layers.length - index) * 0.5 + 0.5}rem` }}
-                    aria-hidden
-                  />
-                  <span className="flex flex-col gap-0.5">
-                    <span className="text-[17px] font-semibold">{item.name}</span>
-                    <span className="text-[15px] text-fd-muted-foreground break-keep">{item.body}</span>
-                  </span>
-                </button>
-                {index === picked ? <Session lines={item.example} className="mt-2 mb-3 bg-fd-card lg:hidden" /> : null}
-              </li>
-            ))}
-          </ol>
-          <p className="text-sm text-fd-muted-foreground">↓ {copy.layersWeak}</p>
-        </div>
-      </div>
-      {layer ? (
-        <div className="hidden lg:block" aria-hidden>
-          <div data-ui key={layer.name} className="home-swap sticky top-24 flex min-h-[24rem] flex-col gap-4 rounded-md bg-fd-card p-6">
-            <p className="text-sm text-fd-muted-foreground">
-              {layer.name} · {layer.source}
-            </p>
-            <Session lines={layer.example} className="!text-[15px]" />
-          </div>
-        </div>
-      ) : null}
-    </section>
-  );
-};
-
-/** A push as the hwip app shows it: the session it came from, the question and its buttons. */
+/** A push as the hwip app shows it on a lock screen. */
 const Phone = ({ phone }: { phone: HomePhone }) => (
-  <div className="mx-auto flex w-full max-w-[18rem] flex-col rounded-[2rem] bg-fd-foreground p-3">
-    <div className="flex min-h-[26rem] flex-col gap-3 rounded-[1.5rem] bg-fd-background p-4 pt-10">
-      <div className="flex flex-col gap-3 rounded-xl bg-fd-card p-4">
-        <p className="text-[13px] text-fd-muted-foreground">hwip · {phone.app}</p>
-        <p className="text-[15px] leading-snug font-semibold break-keep">{phone.question}</p>
+  <div className="mx-auto w-full max-w-[15rem] rounded-t-[1.75rem] bg-fd-foreground px-2.5 pt-2.5">
+    <div className="flex min-h-[11rem] flex-col justify-end rounded-t-[1.25rem] bg-fd-background p-3">
+      <div className="flex flex-col gap-2.5 rounded-xl bg-fd-card p-3">
+        <p className="text-[12px] text-fd-muted-foreground">hwip · {phone.app}</p>
+        <p className="text-[14px] leading-snug font-semibold break-keep">{phone.question}</p>
         <div className="grid grid-cols-2 gap-2">
           {phone.actions.map((action, index) => (
             <span
               key={action}
-              className={`rounded-md px-2 py-2 text-center text-[13px] font-semibold ${index === 0 ? 'bg-brand text-fd-background' : 'bg-fd-secondary'}`}
+              className={`rounded-md px-2 py-1.5 text-center text-[12px] font-semibold ${index === 0 ? 'bg-brand text-fd-background' : 'bg-fd-secondary'}`}
             >
               {action}
             </span>
@@ -173,151 +94,86 @@ const Phone = ({ phone }: { phone: HomePhone }) => (
   </div>
 );
 
-const SceneFragment = ({ scene, className = '' }: { scene: HomeScene; className?: string }) =>
-  scene.phone ? <Phone phone={scene.phone} /> : <Session lines={scene.session} className={className} />;
+const SectionHead = ({ id, heading, children }: { id: string; heading: string; children?: ReactNode }) => (
+  <div className="home-reveal flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+    <h2 id={id} className="text-2xl font-semibold tracking-tight break-keep">
+      {heading}
+    </h2>
+    {children}
+  </div>
+);
 
-/** A working day; the scene nearest the viewport's middle drives the pinned fragment. */
-const Scenes = ({ heading, scenes }: { heading: string; scenes: readonly HomeScene[] }) => {
-  const [active, setActive] = useState(0);
-  const steps = useRef<(HTMLLIElement | null)[]>([]);
+const WorkCard = ({ work }: { work: HomeWork }) => (
+  <li data-ui className="home-reveal flex flex-col justify-between gap-5 overflow-hidden rounded-md bg-fd-card p-5 pb-0">
+    <div className="flex flex-col gap-1">
+      <code className="font-mono text-[15px] font-semibold">{work.name}</code>
+      <p className="text-[17px] leading-snug break-keep">{work.line}</p>
+    </div>
+    {work.phone ? <Phone phone={work.phone} /> : <Session lines={work.session} className="mb-5 min-h-[11rem]" />}
+  </li>
+);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) setActive(steps.current.findIndex((step) => step === entry.target));
-        }
-      },
-      { rootMargin: '-45% 0px -45% 0px' },
-    );
-    for (const step of steps.current) if (step) observer.observe(step);
-    return () => observer.disconnect();
-  }, []);
+/** The enforcement ladder, strongest layer first; the picked layer shows its real example. */
+const Layers = ({ copy, docsHref }: { copy: HomeCopy; docsHref: string }) => {
+  const [picked, setPicked] = useState(0);
+  const layer = copy.layers[picked];
 
   return (
-    <section aria-labelledby="scenes-heading" className="home-frame grid gap-x-16 pt-32 lg:grid-cols-2">
-      <div className="flex flex-col">
-        <h2 id="scenes-heading" className="home-reveal text-2xl font-semibold tracking-tight">
-          {heading}
-        </h2>
-        <ol className="flex flex-col">
-          {scenes.map((scene, index) => (
-            <li
-              key={scene.statement}
-              ref={(node) => {
-                steps.current[index] = node;
-              }}
-              data-active={index === active}
-              className="home-step flex flex-col justify-center gap-3 py-10 lg:min-h-[42vh]"
-            >
-              <p className="text-2xl font-semibold tracking-tight break-keep">{scene.statement}</p>
-              <p className="max-w-md text-[17px] leading-relaxed break-keep">{scene.body}</p>
-              <div className="mt-3 lg:hidden">
-                <SceneFragment scene={scene} className="bg-fd-card" />
-              </div>
-            </li>
-          ))}
-        </ol>
-      </div>
-      <div className="hidden lg:block" aria-hidden>
-        <div data-ui className="sticky top-[calc(50vh-12rem)] grid min-h-[24rem] content-center rounded-md bg-fd-card p-6">
-          {scenes.map((scene, index) => (
-            <div key={scene.statement} className={`home-state grid content-center [grid-area:1/1] ${index === active ? 'opacity-100' : 'opacity-0'}`}>
-              <SceneFragment scene={scene} className="min-h-[20rem] !text-[15px]" />
+    <section aria-labelledby="layers-heading" className="home-frame flex flex-col gap-8 pt-32">
+      <SectionHead id="layers-heading" heading={copy.layersHeading}>
+        <Link to={`${docsHref}/principles`} className="home-link text-[15px] font-medium">
+          <span>{copy.principlesLink}</span>
+          <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
+        </Link>
+      </SectionHead>
+      <div className="grid gap-x-12 gap-y-6 lg:grid-cols-2">
+        <div className="home-reveal flex flex-col gap-2">
+          <p className="text-[15px] text-fd-muted-foreground">{copy.layersLede}</p>
+          <ol className="flex flex-col">
+            {copy.layers.map((item, index) => (
+              <li key={item.name}>
+                <button
+                  type="button"
+                  aria-pressed={index === picked}
+                  onClick={() => setPicked(index)}
+                  onPointerEnter={() => setPicked(index)}
+                  onFocus={() => setPicked(index)}
+                  className="group grid w-full grid-cols-[3.5rem_7rem_1fr] items-baseline gap-x-4 rounded-md px-3 py-3 text-left transition-colors hover:bg-fd-card aria-pressed:bg-fd-card"
+                >
+                  <span
+                    className="h-2 -translate-y-px justify-self-end rounded-full bg-fd-muted-foreground/60 transition-colors group-aria-pressed:bg-brand"
+                    style={{ width: `${(copy.layers.length - index) * 0.5 + 0.5}rem` }}
+                    aria-hidden
+                  />
+                  <span className="text-[17px] font-semibold">{item.name}</span>
+                  <span className="text-[15px] text-fd-muted-foreground break-keep">{item.body}</span>
+                </button>
+                {index === picked ? <Session lines={item.example} className="mt-2 mb-3 bg-fd-card lg:hidden" /> : null}
+              </li>
+            ))}
+          </ol>
+        </div>
+        {layer ? (
+          <div className="hidden lg:block" aria-hidden>
+            <div data-ui key={layer.name} className="home-swap flex h-full min-h-[22rem] flex-col gap-3 rounded-md bg-fd-card p-6">
+              <p className="text-sm text-fd-muted-foreground">{layer.source}</p>
+              <Session lines={layer.example} className="!text-[15px]" />
             </div>
-          ))}
-        </div>
+          </div>
+        ) : null}
       </div>
     </section>
   );
 };
 
-/**
- * The guide index: rows on the left, and beside them the page a row opens, shown as the docs
- * show it (description and section headings) for the row last pointed at or focused.
- */
-const Guides = ({
-  heading,
-  groups,
-  docsHref,
-  outlines,
-}: {
-  heading: string;
-  groups: readonly (HomeGuideGroup & { guides: readonly HomeGuide[] })[];
-  docsHref: string;
-  outlines: Record<string, GuideOutline>;
-}) => {
-  const first = groups[0]?.guides[0];
-  const [shown, setShown] = useState(first?.slug ?? '');
-  const guide = groups.flatMap((group) => group.guides).find((item) => item.slug === shown) ?? first;
-  const outline = guide ? outlines[guide.slug] : undefined;
+const ExternalMark = ({ label }: { label: string }) => (
+  <>
+    <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
+    <span className="sr-only">{label}</span>
+  </>
+);
 
-  return (
-    <section id="guides" aria-labelledby="guides-heading" className="home-frame grid scroll-mt-20 gap-x-16 gap-y-10 pt-32 lg:grid-cols-2">
-      <div className="flex flex-col gap-10">
-        <h2 id="guides-heading" className="home-reveal text-2xl font-semibold tracking-tight">
-          {heading}
-        </h2>
-        {groups.map((group) => (
-          <div key={group.id} className="home-reveal flex flex-col gap-2">
-            <h3 className="text-[15px] text-fd-muted-foreground">{group.heading}</h3>
-            <ul className="flex flex-col">
-              {group.guides.map((item) => {
-                const updated = outlines[item.slug]?.updated;
-                return (
-                  <li key={item.slug}>
-                    <Link
-                      data-guide={item.slug}
-                      data-shown={item.slug === guide?.slug}
-                      to={`${docsHref}/${item.slug}`}
-                      onPointerEnter={() => setShown(item.slug)}
-                      onFocus={() => setShown(item.slug)}
-                      className="group -mx-3 grid grid-cols-[1fr_auto] items-baseline gap-x-6 rounded-md px-3 py-3 transition-colors hover:bg-fd-card lg:data-[shown=true]:bg-fd-card"
-                    >
-                      <span className="flex items-baseline gap-2.5">
-                        <span
-                          className="size-2 shrink-0 -translate-y-px rounded-full bg-fd-muted-foreground/60 transition-colors group-hover:bg-brand"
-                          aria-hidden
-                        />
-                        <span className="flex flex-col gap-0.5">
-                          <span className="text-[17px] font-semibold">{item.title}</span>
-                          <span className="text-[15px] text-fd-muted-foreground break-keep">{item.blurb}</span>
-                        </span>
-                      </span>
-                      {updated ? (
-                        <time dateTime={updated} className="text-sm tabular-nums text-fd-muted-foreground">
-                          {updated}
-                        </time>
-                      ) : null}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        ))}
-      </div>
-      {guide && outline ? (
-        <div className="hidden lg:block" aria-hidden>
-          <div data-ui key={guide.slug} className="home-swap sticky top-24 flex flex-col gap-5 rounded-md bg-fd-card p-8">
-            <p className="text-sm text-fd-muted-foreground">
-              {docsHref}/{guide.slug}
-            </p>
-            <p className="text-2xl font-semibold tracking-tight">{guide.title}</p>
-            <p className="text-[15px] leading-relaxed text-fd-muted-foreground break-keep">{outline.description}</p>
-            <ul className="flex flex-col gap-2 rounded-md bg-fd-background p-5 text-[15px]">
-              {outline.headings.map((title) => (
-                <li key={title} className="break-keep">
-                  {title}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      ) : null}
-    </section>
-  );
-};
+const external = (link: { href: string }) => (link.href.startsWith('http') ? { rel: 'noreferrer noopener', target: '_blank' } : {});
 
 /** Elements below the fold rise in once as they enter; anything already on screen is left alone. */
 const useReveal = () => {
@@ -349,19 +205,16 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
   const copy = homeCopy(loaderData.lang);
   const docsHref = localizedDocsHref(loaderData.lang);
   const guides = copy.guides.filter((guide) => loaderData.publishedGuides.includes(guide.slug));
-  const groups = copy.guideGroups
-    .map((group) => ({ ...group, guides: guides.filter((guide) => guide.group === group.id) }))
-    .filter((group) => group.guides.length > 0);
   useReveal();
 
   return (
     <HomeLayout {...baseOptions({ lang: loaderData.lang })}>
       <section id={HOME_CONTENT_ID} className="grid lg:min-h-[66svh] lg:grid-cols-2">
         <div className="home-frame flex flex-col justify-end gap-6 py-14 lg:pr-12 lg:pb-16">
-          <h1 className="home-rise max-w-[18ch] text-[clamp(2rem,3.2vw,2.75rem)] leading-[1.1] font-semibold tracking-tight break-keep">
+          <h1 className="home-rise max-w-[18ch] text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.08] font-semibold tracking-tight break-keep">
             {copy.headline}
           </h1>
-          <p className="home-rise max-w-[44ch] text-[17px] leading-relaxed break-keep [--i:1]">{copy.lede}</p>
+          <p className="home-rise max-w-[40ch] text-[17px] leading-relaxed break-keep [--i:1]">{copy.lede}</p>
           <ul className="home-rise flex flex-wrap gap-2 [--i:2]">
             {copy.tools.map((tool) => (
               <li key={tool.name} className="rounded-sm bg-fd-card px-2.5 py-1 text-sm">
@@ -370,16 +223,16 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
             ))}
           </ul>
           <div className="home-rise flex flex-wrap items-center gap-x-6 gap-y-3 [--i:3]">
-            <Link
-              to={`${docsHref}/principles`}
+            <a
+              href="#guides"
               className="home-press inline-flex items-center gap-2 rounded-sm bg-brand px-4 py-2.5 text-[15px] font-semibold text-fd-background hover:bg-fd-foreground hover:text-fd-background"
             >
               {copy.primaryCta}
               <ArrowRight className="size-4" strokeWidth={1.75} aria-hidden />
-            </Link>
-            <a href="#guides" className="home-link text-[15px] font-medium">
-              <span>{copy.allGuides}</span>
-              <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
+            </a>
+            <a href={GITHUB_URL} rel="noreferrer noopener" target="_blank" className="home-link text-[15px] font-medium">
+              <span>GitHub</span>
+              <ExternalMark label={copy.newTabLabel} />
             </a>
           </div>
         </div>
@@ -388,125 +241,100 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
             <div data-ui className="rounded-md bg-fd-background">
               <Session lines={copy.heroSession} className="min-h-[13rem]" />
             </div>
-            <figcaption className="text-[15px] text-fd-muted-foreground break-keep">{copy.heroCaption}</figcaption>
+            <figcaption className="text-[15px] text-fd-muted-foreground">{copy.heroCaption}</figcaption>
           </figure>
         </div>
       </section>
 
-      <Layers copy={copy} />
-
-      <Scenes heading={copy.scenesHeading} scenes={copy.scenes} />
-
-      <section aria-labelledby="principles-heading" className="home-frame flex flex-col gap-10 pt-32">
-        <div className="flex flex-wrap items-baseline justify-between gap-4">
-          <h2 id="principles-heading" className="home-reveal text-2xl font-semibold tracking-tight break-keep">
-            {copy.principlesHeading}
-          </h2>
-          <Link to={`${docsHref}/principles`} className="home-reveal home-link text-[15px] font-medium">
-            <span>{copy.principlesLink}</span>
-            <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
-          </Link>
-        </div>
-        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {copy.principles.map((principle) => (
-            <li key={principle.title} className="home-reveal flex flex-col gap-3 rounded-md bg-fd-card p-6">
-              <p className="text-[19px] font-semibold tracking-tight break-keep">{principle.title}</p>
-              <p className="text-base leading-relaxed break-keep">{principle.body}</p>
-            </li>
+      <section aria-labelledby="work-heading" className="home-frame flex flex-col gap-8 pt-32">
+        <SectionHead id="work-heading" heading={copy.workHeading} />
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {copy.work.map((work) => (
+            <WorkCard key={work.name} work={work} />
           ))}
         </ul>
       </section>
 
-      <section aria-labelledby="try-heading" className="home-frame grid gap-x-16 gap-y-8 pt-32 lg:grid-cols-2">
-        <div className="flex flex-col gap-4">
-          <h2 id="try-heading" className="home-reveal text-2xl font-semibold tracking-tight break-keep">
-            {copy.tryHeading}
-          </h2>
-          <p className="home-reveal text-[17px] leading-relaxed break-keep">{copy.tryIntro}</p>
-        </div>
-        <ol className="flex flex-col gap-6">
-          {copy.trySteps.map((step, index) => (
-            <li key={step} className="home-reveal grid grid-cols-[2.5rem_1fr] items-baseline">
-              <span className="text-2xl font-semibold tabular-nums text-brand">{index + 1}</span>
-              <span className="text-[19px] leading-snug tracking-tight break-keep">{step}</span>
-            </li>
-          ))}
-        </ol>
-      </section>
+      <Layers copy={copy} docsHref={docsHref} />
 
-      {groups.length > 0 ? (
-        <Guides heading={copy.guidesHeading} groups={groups} docsHref={docsHref} outlines={loaderData.outlines} />
+      {guides.length > 0 ? (
+        <section id="guides" aria-labelledby="guides-heading" className="home-frame flex scroll-mt-20 flex-col gap-8 pt-32">
+          <SectionHead id="guides-heading" heading={copy.guidesHeading} />
+          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {guides.map((guide) => {
+              const updated = loaderData.updated[guide.slug];
+              return (
+                <li key={guide.slug} className="home-reveal">
+                  <Link
+                    to={`${docsHref}/${guide.slug}`}
+                    className="group flex h-full min-h-[9rem] flex-col justify-between gap-6 rounded-md bg-fd-card p-5 transition-colors hover:bg-fd-accent"
+                  >
+                    <span className="flex flex-col gap-1">
+                      <span className="flex items-center justify-between gap-2 text-[19px] font-semibold tracking-tight">
+                        {guide.title}
+                        <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" strokeWidth={1.5} aria-hidden />
+                      </span>
+                      <span className="text-[15px] text-fd-muted-foreground break-keep">{guide.blurb}</span>
+                    </span>
+                    {updated ? (
+                      <time dateTime={updated} className="text-sm tabular-nums text-fd-muted-foreground">
+                        {updated}
+                      </time>
+                    ) : null}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
       ) : null}
 
       <div className="mt-32 bg-fd-card">
-      <section aria-labelledby="about-heading" className="home-frame grid gap-x-16 gap-y-12 pt-24 lg:grid-cols-[10rem_1fr]">
-        <h2 id="about-heading" className="home-reveal text-2xl font-semibold tracking-tight lg:col-span-2">
-          {copy.aboutHeading}
-        </h2>
-        <dl className="home-reveal grid grid-cols-3 gap-4 text-[15px] lg:grid-cols-1 lg:content-start">
-          {copy.facts.map((fact) => (
-            <div key={fact.label} className="flex flex-col">
-              <dt className="text-fd-muted-foreground">{fact.label}</dt>
-              <dd>{fact.value}</dd>
-            </div>
-          ))}
-        </dl>
-        <div className="flex flex-col gap-14">
-          <p className="home-reveal max-w-[40ch] text-[19px] leading-snug tracking-tight break-keep sm:text-2xl">{copy.bio}</p>
-          <div className="grid gap-10 sm:grid-cols-2 sm:gap-16">
-            {copy.recordGroups.map((group) => (
-              <div key={group.word} className="home-reveal flex flex-col gap-1 text-[15px]">
-                <h3 className="pb-1 text-fd-muted-foreground">{group.word}</h3>
-                {group.records.map((record) => {
-                  const className = '-mx-2 flex items-baseline justify-between gap-4 rounded-sm px-2 py-1.5 transition-colors hover:bg-fd-background';
-                  const value = <span className="text-fd-muted-foreground">{record.value}</span>;
-                  if (record.guide) {
-                    return (
-                      <Link key={record.name} to={`${docsHref}/${record.href}`} className={className}>
-                        <span>{record.name}</span>
-                        {value}
-                      </Link>
-                    );
-                  }
-                  const external = record.href.startsWith('http');
-                  return (
-                    <a
-                      key={record.name}
-                      href={record.href}
-                      className={className}
-                      {...(external ? { rel: 'noreferrer noopener', target: '_blank' } : {})}
-                    >
-                      <span className="inline-flex items-center gap-1">
-                        {record.name}
-                        {external ? (
-                          <>
-                            <ArrowUpRight className="size-3.5" strokeWidth={1.5} aria-hidden />
-                            <span className="sr-only">{copy.newTabLabel}</span>
-                          </>
-                        ) : null}
-                      </span>
-                      {value}
-                    </a>
-                  );
-                })}
-              </div>
+        <section aria-labelledby="built-heading" className="home-frame flex flex-col gap-8 pt-24">
+          <SectionHead id="built-heading" heading={copy.builtHeading} />
+          <ul className="grid gap-4 sm:grid-cols-2">
+            {copy.built.map((item) => (
+              <li key={item.name} className="home-reveal">
+                <a
+                  href={item.href}
+                  {...external(item)}
+                  className="flex h-full flex-col gap-2 rounded-md bg-fd-background p-6 transition-colors hover:bg-fd-accent"
+                >
+                  <span className="flex items-center gap-1.5 text-2xl font-semibold tracking-tight">
+                    {item.name}
+                    <ExternalMark label={copy.newTabLabel} />
+                  </span>
+                  <span className="text-[17px] break-keep">{item.line}</span>
+                </a>
+              </li>
             ))}
+          </ul>
+          <div className="home-reveal flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3 text-[15px]">
+            <p className="text-fd-muted-foreground">{copy.about}</p>
+            <ul className="flex flex-wrap gap-x-6 gap-y-1">
+              {copy.links.map((link) => (
+                <li key={link.name}>
+                  <a href={link.href} {...external(link)} className="home-link font-medium">
+                    <span>{link.name}</span>
+                    {link.href.startsWith('http') ? <ExternalMark label={copy.newTabLabel} /> : null}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <footer className="home-frame grid gap-2 pt-24 pb-8 text-sm sm:grid-cols-[1fr_auto_1fr] sm:items-baseline sm:gap-6">
-        <span className="text-fd-muted-foreground">{copy.footerWhat}</span>
-        <span className="flex flex-wrap gap-x-6 gap-y-1">
-          <a href={`${REPO_URL}/blob/main/LICENSE`} className="inline-block py-1 underline-offset-4 hover:underline">
-            {copy.codeLicense}
-          </a>
-          <a href={`${REPO_URL}/blob/main/LICENSE-CONTENT`} className="inline-block py-1 underline-offset-4 hover:underline">
-            {copy.contentLicense}
-          </a>
-        </span>
-        <span className="text-fd-muted-foreground sm:text-right">© 2026 tak-bro</span>
-      </footer>
+        <footer className="home-frame flex flex-wrap justify-between gap-x-6 gap-y-2 pt-24 pb-8 text-sm text-fd-muted-foreground">
+          <span className="flex flex-wrap gap-x-6 gap-y-1">
+            <a href={`${REPO_URL}/blob/main/LICENSE`} className="inline-block py-1 underline-offset-4 hover:underline">
+              {copy.codeLicense}
+            </a>
+            <a href={`${REPO_URL}/blob/main/LICENSE-CONTENT`} className="inline-block py-1 underline-offset-4 hover:underline">
+              {copy.contentLicense}
+            </a>
+          </span>
+          <span className="py-1">© 2026 tak-bro</span>
+        </footer>
       </div>
     </HomeLayout>
   );

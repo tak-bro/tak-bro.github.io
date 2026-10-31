@@ -53,11 +53,6 @@ html > body[data-scroll-locked] {
   .home-frame {
     padding-inline: 2.5rem;
   }
-
-  /* The statement away from the middle steps back to the soft ink, which still reads at 4.5:1. */
-  .home-step[data-active='false'] {
-    color: var(--color-fd-muted-foreground);
-  }
 }
 
 .home-link {
@@ -123,15 +118,6 @@ html > body[data-scroll-locked] {
 
   .home-press:active {
     scale: 0.97;
-  }
-
-  .home-step {
-    transition: color 0.5s var(--ease-out-expo);
-  }
-
-  /* The pinned session crossfades between stages. */
-  .home-state {
-    transition: opacity 0.6s var(--ease-out-expo);
   }
 
   .home-rise {
