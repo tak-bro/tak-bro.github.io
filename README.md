@@ -24,6 +24,8 @@ pnpm check
 
 It runs, in order: sensitive pattern scan, guide check, typecheck, tests, production build, internal link check, and required files check. The last line it prints is `check: ok`. CI runs the same command on every pull request.
 
+- **Deploy.** A push to `main` runs `.github/workflows/deploy.yml` (not `ci.yml`): the same `pnpm check`, then `build/client` goes to GitHub Pages (source: GitHub Actions). A red check never deploys. The workflow can also be run by hand.
+
 - **Required files.** `/assets/resume.pdf`, `/assets/resume_eng.pdf`, `404.html`, and `index.html` must be in the build. The resume URLs are linked from outside the site.
 - **Guides.** `scripts/check-guides.mjs` reads every Korean guide in `content/docs` (prose, and the `label`/`alt` text of JSX tags) and fails on a sentence, heading, list item or table cell that ends in the plain `-다` form; the site speaks 해요체. It also requires the Korean and English page of each guide to draw the same number of diagrams (components named `…Diagram`), at least one except on the introduction. `node scripts/check-guides.mjs <slug> --min N` checks one guide.
 - **Sensitive patterns.** `content/`, `public/`, and `app/` must not contain a work email or account, a local home path, or a credential. Binary files are skipped. Exceptions go in `config/sensitive-allow.json`.

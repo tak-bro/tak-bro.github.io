@@ -1,9 +1,8 @@
 name: CI
 
+# Pushes to main are gated by deploy.yml, which runs the same check before it publishes.
 on:
   pull_request:
-  push:
-    branches: [main]
 
 permissions:
   contents: read

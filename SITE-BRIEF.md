@@ -57,7 +57,7 @@ nav = 이력서 · GitHub(`app/lib/layout.shared.tsx`, 테스트 `app/lib/__test
 **스택·빌드**
 - React Router 7 + fumadocs, 전부 prerender 하는 정적 사이트, GitHub Pages. Tailwind 4, Pretendard.
 - 완료 판정 = `pnpm check` 마지막 줄 `check: ok`(sensitive → 가이드 해요체·다이어그램 → typecheck → test → build → 링크·이미지 → 필수 파일).
-- 배포(Pages)는 사용자가 정한다. 작업은 draft PR 까지.
+- 배포: `main` 에 push 하면 `.github/workflows/deploy.yml` 이 `pnpm check` 를 통과한 `build/client` 를 GitHub Pages 에 올린다(Pages 소스 = GitHub Actions). 옛 Jekyll 사이트는 `master` 에 기록으로 남는다.
 
 **내용**
 - 현재 회사·고객 이름을 넣지 않는다. `pnpm check:sensitive` 에 예외를 더하지 말고 내용을 고친다. 첫 직장 GE Healthcare(2015–2017, 공개 이력서에 있음)는 써도 된다(2026-11-01 사용자 "2015년부터 ge 다닌것도 어필해야").
