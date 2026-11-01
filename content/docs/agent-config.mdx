@@ -34,17 +34,7 @@ description: Claude Code·pi·opencode 세 하네스가 레포 하나의 규칙�
 
 <HookGateDiagram />
 
-실제로 막힌 기록이에요. 이 사이트의 가이드 개편을 커밋할 때, 에이전트가 만든 메시지 끝에 AI 공동 저자 줄이 붙어 있었어요. 공유 규칙에는 그 줄을 달지 말라고 적혀 있지만, 하네스의 기본 안내는 달라고 해요. 두 지시가 같은 컨텍스트에 있으면 모델은 어느 쪽이든 따를 수 있어요. 그래서 `commit-convention.py` 훅이 막아요.
-
-```text title="git commit — 줄여 옮김"
-$ git commit -m "feat(site): refocus the site on the guides…"
-[commit-convention] 커밋 차단 — AI co-author 트레일러
-  줄: Co-Authored-By: Claude …
-$ git commit -m "feat(site): refocus the site on the guides…"
-c53c335 feat(site): refocus the site on the guides and add a principles guide
-```
-
-첫 시도는 훅이 막았고, 에이전트가 이유를 읽고 트레일러를 뺀 두 번째 시도가 `c53c335` 로 들어갔어요. 규칙은 모델이 메시지를 쓰기 전에 읽고, 훅은 그래도 틀린 시도를 잡는 안전망이에요.
+규칙은 모델이 일하기 전에 읽고, 훅은 그래도 틀린 시도를 잡는 안전망이에요.
 
 훅은 명령 한 줄로 판정할 수 있는 것만 막아요. "PR 은 draft 까지 열고, 머지는 요청에 '머지까지'가 있을 때만 한다"처럼 명령으로 판정할 수 없는 것은 규칙으로만 남아요.
 
@@ -71,7 +61,7 @@ Claude Code `settings.json` 에 걸어 둔 훅 중 주요한 것이에요.
 | 이벤트 | 훅 | 하는 일 |
 |---|---|---|
 | PreToolUse (Bash·Monitor) | `deny-dangerous.sh` | 되돌릴 수 없는 명령을 막아요(아래 차단 목록). 훅 우회 플래그 `git commit --no-verify` 도 막아요 |
-| PreToolUse (Bash·Monitor) | `commit-convention.py` | Conventional Commits 형식이 아니거나 AI 공동 저자 트레일러가 있는 커밋을 막아요 |
+| PreToolUse (Bash·Monitor) | `commit-convention.py` | Conventional Commits 형식이 아닌 커밋을 막아요 |
 | PreToolUse (Bash) | `worktree-guard.py` | `origin` 이 있는 원본 체크아웃에서 `git checkout -b`·`git switch -c` 로 브랜치를 만드는 것을 막아요. worktree 와 서브에이전트는 통과해요 |
 | PreToolUse (Bash) | `rtk-guarded.sh` | 명령을 출력이 짧은 형태로 바꾸고, 바뀐 명령을 차단 목록으로 다시 검사해요 |
 | PreToolUse (Read·Bash) | `read-guard.sh` | 아주 큰 파일을 통째로 읽는 것을 막아요. 범위를 준 읽기와 서브에이전트는 통과해요 |

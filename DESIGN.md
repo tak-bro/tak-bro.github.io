@@ -10,15 +10,17 @@ Scope: the home route (`app/routes/home.tsx`, copy in `app/lib/home-copy.ts`, th
 the title at `clamp(2rem, 3.5vw, 2.75rem)`, semibold, and one muted 17px line under it, then the primary button back
 home and a text link to the guides, centred in the viewport. The docs keep the fumadocs layout. The skip link sits in
 `app/root.tsx` on every page (it must come before the nav) and jumps to `#content`, or to fumadocs' `#nd-page` on the
-docs.
+docs. The language menu in the nav and the docs sidebar (`app/components/language-select.tsx`, a wrapper on
+fumadocs' own) closes the moment a language is picked (2026-11-01, the user: "언어 선택시 바로 툴팁 사라지게 해").
 
 The site is React Router 7, prerendered, with no motion library (no GSAP, no Lenis).
 
 ## Concept
 
 ```
-Idea:        A terminal opens Claude Code and replays the real agent session that rebuilt this site.
-Material:    Real output: `hwip cc`, the request, and lines picked from that session.
+Idea:        A terminal opens Claude Code and plays a typical /orch run, from request to draft PR.
+Material:    Claude Code's own marks and the workflow's real steps (plan, slice review, verify, ship) on an
+             illustrative task (2026-11-01, the user: "꼭 내가 했던걸로 하지말고, 그럴싸한걸로 하자").
 Motion verb: type. Every line types out, like the old env-tak page: commands at a person's pace, the agent's lines faster, a spinner in a line's slot until it starts.
 Live thing:  The terminal, once, when it scrolls into view.
 At rest:     Still. After the session the input box shows a caret that blinks four times and stays lit.
@@ -32,17 +34,16 @@ At rest:     Still. After the session the input box shows a caret that blinks fo
   keylines `#393b3b` (N9), muted text `#aca693` (U9). Light keeps the charcoal ink `#171718` on a neutral grey after
   the set's cool grey 2M, because the set's own cream read too creamy (the user: "라이트테마일때가 별로네 너무
   크리미함"): ground `#f6f6f5`, field `#ebecea`, raised `#e2e3e1`, keylines `#c6c9c7` (2M), muted text `#5e6060`.
-  The field tone is the terminal panel, the footer and the outline button's hover; muted text is the note under the
-  terminal, the footer's licence line and icons at rest, and the terminal's secondary output. One accent, the set's
+  The field tone is the terminal panel and the footer; muted text is the footer's licence line and icons at rest, and the terminal's secondary output. One accent, the set's
   salmon (3C): `--color-brand-fill` `#c87e74` fills the primary button with `--color-on-brand` `#171718` text
   (5.7:1); `--color-brand` draws text, lines and rings — `#9c4f45` in light mode (the fill is under 3:1 as text on
   grey), `#c87e74` in dark: the nav underline, focus rings, diagram highlights, and inside the terminal the prompt and
   Claude Code's own marks. The home uses no error tone.
 - Type: Pretendard Variable everywhere on the page. System mono (with Pretendard after it for Hangul) appears only
-  inside the terminal, because it is real command output; the docs use it for code. Sizes: the name (the h1)
+  inside the terminal, because it is command output; the docs use it for code. Sizes: the name (the h1)
   `clamp(3rem, 5.6vw, 5.25rem)`, bold, line height 0.98, tracking -0.04em, balanced; the lede
   `clamp(1.0625rem, 1.3vw, 1.1875rem)` at most 40ch, one line ("a developer into building software with AI agents"; 2026-11-01, the user: "소개문구는 그냥 개발자고 ai agentic 개발하는데 관심있다 이정도" — the history is in the resume, one click away, as on the old site); buttons and the footer name 15px;
-  the note under the terminal and the licence line 14px; terminal text 12.5px on a phone and 13.5px from `sm`.
+  the licence line 14px; terminal text 12.5px on a phone and 13.5px from `sm`.
   Korean words break whole (`keep-all`). The name on the page is "Tak" alone in both languages (2026-11-01, the user:
   "(진형탁) 이거 없애 그냥 Tak 만"); the full name stays in the document title and description for search.
 - Frame: `.home-frame` is the nav's frame: as wide as fumadocs' layout width (`--fd-layout-width`, 1400px), centred,
@@ -50,14 +51,15 @@ At rest:     Still. After the session the input box shows a caret that blinks fo
   viewport, so the footer sits on the bottom edge on a tall or wide screen. From `lg` a 12-column grid with a 40px
   column gap: the hero (name, lede, actions) takes columns 1 to 5, centred against the terminal, which takes columns
   6 to 12 (a full-width terminal under a header row was tried and rejected, 2026-11-01: "레이아웃은 아까가 더 나아").
-  The home lists no guides (2026-11-01, the user: "셋업 가이드가 앞에 있어야 하나"): the nav's one link, "Tak's config",
-  leads there (the resume and GitHub live only in the hero; the docs sidebar carries no nav links). Below `lg`
+  The home lists no guides (2026-11-01, the user: "셋업 가이드가 앞에 있어야 하나"): the hero's one button, "Tak's
+  config", leads there, and the nav carries the resume and GitHub (2026-11-01, the user: "Config 버튼을 대표로 주고
+  네브에 이력서 깃허브를 추가할까"; visitors mostly arrive from the resume, so the guides are what is new to them). The
+  docs sidebar carries no nav links ("이력서, 깃허브 쌩뚱맞고"). Below `lg`
   one column with 48px between blocks, hero then terminal.
 - Rhythm: the hero starts 48px under the nav (64px from `lg`). The footer is the only field band: 96px above it
   (128px from `lg`), 24px inside top and bottom.
 - Shape: radius 4px on buttons, footer icon links and the request line; 6px on the terminal panel and the Claude Code
-  header box. Keylines in the border tone only: the terminal panel, the outline button and
-  the terminal's input box. No shadows, no gradients (the nav underline is a one-colour fill sized as a line), no glow,
+  header box. Keylines in the border tone only: the terminal panel and the terminal's input box. No shadows, no gradients (the nav underline is a one-colour fill sized as a line), no glow,
   no window-chrome dots, no eyebrows or index numbers.
 - Motion: one ease `cubic-bezier(0.16, 1, 0.3, 1)`. The name, lede and actions rise in on load by transform
   only (0.5em, 0.9s, 80ms apart), so the first screen paints on the first frame; the terminal does not rise, it plays.
@@ -65,7 +67,7 @@ At rest:     Still. After the session the input box shows a caret that blinks fo
   `prefers-reduced-motion: no-preference`, and under reduced motion every transition is 0s too, the fumadocs nav and
   sidebar included. The terminal never plays under reduced motion.
 - Buttons: the primary is brand on the background colour, 15px semibold, at least 44px tall, and turns to the ink
-  colour on hover. The second action is the same size in outline (border tone) and takes the field tone on hover.
+  colour on hover. The hero has only this one, an internal link to the guides with a right arrow.
 - Hover: footer icons take the ink colour on the accent tone; 404 text links darken their underline and nudge the
   arrow 3px; nav links draw an accent underline. The terminal has no links.
 - Diagrams: the home loads none. Guide figures live in `app/components/diagrams/`, are bound to the MDX components in
@@ -78,14 +80,14 @@ At rest:     Still. After the session the input box shows a caret that blinks fo
 HERO (cols 1-5, centred)          |  TERMINAL (cols 6-12)
   name (h1, display size)         |    panel: hwip cc, Claude Code header, request, six session lines,
   lede                            |      input box
-  Resume (brand) ↗  GitHub (outline) ↗   note: lines picked from the session that rebuilt this site
+  Tak's config (brand) →
 FOOTER    field, one row: "© · licences" | icon links (LinkedIn, GitHub, site source)
 ```
 
 The footer links are 44px icon squares, muted at rest; each carries its name as `title` and a screen-reader label
 plus "opens in a new tab". LinkedIn and GitHub are Simple Icons marks (lucide has no brand icons); the site source
 is lucide `CodeXml`. The footer repeats nothing the page already shows: no name (the nav logo and the h1 carry it), no
-resume (the hero button), no hwip (2026-11-01, the user: "푸터에 쓸데없는거 많지않아? hwip.app은 빼자").
+resume (the nav), no hwip (2026-11-01, the user: "푸터에 쓸데없는거 많지않아? hwip.app은 빼자").
 
 ## Terminal
 
@@ -99,10 +101,10 @@ The one live thing on the home, `app/components/home-terminal.tsx`, styled by th
 - Content, top to bottom, every line in the prerendered HTML:
   1. `tak ~ $ hwip cc` (Claude Code started through hwip) with the prompt in the accent, then the Claude Code header: a box keylined in the accent at 60%, `✻` in the accent, "Claude
      Code" in semibold and the working directory muted.
-  2. The request the user typed (`/orch …`, per language), behind a `>` on a faint ink tint (7%).
-  3. Six session lines from that run, from plan to draft PR, all in the ink and muted tones. A `say` line is `⏺`
+  2. The request (`/orch …`, per language: refresh an expired token on its own), behind a `>` on a faint ink tint (7%).
+  3. Six session lines, from plan to draft PR, all in the ink and muted tones. A `say` line is `⏺`
      and the agent's text. A `tool` line is `⏺` and the call in semibold, with its result lines under it, the first
-     behind `⎿`, muted. The questions the user answered (what stays in the nav, how the diagrams are drawn) show as
+     behind `⎿`, muted. The questions the user answered (what happens when the refresh fails, how parallel requests wait) show as
      Claude Code shows them: "User answered Claude's questions:" and one `· question → answer` line each. Lines wrap
      on a phone.
   4. An empty input box (border tone) with a `>` and a resting caret.
@@ -124,7 +126,7 @@ The one live thing on the home, `app/components/home-terminal.tsx`, styled by th
 ## Checks
 
 - `pnpm check`: sensitive words, guides (해요체 and diagram pairs, `scripts/check-guides.mjs`), types, tests (home
-  loader guides, copy symmetry, Korean home tone, diagrams, resume per language, nav), build, links and required
+  loader guides, copy symmetry, Korean home tone, diagrams, nav links and resume per language), build, links and required
   files.
 - `node .claude/20261031/site-ui-rebuild/hero-qa.mjs` (build served on :4400): first screen and footer at 1440 and
   390 in Korean and 1440 in English, and page errors. `full-qa.mjs`: full pages after scrolling, overflow, and a

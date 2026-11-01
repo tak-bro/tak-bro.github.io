@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { HomeCopy } from '../lib/home-copy';
 
 /**
- * The home's terminal: `hwip cc` opens Claude Code, then the request that rebuilt this site and the session's own lines.
+ * The home's terminal: `hwip cc` opens Claude Code, then a request and an illustrative /orch run from plan to draft PR.
  * It plays once when it scrolls into view, typed like the old env-tak page: commands type at a person's
  * pace, the agent's lines type out faster after them, and a spinner holds a line's slot until it starts.
  *
@@ -155,7 +155,7 @@ export const HomeTerminal = ({ copy }: { readonly copy: HomeCopy }) => {
           </span>
           <span className="font-semibold">Claude Code</span>
         </p>
-        <p className="text-fd-muted-foreground">~/workspace/tak-bro/tak-bro.github.io</p>
+        <p className="text-fd-muted-foreground">~/workspace/web-app</p>
       </div>
 
       <p className="home-term-user mt-4 flex gap-2 rounded-sm px-2 py-1 break-keep" {...step(script.request)}>

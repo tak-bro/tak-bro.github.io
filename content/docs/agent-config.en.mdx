@@ -34,17 +34,7 @@ The model can break a rule. What must not happen is blocked by a hook. A hook is
 
 <HookGateDiagram />
 
-Here is one that was blocked. While committing this site's guide rework, the agent's message ended with an AI co-author line. My shared rules say not to add that line, but the harness's default instructions ask for it. With both in the same context, the model can follow either. So the `commit-convention.py` hook blocks it.
-
-```text title="git commit — shortened"
-$ git commit -m "feat(site): refocus the site on the guides…"
-[commit-convention] 커밋 차단 — AI co-author 트레일러
-  줄: Co-Authored-By: Claude …
-$ git commit -m "feat(site): refocus the site on the guides…"
-c53c335 feat(site): refocus the site on the guides and add a principles guide
-```
-
-The hook blocked the first try ("commit blocked — AI co-author trailer"); the agent read the reason, dropped the trailer, and the second try went in as `c53c335`. The model reads the rule before it writes the message; the hook is the safety net that catches a wrong try anyway.
+The model reads the rules before it works; the hook is the safety net that catches a wrong try anyway.
 
 A hook blocks only what one command can decide. "Open the PR as a draft, and merge only when the request says to merge" cannot be decided from a command, so it stays a rule only.
 
@@ -71,7 +61,7 @@ These are the main hooks set in Claude Code's `settings.json`.
 | Event | Hook | What it does |
 |---|---|---|
 | PreToolUse (Bash, Monitor) | `deny-dangerous.sh` | Blocks commands that cannot be undone (see the denylist below). Also blocks the hook bypass flag `git commit --no-verify` |
-| PreToolUse (Bash, Monitor) | `commit-convention.py` | Blocks a commit that is not in Conventional Commits format or has an AI co-author trailer |
+| PreToolUse (Bash, Monitor) | `commit-convention.py` | Blocks a commit that is not in Conventional Commits format |
 | PreToolUse (Bash) | `worktree-guard.py` | Blocks creating a branch with `git checkout -b` or `git switch -c` in the original checkout of a repo with an `origin`. Worktrees and subagents pass |
 | PreToolUse (Bash) | `rtk-guarded.sh` | Rewrites a command into a form with shorter output, then checks the rewritten command against the denylist again |
 | PreToolUse (Read, Bash) | `read-guard.sh` | Blocks reading a very large file whole. Reads with a range and subagents pass |

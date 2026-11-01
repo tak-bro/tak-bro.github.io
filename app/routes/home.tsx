@@ -1,10 +1,11 @@
 import { HomeLayout } from 'fumadocs-ui/layouts/home';
-import { ArrowUpRight, CodeXml } from 'lucide-react';
+import { ArrowRight, CodeXml } from 'lucide-react';
+import { Link } from 'react-router';
 import type { ReactNode } from 'react';
 import type { Route } from './+types/home';
 import { HomeTerminal } from '../components/home-terminal';
 import { primaryButton } from '../components/page-header';
-import { baseOptions, CONTENT_ID, GITHUB_URL, homeCopy, localeFromPath, requestPath, resumeHref, type HomeLink } from '../lib';
+import { baseOptions, CONTENT_ID, GITHUB_URL, GUIDES_LABEL, homeCopy, localeFromPath, localizedDocsHref, requestPath, type HomeLink } from '../lib';
 
 export const meta = ({ location }: Route.MetaArgs) => {
   const copy = homeCopy(localeFromPath(location.pathname));
@@ -21,13 +22,6 @@ export const meta = ({ location }: Route.MetaArgs) => {
 const REPO_URL = `${GITHUB_URL}/tak-bro.github.io`;
 
 export const loader = ({ request }: Route.LoaderArgs) => ({ lang: localeFromPath(requestPath(request)) });
-
-const ExternalMark = ({ label }: { label: string }) => (
-  <>
-    <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
-    <span className="sr-only">{label}</span>
-  </>
-);
 
 /** Brand marks lucide does not carry (Simple Icons paths, 24×24). */
 const BrandMark = ({ d }: { d: string }) => (
@@ -47,10 +41,6 @@ const LINK_ICONS: Record<HomeLink['icon'], ReactNode> = {
   source: <CodeXml className="size-5" strokeWidth={1.5} aria-hidden />,
 };
 
-/** The second action beside the brand button: the same size, drawn in the border tone. */
-const outlineButton =
-  'home-press inline-flex min-h-11 items-center gap-2 rounded-sm border border-fd-border px-4 py-2.5 text-[15px] font-semibold hover:bg-fd-card';
-
 const Home = ({ loaderData }: Route.ComponentProps) => {
   const { lang } = loaderData;
   const copy = homeCopy(lang);
@@ -65,20 +55,12 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
           <p className="home-rise max-w-[40ch] text-[clamp(1.0625rem,1.3vw,1.1875rem)] leading-relaxed text-pretty break-keep [--i:1]">
             {copy.lede}
           </p>
-          <ul className="home-rise flex flex-wrap gap-3 [--i:2]">
-            <li>
-              <a href={resumeHref(lang)} rel="noreferrer noopener" target="_blank" className={`${primaryButton} min-h-11`}>
-                <span>{copy.resumeLabel}</span>
-                <ExternalMark label={copy.newTabLabel} />
-              </a>
-            </li>
-            <li>
-              <a href={GITHUB_URL} rel="noreferrer noopener" target="_blank" className={outlineButton}>
-                <span>GitHub</span>
-                <ExternalMark label={copy.newTabLabel} />
-              </a>
-            </li>
-          </ul>
+          <p className="home-rise [--i:2]">
+            <Link to={localizedDocsHref(lang)} className={`${primaryButton} min-h-11`}>
+              {GUIDES_LABEL}
+              <ArrowRight className="size-4" strokeWidth={1.75} aria-hidden />
+            </Link>
+          </p>
         </div>
 
         <section aria-labelledby="terminal-heading" className="lg:col-span-7">
@@ -86,7 +68,6 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
             {copy.terminalLabel}
           </h2>
           <HomeTerminal copy={copy} />
-          <p className="mt-3 text-sm text-fd-muted-foreground break-keep">{copy.logNote}</p>
         </section>
       </section>
 

@@ -1,4 +1,6 @@
 export const APP_NAME = 'Tak';
+/** The guides' name in the hero button and on the 404, the same in both languages. */
+export const GUIDES_LABEL = "Tak's config";
 export const GITHUB_URL = 'https://github.com/tak-bro';
 export const LINKEDIN_URL = 'https://www.linkedin.com/in/hyungtak/';
 /** The resume in each language. */

@@ -1,9 +1,12 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
-import { i18n, localizedDocsHref } from './i18n';
-import { APP_NAME } from './shared';
+import { languageSelectSlot } from '../components/language-select';
+import { i18n, localized as byLang, resumeHref } from './i18n';
+import { APP_NAME, GITHUB_URL } from './shared';
+
+const RESUME_LABELS: Record<string, string> = { ko: '이력서', en: 'Resume' };
 
 interface LayoutOptions {
-  /** The page's language, for the guides link. */
+  /** The page's language, for the resume link. */
   readonly lang?: string;
   /** False on a page with no translation to switch to (a 404 outside the homes and docs). */
   readonly localized?: boolean;
@@ -20,6 +23,10 @@ export const baseOptions = ({ lang = i18n.defaultLanguage, localized = true }: L
       </>
     ),
   },
-  links: [{ text: "Tak's config", url: localizedDocsHref(lang) }],
+  links: [
+    { text: byLang(RESUME_LABELS, lang), url: resumeHref(lang), external: true },
+    { text: 'GitHub', url: GITHUB_URL, external: true },
+  ],
   i18n: localized ? i18n : false,
+  slots: { languageSelect: languageSelectSlot },
 });

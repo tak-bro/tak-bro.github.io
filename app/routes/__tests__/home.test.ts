@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { plainEndings } from '../../../scripts/korean-tone.mjs';
-import { homeCopy, resumeHref } from '../../lib';
+import { homeCopy } from '../../lib';
 import { loader } from '../home';
 
 type LoaderArgs = Parameters<typeof loader>[0];
@@ -27,11 +27,6 @@ describe('home copy', () => {
   it('carries the same session and links in the same order in both languages', () => {
     expect(shape('ko').session).toHaveLength(6);
     expect(shape('en')).toEqual(shape('ko'));
-  });
-
-  it('points the resume link at the page language', () => {
-    expect(resumeHref('ko')).toBe('/assets/resume.pdf');
-    expect(resumeHref('en')).toBe('/assets/resume_eng.pdf');
   });
 });
 

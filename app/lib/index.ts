@@ -13,6 +13,7 @@ export {
   DOCS_ROUTE,
   DOCS_ROUTE_ID_PREFIX,
   GITHUB_URL,
+  GUIDES_LABEL,
   pageTitle,
 } from './shared';
 export { canonicalUrl, IS_PROD, ogLocale, SITE_URL } from './site';

@@ -19,7 +19,7 @@ Two audiences, weighted equally (confirmed 2026-11-01):
 
 A personal site of setup guides for coding-agent harnesses, written by the person who uses them every day. Success on
 the home: a visitor leaves **remembering the person** — who he is and what he builds — and goes on to the resume or
-GitHub (confirmed 2026-11-01). The guides are where the detail lives.
+GitHub (confirmed 2026-11-01). The guides are where the detail lives, and the hero's one button leads there.
 
 ## Positioning
 
@@ -34,7 +34,7 @@ config repositories, so nothing is general advice dressed up as experience.
   opencode and pi with his own rules, hooks and skills.
 - Guides (7 pairs, ko and en): introduction, principles, agent config, workflow, knowledge loop, plugins and MCP,
   Herdr and keymaps (one page since 2026-11-01).
-- Visitors arrive from the resume (PDF behind the home's first button), LinkedIn, GitHub and search.
+- Visitors arrive from the resume (PDF in the nav), LinkedIn, GitHub and search.
 
 ## Capabilities and Constraints
 

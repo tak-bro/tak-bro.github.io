@@ -58,7 +58,7 @@ const Content = ({ path, slugs, lang }: { path: string; slugs: string[]; lang: s
 const DocsRoute = ({ loaderData }: Route.ComponentProps) => {
   const { pageTree, path, slugs, lang } = useFumadocsLoader(loaderData);
 
-  // baseOptions' one link targets the docs, the page you are on.
+  // The docs sidebar keeps to the guides: no resume or GitHub links.
   return (
     <DocsLayout {...baseOptions({ lang })} links={[]} tree={pageTree}>
       <Content path={path} slugs={slugs} lang={lang} />

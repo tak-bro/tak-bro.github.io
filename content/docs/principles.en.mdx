@@ -13,7 +13,7 @@ A sentence like "never do this" is forgotten once the context grows long; struct
 |---|---|---|
 | No permission | The tool is never given | The explorer agent (`claude/agents/explorer.md`) has no Edit or Write |
 | Hard block | `settings.json` deny and ask | Editing `CLAUDE.md`, `RULES.md`, `CONTEXT.md` or `AGENTS.md` needs approval |
-| Conditional block | A hook exits 2 | Dangerous commands, force pushes to protected branches, `--no-verify`, AI co-author trailers, broken Conventional Commits |
+| Conditional block | A hook exits 2 | Dangerous commands, force pushes to protected branches, `--no-verify`, broken Conventional Commits |
 | Owned verdict | Gates and deterministic verifiers | A slice passes = tests green + review PASS |
 | Injection and isolation | SessionStart hook, forked context | Commits and the branch go back in after a compact; reviews run in a separate context |
 | Request | `CLAUDE.md` | Guidance only. When a line has to hold, it moves up a layer |

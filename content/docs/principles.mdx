@@ -13,7 +13,7 @@ description: 에이전트 설정 전체를 받치는 원칙 — 규칙은 부탁
 |---|---|---|
 | 권한 없음 | 도구를 아예 주지 않아요 | 탐색 에이전트(`claude/agents/explorer.md`)에는 Edit·Write 가 없어요 |
 | 하드 차단 | `settings.json` 의 deny·ask | `CLAUDE.md`·`RULES.md`·`CONTEXT.md`·`AGENTS.md` 편집은 승인을 거쳐요 |
-| 조건부 차단 | 훅이 exit 2 로 막아요 | 위험한 명령, 보호 브랜치 force push, `--no-verify`, AI 공동저자 트레일러, Conventional Commits 위반 |
+| 조건부 차단 | 훅이 exit 2 로 막아요 | 위험한 명령, 보호 브랜치 force push, `--no-verify`, Conventional Commits 위반 |
 | 판정 소유 | 게이트와 결정적 verifier | 슬라이스 통과 = 테스트 green + 리뷰 PASS |
 | 주입·격리 | SessionStart 훅, fork 컨텍스트 | compact 뒤에 커밋·브랜치를 다시 넣고, 리뷰는 분리된 컨텍스트에서 돌아요 |
 | 부탁 | `CLAUDE.md` | 가이드일 뿐이에요. 꼭 지켜야 하면 위층으로 올려요 |
