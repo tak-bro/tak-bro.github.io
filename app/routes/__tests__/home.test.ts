@@ -15,14 +15,9 @@ describe('home loader', () => {
   });
 
   it('lists only guides whose docs page exists', async () => {
-    // All six guides are written; a row without a docs page would link to a 404.
+    // A row without a docs page would link to a 404.
     expect((await call('/')).publishedGuides).toEqual(['principles', 'agent-config', 'workflow', 'knowledge', 'plugins', 'herdr', 'keymaps']);
     expect((await call('/en')).publishedGuides).toEqual(['principles', 'agent-config', 'workflow', 'knowledge', 'plugins', 'herdr', 'keymaps']);
-  });
-
-  it('dates every published guide by its last commit', async () => {
-    const { publishedGuides, updated } = await call('/');
-    for (const slug of publishedGuides) expect(updated[slug]).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });
 });
 

@@ -5,7 +5,7 @@
 
 ## Product Overview
 **One-liner:** 코딩 에이전트 하네스를 어떻게 만들고 쓰는지 정리한 가이드. Tak(진형탁)의 개인 사이트.
-**What it does:** Claude Code·opencode·pi 에 붙인 규칙·훅·스킬과 그 설정을 셋업 가이드로 보인다. 홈은 이름·주제 한 줄("코딩 에이전트 하네스를 만들고 쓰는 법")·가이드 목록·개요 다이어그램 하나이고, 실제 출력(훅이 막은 커밋, 플랜 Outcome)과 나머지 다이어그램은 가이드에 있다.
+**What it does:** Claude Code·opencode·pi 에 붙인 규칙·훅·스킬과 그 설정을 셋업 가이드로 보인다. 홈은 이름·두 문장 소개·가이드 목록과, 이 사이트를 고친 실제 Claude Code 세션을 재생하는 터미널이고, 설정의 근거와 다이어그램은 가이드에 있다.
 **Product category:** 개인 사이트(셋업 가이드). 채용 포트폴리오가 아니다. 채용 맥락은 nav 의 이력서와 푸터의 LinkedIn 이 맡는다.
 **Product type:** 정적 개인 사이트(GitHub Pages, ko/en).
 **Business model:** 없음.
