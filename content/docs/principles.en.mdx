@@ -3,7 +3,7 @@ title: Principles
 description: The principles under my whole agent setup — enforce rules with structure instead of requests, give a criterion that can be checked first, let the model fill in only the verdict, and fix a mistake in the layer that caused it.
 ---
 
-The other guides cover what I set up and how. This one covers why. The principles come from the design notes (`docs/SKILL-PHILOSOPHY.md`, `docs/HARNESS-ENGINEERING.md`, `docs/MODEL-ERA-AUDIT.md`) and working principles (`skills/_shared/principles/`) in the [agent config](./agent-config.mdx) repo, and from the incident log I keep for each rule (`docs/RULES-EVIDENCE.md`).
+The other guides cover what I set up and how. This one covers why. The principles come from the design notes (`claude/docs/SKILL-PHILOSOPHY.md`, `HARNESS-ENGINEERING.md`, `MODEL-ERA-AUDIT.md`) and working principles (`claude/skills/_shared/principles/`) in the [agent config](./agent-config.mdx) repo, and from the incident log I keep for each rule (`claude/docs/RULES-EVIDENCE.md`).
 
 ## Structure, not requests
 
@@ -11,7 +11,7 @@ A sentence like "never do this" is forgotten once the context grows long; struct
 
 | Layer | How | Example |
 |---|---|---|
-| No permission | The tool is never given | The explorer agent (`agents/explorer.md`) has no Edit or Write |
+| No permission | The tool is never given | The explorer agent (`claude/agents/explorer.md`) has no Edit or Write |
 | Hard block | `settings.json` deny and ask | Editing `CLAUDE.md`, `RULES.md`, `CONTEXT.md` or `AGENTS.md` needs approval |
 | Conditional block | A hook exits 2 | Dangerous commands, force pushes to protected branches, `--no-verify`, AI co-author trailers, broken Conventional Commits |
 | Owned verdict | Gates and deterministic verifiers | A slice passes = tests green + review PASS |
@@ -20,7 +20,10 @@ A sentence like "never do this" is forgotten once the context grows long; struct
 
 Where a permission cannot stop something, a verifier checks afterwards. A subagent with write access gets a list of allowed paths, and when it returns, `git diff --name-only` reverts any file outside that list. "Only touch your own folder" written as a sentence is not a verifier.
 
-Bash blocking lives in one guard hook. A `settings.json` deny matches by prefix, so it misses chained commands like `cd x && <command>`. And a deny added only to the repo copy never reached the live settings, so it blocked nothing.
+Bash blocking lives in one guard hook, for two reasons.
+
+1. A `settings.json` deny matches by prefix, so it misses chained commands like `cd x && <command>`.
+2. The live `~/.claude/settings.json` is not a symlink to the repo copy. A deny added only to the repo never reached the live settings, so it blocked nothing; the hook did the blocking.
 
 ## A command instead of "done"
 
@@ -36,20 +39,24 @@ For larger tasks the plan file's Acceptance Contract extends that line. Each cri
 2. **Freeze** — when implementation starts, the criteria are fixed by a hash. Changing one means refreezing with a reason, and the review reads that reason.
 3. **Self-assess** — the implementing model fills in only the verdict columns (status and evidence). Evidence is the command it actually ran plus the one output line the verdict rests on. "I checked" or "it is implemented" is not a pass; it is unverified. A check that ran but never hit its target (0 tests collected, a case skipped by a filter) is not a pass either.
 
+<ContractFlowDiagram />
+
 A script then compares that self-report against the verification ledger. Before this format, plans listed success criteria as `- [ ]` lines. Nobody ran them, so "done" ended as the model's claim. I switched on 2026-10-15. What this stops is criteria quietly drifting. It does not stop forgery.
 
 ## The reviewer never sees the passing bar
 
 A reviewer that knows the bar aims for it. It downgrades a Critical by one level to produce a "pass". Writing "ignore the bar" in the same file is not separation. So the bar is physically removed from the reviewer's context.
 
-- The verdict rules live in a separate file that is read only after all findings are in.
-- The reviewer that produces findings is a new subagent every time. It has not seen the conversation and reads only the plan and the diff. A re-review is a new spawn.
+- The bar lives in a separate file (`GATE.md`) that only the main session reads, after all findings are in. The finder's spawn prompt does not even name it.
+- The finder that produces findings is a subagent that has not seen the conversation. It gets the plan, the diff and the repo's conventions, never earlier findings or verdicts. When the harness can call a finished subagent again, one finder takes three slices and their re-reviews, and the next slice starts a fresh one.
+
+<ReviewSplitDiagram />
 
 Reviews look along two axes: does it follow the repo's conventions (Standards), and did it build what the plan asked for (Spec fidelity). A diff with perfect conventions that builds the wrong thing still fails.
 
 ## Loops end on a deterministic check; weak criteria go to a person
 
-A fix-and-recheck loop ends only on a deterministic check such as tests, lint, or typecheck. No loop ends because the model says "looks done". If the same issue comes back twice in a row, or three rounds go by without a pass, it stops and reports.
+A fix-and-recheck loop ends only on a deterministic check such as tests, lint, or typecheck. No loop ends because the model says "looks done". If the same issue comes back twice in a row, or one slice goes three rounds without a pass, it stops and reports.
 
 Design and scope have weak criteria, so they do not go in a loop. A person decides. Instead of asking every time, the agent picks the recommended option and lists it under "Auto-decided" in the draft PR body, where I review and change it. I do the merge.
 
@@ -72,7 +79,7 @@ The test is not line count but a deletion test. If removing something leaves the
 When the same content lives in two places, the copies drift apart. Keep one source and record only the differences elsewhere.
 
 - The pipeline's shape lives in a shared contract (base), language differences in packs (react, ts, nodejs), and the calls in routers.
-- A skill that Claude Code, pi and opencode share has one English body. The Claude Code file keeps only a table of what differs per harness, such as tool names and availability. When the policy differs, the source changes, not the delta. The checker that kept two copies in sync is gone; there are no two copies left to sync.
+- A skill that Claude Code, pi and opencode share has one English body (`agent-skills/`). The Claude Code file keeps only a table of what differs per harness, such as tool names and availability. When the policy differs, the source changes, not the delta. The parity check that kept two copies in sync was deleted on 2026-10-30; there are no two copies left to sync.
 - Two documents that name each other as the source mean there is no source.
 - A skill body stays small and moves detail into references read on demand, one level deep. When a reference points to another reference, the agent reads the first part and moves on.
 
@@ -84,7 +91,7 @@ A step added for an older model is only cost once the model improves. Steps fall
 |---|---|---|
 | Making up for model limits | "one concern per pass", splitting roles | Delete or merge |
 | Double evaluation | Scoring the same thing twice | Keep one |
-| Unused decomposition | A skill no execution path points to | Delete along the reference graph |
+| Unused decomposition | A mode or role an execution path points to but that is never called | Delete along the reference graph |
 | Deterministic verifiers and structural separation | Tests, hooks, a separate reviewer | Keep; they do not depend on model ability |
 | Specs for weak implementers | Documents a cheap worker model reads | Keep while the reader is weak |
 
@@ -105,7 +112,7 @@ There are 19 short principle files, each read when its situation comes up. The r
 
 ## Sources
 
-The design notes draw on the engineering discipline in [mattpocock/skills](https://github.com/mattpocock/skills) (MIT). Most working principles are adapted from the pstack principles in [cursor/plugins](https://github.com/cursor/plugins) (MIT). The Acceptance Contract's freeze, hard thresholds, and evidence column come from Anthropic's two posts on harnesses for long-running agents and from the Claude Code best practices ("show evidence rather than asserting success").
+The design notes (`SKILL-PHILOSOPHY.md`) start from the engineering discipline in [mattpocock/skills](https://github.com/mattpocock/skills) (MIT). Fifteen of the 19 working principles are adapted from the pstack principles in [cursor/plugins](https://github.com/cursor/plugins) (MIT). The Acceptance Contract's freeze, hard thresholds, and evidence column come from Anthropic's two posts on harnesses for long-running agents and from the Claude Code best practices ("show evidence rather than asserting success").
 
 ## Check
 
