@@ -10,7 +10,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
   const copy = homeCopy(lang);
   const body = pathname.endsWith('llms-full.txt')
     ? await llmsFullTxt(lang)
-    : llmsTxt(lang, { title: copy.title, description: copy.description });
+    : llmsTxt(lang, { title: copy.name, description: copy.description });
 
   return new Response(body, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
 };

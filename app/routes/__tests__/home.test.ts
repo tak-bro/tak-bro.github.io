@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { plainEndings } from '../../../scripts/korean-tone.mjs';
 import { homeCopy } from '../../lib';
 import { loader } from '../home';
 
@@ -8,36 +9,41 @@ const call = (pathname: string) =>
   loader({ request: new Request(`https://example.test${pathname}`) } as LoaderArgs);
 
 describe('home loader', () => {
-  it('takes the language from the path', () => {
-    expect(call('/').lang).toBe('ko');
-    expect(call('/en').lang).toBe('en');
-  });
-
-  it('lists only guides whose docs page exists', () => {
-    // All five guides are written; a card without a docs page would link to a 404.
-    expect(call('/').publishedGuides).toEqual(['agent-config', 'workflow', 'plugins', 'herdr', 'keymaps']);
-    expect(call('/en').publishedGuides).toEqual(['agent-config', 'workflow', 'plugins', 'herdr', 'keymaps']);
+  it('takes the language from the path', async () => {
+    expect((await call('/')).lang).toBe('ko');
+    expect((await call('/en')).lang).toBe('en');
   });
 });
 
 describe('home copy', () => {
-  it('puts every guide in one of the two groups', () => {
-    for (const lang of ['ko', 'en']) {
-      const copy = homeCopy(lang);
-      const grouped = copy.guideGroups.flatMap((group) => copy.guides.filter((guide) => guide.group === group.id));
-      expect(grouped.map((guide) => guide.slug)).toEqual(copy.guides.map((guide) => guide.slug));
-    }
-  });
+  const shape = (lang: string) => {
+    const copy = homeCopy(lang);
+    return {
+      session: copy.session.map((line) => (line.kind === 'tool' ? [line.call, line.result.length] : 'say')),
+      links: copy.links.map((link) => [link.icon, link.href]),
+    };
+  };
 
-  it('links the resume in the page language', () => {
-    expect(homeCopy('ko').resumeHref).toBe('/assets/resume.pdf');
-    expect(homeCopy('en').resumeHref).toBe('/assets/resume_eng.pdf');
+  it('carries the same session and links in the same order in both languages', () => {
+    expect(shape('ko').session).toHaveLength(6);
+    expect(shape('en')).toEqual(shape('ko'));
   });
 });
 
 describe('home loader on a data request', () => {
-  it('reads the language the same way as for the document', () => {
-    expect(call('/en.data').lang).toBe('en');
-    expect(call('/_.data').lang).toBe('ko');
+  it('reads the language the same way as for the document', async () => {
+    expect((await call('/en.data')).lang).toBe('en');
+    expect((await call('/_.data')).lang).toBe('ko');
+  });
+});
+
+// Every string the Korean home shows, walked out of the copy object.
+const strings = (value: unknown): string[] =>
+  typeof value === 'string' ? [value] : value && typeof value === 'object' ? Object.values(value).flatMap(strings) : [];
+
+describe('Korean home copy', () => {
+  // The site speaks 해요체 (SITE-BRIEF); scripts/check-guides.mjs reads only content/docs, so the home is checked here.
+  it('ends no sentence in the plain form', () => {
+    expect(plainEndings(strings(homeCopy('ko')).join('\n'))).toEqual([]);
   });
 });

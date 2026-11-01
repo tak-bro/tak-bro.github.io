@@ -1,11 +1,29 @@
 ---
-title: Herdr
-description: Key routing and my config for herdr, the terminal workspace I run coding agents in.
+title: Herdr and keymaps
+seoTitle: "Herdr and keymaps: agent terminal and Ghostty key setup"
+description: herdr, the terminal workspace I run coding agents in, and the key settings I set in macOS, Ghostty, Karabiner, and Neovim.
 ---
 
 [herdr](https://herdr.dev) is an agent multiplexer. Like tmux it splits tabs and panes, but its sidebar also shows which agent runs in each pane and whether it is working or waiting for my answer. I start herdr inside Ghostty and run every agent session in it.
 
+<HerdrDemo label="Screen recording of herdr: splitting panes, starting Claude Code, opencode and pi, switching projects, zooming a pane and hiding the sidebar." />
+
+The captions along the bottom name the Cmd key first and the matching prefix key in brackets. The recording ran outside Ghostty, so it used the prefix keys.
+
+Most of my key settings are defaults. What I changed is the key repeat speed, automatic text correction, and where the Option and Cmd keys go in the terminal. This page lists only what is in my config files.
+
 ## How it works
+
+### A key press passes four layers
+
+A key press passes through these layers, and each one can change it.
+
+<KeyLayersDiagram />
+
+- **Karabiner-Elements** changes keys before the OS sees them. I use it only for a device setting, with no remaps.
+- **macOS** sets key repeat and text input rules. I change them with `defaults write`, and change typed characters with `~/Library/KeyBindings/DefaultkeyBinding.dict`.
+- **Ghostty** uses `keybind` to bind a key to one of its own actions, or to send a different sequence to the program running in the terminal.
+- **Neovim** reads the keys it gets through its own keymaps.
 
 ### Keys come in two ways
 
@@ -16,10 +34,7 @@ herdr shortcuts have two kinds of input.
 
 To use Cmd keys I use a Ghostty **key table**. Only while the `herdr` table is on, Ghostty turns Cmd keys into [kitty keyboard protocol](https://sw.kovidgoyal.net/kitty/keyboard-protocol/) escape sequences (`CSI <key code>;<modifiers>u`, or `CSI 1;<modifiers><A-D>` for arrow keys) and sends them to herdr. While the table is off, the same keys do what Ghostty normally does (a new tab, and so on).
 
-```text
-Cmd+T ──▶ Ghostty (herdr table on)  ──▶ CSI 116;9u ──▶ herdr: new_tab
-Cmd+T ──▶ Ghostty (table off)       ──▶ new Ghostty tab
-```
+<KeyPathDiagram />
 
 The modifier value is `1 + shift(1) + alt(2) + ctrl(4) + cmd(8)`. `Cmd` alone is `9`, and `Cmd+Shift` is `10`.
 
@@ -31,9 +46,11 @@ A key turns the table on and off by hand (`Cmd+Shift+H`), but usually a shell fu
 
 To show each pane's git branch on the second line of an agent row, I use a custom token, `$branch`. herdr does not fill this token itself. So the right side of the tab bar has a command entry that prints nothing, and it runs `pane-branch.sh` every 5 seconds. The script reads the branch of each agent pane and reports it with `herdr pane report-metadata`. The token has a 30-second TTL, so the branch disappears on its own if the script stops.
 
+<BranchTokenDiagram />
+
 ## My config
 
-### Shortcuts
+### herdr shortcuts
 
 | Action | Prefix key | Cmd key |
 |---|---|---|
@@ -69,7 +86,15 @@ The sidebar has two panels. The spaces panel on top shows projects and branches.
 
 <include lang="sh" meta='title="~/.config/herdr/pane-branch.sh"'>../snippets/dotfiles/herdr/pane-branch.sh</include>
 
-### Ghostty key table
+### Ghostty
+
+Besides the herdr key table, I set three Ghostty options for keys.
+
+| Setting | What it does |
+|---|---|
+| `keybind = super+arrow_up=scroll_page_lines:-1` | `Cmd+↑` scrolls up one line (as in iTerm) |
+| `keybind = super+arrow_down=scroll_page_lines:1` | `Cmd+↓` scrolls down one line |
+| `macos-option-as-alt = true` | The Option key sends Alt. herdr's `Alt+1..9` workspace switch depends on it |
 
 The herdr table is at the top of the file. The rest is Ghostty's own config and has nothing to do with herdr.
 
@@ -77,7 +102,7 @@ The herdr table is at the top of the file. The rest is Ghostty's own config and 
 
 ### Shell function
 
-`.zshrc` mixes in personal settings, so it is not synced. Only the herdr part is copied here. Its comments are in Korean, as in the source.
+Only the herdr function is copied here, from `zsh/.zshrc` in dotfiles. The rest of that file is shell setup unrelated to herdr, and secrets live in the untracked `~/.zshrc.local`. Its comments are in Korean, as in the source.
 
 ```zsh title="~/.zshrc"
 herdr() {
@@ -110,7 +135,70 @@ herdr() {
 }
 ```
 
+### macOS keyboard
+
+`macos-defaults.sh` in my dotfiles applies the keyboard settings in one go.
+
+- Holding a key repeats it instead of showing the accent popup (`ApplePressAndHoldEnabled false`). The repeat starts soon and runs fast (`InitialKeyRepeat 15`, `KeyRepeat 2`).
+- Automatic capitalization, smart dashes, automatic periods, smart quotes, and auto-correct are off, so typed code and commands stay as typed.
+- `Tab` moves through every control, in dialogs too (`AppleKeyboardUIMode 3`).
+- The `Cmd+Ctrl+D` dictionary popup is off.
+- On a Korean keyboard, the backtick key types `` ` `` instead of `₩`. I type backticks often in Markdown and the shell. It takes effect after a restart.
+
+```sh title="macos-defaults.sh (keyboard part)"
+# Enable full keyboard access for all controls
+# (e.g. enable Tab in modal dialogs)
+defaults write -g AppleKeyboardUIMode -int 3
+
+# Disable press-and-hold for keys in favor of key repeat
+defaults write -g ApplePressAndHoldEnabled -bool false
+
+# Set a blazingly fast keyboard repeat rate
+defaults write -g KeyRepeat -int 2
+defaults write -g InitialKeyRepeat -int 15
+
+# Disable automatic capitalization
+defaults write -g NSAutomaticCapitalizationEnabled -bool false
+
+# Disable smart dashes
+defaults write -g NSAutomaticDashSubstitutionEnabled -bool false
+
+# Disable automatic period substitution
+defaults write -g NSAutomaticPeriodSubstitutionEnabled -bool false
+
+# Disable smart quotes
+defaults write -g NSAutomaticQuoteSubstitutionEnabled -bool false
+
+# Disable auto-correct
+defaults write -g NSAutomaticSpellingCorrectionEnabled -bool false
+
+# Disable Cmd+Ctrl+D Dictionary popup
+defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 70 '<dict><key>enabled</key><false/></dict>'
+
+# Map ₩ (Won sign) to ` (Backtick) for Korean keyboards
+mkdir -p ~/Library/KeyBindings
+echo '{"₩" = ("insertText:", "`");}' > ~/Library/KeyBindings/DefaultkeyBinding.dict
+```
+
+The original script does not overwrite `DefaultkeyBinding.dict` if it already exists. That branch is left out above.
+
+### Karabiner-Elements
+
+There are no remap rules. The only setting turns off the MacBook's built-in keyboard while an external keyboard is connected (`disable_built_in_keyboard_if_exists`). This stops the built-in keys from being pressed when the external keyboard sits on top of the laptop. Three devices have this setting.
+
+The config file is not synced to this site, because it holds identifiers for my devices (vendor and product IDs, a Bluetooth address). To set this up yourself, pick the keyboard in the device list of the Karabiner-Elements settings and turn on the option that disables the built-in keyboard. The config file then records `disable_built_in_keyboard_if_exists: true`.
+
+### Neovim
+
+I use [LazyVim](https://github.com/LazyVim/LazyVim) with its default keymaps. `lua/config/keymaps.lua` has no keymaps of my own. The default keymaps are listed in [LazyVim's keymaps.lua](https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua).
+
+`settings.lua`, which loads before LazyVim, holds editing options only. One of its lines touches key input: `ttimeoutlen = 0` (do not wait for a key code after Esc). `clipboard = "unnamedplus"` makes yank, delete, and put use the system clipboard. Despite the "except yank" in its trailing comment, yank is included.
+
+<include lang="lua" meta='title="~/.config/nvim/lua/config/settings.lua"'>../snippets/dotfiles/nvim/settings.lua</include>
+
 ## Check
+
+### herdr
 
 1. Run `herdr` in Ghostty. Press `Cmd+T`. If a herdr tab opens instead of a Ghostty tab, the key table is on.
 2. Exit herdr and press `Cmd+T` again. This time a Ghostty tab must open (the table is off).
@@ -119,4 +207,17 @@ herdr() {
 
 ```sh
 herdr pane list | jq '.result.panes[] | select(.agent != null) | {pane_id, cwd: (.foreground_cwd // .cwd)}'
+```
+
+### Keyboard
+
+1. Hold `a` in any text field. If `aaaa…` repeats fast with no accent popup, the key repeat settings are on.
+2. Press the backtick key in a plain text field such as TextEdit. It must type `` ` ``, not `₩`.
+3. In Ghostty, run a command with long output and press `Cmd+↑`. The view moves up one line at a time.
+4. Read the values directly.
+
+```sh
+defaults read -g KeyRepeat          # 2
+defaults read -g InitialKeyRepeat   # 15
+defaults read -g ApplePressAndHoldEnabled  # 0
 ```

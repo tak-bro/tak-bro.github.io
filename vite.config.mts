@@ -14,7 +14,7 @@ export default defineConfig(({ command, mode }) => {
       tailwindcss(),
       reactRouter(),
       contentRouteReload({
-        contentDirs: ['docs', 'blog', 'projects'].map((dir) => `${import.meta.dirname}/content/${dir}`),
+        contentDirs: [`${import.meta.dirname}/content/docs`],
         routesFile: `${import.meta.dirname}/app/routes.ts`,
       }),
     ],

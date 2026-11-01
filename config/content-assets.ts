@@ -2,9 +2,8 @@ import { readFile, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import { listMdxFiles } from './content-files';
 
-// The forms scripts/import-jekyll.mjs writes: markdown images, quoted `src`
-// attributes, and the double-quoted frontmatter `screenshot`.
-const IMAGE_REFS = [/!\[[^\]]*]\((\/[^)\s]+)/g, /\bsrc=["'](\/[^"']+)["']/g, /^screenshot:\s*"?(\/[^"\s]+)/gm];
+// How content refers to a local image: markdown images and quoted `src` attributes.
+const IMAGE_REFS = [/!\[[^\]]*]\((\/[^)\s]+)/g, /\bsrc=["'](\/[^"']+)["']/g];
 
 const isFile = async (path: string): Promise<boolean> => (await stat(path).catch(() => undefined))?.isFile() ?? false;
 

@@ -1,5 +1,5 @@
 import { defineI18n } from 'fumadocs-core/i18n';
-import { DOCS_ROUTE } from './shared';
+import { DOCS_ROUTE, RESUME_HREF } from './shared';
 
 // `hideLocale: 'default-locale'` puts Korean at the root and English under /en.
 export const i18n = defineI18n({
@@ -56,8 +56,8 @@ export const localeFromPath = (pathname: string): string => {
 };
 
 /**
- * Whether the page at `pathname` exists in every language: the homes and docs do,
- * the blog and projects are Korean only.
+ * Whether the page at `pathname` exists in every language: the homes and docs do; any
+ * other path is not a page.
  */
 export const isLocalizedPath = (pathname: string): boolean => {
   const path = localeSwitchPath(pathname, localeFromPath(pathname), i18n.defaultLanguage);
@@ -73,7 +73,7 @@ export interface AlternateLink {
 
 /**
  * The page at `pathname` in every language, plus `x-default` naming the default-language one.
- * None for a Korean-only page, which has no translation to point at.
+ * None for a path outside the homes and docs, which has no translation to point at.
  *
  * Every localized page is prerendered in every language (config/prerender-paths.ts),
  * so the set is the same for each member, which is what keeps the references reciprocal.
@@ -90,3 +90,9 @@ export const alternateLinks = (pathname: string, currentLocale: string): Alterna
     { hreflang: 'x-default', path: defaultPath },
   ];
 };
+
+/** A per-language value, falling back to the default language's. */
+export const localized = <T,>(values: Record<string, T>, lang: string | undefined): T =>
+  values[lang ?? i18n.defaultLanguage] ?? values[i18n.defaultLanguage];
+
+export const resumeHref = (lang: string): string => localized(RESUME_HREF, lang);

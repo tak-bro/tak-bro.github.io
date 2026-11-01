@@ -35,16 +35,15 @@ describe('content assets', () => {
     await expect(missingAssets(join(siteRoot, 'content'), join(siteRoot, 'public'))).resolves.toEqual([]);
   });
 
-  it('reports markdown, src attribute, and screenshot references that are missing', async () => {
+  it('reports markdown and src attribute references that are missing', async () => {
     const root = await fixture({
-      'content/blog/a.mdx': '---\nscreenshot: "/img/shot.png"\n---\n![x](/img/here.png)\n![y](/img/gone.png)\n<img src="/img/attr.png" />\n',
+      'content/docs/a.mdx': '![x](/img/here.png)\n![y](/img/gone.png)\n<img src="/img/attr.png" />\n',
       'public/img/here.png': '',
     });
 
     await expect(missingAssets(join(root, 'content'), join(root, 'public'))).resolves.toEqual([
-      'blog/a.mdx: /img/attr.png',
-      'blog/a.mdx: /img/gone.png',
-      'blog/a.mdx: /img/shot.png',
+      'docs/a.mdx: /img/attr.png',
+      'docs/a.mdx: /img/gone.png',
     ]);
   });
 

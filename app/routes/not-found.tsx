@@ -1,37 +1,59 @@
 import { HomeLayout } from 'fumadocs-ui/layouts/home';
+import { ArrowRight } from 'lucide-react';
+import { use, useEffect } from 'react';
 import { Link, useLocation } from 'react-router';
-import { baseOptions, i18n, isLocalizedPath, localeFromPath, localizedDocsHref } from '../lib';
+import { PageHeader, primaryButton } from '../components/page-header';
+import { baseOptions, CONTENT_ID, GUIDES_LABEL, i18n, isLocalizedPath, localeFromPath, localizedDocsHref, NotFoundPathContext, takeNotFoundPath, type NotFoundHold } from '../lib';
 
-const COPY: Record<string, { title: string; body: string; back: string }> = {
-  ko: { title: '페이지를 찾을 수 없습니다', body: '주소가 바뀌었거나 없는 페이지입니다.', back: '문서로 돌아가기' },
-  en: { title: 'Not Found', body: 'This page could not be found.', back: 'Back to Docs' },
+declare global {
+  /** 404.html swaps the visitor's address for /404 so the page hydrates as rendered. */
+  interface Window extends NotFoundHold {}
+}
+
+const COPY: Record<string, { title: string; body: string; home: string }> = {
+  ko: { title: '없는 페이지예요', body: '주소가 바뀌었거나 지워졌어요.', home: '홈으로' },
+  en: { title: 'This page does not exist', body: 'The address changed or the page was removed.', home: 'Home' },
 };
 
 const notFoundCopy = (lang: string) => COPY[lang] ?? COPY[i18n.defaultLanguage];
-
-export const meta = ({ location }: { location: { pathname: string } }) => [
-  { title: notFoundCopy(localeFromPath(location.pathname)).title },
-];
 
 // Rendered from root.tsx's ErrorBoundary as well as the catch-all route, which has
 // no `lang` param, so the locale comes from the path itself.
 const NotFound = () => {
   const { pathname } = useLocation();
-  const lang = localeFromPath(pathname);
+  const { heldPath, holdPath } = use(NotFoundPathContext);
+  const path = heldPath ?? pathname;
+
+  // After hydration, put the visitor's own address back. The router stays on /404 (it matches
+  // paths case-insensitively and a host 404 like /DOCS/x must not become /docs/x); the root takes
+  // the held path for the document language and the skip link.
+  useEffect(() => {
+    const restored = takeNotFoundPath(window, window.location.origin);
+    if (!restored) return;
+    window.history.replaceState(window.history.state, '', restored);
+    holdPath(new URL(restored, window.location.origin).pathname);
+  }, [holdPath]);
+
+  const lang = localeFromPath(path);
   const copy = notFoundCopy(lang);
 
   return (
-    <HomeLayout {...baseOptions({ lang, localized: isLocalizedPath(pathname) })}>
-      <div className="p-4 flex flex-col items-center justify-center text-center flex-1">
-        <h1 className="text-xl font-bold mb-2">{copy.title}</h1>
-        <p className="text-fd-muted-foreground mb-4">{copy.body}</p>
-        <Link
-          className="text-sm bg-fd-primary text-fd-primary-foreground rounded-full font-medium px-4 py-2.5"
-          to={localizedDocsHref(lang)}
-        >
-          {copy.back}
-        </Link>
-      </div>
+    <HomeLayout {...baseOptions({ lang, localized: isLocalizedPath(path) })}>
+      <title>{copy.title}</title>
+      <section id={CONTENT_ID} className="home-frame flex flex-1 flex-col justify-center py-24">
+        <PageHeader title={copy.title} description={copy.body}>
+          <div className="mt-2 flex flex-wrap items-center gap-x-6 gap-y-3">
+            <Link to={lang === i18n.defaultLanguage ? '/' : `/${lang}`} className={`${primaryButton} min-h-11`}>
+              {copy.home}
+              <ArrowRight className="size-4" strokeWidth={1.75} aria-hidden />
+            </Link>
+            <Link to={localizedDocsHref(lang)} className="home-link text-[15px] font-medium">
+              <span>{GUIDES_LABEL}</span>
+              <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
+            </Link>
+          </div>
+        </PageHeader>
+      </section>
     </HomeLayout>
   );
 };

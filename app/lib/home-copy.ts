@@ -1,89 +1,90 @@
-import { i18n } from './i18n';
+import { localized } from './i18n';
+import { GITHUB_URL, LINKEDIN_URL } from './shared';
 
-export type HomeGuideGroupId = 'agents' | 'machine';
-
-/** One guide card: `slug` is the top-level folder under content/docs. */
-export interface HomeGuide {
-  readonly slug: string;
-  readonly group: HomeGuideGroupId;
-  readonly title: string;
-  readonly blurb: string;
+/** A footer link, drawn as its icon; `name` is its accessible name and tooltip. */
+export interface HomeLink {
+  readonly icon: 'linkedin' | 'github' | 'source';
+  readonly name: string;
+  readonly href: string;
 }
 
-export interface HomeGuideGroup {
-  readonly id: HomeGuideGroupId;
-  readonly heading: string;
-}
+/**
+ * One turn of the agent in the home's Claude Code session.
+ * `say` is a line the agent printed; `tool` is a call (`Skill(ship)`) and the lines under it.
+ */
+export type HomeSessionLine =
+  | { readonly kind: 'say'; readonly text: string }
+  | { readonly kind: 'tool'; readonly call: string; readonly result: readonly string[] };
 
 export interface HomeCopy {
-  readonly title: string;
+  readonly documentTitle: string;
   readonly description: string;
-  readonly heading: string;
-  readonly intro: string;
-  readonly docsCta: string;
-  readonly resumeLabel: string;
-  readonly resumeHref: string;
-  readonly guidesHeading: string;
-  readonly guideGroups: readonly HomeGuideGroup[];
+  /** The person's name: the page's h1 and the site name in llms.txt. */
+  readonly name: string;
+  readonly lede: string;
+  /** The terminal: its name for screen readers, the request typed into Claude Code, and the session's lines (an illustrative /orch run, not a transcript). */
+  readonly terminalLabel: string;
+  readonly request: string;
+  readonly session: readonly HomeSessionLine[];
+  readonly links: readonly HomeLink[];
   readonly codeLicense: string;
   readonly contentLicense: string;
   readonly newTabLabel: string;
-  readonly guides: readonly HomeGuide[];
+  readonly skipLabel: string;
 }
 
+const footerLinks = (source: string): HomeLink[] => [
+  { icon: 'linkedin', name: 'LinkedIn', href: LINKEDIN_URL },
+  { icon: 'github', name: 'GitHub', href: GITHUB_URL },
+  { icon: 'source', name: source, href: `${GITHUB_URL}/tak-bro.github.io` },
+];
+
 const en: HomeCopy = {
-  title: 'Tak',
-  description: 'How I set up coding agents, terminals, and keymaps, written so you can copy it.',
-  heading: 'My development setup, written down',
-  intro:
-    'Agent configuration, the workflow I run it with, plugins and MCP servers, Herdr, and keymaps. Each guide explains how a piece works, shows my config, and ends with a way to check it.',
-  docsCta: 'Read the guides',
-  resumeLabel: 'Resume',
-  resumeHref: '/assets/resume_eng.pdf',
-  guidesHeading: 'Guides',
-  guideGroups: [
-    { id: 'agents', heading: 'Coding agents' },
-    { id: 'machine', heading: 'Terminal and Mac' },
+  documentTitle: 'Tak (Hyungtak Jin) — coding-agent harnesses',
+  description:
+    'How I build coding-agent harnesses and work with them: setup guides by Tak (Hyungtak Jin).',
+  name: 'Tak',
+  lede: 'A developer into building software with AI agents.',
+  terminalLabel: 'Claude Code session',
+  request: '/orch refresh the token on its own so an expired one never logs me out',
+  session: [
+    { kind: 'say', text: 'orch: add · M · done: an expired token never forces a new login' },
+    { kind: 'tool', call: "User answered Claude's questions:", result: ['· If the refresh fails → back to the login screen', '· Parallel requests → wait on one refresh'] },
+    { kind: 'tool', call: 'Skill(01-plan)', result: ['3 slices · contract 6 rows, red before any code'] },
+    { kind: 'tool', call: 'Skill(03-review) slice 02', result: ['FAIL → PASS · one fix for a race'] },
+    { kind: 'tool', call: 'Bash(verify-check.sh --all)', result: ['6/6 green'] },
+    { kind: 'tool', call: 'Skill(ship)', result: ['committed → draft PR'] },
   ],
+  links: footerLinks('Site source'),
   codeLicense: 'Code: MIT',
   contentLicense: 'Content: CC BY 4.0',
   newTabLabel: '(opens in a new tab)',
-  guides: [
-    { slug: 'agent-config', group: 'agents', title: 'Agent config', blurb: 'Rules, hooks, and subagents for Claude Code, pi, and opencode.' },
-    { slug: 'workflow', group: 'agents', title: 'Workflow', blurb: 'How a task goes from plan to merged PR.' },
-    { slug: 'plugins', group: 'agents', title: 'Plugins and MCP', blurb: 'The Claude Code plugins and MCP servers I keep on, and why.' },
-    { slug: 'herdr', group: 'machine', title: 'Herdr', blurb: 'Terminal workspace setup and its keyboard shortcuts.' },
-    { slug: 'keymaps', group: 'machine', title: 'Keymaps', blurb: 'macOS keyboard defaults, Ghostty keys, Karabiner, and LazyVim.' },
-  ],
+  skipLabel: 'Skip to content',
 };
 
 const ko: HomeCopy = {
-  title: 'Tak',
-  description: '코딩 에이전트·터미널·키맵 설정을 그대로 가져다 쓸 수 있게 정리한 곳.',
-  heading: '내 개발 환경을 글로 남긴다',
-  intro:
-    '에이전트 설정, 그걸 굴리는 워크플로우, 플러그인·MCP, Herdr, 키맵. 가이드마다 동작 원리와 내 설정, 확인 방법을 차례로 적었다.',
-  docsCta: '가이드 읽기',
-  resumeLabel: '이력서',
-  resumeHref: '/assets/resume.pdf',
-  guidesHeading: '가이드',
-  guideGroups: [
-    { id: 'agents', heading: '코딩 에이전트' },
-    { id: 'machine', heading: '터미널과 맥' },
+  documentTitle: 'Tak(진형탁) — 코딩 에이전트 하네스',
+  description: 'Tak(진형탁)이 코딩 에이전트 하네스를 만들고 쓰는 법을 정리한 셋업 가이드예요.',
+  name: 'Tak',
+  lede: 'AI 에이전트와 함께 개발하는 데 관심 많은 개발자예요.',
+  terminalLabel: 'Claude Code 세션',
+  request: '/orch 토큰 만료돼도 로그아웃되지 않게 자동 갱신 붙여줘',
+  session: [
+    { kind: 'say', text: 'orch: add · M · 완료: 만료 토큰으로도 다시 로그인하지 않음' },
+    { kind: 'tool', call: "User answered Claude's questions:", result: ['· 갱신이 실패하면 → 로그인 화면으로', '· 동시 요청 → 갱신 한 번만 기다리게'] },
+    { kind: 'tool', call: 'Skill(01-plan)', result: ['슬라이스 3개 · 계약 6행, 구현 전 red 확인'] },
+    { kind: 'tool', call: 'Skill(03-review) slice 02', result: ['FAIL → PASS · 경합 fix 1회'] },
+    { kind: 'tool', call: 'Bash(verify-check.sh --all)', result: ['6/6 green'] },
+    { kind: 'tool', call: 'Skill(ship)', result: ['committed → draft PR'] },
   ],
+  links: footerLinks('사이트 소스'),
   codeLicense: '코드: MIT',
-  contentLicense: '글: CC BY 4.0',
+  contentLicense: '문서: CC BY 4.0',
   newTabLabel: '(새 탭)',
-  guides: [
-    { slug: 'agent-config', group: 'agents', title: '에이전트 설정', blurb: 'Claude Code·pi·opencode 의 규칙·훅·서브에이전트.' },
-    { slug: 'workflow', group: 'agents', title: '워크플로우', blurb: '작업 하나가 계획에서 머지까지 가는 길.' },
-    { slug: 'plugins', group: 'agents', title: '플러그인·MCP', blurb: '켜 두고 쓰는 Claude Code 플러그인과 MCP 서버.' },
-    { slug: 'herdr', group: 'machine', title: 'Herdr', blurb: '터미널 작업 공간 설정과 단축키.' },
-    { slug: 'keymaps', group: 'machine', title: '키맵', blurb: 'macOS 키보드 기본값·Ghostty 키·Karabiner·LazyVim.' },
-  ],
+  skipLabel: '본문으로 건너뛰기',
 };
 
 const HOME_COPY: Record<string, HomeCopy> = { en, ko };
 
 export const homeCopy = (locale: string | undefined): HomeCopy =>
-  HOME_COPY[locale ?? i18n.defaultLanguage] ?? HOME_COPY[i18n.defaultLanguage];
+  localized(HOME_COPY, locale);

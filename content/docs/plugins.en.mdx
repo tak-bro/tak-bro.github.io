@@ -1,5 +1,6 @@
 ---
 title: Plugins and MCP
+seoTitle: Claude Code plugins and MCP servers I keep on
 description: The Claude Code plugins and MCP servers I keep on, and how the install script puts the same list back.
 ---
 
@@ -21,12 +22,14 @@ Besides the rules, hooks, and skills I write myself, Claude Code also takes exte
 
 `install.sh` in dotfiles reads both lists and adds them back. Running it again skips anything already there.
 
+<RestoreListsDiagram />
+
 - **Plugins** — it reads the real `~/.claude/settings.json`. That file is copied once from the agent config repo's copy, and after that a session start hook reports any difference. It adds the marketplaces first, then installs only the entries in `enabledPlugins` that are `true`.
 - **MCP servers** — it adds only the names from `mcp-servers.json` that are not in `~/.claude.json` yet. Existing entries are left as they are. If VS Code is installed and has no `mcp.json`, it writes one from the same list.
 
 pi and opencode get only `qmd` from this list (`mcp` in `opencode.json`, and `~/.pi/agent/mcp.json`). The rest are for Claude Code only.
 
-Removing a server from the list does not unregister it, because the script only adds. So a removed server gets its own unregister command in the install script. Right now that is how the two browser-driving servers (`playwright` and `chrome-devtools`) are removed. Browser checks now go through one CLI, `agent-browser`, instead of MCP.
+Removing a server from the list does not unregister it, because the script only adds. So a removed server gets its own unregister command in the install script.
 
 ## My config
 

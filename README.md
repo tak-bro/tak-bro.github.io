@@ -1,8 +1,10 @@
 # tak-bro.github.io
 
-Source of [tak-bro.github.io](https://tak-bro.github.io): guides to my coding-agent setup, workflow, plugins and MCP servers, Herdr, and keymaps. Korean is the default language; English lives under `/en`.
+Source of [tak-bro.github.io](https://tak-bro.github.io): setup guides for coding-agent harnesses — my principles, agent config, workflow, knowledge loop, plugins and MCP servers, and Herdr and keymaps. Korean is the default language; the home and guides also live in English under `/en`.
 
 Built with [fumadocs](https://fumadocs.dev) on React Router 7 as a fully prerendered static site.
+
+The home page has its own design (concept, palette, type scale, motion) recorded in [DESIGN.md](DESIGN.md); the docs use the fumadocs layout. What the site is for, who reads it and what a redesign must keep are in [SITE-BRIEF.md](SITE-BRIEF.md).
 
 ## Develop
 
@@ -20,15 +22,21 @@ pnpm dev            # http://localhost:5175
 pnpm check
 ```
 
-It runs, in order: sensitive pattern scan, typecheck, tests, production build, internal link check, and required files check. The last line it prints is `check: ok`. CI runs the same command on every pull request.
+It runs, in order: sensitive pattern scan, guide check, typecheck, tests, production build, internal link check, and required files check. The last line it prints is `check: ok`. CI runs the same command on every pull request.
+
+- **Deploy.** A push to `main` runs `.github/workflows/deploy.yml` (not `ci.yml`): the same `pnpm check`, then `build/client` goes to GitHub Pages (source: GitHub Actions). A red check never deploys. The workflow can also be run by hand.
 
 - **Required files.** `/assets/resume.pdf`, `/assets/resume_eng.pdf`, `404.html`, and `index.html` must be in the build. The resume URLs are linked from outside the site.
+- **Guides.** `scripts/check-guides.mjs` reads every Korean guide in `content/docs` (prose, and the `label`/`alt` text of JSX tags) and fails on a sentence, heading, list item or table cell that ends in the plain `-다` form; the site speaks 해요체. It also requires the Korean and English page of each guide to draw the same number of diagrams (components named `…Diagram`), at least one except on the introduction. `node scripts/check-guides.mjs <slug> --min N` checks one guide.
 - **Sensitive patterns.** `content/`, `public/`, and `app/` must not contain a work email or account, a local home path, or a credential. Binary files are skipped. Exceptions go in `config/sensitive-allow.json`.
 
 ## Content
 
 - Docs pages live in `content/docs/`. Each page has a Korean file `x.mdx` and an English file `x.en.mdx`, and each `meta.json` has a `meta.en.json`. A test fails if either side is missing.
-- Blog posts (`content/blog/`) and projects (`content/projects/`) are Korean only. They are served at `/blog/<slug>` and `/projects/<name>`, with no English page, no hreflang, and no language switcher. They are generated from the old Jekyll repo, so do not edit them by hand. To regenerate them, run `node scripts/import-jekyll.mjs <jekyll repo>`. It also replaces `public/assets/img/blog/` and `public/assets/img/projects/` with the referenced images, and masks keys and local paths. If any output still matches a sensitive pattern, nothing is written.
+- Frontmatter needs `title` (the h1 and sidebar), `seoTitle` (the `<title>` alone, with the topic words a search needs) and `description` (160 characters at most, the frontmatter schema fails the build on a longer one).
+- Published URLs end in a slash (`/docs/herdr/`): pages are prerendered as `<path>/index.html` and GitHub Pages redirects the slashless path. `canonicalUrl` (`app/lib/site.ts`) adds it for the canonical, hreflang, `og:url`, sitemap and `llms.txt`; in-site links stay as they are.
+- Home and guides carry schema.org JSON-LD (`app/lib/structured-data.ts`): a `Person` on the home, a `TechArticle` and `BreadcrumbList` on each guide.
+- `public/og.png`, the share card, is drawn from `scripts/og/og.html`; `just og` recaptures it.
 - Config snippets in `content/snippets/` are copied from my private repos by `just sync-configs`. Only the files listed in `config/sync-allowlist.json` are copied. If any file matches a sensitive pattern, nothing is written. Docs show a snippet only through `<include>../snippets/<repo>/<path></include>`, and a test fails if an include points anywhere but an allowlisted snippet.
 
 ## License

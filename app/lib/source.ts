@@ -1,8 +1,8 @@
 import { loader } from 'fumadocs-core/source';
 import { defineDocs } from 'fumadocs-mdx/macro';
-import { blogFrontmatterSchema, frontmatterSchema, projectFrontmatterSchema } from './frontmatter';
+import { frontmatterSchema } from './frontmatter';
 import { i18n } from './i18n';
-import { BLOG_ROUTE, DOCS_ROUTE, PROJECTS_ROUTE } from './shared';
+import { DOCS_ROUTE } from './shared';
 
 export const docs = defineDocs({
   // Must stay a string literal — fumadocs-mdx resolves it at build time to
@@ -23,40 +23,3 @@ export const source = loader({
   baseUrl: DOCS_ROUTE,
   i18n,
 });
-
-export const blog = defineDocs({
-  // String literal for the same reason as `docs` above.
-  dir: 'content/blog',
-  docs: {
-    async: true,
-    schema: blogFrontmatterSchema,
-  },
-});
-
-/** Korean only, so no i18n: every post has one URL, /blog/<slug>. */
-export const blogSource = loader({
-  source: blog.toFumadocsSource(),
-  baseUrl: BLOG_ROUTE,
-});
-
-const newestFirst = <Page extends { data: { date: string } }>(pages: Page[]): Page[] =>
-  [...pages].sort((a, b) => b.data.date.localeCompare(a.data.date));
-
-export const blogPosts = () => newestFirst(blogSource.getPages());
-
-export const projects = defineDocs({
-  // String literal for the same reason as `docs` above.
-  dir: 'content/projects',
-  docs: {
-    async: true,
-    schema: projectFrontmatterSchema,
-  },
-});
-
-/** Korean only, like the blog: /projects/<name>. */
-export const projectsSource = loader({
-  source: projects.toFumadocsSource(),
-  baseUrl: PROJECTS_ROUTE,
-});
-
-export const projectPages = () => newestFirst(projectsSource.getPages());

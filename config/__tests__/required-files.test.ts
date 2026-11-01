@@ -72,11 +72,20 @@ describe('build output gates', () => {
   });
 
   describe('write-404', () => {
-    it('copies the prerendered /404 page to 404.html', async () => {
-      const tree = await buildTree({ '404/index.html': '<h1>missing</h1>' });
+    it('copies the prerendered /404 page to 404.html, holding the router at /404 until hydration', async () => {
+      const tree = await buildTree({ '404/index.html': '<html><head><title>x</title></head><h1>missing</h1></html>' });
 
       await expect(runScript('write-404.mjs', tree)).resolves.toMatchObject({ code: 0 });
-      await expect(readFile(join(tree, '404.html'), 'utf8')).resolves.toBe('<h1>missing</h1>');
+      const html = await readFile(join(tree, '404.html'), 'utf8');
+      expect(html).toMatch(/^<html><head><script>.*window\.__notFoundPath=.*replaceState\(history\.state,"","\/404"\).*<\/script><title>x<\/title>/);
+      expect(html).toContain('<h1>missing</h1>');
+    });
+
+    it('fails when the /404 page has no <head> to hold the script', async () => {
+      const result = await runScript('write-404.mjs', await buildTree({ '404/index.html': '<h1>missing</h1>' }));
+
+      expect(result.code).toBe(1);
+      expect(result.output).toContain('no <head>');
     });
 
     it('fails when /404 was not prerendered', async () => {

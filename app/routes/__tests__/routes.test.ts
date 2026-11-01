@@ -36,4 +36,11 @@ describe('routes', () => {
     expect(routeIdFor('/ko')).toBe('not-found');
     expect(routeIdFor('/nope/docs/x')).toBe('not-found');
   });
+
+  // The posts and projects were removed; their old addresses must reach the 404, not an empty page.
+  it('sends the old blog and project addresses to the 404', () => {
+    for (const path of ['/blog', '/blog/advanced-java01', '/projects', '/projects/hwip']) {
+      expect(routeIdFor(path), path).toBe('not-found');
+    }
+  });
 });

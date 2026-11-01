@@ -1,78 +1,86 @@
 ---
 title: 에이전트 설정
+seoTitle: "에이전트 설정: Claude Code·pi·opencode 규칙과 훅"
 description: Claude Code·pi·opencode 세 하네스가 레포 하나의 규칙·훅·스킬·서브에이전트를 나눠 쓰는 방식.
 ---
 
-코딩 에이전트 설정은 `agent-config` 레포 하나에 모아 둔다. Claude Code, pi, opencode 세 하네스가 이 레포를 심링크로 읽는다. 이 레포는 비공개라서 그대로 clone 할 수는 없다. 대신 설치 스크립트와 리뷰 서브에이전트 정의는 원문을 아래에 실었다. 작업 하나를 계획에서 머지까지 끌고 가는 스킬 파이프라인은 [워크플로우](./workflow.mdx) 가이드에서 따로 다룬다.
+코딩 에이전트 설정은 `agent-config` 레포 하나에 모아 둬요. Claude Code, pi, opencode 세 하네스가 이 레포를 심링크로 읽어요. 레포가 비공개라서 그대로 clone 할 수는 없어요. 대신 설치 스크립트와 리뷰 서브에이전트 정의는 원문을 아래에 실었어요. 작업 하나를 계획에서 머지까지 끌고 가는 스킬 파이프라인은 [워크플로우](./workflow.mdx) 가이드에서 따로 다뤄요.
 
 ## 동작 원리
 
-### 레포 하나를 세 하네스가 읽는다
+### 레포 하나를 세 하네스가 읽어요
 
-`install.sh` 가 레포의 각 부분을 하네스가 찾는 자리에 심링크로 건다.
+`install.sh` 가 레포의 각 부분을 하네스가 찾는 자리에 심링크로 걸어요.
 
-| 레포 | 링크되는 곳 | 쓰는 하네스 |
-|---|---|---|
-| `claude/<항목>` | `~/.claude/<항목>` | Claude Code |
-| `agent-skills/*` | `~/.agents/skills/<이름>` | 세 하네스 모두(아래) |
-| `pi/home/*` | `~/.pi/agent/*` | pi |
-| `opencode/*` | `~/.config/opencode/*` | opencode (그 디렉터리가 있을 때만) |
-| `external-skills.txt` | `~/.agents/skills/<스킬>` | 남이 만든 스킬. `npx skills add -g` 로 없는 것만 받는다 |
+<HarnessRepoDiagram />
 
-`~/.claude` 를 통째로 링크하지 않고 항목마다 링크한다. `~/.claude` 에는 Claude Code 가 직접 쓰는 머신 상태(세션 기록, 자격증명)도 있기 때문이다. 통째로 링크하면 그 상태가 레포 안으로 들어온다.
+그림에 없는 것이 둘 있어요.
 
-`settings.json`·`settings.local.json`·`config.json`·`.mcp.json` 은 링크하지 않고 없을 때 한 번만 복사한다. Claude Code 가 이 파일들을 제자리에서 고쳐 쓰기 때문이다. 대신 세션을 시작할 때 훅 하나가 레포 사본과 실제 `settings.json` 의 차이를 알려 준다.
+- `opencode/*` 링크는 `~/.config/opencode` 디렉터리가 있을 때만 걸어요.
+- 남이 만든 스킬은 `external-skills.txt` 에 적어 두고, `npx skills add -g` 로 없는 것만 받아 `~/.agents/skills` 에 둬요.
+
+`~/.claude` 를 통째로 링크하지 않고 항목마다 링크해요. `~/.claude` 에는 Claude Code 가 직접 쓰는 머신 상태(세션 기록, 자격증명)도 있어서, 통째로 링크하면 그 상태가 레포 안으로 들어와요.
+
+`settings.json`·`settings.local.json` 은 링크하지 않고, 없을 때 한 번만 복사해요. Claude Code 가 두 파일을 제자리에서 고쳐 쓰기 때문이에요. 대신 세션을 시작할 때 훅 하나가 레포 사본과 실제 `settings.json` 의 차이를 알려 줘요.
 
 ### 스킬 본문은 한 벌, 하네스 차이만 따로
 
-세 하네스가 같이 쓰는 스킬(계획, 구현, 리뷰, ship 등)의 본문은 `agent-skills/<이름>/SKILL.md` 한 곳에 영어로 쓴다. pi 와 opencode 는 이 파일을 그대로 읽는다. Claude Code 쪽 `claude/skills/<이름>/SKILL.md` 에는 "정본을 먼저 읽어라"는 줄과, Claude Code 에서 달라지는 것(툴 이름, 스킬 호출 표기, 훅 경로)만 표로 둔다. 같은 규칙을 세 번 고치지 않으려는 것이다. 정본과 차이 파일의 모양은 스크립트가 검사한다.
+세 하네스가 같이 쓰는 스킬(계획, 구현, 리뷰, ship 등)의 본문은 `agent-skills/<이름>/SKILL.md` 한 곳에 영어로 써요. pi 와 opencode 는 이 파일을 그대로 읽어요. Claude Code 쪽 `claude/skills/<이름>/SKILL.md` 에는 "정본을 먼저 읽어라"는 줄과, Claude Code 에서 달라지는 것(툴 이름, 스킬 호출 표기, 훅 경로)만 표로 둬요. 같은 규칙을 세 번 고치지 않으려는 거예요.
 
-### 규칙은 부탁하고, 훅은 막는다
+### 규칙은 부탁하고, 훅은 막아요
 
-규칙 파일은 모델이 읽는 지시다. 공유 규칙(git, 커밋 메시지, 응답 방식, 코딩 규율)은 하네스와 상관없는 파일 `RULES.md` 하나에 둔다. Claude Code 는 `CLAUDE.md` 에서 그 파일을 import 하고, opencode 는 `opencode.json` 의 `instructions` 로 같은 파일을 읽는다. pi 는 자기 시스템 프롬프트 덧붙임 파일에 같은 규칙의 요약을 둔다. 하네스마다 다른 것만 하네스별 파일에 적는다. 컨텍스트를 언제 비우고 언제 서브에이전트에게 넘길지 같은 규칙은 `rules/` 아래 파일로 나눈다.
+규칙 파일은 모델이 읽는 지시예요. 공유 규칙(git, 커밋 메시지, 응답 방식, 코딩 규율)은 하네스와 상관없는 파일 `RULES.md` 하나에 둬요. Claude Code 는 `CLAUDE.md` 에서 그 파일을 import 하고, opencode 는 `opencode.json` 의 `instructions` 로 같은 파일을 읽어요. pi 는 자기 시스템 프롬프트 덧붙임 파일에 같은 규칙을 줄여 둬요. 하네스마다 다른 것만 하네스별 파일에 적어요.
 
-규칙은 모델이 어길 수 있다. 어기면 안 되는 것은 훅으로 막는다. 훅은 툴 호출 앞뒤에 도는 스크립트다. 툴 호출 앞에 도는 훅이 exit 2 로 끝나면 그 호출은 실행되지 않는다. 예를 들어 "커밋할 작업은 원본 체크아웃이 아니라 `git worktree` 에서 한다"는 규칙에도 있고, 원본 체크아웃에서 `git checkout -b` 로 브랜치를 만드는 명령은 훅이 막는다. 반대로 "PR 은 draft 까지 열고, 머지는 요청에 '머지까지'가 있을 때만 한다"처럼 훅으로 판정할 수 없는 것은 규칙으로만 남는다.
+규칙은 모델이 어길 수 있어요. 어기면 안 되는 것은 훅으로 막아요. 훅은 툴 호출 앞뒤에 도는 스크립트예요. 툴 호출 앞에 도는 훅이 exit 2 로 끝나면 그 호출은 실행되지 않아요.
 
-### 서브에이전트는 모델을 고정한다
+<HookGateDiagram />
 
-탐색, 리뷰, 성능 분석 같은 일은 서브에이전트에게 맡긴다. 서브에이전트 정의 9개마다 `model:` 을 적어 둔다. 판정을 내리는 `reviewer` 만 `opus` 이고, 나머지 8개(탐색, 단순화, 성능, 디자인 등)는 `sonnet` 이다. 메인 세션의 모델을 바꿔도 서브에이전트 비용과 동작은 그대로다.
+규칙은 모델이 일하기 전에 읽고, 훅은 그래도 틀린 시도를 잡는 안전망이에요.
 
-부르는 쪽은 호출 한 번에 한해 이 고정값을 바꿀 수 있다. 브랜치 전체 리뷰(`/review --full`)는 `reviewer` 를 `opus` 로 한 번, 같은 지시서로 `sonnet` 으로 한 번 띄워 두 결과를 합친다. 한 모델이 놓친 결함을 다른 모델이 잡게 하려는 것이다.
+훅은 명령 한 줄로 판정할 수 있는 것만 막아요. "PR 은 draft 까지 열고, 머지는 요청에 '머지까지'가 있을 때만 한다"처럼 명령으로 판정할 수 없는 것은 규칙으로만 남아요.
+
+### 서브에이전트는 모델을 고정해요
+
+탐색, 리뷰, 성능 분석 같은 일은 서브에이전트에게 맡겨요. 서브에이전트 정의 9개마다 `model:` 을 적어 뒀어요. 판정을 내리는 `reviewer` 만 `opus` 이고, 나머지 8개(탐색, 단순화, 성능, 디자인 등)는 `sonnet` 이에요. 메인 세션의 모델을 바꿔도 서브에이전트의 비용과 동작은 그대로예요.
+
+부르는 쪽은 호출 한 번에 한해 이 고정값을 바꿀 수 있어요. 혼자 돌리는 브랜치 전체 리뷰(`/review --full`)는 같은 지시서로 `reviewer` 를 `opus` 로 한 번, `sonnet` 으로 한 번 띄워 두 결과를 합쳐요.
+
+<CrossModelReviewDiagram />
 
 ## 내 설정
 
 ### 설치 스크립트
 
-머리 주석이 링크 규칙을 요약한다. 맞게 걸린 링크는 그대로 두고, 깨진 링크는 바꾸고, 그 밖의 파일은 `<항목>.bak-<시각>` 으로 옮긴 뒤 링크한다. 그래서 다시 돌려도 안전하다. `--claude-only` 를 주면 pi·opencode 쪽을 건너뛴다. 그때는 `~/.agents/skills` 링크도 생기지 않아서, Claude Code 는 레포의 `agent-skills/` 를 직접 읽는다.
+머리 주석이 링크 규칙을 요약해요. 맞게 걸린 링크는 그대로 두고, 깨진 링크는 바꾸고, 그 밖의 파일은 `<항목>.bak-<시각>` 으로 옮긴 뒤 링크해요. 그래서 다시 돌려도 안전해요. `--claude-only` 를 주면 pi·opencode 쪽을 건너뛰어요. 그때는 `~/.agents/skills` 링크도 생기지 않아서, Claude Code 가 레포의 `agent-skills/` 를 직접 읽어요.
 
 <include lang="sh" meta='title="install.sh"'>../snippets/agent-config/install.sh</include>
 
 ### 훅
 
-Claude Code `settings.json` 에 걸어 둔 훅 중 주요한 것이다.
+Claude Code `settings.json` 에 걸어 둔 훅 중 주요한 것이에요.
 
 | 이벤트 | 훅 | 하는 일 |
 |---|---|---|
-| PreToolUse (Bash·Monitor) | `deny-dangerous.sh` | 되돌릴 수 없는 명령을 막는다(아래 차단 목록). 훅 우회 플래그 `git commit --no-verify` 도 막는다 |
-| PreToolUse (Bash·Monitor) | `commit-convention.py` | Conventional Commits 형식이 아니거나 AI 공동 저자 트레일러가 있는 커밋을 막는다 |
-| PreToolUse (Bash) | `worktree-guard.py` | `origin` 이 있는 원본 체크아웃에서 `git checkout -b`·`git switch -c` 로 브랜치를 만드는 것을 막는다. worktree 와 서브에이전트는 통과한다 |
-| PreToolUse (Bash) | `rtk-guarded.sh` | 명령을 출력이 짧은 형태로 바꾸고, 바뀐 명령을 차단 목록으로 다시 검사한다 |
-| PreToolUse (Read·Bash) | `read-guard.sh` | 아주 큰 파일을 통째로 읽는 것을 막는다. 범위를 준 읽기와 서브에이전트는 통과한다 |
-| PostToolUse | `tool-output-trim.sh` | 1 KB 가 넘는 툴 출력을 줄인다 |
-| PostToolUse·PostToolUseFailure·Stop | `completion-gate.py` | 코드를 고친 뒤 테스트·린트·타입 검사가 한 번도 통과하지 않았는데 "끝났다"고 하면 잡는다 |
-| Stop | `review-gate.py` | UX·UI 리뷰 보고가 실행 증거 없이 "리뷰 완료"라고 하면 막는다 |
-| PreCompact | `compact-gate.py` | 자동 컨텍스트 압축을 작업 단계 경계(PR 생성·머지, 슬라이스 리뷰 통과 직후 등)에서만 허용한다. 컨텍스트가 넘치기 직전이면 예외로 허용한다 |
-| SessionStart | `settings-sync.py` | 레포의 `settings.json` 과 실제 파일의 차이를 알린다. `--diff` 로 차이를 보고, `--apply` 로 실제 파일을 백업한 뒤 레포 쪽 값을 덮어쓴다 |
+| PreToolUse (Bash·Monitor) | `deny-dangerous.sh` | 되돌릴 수 없는 명령을 막아요(아래 차단 목록). 훅 우회 플래그 `git commit --no-verify` 도 막아요 |
+| PreToolUse (Bash·Monitor) | `commit-convention.py` | Conventional Commits 형식이 아닌 커밋을 막아요 |
+| PreToolUse (Bash) | `worktree-guard.py` | `origin` 이 있는 원본 체크아웃에서 `git checkout -b`·`git switch -c` 로 브랜치를 만드는 것을 막아요. worktree 와 서브에이전트는 통과해요 |
+| PreToolUse (Bash) | `rtk-guarded.sh` | 명령을 출력이 짧은 형태로 바꾸고, 바뀐 명령을 차단 목록으로 다시 검사해요 |
+| PreToolUse (Read·Bash) | `read-guard.sh` | 아주 큰 파일을 통째로 읽는 것을 막아요. 범위를 준 읽기와 서브에이전트는 통과해요 |
+| PostToolUse | `tool-output-trim.sh` | 1 KB 가 넘는 툴 출력을 줄여요 |
+| PostToolUse·PostToolUseFailure·Stop | `completion-gate.py` | 코드를 고친 뒤 테스트·린트·타입 검사가 한 번도 통과하지 않았는데 "끝났어요"라고 하면 잡아요 |
+| Stop | `review-gate.py` | UX·UI 리뷰 보고가 실행 증거 없이 "리뷰 완료"라고 하면 막아요 |
+| PreCompact | `compact-gate.py` | 자동 컨텍스트 압축을 작업 단계 경계(PR 생성·머지, 슬라이스 리뷰 통과 직후 등)에서만 허용해요 |
+| SessionStart | `settings-sync.py` | 레포의 `settings.json` 과 실제 파일의 차이를 알려요. `--diff` 로 차이를 보고, `--apply` 로 실제 파일을 백업한 뒤 레포 쪽 값을 덮어써요 |
 
-opencode 는 플러그인 하나가 같은 훅 스크립트 일부(차단 목록, 커밋 형식, 출력 줄이기 등)를 같은 입력과 exit 2 규칙으로 돌린다. pi 는 훅 사본을 자기 확장이 돌린다.
+opencode 는 플러그인 하나가 같은 훅 스크립트 일부(차단 목록, 커밋 형식, 출력 줄이기 등)를 같은 입력과 exit 2 규칙으로 돌려요. pi 는 훅 사본을 자기 확장이 돌려요.
 
 ### 명령 차단 목록
 
-`deny-dangerous.sh` 는 정규식 목록 파일 하나를 읽는다. 데이터를 잃거나 디스크를 지우거나 보호 브랜치를 덮어쓰는 것처럼 되돌릴 수 없는 명령만 막는다. `rm -rf node_modules`·`git clean` 같이 복구할 수 있는 명령은 막지 않는다. 너무 많이 막으면 에이전트를 쓸 수 없기 때문이다. 이 목록은 안전벨트이지 샌드박스가 아니다. 정규식을 피해 가는 명령까지 막지는 못한다.
+`deny-dangerous.sh` 는 정규식 목록 파일 하나를 읽어요. 데이터를 잃거나 디스크를 지우거나 보호 브랜치를 덮어쓰는 것처럼 되돌릴 수 없는 명령만 막아요. `rm -rf node_modules`·`git clean` 같이 복구할 수 있는 명령은 막지 않아요. 너무 많이 막으면 에이전트를 쓸 수 없기 때문이에요. 이 목록은 안전벨트이지 샌드박스가 아니에요. 정규식을 피해 가는 명령까지 막지는 못해요.
 
-지금 막는 범주는 이렇다.
+지금 막는 범주는 이래요.
 
-- 루트, 홈 폴더 전체, `/Users` 전체, 시스템 디렉터리 루트(`/etc`·`/Library` 등)를 겨눈 `rm`. 그 아래 파일 하나를 지우는 것은 막지 않는다
+- 루트, 홈 폴더 전체, `/Users` 전체, 시스템 디렉터리 루트(`/etc`·`/Library` 등)를 겨눈 `rm`. 그 아래 파일 하나를 지우는 것은 막지 않아요
 - 같은 삭제를 다른 모양으로 쓴 것 — `find <루트> -delete`, `python -c`·`node -e` 안의 `rmtree`·`rmSync`
 - 원시 디스크 쓰기, 포맷, 지우기
 - 포크 폭탄
@@ -80,35 +88,33 @@ opencode 는 플러그인 하나가 같은 훅 스크립트 일부(차단 목록
 - 시스템 전체의 권한·소유자 변경
 - `gh` 로 저장소 지우기(API 호출 포함), 시크릿·SSH 키·GPG 키 지우기, 저장소를 공개로 바꾸기
 
-예전에 막던 것 중 일부는 풀었다. 보호 브랜치가 아닌 브랜치의 force push(원격에 옛 커밋이 남아 되돌릴 수 있다), 인터넷에서 받은 설치 스크립트를 셸에 넘기는 것, `reflog expire` 같은 로컬 정리, `gh release delete` 다. 목록 파일은 풀어 준 이유를 주석으로 남긴다. 이 파일은 예시 주석에 로컬 경로가 들어 있어서 이 사이트에 원문을 싣지 않는다.
-
 ### 리뷰 서브에이전트
 
-`reviewer` 는 리뷰를 실행하는 서브에이전트다. 부르는 자리는 세 곳이다. 랜딩 직전 리뷰 `/review`, 슬라이스 리뷰 게이트의 파인더, `/review --full` 의 교차 모델 파인더다. 무엇을 볼지는 부르는 쪽의 지시서가 주고, 이 파일에는 실행 제약만 있다. 리뷰 대상 코드를 고치지 않고 발견 사항만 돌려준다. 통과 여부는 부른 쪽이 정한다.
+`reviewer` 는 리뷰를 실행하는 서브에이전트예요. 무엇을 볼지는 부르는 쪽의 지시서가 주고, 이 파일에는 실행 제약만 있어요. 리뷰 대상 코드를 고치지 않고 발견 사항만 돌려줘요. 통과 여부는 부른 쪽이 정해요.
 
 <include lang="text" meta='title="claude/agents/reviewer.md"'>../snippets/agent-config/agents/reviewer.md</include>
 
 ## 확인
 
-1. 바꾸지 않고 무엇이 링크될지만 본다.
+1. 바꾸지 않고 무엇이 링크될지만 봐요.
 
 ```sh
 bash install.sh --dry-run
 ```
 
-2. `~/.claude` 의 항목이 레포를 가리키는지 본다.
+2. `~/.claude` 의 항목이 레포를 가리키는지 봐요.
 
 ```sh
 ls -l ~/.claude   # hooks, agents, skills, CLAUDE.md 등이 <agent-config 체크아웃>/claude/... 를 가리킨다
 ```
 
-3. 명령 차단 훅의 회귀 테스트를 돌린다. 마지막 줄이 `failed: 0` 이어야 한다.
+3. 명령 차단 훅의 회귀 테스트를 돌려요. 마지막 줄이 `failed: 0` 으로 끝나야 해요.
 
 ```sh
 bash ~/.claude/hooks/test-guard.sh
 ```
 
-4. 레포의 `settings.json` 과 실제 파일의 차이를 본다. 같으면 `레포 소유 키 전부 일치` 한 줄이 나온다.
+4. 레포의 `settings.json` 과 실제 파일의 차이를 봐요. 같으면 `settings-sync: 레포 소유 키 전부 일치` 한 줄이 나와요.
 
 ```sh
 python3 ~/.claude/hooks/settings-sync.py --diff

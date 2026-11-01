@@ -1,5 +1,6 @@
 ---
 title: Workflow
+seoTitle: "Agent workflow: from plan to merged PR"
 description: How one task goes from plan to merge — steps by size, the plan file, and a review gate for every slice.
 ---
 
@@ -15,39 +16,60 @@ Not every task runs every step. The number of files that change sets the size, a
 |---|---|---|
 | S | 1–2 files | Implement → review → ship (for a bug, investigate first) |
 | M | 3–10 files | Explore → plan → slice loop → whole-branch review → ship |
-| L | 10+ files | M, plus a scope review before and one cleanup pass (`/simplify`) after the slice loop (as `/orch` runs it. The size table below recommends an architecture pass, `/improve-architecture`, that I pick myself) |
+| L | 10+ files | M, plus a scope review before and one cleanup pass (`/simplify`) after the slice loop |
 | XL | I don't yet know what to decide | Settle the decisions with questions first, then plan → same as L |
 
 Even with few files, a change that touches authentication, authorization, user input, DB queries, file paths, external APIs, cryptography, secrets, or a public API or contract is at least M. When the plan has 3 or more slices, or creates a new module, service, or package, one more review with an engineering lens (`/plan-eng-review`) runs after the plan. Catching slice boundaries and failure cases before any code is cheaper.
 
 With `/orch`, the agent makes this choice. Its first line declares the kind of task (add, change, fix, refine), the size, the done criterion, and the command that measures it. Then it runs the steps through to the end. If the declaration is wrong, I correct that line.
 
+<OrchChainDiagram />
+
 ### The plan is a file
 
 For M and up, the plan is written to `.claude/<date>/PLAN-<time>.md` in the repo. That file is the whole state of the task. If the session breaks or the context is compacted, the agent reads the file again and continues.
 
 - **Slice queue** — a table that splits the work into vertical slices. A slice is not one layer of the stack but a narrow path that works end to end, and it can be checked on its own. The checkboxes are the progress.
-- **Acceptance contract** — one line per done criterion, each tied to the command that measures it. Before implementing, the agent runs these commands to confirm they actually fail. A check that passes from the start measures nothing. Once implementation starts, the contract is frozen with a hash. The implementing model only fills in the pass/fail columns, and a script checks that record again at each slice review and just before ship.
+- **Acceptance contract** — one line per done criterion, each tied to the command that measures it. Before implementing, the agent runs the contract checks to confirm they actually fail. A contract check that passes from the start measures nothing. Once implementation starts, the contract is frozen with a hash, and the implementing model only fills in the pass/fail columns. Just before ship, a script checks that record against the real runs.
 
 ### Every slice passes a review gate
 
-When one slice is implemented and its checks pass, the agent starts a reviewer subagent in the same turn (for a slice that changes only doc files, `.md` or `.txt`, the main session reads the diff itself. Config files change behavior, so they get a reviewer). The reviewer does not see the main session's conversation. It reads only the plan and the diff, and returns findings. If there is a Critical or Important finding, the agent fixes it, runs the checks again, and sends it back to the same reviewer. This loop runs at most 3 times per slice. The count is kept as one line in the plan file, `- fix-loop: <slice> iteration N/3`, so it keeps counting after the context is compacted. If the same issue comes back twice in a row, or all 3 rounds are used, it stops and reports to me.
+When one slice is implemented and its checks pass, the agent starts a reviewer subagent in the same turn. The reviewer knows neither the main session's conversation nor earlier verdicts. It reads the plan, the diff and the repo's conventions, and returns findings.
+
+<SliceLoopDiagram />
+
+If there is a Critical or Important finding, the agent fixes it, runs the checks again, and sends it back to the same reviewer. This loop runs at most 3 times per slice. If the same issue comes back twice in a row, or all 3 rounds are used, it stops and reports to me.
 
 When the gate passes, the slice is committed, its box is ticked, and the agent moves on to the next slice. It does not ask me between slices.
 
 ### It stops at a draft PR
 
-With `/orch`, once the queue is empty the whole branch is reviewed once more (`/review --full`). The slice gate only sees one slice at a time, so problems that cross slices are caught here. This review starts `opus` and `sonnet` separately with the same brief and merges the two results. A finding that only one side reported is marked with the model that found it.
+With `/orch`, once the queue is empty the whole branch is reviewed once more (`/review --full`). The slice gate only sees one slice at a time, so problems that cross slices are caught here. This review starts `opus` and `sonnet` separately with the same brief and merges the two results.
 
 Then `/ship` runs the closing gate. It runs every check in the plan again and checks the PASS records in the contract. If code that draws a screen changed, it runs screen QA (a browser for web). If logic changed and no test changed with it, it has the missing tests written. Just before the commit, it writes down the decisions and lessons from this work worth keeping (`/harvest`). Then it pushes the commits and opens a draft PR. The PR body lists each contract line with its verdict and evidence.
 
-I start the merge with `/land`. It marks a draft ready, squash merges (in my personal repos), moves the base of stacked PRs, and cleans up the worktree in one go. If my request says "merge too" ("머지까지"), that phrase is the approval given in advance, so `/ship` merges right after it opens the PR. In my personal repos, when GitHub's checks could not run for a reason other than the code, a PR can be merged if the same CI steps pass locally. If the checks did run and failed because of the code, this exception is not used.
+These are the lines left in the plan's `## Outcome` on the day I handed this site's home redesign to one `/orch` run.
+
+```text title="PLAN-16-31-30.md — Outcome excerpt"
+- contract: frozen 455d2935
+- fix-loop: 01 iteration 1/3 (closed)
+- review[01]: FAIL → PASS (fix 루프 1회) — Critical 0, Important 0 2026-10-31
+- fix-loop: 02 iteration 1/3 (closed)
+- review[02]: FAIL → PASS (fix 루프 1회) — Critical 0, Important 0 2026-10-31
+- review: --full FAIL — Critical 1 (contract audit), Important 3 (빈 /blog 링크, 출처 없는 CI 문장, en 404 lang) · cross-model: sonnet · merged 2 · only opus 1 · only sonnet 1 · 2026-10-31
+- contract: audit ok (3 checked rows at ab6fdec)
+- status: shipped
+```
+
+Every gate passed in the end. Then I opened the draft PR and my verdict was that I could not tell what the site was about. The gates can measure whether a sentence matches its source, whether a link resolves, whether tests are green. They cannot measure who a home page speaks to, or what it says. That judgment is why the work stops at a draft PR. The home never shipped, and changing direction cost a few rewritten commits.
+
+I start the merge with `/land`. It marks a draft ready, squash merges (in my personal repos), moves the base of stacked PRs, and cleans up the worktree in one go. If my request says "merge too" ("머지까지"), that phrase is the approval given in advance, so `/ship` merges right after it opens the PR. Where the record of a finished task goes is covered in the [knowledge loop](./knowledge.mdx) guide.
 
 ### When several agents run
 
-When there are two or more independent tasks, I use `/team`. The current Claude Code session becomes the lead and starts workers (Claude, pi, opencode, and a tester if needed) in [Herdr](./herdr.mdx) panes, giving each one task. Each worker walks the same path above on its own. A Claude worker merges its own S-size PRs. The lead merges PRs of size M and up, and every PR from a pi or opencode worker. For a Claude worker's M-and-up PR, the lead merges on the verdict of the whole-branch review the worker ran. For a pi or opencode PR, or a PR with no verdict, the lead starts a fresh review. An idle worker reads the repo through a lens such as security, logic, tests, CI, or performance to find the next task.
+When there are two or more independent tasks, I use `/team`. The current Claude Code session becomes the lead and starts workers (Claude, pi, opencode, and a tester if needed) in [Herdr](./herdr.mdx) panes, giving each one task. Each worker walks the same path above on its own. A Claude worker merges its own S-size PRs; the lead merges the rest. An idle worker reads the repo through a lens such as security, logic, tests, CI, or performance to find the next task.
 
-`/night` is the single-session, overnight version of those lenses. Until a deadline it reads the repo one lens at a time and writes down findings, then fixes only the qualifying S- and M-size ones with `/orch` and commits them to one night branch. When the run ends, it opens one draft PR from that branch. It does not merge, and it does not turn findings that look like security issues into PRs.
+`/night` is the single-session, overnight version of those lenses. Until a deadline it reads the repo one lens at a time and writes down findings, then fixes only the S- and M-size ones with `/orch` and commits them to one night branch. When the run ends, it opens one draft PR from that branch and does not merge.
 
 ## My config
 
@@ -57,7 +79,7 @@ When there are two or more independent tasks, I use `/team`. The current Claude 
 
 ### Review loop
 
-The canonical loop rules live in a shared skill file that all three harnesses read, so it is written in English. The stop conditions are only in two places in this file: the Exit table and the table of stops outside the loop.
+The canonical loop rules live in a shared skill file that all three harnesses read, so it is written in English.
 
 {/* Keep lang="text": with lang="md" this file highlights differently in SSR and on the client, which breaks hydration (#418) */}
 

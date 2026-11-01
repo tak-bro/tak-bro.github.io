@@ -46,4 +46,8 @@ const korean = {
   },
 } as const;
 
+/** The heading fumadocs prints over the table of contents, to name the TOC landmark the same way. */
+export const tocLabel = (lang: string) =>
+  lang === i18n.defaultLanguage ? korean.value['On this page(table of contents)'] : 'On this page';
+
 export const translations = i18n.translations().extend(uiTranslations()).preset('ko', korean);

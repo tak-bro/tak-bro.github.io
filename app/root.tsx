@@ -9,30 +9,49 @@ import {
   useMatches,
   useNavigate,
 } from 'react-router';
+import { lazy, useCallback, useMemo, useState } from 'react';
 import { RootProvider } from 'fumadocs-ui/provider/react-router';
 import { i18nProvider } from 'fumadocs-ui/i18n';
 import type { Route } from './+types/root';
 import './app.css';
-import { DocsSearchDialog } from './components';
 import {
   alternateLinks,
   APP_NAME,
   canonicalUrl,
+  CONTENT_ID,
+  DOCS_ROUTE_ID_PREFIX,
+  heldPathAt,
+  type HeldPath,
+  homeCopy,
   IS_PROD,
   localeFromPath,
   localeSwitchPath,
+  NotFoundPathContext,
   ogLocale,
   translations,
 } from './lib';
 import NotFound from './routes/not-found';
 
+// A separate chunk, so the Orama client is not in the modulepreload set of every page.
+// SearchProvider preloads the closed dialog, so the chunk still loads right after hydration.
+const DocsSearchDialog = lazy(() =>
+  import('./components/search').then((m) => ({ default: m.DocsSearchDialog })),
+);
+
 const NOT_FOUND_ROUTE_IDS = new Set(['not-found', 'not-found-page']);
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
-  const { pathname } = useLocation();
+  const { pathname, key } = useLocation();
+  // The 404 page restores the visitor's address after hydration while the router stays on /404;
+  // the document then speaks for that address until the router moves on.
+  const [held, setHeld] = useState<HeldPath | null>(null);
+  const heldPath = heldPathAt(key, held);
+  const documentPath = heldPath ?? pathname;
+  const holdPath = useCallback((path: string) => setHeld({ key, path }), [key]);
+  const notFoundPath = useMemo(() => ({ heldPath, holdPath }), [heldPath, holdPath]);
   // From the path, not useParams: the catch-all 404 has no `lang` param, and an
   // unknown first segment (/nope-x) must not become the document language.
-  const lang = localeFromPath(pathname);
+  const lang = localeFromPath(documentPath);
   const navigate = useNavigate();
   // Every page is prerendered to its own HTML file, so each gets its own canonical.
   // Trailing slashes are dropped so `/docs/cli/` and `/docs/cli` name one URL.
@@ -40,7 +59,9 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
   const canonical = canonicalUrl(path);
   // The /404 page is also served as 404.html for every unknown URL, so it must
   // neither be indexed nor claim a canonical or translated counterpart.
-  const notFound = useMatches().some((match) => NOT_FOUND_ROUTE_IDS.has(match.id));
+  const matches = useMatches();
+  const notFound = matches.some((match) => NOT_FOUND_ROUTE_IDS.has(match.id));
+  const docsPage = matches.some((match) => match.id.startsWith(DOCS_ROUTE_ID_PREFIX));
 
   return (
     <html lang={lang} suppressHydrationWarning>
@@ -64,6 +85,10 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         )}
         <meta property="og:site_name" content={APP_NAME} />
         <meta property="og:locale" content={ogLocale(lang)} />
+        <meta property="og:image" content={canonicalUrl('/og.png')} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta name="twitter:card" content="summary_large_image" />
         {/*
           Only the production build may be indexed; a local or preview build is not
           the published site. `og:type` is not here — it differs per route, and
@@ -74,16 +99,24 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         <Links />
       </head>
       <body className="flex flex-col min-h-screen">
+        {/* The skip link must come before the nav, so only the root can place it. */}
+        <a
+          href={`#${docsPage ? 'nd-page' : CONTENT_ID}`}
+          className="fixed top-3 left-3 z-50 -translate-y-24 rounded-md bg-fd-foreground px-4 py-2 text-sm font-semibold text-fd-background focus:translate-y-0"
+        >
+          {homeCopy(lang).skipLabel}
+        </a>
         <RootProvider
           search={{ SearchDialog: DocsSearchDialog }}
           i18n={{
             ...i18nProvider(translations, lang),
             // Without this, fumadocs swaps the first path segment for the locale
             // code and sends Korean readers to /ko/docs, which does not exist.
-            onLocaleChange: (next) => navigate(localeSwitchPath(pathname, lang, next)),
+            // From the held path on a restored 404, so the switch keeps the visitor's address.
+            onLocaleChange: (next) => navigate(localeSwitchPath(documentPath, lang, next)),
           }}
         >
-          {children}
+          <NotFoundPathContext value={notFoundPath}>{children}</NotFoundPathContext>
         </RootProvider>
         <ScrollRestoration />
         <Scripts />

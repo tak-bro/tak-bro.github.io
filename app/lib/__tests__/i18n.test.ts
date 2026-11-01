@@ -64,7 +64,7 @@ describe('alternateLinks', () => {
   });
 });
 
-// The blog and projects are Korean only: advertising /en/blog/... would point
+// Advertising a translation of anything but the homes and docs would point
 // crawlers and the language switcher at pages that are never built.
 describe('isLocalizedPath', () => {
   it('is true for the homes and docs in either language', () => {
@@ -73,13 +73,13 @@ describe('isLocalizedPath', () => {
     }
   });
 
-  it('is false for the Korean-only collections and look-alike paths', () => {
+  it('is false for paths outside the homes and docs, and look-alikes', () => {
     for (const path of ['/blog', '/blog/eos-tutorial', '/projects', '/projects/suji', '/docsx', '/en/blog']) {
       expect(isLocalizedPath(path), path).toBe(false);
     }
   });
 
-  it('gives a Korean-only page no alternates', () => {
+  it('gives a path outside the homes and docs no alternates', () => {
     expect(alternateLinks('/blog/eos-tutorial', 'ko')).toEqual([]);
     expect(alternateLinks('/projects', 'ko')).toEqual([]);
   });

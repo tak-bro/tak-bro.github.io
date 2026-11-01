@@ -3,8 +3,10 @@ import { DocsLayout } from 'fumadocs-ui/layouts/docs';
 import { DocsBody, DocsDescription, DocsPage, DocsTitle } from 'fumadocs-ui/layouts/docs/page';
 import { useFumadocsLoader } from 'fumadocs-core/source/client';
 import type { Route } from './+types/docs';
-import { baseOptions, docs, DOCS_ROUTE, i18n, localeFromPath, localeSwitchPath, pageTitle, requestPath, source } from '../lib';
-import { docsMdxComponents } from '../components';
+import { baseOptions, docs, DOCS_ROUTE, guideLd, i18n, localeFromPath, localeSwitchPath, pageTitle, requestPath, source } from '../lib';
+import { JsonLd } from '../components/json-ld';
+import { docsMdxComponents } from '../components/mdx';
+import { docsTocSlots } from '../components/toc';
 
 // One module behind a route per page and language (routes.ts), so the language
 // and the slugs both come from the path.
@@ -22,25 +24,27 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
 
   return {
     path: page.path,
+    url: page.url,
     slugs,
     lang,
     pageTree: await source.serializePageTree(source.getPageTree(lang)),
   };
 };
 
-const Content = ({ path, slugs, lang }: { path: string; slugs: string[]; lang: string }) => {
+const Content = ({ path, url, slugs, lang }: { path: string; url: string; slugs: string[]; lang: string }) => {
   const page = docs.getPage(path);
   if (!page) throw new Error(`unknown page: ${path}`);
 
   // Content is loaded lazily; `use` suspends until the MDX chunk resolves.
-  const { toc } = use(page.load());
+  const { toc, lastModified } = use(page.load());
   const Mdx = page.body;
   // Stable across re-renders: a new component type would remount every link.
   const components = useMemo(() => docsMdxComponents(slugs, lang), [slugs, lang]);
 
   return (
-    <DocsPage toc={toc}>
-      <title>{pageTitle(page.title)}</title>
+    <DocsPage toc={toc} slots={{ toc: docsTocSlots }}>
+      <title>{pageTitle(page.seoTitle)}</title>
+      <JsonLd data={guideLd({ title: page.title, description: page.description, lang, path: url, lastModified })} />
       <meta name="description" content={page.description} />
       <meta property="og:type" content="article" />
       <meta property="og:title" content={page.title} />
@@ -55,11 +59,12 @@ const Content = ({ path, slugs, lang }: { path: string; slugs: string[]; lang: s
 };
 
 const DocsRoute = ({ loaderData }: Route.ComponentProps) => {
-  const { pageTree, path, slugs, lang } = useFumadocsLoader(loaderData);
+  const { pageTree, path, url, slugs, lang } = useFumadocsLoader(loaderData);
 
+  // The docs sidebar keeps to the guides: no resume or GitHub links.
   return (
-    <DocsLayout {...baseOptions({ lang })} tree={pageTree}>
-      <Content path={path} slugs={slugs} lang={lang} />
+    <DocsLayout {...baseOptions({ lang })} links={[]} tree={pageTree}>
+      <Content path={path} url={url} slugs={slugs} lang={lang} />
     </DocsLayout>
   );
 };
