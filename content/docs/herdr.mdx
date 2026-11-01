@@ -1,6 +1,6 @@
 ---
-title: Herdr
-description: 코딩 에이전트를 여러 개 띄워 두는 터미널 작업 공간 herdr 의 키 경로와 제 설정.
+title: Herdr·키맵
+description: 코딩 에이전트를 띄워 두는 터미널 작업 공간 herdr 와, 키 입력이 지나가는 macOS·Ghostty·Karabiner·Neovim 에 걸어 둔 설정.
 ---
 
 [herdr](https://herdr.dev) 는 에이전트 멀티플렉서예요. tmux 처럼 탭과 pane 을 나누지만, 사이드바가 pane 마다 어떤 에이전트가 돌고 있는지, 지금 일하는 중인지 제 답을 기다리는지를 보여 줘요. 저는 Ghostty 안에서 herdr 를 띄우고 에이전트 세션을 전부 그 안에서 굴려요.
@@ -9,7 +9,20 @@ description: 코딩 에이전트를 여러 개 띄워 두는 터미널 작업 �
 
 화면 아래 자막은 Cmd 키를 앞에, 같은 동작의 prefix 키를 괄호에 적었어요. 녹화는 Ghostty 밖에서 해서 prefix 키로 했어요.
 
+키 설정은 대부분 기본값을 써요. 바꾼 것은 키 반복 속도와 입력 자동 교정, 터미널에서 Option·Cmd 키가 가는 곳 정도예요. 이 페이지는 실제 설정 파일에 있는 것만 적어요.
+
 ## 동작 원리
+
+### 키 입력은 네 층을 지나요
+
+키 입력은 아래 순서로 지나가요. 층마다 키를 바꿀 기회가 있어요.
+
+<KeyLayersDiagram />
+
+- **Karabiner-Elements** 는 OS 보다 앞에서 키를 바꿔요. 저는 리맵 없이 기기 설정에만 써요.
+- **macOS** 는 키 반복과 텍스트 입력 규칙을 정해요. `defaults write` 로 바꾸고, `~/Library/KeyBindings/DefaultkeyBinding.dict` 로 문자 입력을 바꿔요.
+- **Ghostty** 는 `keybind` 로 키를 자기 동작에 묶거나, 터미널 안 프로그램에 다른 시퀀스로 넘겨요.
+- **Neovim** 은 받은 키를 자기 키맵으로 해석해요.
 
 ### 키는 두 갈래로 들어가요
 
@@ -36,7 +49,7 @@ Cmd 키를 쓰려고 Ghostty 의 **key table** 을 써요. `herdr` 테이블이 
 
 ## 내 설정
 
-### 단축키
+### herdr 단축키
 
 | 동작 | prefix 키 | Cmd 키 |
 |---|---|---|
@@ -72,7 +85,15 @@ Cmd 키를 쓰려고 Ghostty 의 **key table** 을 써요. `herdr` 테이블이 
 
 <include lang="sh" meta='title="~/.config/herdr/pane-branch.sh"'>../snippets/dotfiles/herdr/pane-branch.sh</include>
 
-### Ghostty key table
+### Ghostty
+
+herdr key table 말고 키에 관련된 Ghostty 설정은 세 가지예요.
+
+| 설정 | 하는 일 |
+|---|---|
+| `keybind = super+arrow_up=scroll_page_lines:-1` | `Cmd+↑` 로 한 줄 위로 스크롤(iTerm 과 같게) |
+| `keybind = super+arrow_down=scroll_page_lines:1` | `Cmd+↓` 로 한 줄 아래로 스크롤 |
+| `macos-option-as-alt = true` | Option 키를 Alt 로 보내요. herdr 의 `Alt+1..9` 워크스페이스 이동이 이걸로 동작해요 |
 
 파일 앞부분이 herdr 테이블이에요. 뒷부분은 herdr 와 상관없는 Ghostty 자체 설정이에요.
 
@@ -113,7 +134,70 @@ herdr() {
 }
 ```
 
+### macOS 키보드
+
+dotfiles 의 `macos-defaults.sh` 가 키보드 설정을 한 번에 걸어요.
+
+- 키를 누르고 있으면 악센트 문자 팝업 대신 반복 입력이 나와요(`ApplePressAndHoldEnabled false`). 반복은 빠르게 시작해 빠르게 이어져요(`InitialKeyRepeat 15`, `KeyRepeat 2`).
+- 자동 대문자·스마트 대시·마침표 자동 입력·스마트 따옴표·자동 고침을 꺼요. 코드나 명령을 칠 때 글자가 바뀌지 않게 하려는 거예요.
+- 대화상자에서도 `Tab` 으로 모든 컨트롤을 오가요(`AppleKeyboardUIMode 3`).
+- `Cmd+Ctrl+D` 사전 팝업을 꺼요.
+- 한국어 자판에서 백틱 자리 키가 `₩` 를 입력하지 않고 `` ` `` 를 입력하게 해요. 마크다운과 셸에서 백틱을 자주 쓰기 때문이에요. 재시동해야 적용돼요.
+
+```sh title="macos-defaults.sh (키보드 부분)"
+# Enable full keyboard access for all controls
+# (e.g. enable Tab in modal dialogs)
+defaults write -g AppleKeyboardUIMode -int 3
+
+# Disable press-and-hold for keys in favor of key repeat
+defaults write -g ApplePressAndHoldEnabled -bool false
+
+# Set a blazingly fast keyboard repeat rate
+defaults write -g KeyRepeat -int 2
+defaults write -g InitialKeyRepeat -int 15
+
+# Disable automatic capitalization
+defaults write -g NSAutomaticCapitalizationEnabled -bool false
+
+# Disable smart dashes
+defaults write -g NSAutomaticDashSubstitutionEnabled -bool false
+
+# Disable automatic period substitution
+defaults write -g NSAutomaticPeriodSubstitutionEnabled -bool false
+
+# Disable smart quotes
+defaults write -g NSAutomaticQuoteSubstitutionEnabled -bool false
+
+# Disable auto-correct
+defaults write -g NSAutomaticSpellingCorrectionEnabled -bool false
+
+# Disable Cmd+Ctrl+D Dictionary popup
+defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 70 '<dict><key>enabled</key><false/></dict>'
+
+# Map ₩ (Won sign) to ` (Backtick) for Korean keyboards
+mkdir -p ~/Library/KeyBindings
+echo '{"₩" = ("insertText:", "`");}' > ~/Library/KeyBindings/DefaultkeyBinding.dict
+```
+
+원본 스크립트는 `DefaultkeyBinding.dict` 가 이미 있으면 덮어쓰지 않아요. 위에서는 그 분기를 뺐어요.
+
+### Karabiner-Elements
+
+리맵 규칙은 하나도 없어요. 외장 키보드가 연결되면 맥북 내장 키보드를 끄는 기기 설정(`disable_built_in_keyboard_if_exists`)만 있어요. 외장 키보드를 노트북 위에 올려 둘 때 내장 키가 눌리지 않게 하려는 거예요. 기기 세 대에 같은 설정을 걸었어요.
+
+설정 파일은 이 사이트에 싣지 않아요. 기기를 가리키는 식별자(제조사·제품 ID, 블루투스 주소)가 들어 있기 때문이에요. 직접 걸려면 Karabiner-Elements 설정의 기기 목록에서 그 키보드를 고르고, 내장 키보드를 끄는 옵션을 켜요. 설정 파일에는 `disable_built_in_keyboard_if_exists: true` 로 남아요.
+
+### Neovim
+
+[LazyVim](https://github.com/LazyVim/LazyVim) 을 쓰고, 키맵은 LazyVim 기본값 그대로예요. `lua/config/keymaps.lua` 에는 개인 키맵이 없어요. 기본 키맵 목록은 [LazyVim 의 keymaps.lua](https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua) 에 있어요.
+
+LazyVim 보다 먼저 불리는 `settings.lua` 에는 편집 옵션만 있어요. 키 입력에 닿는 것은 `ttimeoutlen = 0`(Esc 뒤에 키 코드를 기다리지 않음) 한 줄이에요. `clipboard = "unnamedplus"` 는 yank·삭제·붙여넣기가 시스템 클립보드를 쓰게 해요. 줄 끝 주석의 "except yank" 와 달리 yank 도 포함돼요.
+
+<include lang="lua" meta='title="~/.config/nvim/lua/config/settings.lua"'>../snippets/dotfiles/nvim/settings.lua</include>
+
 ## 확인
+
+### herdr
 
 1. Ghostty 에서 `herdr` 를 실행해요. `Cmd+T` 를 눌러 Ghostty 탭이 아니라 herdr 탭이 생기면 key table 이 켜진 거예요.
 2. herdr 를 끝내고 다시 `Cmd+T` 를 눌러요. 이번에는 Ghostty 탭이 생겨야 해요(테이블이 꺼짐).
@@ -122,4 +206,17 @@ herdr() {
 
 ```sh
 herdr pane list | jq '.result.panes[] | select(.agent != null) | {pane_id, cwd: (.foreground_cwd // .cwd)}'
+```
+
+### 키보드
+
+1. 아무 입력창에서 `a` 를 누르고 있어요. 악센트 팝업 없이 `aaaa…` 가 빠르게 반복되면 키 반복 설정이 걸린 거예요.
+2. TextEdit 같은 일반 입력창에서 백틱 키를 눌러요. `₩` 가 아니라 `` ` `` 가 나와야 해요.
+3. Ghostty 에서 출력이 긴 명령을 실행한 뒤 `Cmd+↑` 를 눌러요. 한 줄씩 위로 올라가요.
+4. 설정 값을 직접 읽어요.
+
+```sh
+defaults read -g KeyRepeat          # 2
+defaults read -g InitialKeyRepeat   # 15
+defaults read -g ApplePressAndHoldEnabled  # 0
 ```

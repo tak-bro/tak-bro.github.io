@@ -1,6 +1,6 @@
 # tak-bro.github.io
 
-Source of [tak-bro.github.io](https://tak-bro.github.io): setup guides for coding-agent harnesses — my principles, agent config, workflow, knowledge loop, plugins and MCP servers, Herdr, and keymaps. Korean is the default language; the home and guides also live in English under `/en`.
+Source of [tak-bro.github.io](https://tak-bro.github.io): setup guides for coding-agent harnesses — my principles, agent config, workflow, knowledge loop, plugins and MCP servers, and Herdr and keymaps. Korean is the default language; the home and guides also live in English under `/en`.
 
 Built with [fumadocs](https://fumadocs.dev) on React Router 7 as a fully prerendered static site.
 

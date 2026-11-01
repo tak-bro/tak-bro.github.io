@@ -50,7 +50,7 @@ nav = 가이드 · 이력서 · GitHub(`app/lib/layout.shared.tsx`, 테스트 `a
 - 훅이 실제로 막은 커밋 출력(`hooks/commit-convention.py`, exit 2), `/orch` 실행의 플랜 Outcome 줄, 규칙 한 곳과 세 하네스 표. 지운 글(fecc325 기준 `content/blog/`)에 있던 것은 1차 출처로 다시 확인한 것만 가이드로 옮긴다.
 - herdr 녹화 `public/assets/video/herdr.mp4` + 포스터 `herdr-poster.webp`. **사용자 결정: 영상은 `/docs/herdr` 에만 둔다. 홈에 넣지 않는다.**
 
-**가이드 7편**(`content/docs/meta.json` 순서): 원칙 · 에이전트 설정 · 워크플로우 · 지식 루프 · 플러그인·MCP · Herdr · 키맵. 각 ko/en. 1차 출처 = agent-config·dotfiles 레포.
+**가이드 6편**(`content/docs/meta.json` 순서): 원칙 · 에이전트 설정 · 워크플로우 · 지식 루프 · 플러그인·MCP · Herdr·키맵(2026-11-01 한 페이지로 합침, `/docs/keymaps` 는 404). 각 ko/en. 1차 출처 = agent-config·dotfiles 레포.
 
 ## 6. 고정 조건(바꾸지 않는다)
 
@@ -87,7 +87,7 @@ nav = 가이드 · 이력서 · GitHub(`app/lib/layout.shared.tsx`, 테스트 `a
 
 2026-11-01 가이드 전환에서 기본값으로 정했다. draft PR 에서 바꿀 수 있다.
 
-- nav = 가이드·이력서·GitHub(사용자 답).
+- nav = 가이드 링크 하나, 이름은 "Tak's config"(2026-11-01 사용자: "홈 헤더에 가이드가 너무 쌩뚱맞음"). 이력서·GitHub 는 홈 히어로 버튼에만 둔다("이력서, 깃허브 쌩뚱맞고"). docs 사이드바에는 nav 링크가 없다.
 - 가이드 다이어그램 = 직접 만든 SVG React 컴포넌트, 의존성 추가 없음(사용자 답).
 - 옛 `/blog/*`·`/projects/*` 는 리다이렉트 없이 404.
 

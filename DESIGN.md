@@ -50,7 +50,8 @@ At rest:     Still. After the session the input box shows a caret that blinks fo
   viewport, so the footer sits on the bottom edge on a tall or wide screen. From `lg` a 12-column grid with a 40px
   column gap: the hero (name, lede, actions) takes columns 1 to 5, centred against the terminal, which takes columns
   6 to 12 (a full-width terminal under a header row was tried and rejected, 2026-11-01: "레이아웃은 아까가 더 나아").
-  The home lists no guides (2026-11-01, the user: "셋업 가이드가 앞에 있어야 하나"): the nav leads there. Below `lg`
+  The home lists no guides (2026-11-01, the user: "셋업 가이드가 앞에 있어야 하나"): the nav's one link, "Tak's config",
+  leads there (the resume and GitHub live only in the hero; the docs sidebar carries no nav links). Below `lg`
   one column with 48px between blocks, hero then terminal.
 - Rhythm: the hero starts 48px under the nav (64px from `lg`). The footer is the only field band: 96px above it
   (128px from `lg`), 24px inside top and bottom.
@@ -84,7 +85,7 @@ FOOTER    field, one row: "© · licences" | icon links (LinkedIn, GitHub, site 
 The footer links are 44px icon squares, muted at rest; each carries its name as `title` and a screen-reader label
 plus "opens in a new tab". LinkedIn and GitHub are Simple Icons marks (lucide has no brand icons); the site source
 is lucide `CodeXml`. The footer repeats nothing the page already shows: no name (the nav logo and the h1 carry it), no
-resume (the hero button and the nav), no hwip (2026-11-01, the user: "푸터에 쓸데없는거 많지않아? hwip.app은 빼자").
+resume (the hero button), no hwip (2026-11-01, the user: "푸터에 쓸데없는거 많지않아? hwip.app은 빼자").
 
 ## Terminal
 
