@@ -3,6 +3,8 @@ import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { useEffect } from 'react';
 import { Link } from 'react-router';
 import type { Route } from './+types/home';
+// By path, not through the components barrel: the home loads only its own diagram.
+import { SetupMapDiagram } from '../components/diagrams/setup-map';
 import { baseOptions, CONTENT_ID, GITHUB_URL, homeCopy, localeFromPath, localizedDocsHref, requestPath, resumeHref, source } from '../lib';
 
 export const meta = ({ location }: Route.MetaArgs) => {
@@ -151,6 +153,9 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
         <section id="guides" aria-labelledby="guides-heading" className="home-frame grid scroll-mt-20 gap-10 pt-28 lg:grid-cols-12 lg:gap-x-10 lg:pt-40">
           <div className="lg:col-span-6">
             <SectionHead id="guides-heading" heading={copy.guidesHeading} lede={copy.guidesLede} />
+            <div className="home-reveal max-w-[360px]">
+              <SetupMapDiagram lang={lang} />
+            </div>
           </div>
           <ul className="-mx-4 flex flex-col lg:col-span-6">
             {guides.map((guide) => (

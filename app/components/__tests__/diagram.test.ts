@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { plainEndings } from '../../../scripts/korean-tone.mjs';
 import { guideDiagrams } from '../diagrams';
+import { SetupMapDiagram } from '../diagrams/setup-map';
 
 const render = (Figure: ComponentType<{ lang?: string }>, lang: string) => renderToStaticMarkup(createElement(Figure, { lang }));
 
@@ -11,7 +12,8 @@ const named = (html: string) => {
   return ids.map((id) => html.match(new RegExp(`id="${id}">([^<]*)<`))?.[1] ?? '');
 };
 
-describe.each(Object.entries(guideDiagrams))('%s', (_, Figure) => {
+// The home's diagram is imported by path, so it is not in the guide map.
+describe.each(Object.entries({ ...guideDiagrams, SetupMapDiagram }))('%s', (_, Figure) => {
   it('is one named image: role img, labelled by a non-empty title and description', () => {
     for (const lang of ['ko', 'en']) {
       const html = render(Figure, lang);

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { plainEndings } from '../../../scripts/korean-tone.mjs';
 import { homeCopy, resumeHref } from '../../lib';
 import { loader } from '../home';
 
@@ -52,5 +53,16 @@ describe('home loader on a data request', () => {
   it('reads the language the same way as for the document', async () => {
     expect((await call('/en.data')).lang).toBe('en');
     expect((await call('/_.data')).lang).toBe('ko');
+  });
+});
+
+// Every string the Korean home shows, walked out of the copy object.
+const strings = (value: unknown): string[] =>
+  typeof value === 'string' ? [value] : value && typeof value === 'object' ? Object.values(value).flatMap(strings) : [];
+
+describe('Korean home copy', () => {
+  // The site speaks 해요체 (SITE-BRIEF); scripts/check-guides.mjs reads only content/docs, so the home is checked here.
+  it('ends no sentence in the plain form', () => {
+    expect(plainEndings(strings(homeCopy('ko')).join('\n'))).toEqual([]);
   });
 });

@@ -11,7 +11,7 @@ declare global {
 }
 
 const COPY: Record<string, { title: string; body: string; home: string; guides: string }> = {
-  ko: { title: '없는 페이지다', body: '주소가 바뀌었거나 지워졌다.', home: '홈으로', guides: '가이드' },
+  ko: { title: '없는 페이지예요', body: '주소가 바뀌었거나 지워졌어요.', home: '홈으로', guides: '가이드' },
   en: { title: 'This page does not exist', body: 'The address changed or the page was removed.', home: 'Home', guides: 'Guides' },
 };
 

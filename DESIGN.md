@@ -54,6 +54,13 @@ At rest:     Still. Nothing moves while the pointer is still; hovers carry the l
   on the first frame). Below the fold, blocks rise in once (opacity and 24px). All of it lives inside `prefers-reduced-motion: no-preference`; the reveal script does
   not run under reduced motion, and nothing is hidden without script. Under reduced motion every
   transition is 0s too (`app.css`), the fumadocs nav and sidebar included. No motion library.
+- Diagrams: one static SVG per figure from `app/components/diagram.tsx` (`Diagram`, `Box`, `Arrow`), no
+  library and no script. Fill and stroke come from the same tokens (`fd-card`, `fd-border`,
+  `fd-muted-foreground`, `brand` for the one box the figure starts from), so dark mode follows the
+  page. viewBox at most 400 wide, labels 16 and subs 14, captions under the drawing; each SVG is a
+  named image (title and description). The home's `SetupMapDiagram` is imported by path, never through
+  the components barrel, so the home loads only its own figure; guide figures are bound to the MDX
+  components in `app/components/mdx.tsx`.
 - Hover: text links darken their underline and nudge the arrow; index rows take the field tone and
   nudge the arrow; nav links draw an accent underline.
 
@@ -65,9 +72,11 @@ HERO      name (small line)
           lede: since 2018, now three harnesses with my own rules, hooks and skills
           Resume ↗  GitHub ↗
 GUIDES    heading, lede                            |  6 rows: title → | line | last commit date
+          overview diagram: one repo → rules · hooks · skills → three harnesses
 FOOTER    field: name, links (LinkedIn, GitHub, hwip, resume, source), licences
 ```
 
+The overview diagram sits under the guides lede, on the margin's left edge, at most 360px wide.
 Guide titles are short and take a column from `sm`. Phone (390px): rows put the date at the right of
 the title and the line under both.
 
@@ -76,5 +85,8 @@ the title and the line under both.
 - `node .claude/20261031/site-ui-rebuild/hero-qa.mjs` (build served on :4400): first screen at 1440
   and 390 in Korean and 1440 in English, and page errors. `full-qa.mjs`: full pages, pending reveals,
   overflow, reduced motion. `404-qa.mjs`: the 404 in both languages. The folder is local, not in git.
+- `node .claude/20261101/guides/guides-qa.mjs ac3` (needs a build): one diagram on the home in both
+  languages, no plain `-다` ending in the Korean home and introduction, and the home's first-load JS
+  budget.
 - `pnpm check`: sensitive words, types, tests (home loader guides, copy symmetry, resume per language,
   nav), build, links and images.
