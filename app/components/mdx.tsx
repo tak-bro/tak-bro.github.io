@@ -1,11 +1,18 @@
 import defaultMdxComponents from 'fumadocs-ui/mdx';
 import { i18n, resolveDocsHref } from '../lib';
 import { HerdrDemo } from './demo-video';
+import { guideDiagrams } from './diagrams';
 
 // Typed off fumadocs' own component map rather than `mdx/types`: that specifier
 // resolves to a .d.ts-only package, and vite's dev dependency optimizer tries to
 // bundle it, which kills `react-router dev`.
-type MDXComponentMap = typeof defaultMdxComponents & { HerdrDemo: typeof HerdrDemo };
+type MDXComponentMap = typeof defaultMdxComponents & { HerdrDemo: typeof HerdrDemo } & Record<keyof typeof guideDiagrams, () => React.JSX.Element>;
+
+/** The diagrams take the page language, so MDX writes `<HarnessRepoDiagram />` with no props. */
+const boundDiagrams = (lang: string | undefined) =>
+  Object.fromEntries(
+    Object.entries(guideDiagrams).map(([name, Figure]) => [name, () => <Figure lang={lang} />]),
+  ) as Record<keyof typeof guideDiagrams, () => React.JSX.Element>;
 
 const TABLE_LABEL: Record<string, string> = { ko: '표', en: 'Table' };
 
@@ -24,6 +31,7 @@ export const docsMdxComponents = (slugs: string[], lang: string | undefined): MD
 
   return {
     ...defaultMdxComponents,
+    ...boundDiagrams(lang),
     HerdrDemo,
     a: ({ href, ...props }) => <DefaultLink href={resolve(href)} {...props} />,
     Card: ({ href, ...props }) => <DefaultCard href={resolve(href)} {...props} />,
