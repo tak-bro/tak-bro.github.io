@@ -4,19 +4,23 @@ import type { HomeCopy } from '../lib/home-copy';
 
 /**
  * The home's terminal: `claude`, then the request that rebuilt this site and the session's own lines.
- * It plays once when it scrolls into view: commands type character by character, output prints after
- * its command, and a spinner runs while the agent works.
+ * It plays once when it scrolls into view, typed like the old env-tak page: commands type at a person's
+ * pace, the agent's lines type out faster after them, and a spinner holds a line's slot until it starts.
  *
  * Every line is in the prerendered HTML, so the page reads without JS. Lines that have not played yet
  * are `visibility: hidden`, so nothing moves when they appear. Under reduced motion it never plays.
  */
 
-type Beat = { kind: 'type'; text: string } | { kind: 'show'; wait: number };
+/** `agent` lines stay hidden, the spinner in their slot, until their first character. */
+type Beat = { kind: 'type'; text: string; lead: number; agent: boolean } | { kind: 'show'; wait: number };
 
 /** pending: prerendered, CSS shows everything after a delay if JS never runs · armed: waiting to scroll in. */
 type Play = 'pending' | 'armed' | 'playing' | 'done';
 
-const TYPE_MS = 30;
+/** A person types one character at a time; the agent streams two. */
+const TYPE_MS = 42;
+const STREAM_MS = 22;
+const STREAM_CHUNK = 2;
 const SPINNER = ['·', '✢', '✳', '✶', '✻', '✽', '✻', '✶', '✳', '✢'];
 const CLAUDE_CMD_TEXT = 'claude';
 
@@ -32,12 +36,12 @@ const Caret = ({ rest }: { rest?: boolean }) => <span className={rest ? 'home-te
 const buildScript = (copy: HomeCopy) => {
   const beats: Beat[] = [];
   const add = (beat: Beat) => beats.push(beat) - 1;
-  const claudeCmd = add({ kind: 'type', text: CLAUDE_CMD_TEXT });
+  const claudeCmd = add({ kind: 'type', text: CLAUDE_CMD_TEXT, lead: 300, agent: false });
   const header = add({ kind: 'show', wait: 300 });
-  const request = add({ kind: 'type', text: copy.request });
+  const request = add({ kind: 'type', text: copy.request, lead: 300, agent: false });
   const session = copy.session.map((line) => ({
-    head: add({ kind: 'show', wait: 520 }),
-    result: line.kind === 'tool' ? add({ kind: 'show', wait: 260 }) : -1,
+    head: add({ kind: 'type', text: line.kind === 'tool' ? line.call : line.text, lead: 420, agent: true }),
+    result: line.kind === 'tool' ? add({ kind: 'type', text: line.result, lead: 160, agent: true }) : -1,
   }));
   const input = add({ kind: 'show', wait: 200 });
   return { beats, claudeCmd, header, request, session, input };
@@ -86,10 +90,12 @@ export const HomeTerminal = ({ copy, docsHref }: HomeTerminalProps) => {
     let delay: number;
     let next: typeof pos;
     if (beat.kind === 'type' && pos.chars < Array.from(beat.text).length) {
-      delay = pos.chars === 0 ? 300 : TYPE_MS + ((pos.chars * 37) % 5) * 8;
-      next = { at: pos.at, chars: pos.chars + 1 };
+      if (pos.chars === 0) delay = beat.lead;
+      else delay = beat.agent ? STREAM_MS : TYPE_MS + ((pos.chars * 37) % 5) * 8;
+      next = { at: pos.at, chars: pos.chars + (beat.agent ? STREAM_CHUNK : 1) };
     } else {
-      delay = beat.kind === 'type' ? 280 : beat.wait;
+      if (beat.kind === 'show') delay = beat.wait;
+      else delay = beat.agent ? 120 : 280;
       next = { at: pos.at + 1, chars: 0 };
     }
     const timer = window.setTimeout(() => setPos(next), delay);
@@ -104,9 +110,13 @@ export const HomeTerminal = ({ copy, docsHref }: HomeTerminalProps) => {
   }, [working]);
 
   const playing = play === 'playing' || play === 'armed';
-  /** A `type` beat's line shows while it types; a `show` beat's line shows once its wait is over. */
-  const shown = (index: number) => pos.at > index || (play === 'playing' && pos.at === index && beats[index].kind === 'type');
-  const step = (index: number) => ({ 'data-step': '', ...(playing && shown(index) ? { 'data-on': '' } : {}) });
+  /** A line shows once its beat is over, or while it types: a person's prompt at once, an agent's line from its first character. */
+  const typing = (index: number) => {
+    const beat = beats[index];
+    return play === 'playing' && pos.at === index && beat.kind === 'type' && (!beat.agent || pos.chars > 0);
+  };
+  const stepOn = (on: boolean) => ({ 'data-step': '', ...(playing && on ? { 'data-on': '' } : {}) });
+  const step = (index: number) => stepOn(pos.at > index || typing(index));
 
   /** A command as typed so far, the caret at its end, the rest kept invisible so the line never reflows. */
   const typed = (index: number): ReactNode => {
@@ -114,7 +124,7 @@ export const HomeTerminal = ({ copy, docsHref }: HomeTerminalProps) => {
     const text = beat.kind === 'type' ? beat.text : '';
     if (!playing || pos.at > index) return text;
     const chars = Array.from(text);
-    const count = pos.at === index ? pos.chars : 0;
+    const count = pos.at === index ? Math.min(pos.chars, chars.length) : 0;
     return (
       <>
         {chars.slice(0, count).join('')}
@@ -126,7 +136,7 @@ export const HomeTerminal = ({ copy, docsHref }: HomeTerminalProps) => {
 
   /** While the agent works, the spinner holds the slot of the line it is about to print. */
   const spinner = (index: number) =>
-    working && pos.at === index ? (
+    working && pos.at === index && !typing(index) ? (
       <span className="home-term-spin absolute inset-x-0 top-0 text-brand" aria-hidden>
         {SPINNER[frame]} Orchestrating…
       </span>
@@ -174,9 +184,10 @@ export const HomeTerminal = ({ copy, docsHref }: HomeTerminalProps) => {
                   <span className={tool?.blocked ? 'text-fd-error' : 'text-fd-foreground'} aria-hidden>
                     ⏺
                   </span>
-                  <span className={tool ? 'font-semibold' : undefined}>{line.kind === 'tool' ? line.call : line.text}</span>
+                  <span className={tool ? 'font-semibold' : undefined}>{typed(head)}</span>
                 </span>
                 <Link
+                  {...stepOn(pos.at > head)}
                   to={`${docsHref}/${line.guide}`}
                   className="font-sans text-[12px] whitespace-nowrap text-fd-muted-foreground group-hover/log:text-brand hover:text-brand max-sm:hidden motion-safe:transition-colors sm:text-[13px]"
                 >
@@ -187,7 +198,7 @@ export const HomeTerminal = ({ copy, docsHref }: HomeTerminalProps) => {
                 <p className={`relative flex gap-2 pl-5 break-keep ${tool.blocked ? 'text-fd-error' : 'text-fd-muted-foreground'}`} {...step(result)}>
                   {spinner(result)}
                   <span aria-hidden>⎿</span>
-                  <span>{tool.result}</span>
+                  <span>{typed(result)}</span>
                 </p>
               ) : null}
             </li>

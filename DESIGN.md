@@ -19,7 +19,7 @@ The site is React Router 7, prerendered, with no motion library (no GSAP, no Len
 ```
 Idea:        A terminal opens Claude Code and replays the real agent session that rebuilt this site.
 Material:    Real output: `claude`, the request, and lines picked from that session.
-Motion verb: type. Commands type in, output prints after them, a spinner holds the slot while the agent works.
+Motion verb: type. Every line types out, like the old env-tak page: commands at a person's pace, the agent's lines faster, a spinner in a line's slot until it starts.
 Live thing:  The terminal, once, when it scrolls into view.
 At rest:     Still. After the session the input box shows a caret that blinks four times and stays lit.
 ```
@@ -101,11 +101,13 @@ The one live thing on the home, `app/components/home-terminal.tsx`, styled by th
     panel reads even if script never runs.
   - `armed`: script is running and waiting; lines that have not played are `visibility: hidden`, so the panel keeps
     its size and nothing reflows. It plays when 35% of the panel is in view, once.
-  - `playing`: commands type one character at a time (300ms before the first, then about 30 to 60ms each, 280ms
-    after the last). Output lines appear after their command: the header after 300ms, each
-    session line after 520ms and a tool result 260ms after its call, the input box last. From the request until the
-    input box, a spinner (`·✢✳✶✻✽`, 110ms a frame) and "Orchestrating…" in the accent hold the slot of the next line.
-    While a command types, the caret sits at its end and the untyped rest stays invisible in place.
+  - `playing`: every line types out. Commands (`claude`, the request) type one character at a time (300ms before
+    the first, then about 42 to 74ms each, 280ms after the last). The header box appears 300ms after `claude`. The
+    agent's lines stream two characters every 22ms: a session line starts 420ms after the line before it, a tool
+    result 160ms after its call, and each waits 120ms after its last character; the input box comes last. Until an
+    agent line's first character, a spinner (`·✢✳✶✻✽`, 110ms a frame) and "Orchestrating…" in the accent hold its
+    slot. A line's guide name shows once the line has finished. While a line types, the caret sits at its end and the
+    untyped rest stays invisible in place.
   - `done`: everything shows. Reduced motion, or a browser without IntersectionObserver, goes straight here.
 - The resting caret blinks four times (1.1s each, under five seconds) and then stays lit.
 
