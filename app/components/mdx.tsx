@@ -6,13 +6,14 @@ import { guideDiagrams } from './diagrams';
 // Typed off fumadocs' own component map rather than `mdx/types`: that specifier
 // resolves to a .d.ts-only package, and vite's dev dependency optimizer tries to
 // bundle it, which kills `react-router dev`.
-type MDXComponentMap = typeof defaultMdxComponents & { HerdrDemo: typeof HerdrDemo } & Record<keyof typeof guideDiagrams, () => React.JSX.Element>;
+type BoundDiagrams = Record<keyof typeof guideDiagrams, () => React.JSX.Element>;
+type MDXComponentMap = typeof defaultMdxComponents & { HerdrDemo: typeof HerdrDemo } & BoundDiagrams;
 
 /** The diagrams take the page language, so MDX writes `<HarnessRepoDiagram />` with no props. */
 const boundDiagrams = (lang: string | undefined) =>
   Object.fromEntries(
     Object.entries(guideDiagrams).map(([name, Figure]) => [name, () => <Figure lang={lang} />]),
-  ) as Record<keyof typeof guideDiagrams, () => React.JSX.Element>;
+  ) as BoundDiagrams;
 
 const TABLE_LABEL: Record<string, string> = { ko: '표', en: 'Table' };
 

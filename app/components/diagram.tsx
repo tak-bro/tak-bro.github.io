@@ -108,29 +108,17 @@ export const Box = ({ x, y, w, h, label, sub, tone = 'default', mono = false }: 
 export interface ArrowProps {
   /** The path's corners, from tail to head: [x, y] pairs. */
   readonly points: readonly (readonly [number, number])[];
-  /** A short word on the arrow, drawn on the ground beside its first segment. */
-  readonly label?: string;
-  /** Where the label sits, relative to the first segment's midpoint. */
-  readonly labelAt?: readonly [number, number];
   readonly dashed?: boolean;
 }
 
-export const Arrow = ({ points, label, labelAt = [8, 0], dashed = false }: ArrowProps) => {
+export const Arrow = ({ points, dashed = false }: ArrowProps) => {
   const marker = use(MarkerContext);
-  const [[x1, y1], [x2, y2]] = points;
   return (
-    <g>
-      <polyline
-        points={points.map(([x, y]) => `${x},${y}`).join(' ')}
-        fill="none"
-        markerEnd={`url(#${marker})`}
-        className={`stroke-fd-muted-foreground [stroke-width:1.25] ${dashed ? '[stroke-dasharray:4_4]' : ''}`}
-      />
-      {label ? (
-        <text x={(x1 + x2) / 2 + labelAt[0]} y={(y1 + y2) / 2 + labelAt[1]} fontSize={SUB} dominantBaseline="middle" className="fill-fd-muted-foreground">
-          {label}
-        </text>
-      ) : null}
-    </g>
+    <polyline
+      points={points.map(([x, y]) => `${x},${y}`).join(' ')}
+      fill="none"
+      markerEnd={`url(#${marker})`}
+      className={`stroke-fd-muted-foreground [stroke-width:1.25] ${dashed ? '[stroke-dasharray:4_4]' : ''}`}
+    />
   );
 };

@@ -10,11 +10,9 @@ export { robotsTxt } from './robots';
 export {
   APP_NAME,
   CONTENT_ID,
-  DOCS_CONTENT_DIR,
   DOCS_ROUTE,
   DOCS_ROUTE_ID_PREFIX,
   GITHUB_URL,
-  LINKEDIN_URL,
   pageTitle,
 } from './shared';
 export { canonicalUrl, IS_PROD, ogLocale, SITE_URL } from './site';
