@@ -43,7 +43,7 @@ nav = 가이드 · 이력서 · GitHub(`app/lib/layout.shared.tsx`, 테스트 `a
 새로 지어내지 않는다. 고객·추천사·수치·로고는 없다(지어내면 안 된다).
 
 **연락·신원**
-- LinkedIn `https://www.linkedin.com/in/hyungtak/`, GitHub `https://github.com/tak-bro`, hwip `https://hwip.app`, 사이트 소스 레포.
+- LinkedIn `https://www.linkedin.com/in/hyungtak/`, GitHub `https://github.com/tak-bro`, 사이트 소스 레포(홈 푸터 아이콘 셋. 이름·이력서·hwip 은 푸터에 두지 않는다 — 2026-11-01 사용자 "푸터에 쓸데없는거 많지않아? hwip.app은 빼자").
 - 상수 정본 = `app/lib/shared.ts`(`LINKEDIN_URL`, `GITHUB_URL`, `RESUME_HREF`), 언어별 이력서 = `resumeHref(lang)`(`app/lib/i18n.ts`).
 
 **실제 출력** — 가이드에 있다

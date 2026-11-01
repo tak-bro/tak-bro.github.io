@@ -1,9 +1,9 @@
 import { localized } from './i18n';
-import { GITHUB_URL, LINKEDIN_URL, RESUME_HREF } from './shared';
+import { GITHUB_URL, LINKEDIN_URL } from './shared';
 
 /** A footer link, drawn as its icon; `name` is its accessible name and tooltip. */
 export interface HomeLink {
-  readonly icon: 'linkedin' | 'github' | 'hwip' | 'resume' | 'source';
+  readonly icon: 'linkedin' | 'github' | 'source';
   readonly name: string;
   readonly href: string;
 }
@@ -19,7 +19,7 @@ export type HomeSessionLine =
 export interface HomeCopy {
   readonly documentTitle: string;
   readonly description: string;
-  /** The person's name: the page's h1, the footer, and the site name in llms.txt. */
+  /** The person's name: the page's h1 and the site name in llms.txt. */
   readonly name: string;
   readonly lede: string;
   readonly resumeLabel: string;
@@ -35,11 +35,9 @@ export interface HomeCopy {
   readonly skipLabel: string;
 }
 
-const footerLinks = (resume: string, resumeHref: string, source: string): HomeLink[] => [
+const footerLinks = (source: string): HomeLink[] => [
   { icon: 'linkedin', name: 'LinkedIn', href: LINKEDIN_URL },
   { icon: 'github', name: 'GitHub', href: GITHUB_URL },
-  { icon: 'hwip', name: 'hwip', href: 'https://hwip.app' },
-  { icon: 'resume', name: resume, href: resumeHref },
   { icon: 'source', name: source, href: `${GITHUB_URL}/tak-bro.github.io` },
 ];
 
@@ -61,7 +59,7 @@ const en: HomeCopy = {
     { kind: 'tool', call: 'Skill(ship)', result: ['committed → draft PR #20'] },
   ],
   logNote: 'Lines picked from the Claude Code session that rebuilt this site.',
-  links: footerLinks('Resume', RESUME_HREF.en, 'Site source'),
+  links: footerLinks('Site source'),
   codeLicense: 'Code: MIT',
   contentLicense: 'Content: CC BY 4.0',
   newTabLabel: '(opens in a new tab)',
@@ -85,7 +83,7 @@ const ko: HomeCopy = {
     { kind: 'tool', call: 'Skill(ship)', result: ['committed → draft PR #20'] },
   ],
   logNote: '이 사이트를 고친 실제 Claude Code 세션에서 골랐어요.',
-  links: footerLinks('이력서', RESUME_HREF.ko, '사이트 소스'),
+  links: footerLinks('사이트 소스'),
   codeLicense: '코드: MIT',
   contentLicense: '문서: CC BY 4.0',
   newTabLabel: '(새 탭)',

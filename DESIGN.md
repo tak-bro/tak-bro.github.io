@@ -53,7 +53,7 @@ At rest:     Still. After the session the input box shows a caret that blinks fo
   The home lists no guides (2026-11-01, the user: "셋업 가이드가 앞에 있어야 하나"): the nav leads there. Below `lg`
   one column with 48px between blocks, hero then terminal.
 - Rhythm: the hero starts 48px under the nav (64px from `lg`). The footer is the only field band: 96px above it
-  (128px from `lg`), 32px inside top and bottom.
+  (128px from `lg`), 24px inside top and bottom.
 - Shape: radius 4px on buttons, footer icon links and the request line; 6px on the terminal panel and the Claude Code
   header box. Keylines in the border tone only: the terminal panel, the outline button and
   the terminal's input box. No shadows, no gradients (the nav underline is a one-colour fill sized as a line), no glow,
@@ -78,12 +78,13 @@ HERO (cols 1-5, centred)          |  TERMINAL (cols 6-12)
   name (h1, display size)         |    panel: hwip cc, Claude Code header, request, six session lines,
   lede                            |      input box
   Resume (brand) ↗  GitHub (outline) ↗   note: lines picked from the session that rebuilt this site
-FOOTER    field: name over "© · licences" | icon links (LinkedIn, GitHub, hwip, resume, source)
+FOOTER    field, one row: "© · licences" | icon links (LinkedIn, GitHub, site source)
 ```
 
 The footer links are 44px icon squares, muted at rest; each carries its name as `title` and a screen-reader label
-(plus "opens in a new tab" when external). LinkedIn and GitHub are Simple Icons marks (lucide has no brand icons);
-hwip, the resume and the site source are lucide `Smartphone`, `FileUser` and `CodeXml`.
+plus "opens in a new tab". LinkedIn and GitHub are Simple Icons marks (lucide has no brand icons); the site source
+is lucide `CodeXml`. The footer repeats nothing the page already shows: no name (the nav logo and the h1 carry it), no
+resume (the hero button and the nav), no hwip (2026-11-01, the user: "푸터에 쓸데없는거 많지않아? hwip.app은 빼자").
 
 ## Terminal
 

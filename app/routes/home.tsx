@@ -1,5 +1,5 @@
 import { HomeLayout } from 'fumadocs-ui/layouts/home';
-import { ArrowUpRight, CodeXml, FileUser, Smartphone } from 'lucide-react';
+import { ArrowUpRight, CodeXml } from 'lucide-react';
 import type { ReactNode } from 'react';
 import type { Route } from './+types/home';
 import { HomeTerminal } from '../components/home-terminal';
@@ -44,18 +44,12 @@ const LINKEDIN_MARK =
 const LINK_ICONS: Record<HomeLink['icon'], ReactNode> = {
   linkedin: <BrandMark d={LINKEDIN_MARK} />,
   github: <BrandMark d={GITHUB_MARK} />,
-  hwip: <Smartphone className="size-5" strokeWidth={1.5} aria-hidden />,
-  resume: <FileUser className="size-5" strokeWidth={1.5} aria-hidden />,
   source: <CodeXml className="size-5" strokeWidth={1.5} aria-hidden />,
 };
-
-const isExternal = (href: string) => href.startsWith('http');
 
 /** The second action beside the brand button: the same size, drawn in the border tone. */
 const outlineButton =
   'home-press inline-flex min-h-11 items-center gap-2 rounded-sm border border-fd-border px-4 py-2.5 text-[15px] font-semibold hover:bg-fd-card';
-
-const external = (link: { href: string }) => (isExternal(link.href) ? { rel: 'noreferrer noopener', target: '_blank' } : {});
 
 const Home = ({ loaderData }: Route.ComponentProps) => {
   const { lang } = loaderData;
@@ -97,32 +91,30 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
       </section>
 
       <footer className="bg-fd-card">
-        <div className="home-frame flex flex-wrap items-center justify-between gap-x-8 gap-y-4 py-8">
-          <div className="flex flex-col gap-1 text-sm text-fd-muted-foreground">
-            <p className="text-[15px] font-medium text-fd-foreground">{copy.name}</p>
-            <p className="flex flex-wrap gap-x-4">
-              <span>© 2026 tak-bro</span>
-              <a href={`${REPO_URL}/blob/main/LICENSE`} className="underline-offset-4 hover:underline">
-                {copy.codeLicense}
-              </a>
-              <a href={`${REPO_URL}/blob/main/LICENSE-CONTENT`} className="underline-offset-4 hover:underline">
-                {copy.contentLicense}
-              </a>
-            </p>
-          </div>
+        <div className="home-frame flex flex-wrap items-center justify-between gap-x-8 gap-y-2 py-6">
+          <p className="flex flex-wrap gap-x-4 text-sm text-fd-muted-foreground">
+            <span>© 2026 tak-bro</span>
+            <a href={`${REPO_URL}/blob/main/LICENSE`} className="underline-offset-4 hover:underline">
+              {copy.codeLicense}
+            </a>
+            <a href={`${REPO_URL}/blob/main/LICENSE-CONTENT`} className="underline-offset-4 hover:underline">
+              {copy.contentLicense}
+            </a>
+          </p>
           <ul className="-mx-2.5 flex flex-wrap">
             {copy.links.map((link) => (
               <li key={link.icon}>
                 <a
                   href={link.href}
-                  {...external(link)}
+                  rel="noreferrer noopener"
+                  target="_blank"
                   title={link.name}
                   className="flex size-11 items-center justify-center rounded-sm text-fd-muted-foreground hover:bg-fd-accent hover:text-fd-foreground motion-safe:transition-colors"
                 >
                   {LINK_ICONS[link.icon]}
                   <span className="sr-only">
                     {link.name}
-                    {isExternal(link.href) ? ` ${copy.newTabLabel}` : ''}
+                    {` ${copy.newTabLabel}`}
                   </span>
                 </a>
               </li>

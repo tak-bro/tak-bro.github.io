@@ -20,7 +20,7 @@ describe('home copy', () => {
     const copy = homeCopy(lang);
     return {
       session: copy.session.map((line) => (line.kind === 'tool' ? [line.call, line.result.length] : 'say')),
-      links: copy.links.map((link) => [link.icon, link.href.startsWith('/assets/') ? 'resume' : link.href]),
+      links: copy.links.map((link) => [link.icon, link.href]),
     };
   };
 
@@ -29,12 +29,9 @@ describe('home copy', () => {
     expect(shape('en')).toEqual(shape('ko'));
   });
 
-  it('points the resume links at the page language', () => {
+  it('points the resume link at the page language', () => {
     expect(resumeHref('ko')).toBe('/assets/resume.pdf');
     expect(resumeHref('en')).toBe('/assets/resume_eng.pdf');
-    const resume = (lang: string) => homeCopy(lang).links.find((link) => link.href.startsWith('/assets/'))?.href;
-    expect(resume('ko')).toBe('/assets/resume.pdf');
-    expect(resume('en')).toBe('/assets/resume_eng.pdf');
   });
 });
 
