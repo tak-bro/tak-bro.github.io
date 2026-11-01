@@ -8,8 +8,6 @@ import { plainEndings, proseOf } from './korean-tone.mjs';
 import { parseGuideArgs } from './lib/guide-args.mjs';
 
 const DOCS = join(import.meta.dirname, '..', 'content', 'docs');
-/** The introduction lists the guides; it has no flow to draw. */
-const NO_DIAGRAM = new Set(['index']);
 
 const { slugs: named, min } = parseGuideArgs(process.argv.slice(2));
 const slugs = named.length > 0 ? named : (await readdir(DOCS)).filter((f) => /^[^.]+\.mdx$/.test(f)).map((f) => f.slice(0, -4)).sort();
@@ -22,12 +20,11 @@ for (const slug of slugs) {
   const en = await readFile(join(DOCS, `${slug}.en.mdx`), 'utf8');
   const plain = plainEndings(proseOf(ko));
   const [nKo, nEn] = [diagrams(ko), diagrams(en)];
-  const floor = NO_DIAGRAM.has(slug) ? 0 : min;
   console.log(`${slug}: plain ${plain.length} · diagrams ko ${nKo} en ${nEn}`);
   for (const line of plain.slice(0, 5)) console.log(`  plain: ${line}`);
   if (plain.length) fails.push(`${slug} plain ${plain.length}`);
   if (nKo !== nEn) fails.push(`${slug} diagrams ko ${nKo} ≠ en ${nEn}`);
-  if (nKo < floor) fails.push(`${slug} diagrams ${nKo} < ${floor}`);
+  if (nKo < min) fails.push(`${slug} diagrams ${nKo} < ${min}`);
 }
 
 console.log(fails.length === 0 ? 'guides: ok' : `guides: fail — ${fails.join(' · ')}`);

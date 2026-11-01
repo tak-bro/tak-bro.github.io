@@ -28,7 +28,7 @@ Besides the rules, hooks, and skills I write myself, Claude Code also takes exte
 
 pi and opencode get only `qmd` from this list (`mcp` in `opencode.json`, and `~/.pi/agent/mcp.json`). The rest are for Claude Code only.
 
-Removing a server from the list does not unregister it, because the script only adds. So a removed server gets its own unregister command in the install script. Right now five retired servers are removed this way. Two drove a browser (`playwright` and `chrome-devtools`); browser checks now go through one CLI, `agent-browser`, instead of MCP. The other three (`codebase-memory-mcp`, `enquire`, `basic-memory`) gave way to `codegraph` and `qmd`, or were dropped.
+Removing a server from the list does not unregister it, because the script only adds. So a removed server gets its own unregister command in the install script.
 
 ## My config
 

@@ -20,15 +20,15 @@ Two things are not in the drawing.
 
 It links `~/.claude` item by item, not as a whole. `~/.claude` also holds machine state that Claude Code writes itself (session history, credentials). Linking the whole directory would put that state inside the repo.
 
-`settings.json`, `settings.local.json`, `config.json`, and `.mcp.json` are not linked. Each is copied once, when it is missing. Claude Code rewrites these files in place. Instead, a hook reports the difference between the repo copy and the real `settings.json` when a session starts.
+`settings.json` and `settings.local.json` are not linked. Each is copied once, when it is missing. Claude Code rewrites both files in place. Instead, a hook reports the difference between the repo copy and the real `settings.json` when a session starts.
 
 ### One skill body, harness differences kept apart
 
-The skills all three harnesses share (plan, implement, review, ship, and so on) have their body in one place, `agent-skills/<name>/SKILL.md`, written in English. pi and opencode read that file as is. On the Claude Code side, `claude/skills/<name>/SKILL.md` holds a line that says "read the canonical body first" and a table of only what differs in Claude Code (tool names, how skills are called, hook paths). This way a rule is not edited three times. A script checks the shape of the canonical files and the delta files.
+The skills all three harnesses share (plan, implement, review, ship, and so on) have their body in one place, `agent-skills/<name>/SKILL.md`, written in English. pi and opencode read that file as is. On the Claude Code side, `claude/skills/<name>/SKILL.md` holds a line that says "read the canonical body first" and a table of only what differs in Claude Code (tool names, how skills are called, hook paths). This way a rule is not edited three times.
 
 ### Rules ask, hooks block
 
-Rule files are instructions the model reads. Shared rules (git, commit messages, how to reply, coding discipline) live in one harness-neutral file, `RULES.md`. Claude Code imports that file from `CLAUDE.md`, and opencode reads the same file through `instructions` in `opencode.json`. pi keeps a shortened copy of the same rules in its own system prompt addendum (`APPEND_SYSTEM.md`), and its index of principles points to `RULES.md`. Only what differs per harness goes in a per-harness file. Rules such as when to clear the context and when to hand work to a subagent are split into files under `rules/`.
+Rule files are instructions the model reads. Shared rules (git, commit messages, how to reply, coding discipline) live in one harness-neutral file, `RULES.md`. Claude Code imports that file from `CLAUDE.md`, and opencode reads the same file through `instructions` in `opencode.json`. pi keeps a shortened copy of the same rules in its own system prompt addendum. Only what differs per harness goes in a per-harness file.
 
 The model can break a rule. What must not happen is blocked by a hook. A hook is a script that runs before or after a tool call. If a hook that runs before the call exits with 2, the call does not run.
 
@@ -44,16 +44,15 @@ $ git commit -m "feat(site): refocus the site on the guides…"
 c53c335 feat(site): refocus the site on the guides and add a principles guide
 ```
 
-The hook blocked the first try ("commit blocked — AI co-author trailer"); the agent read the reason, dropped the trailer, and the second try went in as `c53c335`. The rule stays even though the hook blocks, for two reasons.
+The hook blocked the first try ("commit blocked — AI co-author trailer"); the agent read the reason, dropped the trailer, and the second try went in as `c53c335`. The model reads the rule before it writes the message; the hook is the safety net that catches a wrong try anyway.
 
-- The rule line (`RULES.md`) says that it overrides the harness default and that `hooks/commit-convention.py` blocks it. The model reads the rule before it writes the message; the hook is the safety net that catches a wrong try anyway.
-- A hook blocks only what one command can decide. "Work that will be committed happens in a `git worktree`, not in the original checkout" can be decided from `git checkout -b` creating a branch in the original checkout, so a hook blocks that too. "Open the PR as a draft, and merge only when the request says to merge" cannot be decided by a hook, so it stays a rule only.
+A hook blocks only what one command can decide. "Open the PR as a draft, and merge only when the request says to merge" cannot be decided from a command, so it stays a rule only.
 
 ### Subagents pin their model
 
 Exploring, reviewing, and performance analysis go to subagents. Each of the 9 subagent definitions sets `model:`. Only `reviewer`, which gives the verdict, is `opus`. The other 8 (exploring, simplifying, performance, design, and so on) are `sonnet`. Changing the main session's model does not change the subagents' cost or behavior.
 
-The caller can override the pinned model for one call. The whole-branch review (`/review --full`) starts `reviewer` once as `opus`, as its definition pins, and once as `sonnet` with the same brief, then merges the two results. When the environment forces every spawn onto one model (a `/team` worker), the second one is not started; the report notes that cross-model was unavailable and uses the single verdict.
+The caller can override the pinned model for one call. Run solo, the whole-branch review (`/review --full`) starts `reviewer` with the same brief once as `opus` and once as `sonnet`, then merges the two results.
 
 <CrossModelReviewDiagram />
 
@@ -79,7 +78,7 @@ These are the main hooks set in Claude Code's `settings.json`.
 | PostToolUse | `tool-output-trim.sh` | Trims tool output over 1 KB |
 | PostToolUse, PostToolUseFailure, Stop | `completion-gate.py` | Catches a "done" after code edits when no test, lint, or type check has passed |
 | Stop | `review-gate.py` | Blocks a UX or UI review report that says "review complete" without evidence that the steps ran |
-| PreCompact | `compact-gate.py` | Allows automatic context compaction only at a phase boundary (PR creation, merge, right after a slice passes review, and so on). Allows it anyway when the context is about to overflow |
+| PreCompact | `compact-gate.py` | Allows automatic context compaction only at a phase boundary (PR creation, merge, right after a slice passes review, and so on) |
 | SessionStart | `settings-sync.py` | Reports the difference between the repo's `settings.json` and the real file. `--diff` shows it, and `--apply` backs up the real file and writes the repo's values over it |
 
 In opencode, one plugin runs part of the same hook scripts (the denylist, commit format, output trimming, and so on) with the same input and the same exit 2 rule. pi runs copies of the hooks from its own extension.
@@ -98,11 +97,9 @@ These are the categories it blocks now.
 - Changing permissions or ownership across the whole system
 - Deleting a repo with `gh` (API calls included), deleting secrets, SSH keys, or GPG keys, and making a repo public
 
-Some things it used to block were allowed on 2026-08-14: a force push to a branch that is not protected (the remote keeps the old commit, so it can be undone), piping an install script from the internet into a shell, local cleanup like `reflog expire`, and `gh release delete`. The list file keeps the reason for each in a comment. That file has a local path in an example comment, so it is not shown in full on this site.
-
 ### Review subagent
 
-`reviewer` is the subagent that runs reviews. It is called from three places: the pre-landing review `/review`, the finder of the per-slice review gate, and the cross-model finder of `/review --full`. The caller's brief says what to look at, and this file only holds the constraints on how it runs. It does not change the code under review and only returns findings. The caller decides pass or fail.
+`reviewer` is the subagent that runs reviews. The caller's brief says what to look at, and this file only holds the constraints on how it runs. It does not change the code under review and only returns findings. The caller decides pass or fail.
 
 <include lang="text" meta='title="claude/agents/reviewer.md"'>../snippets/agent-config/agents/reviewer.md</include>
 
