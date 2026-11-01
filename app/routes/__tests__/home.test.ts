@@ -13,20 +13,14 @@ describe('home loader', () => {
     expect((await call('/')).lang).toBe('ko');
     expect((await call('/en')).lang).toBe('en');
   });
-
-  it('lists only guides whose docs page exists', async () => {
-    // A row without a docs page would link to a 404.
-    expect((await call('/')).publishedGuides).toEqual(['principles', 'agent-config', 'workflow', 'knowledge', 'plugins', 'herdr', 'keymaps']);
-    expect((await call('/en')).publishedGuides).toEqual(['principles', 'agent-config', 'workflow', 'knowledge', 'plugins', 'herdr', 'keymaps']);
-  });
 });
 
 describe('home copy', () => {
   const shape = (lang: string) => {
     const copy = homeCopy(lang);
     return {
-      guides: copy.guides.map((guide) => guide.slug),
-      links: copy.links.map((link) => (link.href.startsWith('/assets/') ? 'resume' : link.href)),
+      guides: Object.keys(copy.guideTitles),
+      links: copy.links.map((link) => [link.icon, link.href.startsWith('/assets/') ? 'resume' : link.href]),
     };
   };
 

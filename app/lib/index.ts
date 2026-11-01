@@ -1,6 +1,6 @@
 export { heldPathAt, NotFoundPathContext, takeNotFoundPath, type HeldPath, type NotFoundHold } from './not-found-hold';
 export { sameOriginPath } from './same-origin-path';
-export { homeCopy, type HomeCopy } from './home-copy';
+export { homeCopy, type HomeCopy, type HomeLink } from './home-copy';
 export { alternateLinks, i18n, isLocalizedPath, localeFromPath, localeSwitchPath, localized, localizedDocsHref, resumeHref, type AlternateLink } from './i18n';
 export { baseOptions } from './layout.shared';
 export { llmsFullTxt, llmsTxt } from './llms';

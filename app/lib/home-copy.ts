@@ -1,14 +1,9 @@
 import { localized } from './i18n';
 import { GITHUB_URL, LINKEDIN_URL, RESUME_HREF } from './shared';
 
-/** One guide in the list: `slug` is the top-level page under content/docs. */
-export interface HomeGuide {
-  readonly slug: string;
-  readonly title: string;
-  readonly blurb: string;
-}
-
+/** A footer link, drawn as its icon; `name` is its accessible name and tooltip. */
 export interface HomeLink {
+  readonly icon: 'linkedin' | 'github' | 'hwip' | 'resume' | 'source';
   readonly name: string;
   readonly href: string;
 }
@@ -35,8 +30,8 @@ export interface HomeCopy {
   readonly request: string;
   readonly session: readonly HomeSessionLine[];
   readonly logNote: string;
-  readonly guidesHeading: string;
-  readonly guides: readonly HomeGuide[];
+  /** The guide a session line points to, by its top-level page under content/docs. */
+  readonly guideTitles: Readonly<Record<GuideSlug, string>>;
   readonly about: string;
   readonly links: readonly HomeLink[];
   readonly codeLicense: string;
@@ -45,18 +40,14 @@ export interface HomeCopy {
   readonly skipLabel: string;
 }
 
-const GUIDE_SLUGS = ['principles', 'agent-config', 'workflow', 'knowledge', 'plugins', 'herdr', 'keymaps'] as const;
-type GuideSlug = (typeof GUIDE_SLUGS)[number];
-
-const guides = (lines: Record<GuideSlug, readonly [string, string]>): HomeGuide[] =>
-  GUIDE_SLUGS.map((slug) => ({ slug, title: lines[slug][0], blurb: lines[slug][1] }));
+type GuideSlug = 'principles' | 'agent-config' | 'workflow' | 'knowledge' | 'plugins' | 'herdr' | 'keymaps';
 
 const footerLinks = (resume: string, resumeHref: string, source: string): HomeLink[] => [
-  { name: 'LinkedIn', href: LINKEDIN_URL },
-  { name: 'GitHub', href: GITHUB_URL },
-  { name: 'hwip', href: 'https://hwip.app' },
-  { name: resume, href: resumeHref },
-  { name: source, href: `${GITHUB_URL}/tak-bro.github.io` },
+  { icon: 'linkedin', name: 'LinkedIn', href: LINKEDIN_URL },
+  { icon: 'github', name: 'GitHub', href: GITHUB_URL },
+  { icon: 'hwip', name: 'hwip', href: 'https://hwip.app' },
+  { icon: 'resume', name: resume, href: resumeHref },
+  { icon: 'source', name: source, href: `${GITHUB_URL}/tak-bro.github.io` },
 ];
 
 const en: HomeCopy = {
@@ -65,7 +56,7 @@ const en: HomeCopy = {
   description:
     'How I build coding-agent harnesses and work with them: setup guides by Tak (Hyungtak Jin).',
   name: 'Tak (Hyungtak Jin)',
-  lede: 'I have built web, React Native and Electron apps since 2018. Now I write the rules for the coding agents that build them, and these guides show that setup and why.',
+  lede: 'Software engineer. I started on ultrasound device software at GE Healthcare in 2015, have built web, mobile and desktop products since 2018, and now shape how I work with coding agents.',
   resumeLabel: 'Resume',
   terminalLabel: 'Claude Code session',
   request: '/orch drop the posts and projects, polish the guides, and redraw them with diagrams',
@@ -79,16 +70,15 @@ const en: HomeCopy = {
     { kind: 'tool', call: 'Skill(ship)', result: 'committed → draft PR #20', guide: 'workflow' },
   ],
   logNote: 'Lines picked from the Claude Code session that rebuilt this site.',
-  guidesHeading: 'Setup guides',
-  guides: guides({
-    principles: ['Principles', 'Why the setup looks the way it does.'],
-    'agent-config': ['Agent config', 'Rules, hooks and subagents for three harnesses.'],
-    workflow: ['Workflow', 'From a one-line request to a merged PR.'],
-    knowledge: ['Knowledge loop', 'Where a finished task’s record goes.'],
-    plugins: ['Plugins and MCP', 'What stays on, and why.'],
-    herdr: ['Herdr', 'The terminal workspace and its keys.'],
-    keymaps: ['Keymaps', 'macOS, Ghostty, Karabiner, LazyVim.'],
-  }),
+  guideTitles: {
+    principles: 'Principles',
+    'agent-config': 'Agent config',
+    workflow: 'Workflow',
+    knowledge: 'Knowledge loop',
+    plugins: 'Plugins and MCP',
+    herdr: 'Herdr',
+    keymaps: 'Keymaps',
+  },
   about: 'Tak (Hyungtak Jin)',
   links: footerLinks('Resume', RESUME_HREF.en, 'Site source'),
   codeLicense: 'Code: MIT',
@@ -102,7 +92,7 @@ const ko: HomeCopy = {
   documentTitle: 'Tak(진형탁) — 코딩 에이전트 하네스',
   description: 'Tak(진형탁)이 코딩 에이전트 하네스를 만들고 쓰는 법을 정리한 셋업 가이드예요.',
   name: 'Tak(진형탁)',
-  lede: '2018년부터 웹·React Native·Electron 앱을 만들었고, 지금은 그 앱을 만드는 코딩 에이전트의 규칙을 만들어요. 그 설정과 이유를 가이드로 적었어요.',
+  lede: '소프트웨어 엔지니어예요. 2015년 GE Healthcare에서 초음파 의료기기 소프트웨어로 시작했고, 2018년부터 웹·앱·데스크톱 제품을 만들고 있어요. 요즘은 코딩 에이전트와 일하는 방식을 다듬어요.',
   resumeLabel: '이력서',
   terminalLabel: 'Claude Code 세션',
   request: '/orch 글·프로젝트 없애고, 가이드 윤문하고, 다이어그램 적극 활용해서 재개정해',
@@ -116,16 +106,15 @@ const ko: HomeCopy = {
     { kind: 'tool', call: 'Skill(ship)', result: 'committed → draft PR #20', guide: 'workflow' },
   ],
   logNote: '이 사이트를 고친 실제 Claude Code 세션에서 골랐어요.',
-  guidesHeading: '셋업 가이드',
-  guides: guides({
-    principles: ['원칙', '셋업이 이렇게 생긴 이유.'],
-    'agent-config': ['에이전트 설정', '세 하네스의 규칙·훅·서브에이전트.'],
-    workflow: ['워크플로우', '한 줄 요청에서 머지까지.'],
-    knowledge: ['지식 루프', '끝난 작업의 기록이 가는 곳.'],
-    plugins: ['플러그인·MCP', '켜 두는 플러그인과 그 이유.'],
-    herdr: ['Herdr', '터미널 작업 공간과 단축키.'],
-    keymaps: ['키맵', 'macOS, Ghostty, Karabiner, LazyVim.'],
-  }),
+  guideTitles: {
+    principles: '원칙',
+    'agent-config': '에이전트 설정',
+    workflow: '워크플로우',
+    knowledge: '지식 루프',
+    plugins: '플러그인·MCP',
+    herdr: 'Herdr',
+    keymaps: '키맵',
+  },
   about: 'Tak(진형탁)',
   links: footerLinks('이력서', RESUME_HREF.ko, '사이트 소스'),
   codeLicense: '코드: MIT',

@@ -5,7 +5,7 @@
 
 ## Product Overview
 **One-liner:** 코딩 에이전트 하네스를 어떻게 만들고 쓰는지 정리한 가이드. Tak(진형탁)의 개인 사이트.
-**What it does:** Claude Code·opencode·pi 에 붙인 규칙·훅·스킬과 그 설정을 셋업 가이드로 보인다. 홈은 이름·두 문장 소개·가이드 목록과, 이 사이트를 고친 실제 Claude Code 세션을 재생하는 터미널이고, 설정의 근거와 다이어그램은 가이드에 있다.
+**What it does:** Claude Code·opencode·pi 에 붙인 규칙·훅·스킬과 그 설정을 셋업 가이드로 보인다. 홈은 이름·두 문장 소개·이력서와 GitHub 버튼과, 이 사이트를 고친 실제 Claude Code 세션을 재생하는 터미널이고, 설정의 근거와 다이어그램은 가이드에 있다.
 **Product category:** 개인 사이트(셋업 가이드). 채용 포트폴리오가 아니다. 채용 맥락은 nav 의 이력서와 푸터의 LinkedIn 이 맡는다.
 **Product type:** 정적 개인 사이트(GitHub Pages, ko/en).
 **Business model:** 없음.
@@ -32,7 +32,7 @@
 - 에이전트 작업은 draft PR 에서 멈추고, 방향 판단은 사람이 한다.
 - 세 하네스(Claude Code·opencode·pi)가 규칙 파일 하나를 읽는다.
 - 직접 만든 도구: hwip, aicommit2, pi-statusline, 그리고 claude-watch 를 포크해 고친 tak-cc-statusline.
-- 2018년부터 웹·React Native·Electron 실무.
+- 2015년 GE Healthcare 초음파 의료기기 소프트웨어(C++, 인턴 2015.07–12 · 전임연구원 2016.02–2017.10)로 시작, 2018년부터 웹·React Native·Electron 실무.
 
 ## Objections
 | Objection | Response |

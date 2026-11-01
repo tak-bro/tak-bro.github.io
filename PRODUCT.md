@@ -29,7 +29,8 @@ config repositories, so nothing is general advice dressed up as experience.
 
 ## Operating Context
 
-- Subject: Tak (Hyungtak Jin, 진형탁). Web, React Native and Electron since 2018; now works through Claude Code,
+- Subject: Tak (Hyungtak Jin, 진형탁). Started in 2015 on ultrasound device software (C++) at GE Healthcare (intern
+  2015.07–12, research engineer 2016.02–2017.10, per the public resume); web, React Native and Electron since 2018; now works through Claude Code,
   opencode and pi with his own rules, hooks and skills.
 - Guides (8 pairs, ko and en): introduction, principles, agent config, workflow, knowledge loop, plugins and MCP,
   Herdr, keymaps.
@@ -43,7 +44,8 @@ config repositories, so nothing is general advice dressed up as experience.
 - No motion library (no GSAP, no Lenis). Under `prefers-reduced-motion` every motion is off.
 - Colour and type stay on the fumadocs tokens and Pretendard, shared with the guides; the home does not become a
   separate visual island.
-- No employer or company names (a sensitive-content gate blocks them). The config repositories stay private: no links
+- The current employer and customer names stay off the site (a sensitive-content gate blocks them). GE Healthcare,
+  the first employer, may be named (the user, 2026-11-01: "2015년부터 ge 다닌것도 어필해야"); it is on the public resume. The config repositories stay private: no links
   to them.
 - No blog or project pages; they were removed on purpose.
 
@@ -58,7 +60,7 @@ config repositories, so nothing is general advice dressed up as experience.
   loop.
 - A herdr screen recording (used in the Herdr guide).
 - Public resume PDF (`public/assets/resume.pdf`), GitHub profile `tak-bro`, LinkedIn.
-- Absent, never to be invented: customers, testimonials, employer names, usage metrics, star counts, adoption numbers.
+- Absent, never to be invented: customers, testimonials, the current employer's name, usage metrics, star counts, adoption numbers.
   Counts from the knowledge base (plans, notes) are not used: their definitions are not stable.
 
 ## Product Principles

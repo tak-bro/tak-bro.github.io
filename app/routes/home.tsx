@@ -1,10 +1,10 @@
 import { HomeLayout } from 'fumadocs-ui/layouts/home';
-import { ArrowRight, ArrowUpRight } from 'lucide-react';
-import { Link } from 'react-router';
+import { ArrowUpRight, CodeXml, FileUser, Smartphone } from 'lucide-react';
+import type { ReactNode } from 'react';
 import type { Route } from './+types/home';
 import { HomeTerminal } from '../components/home-terminal';
 import { primaryButton } from '../components/page-header';
-import { baseOptions, CONTENT_ID, GITHUB_URL, homeCopy, localeFromPath, localizedDocsHref, requestPath, resumeHref, source } from '../lib';
+import { baseOptions, CONTENT_ID, GITHUB_URL, homeCopy, localeFromPath, localizedDocsHref, requestPath, resumeHref, type HomeLink } from '../lib';
 
 export const meta = ({ location }: Route.MetaArgs) => {
   const copy = homeCopy(localeFromPath(location.pathname));
@@ -19,12 +19,8 @@ export const meta = ({ location }: Route.MetaArgs) => {
 };
 
 const REPO_URL = `${GITHUB_URL}/tak-bro.github.io`;
-// Guides only for pages that exist; check:links fails on a link to an unwritten one.
-export const loader = ({ request }: Route.LoaderArgs) => {
-  const lang = localeFromPath(requestPath(request));
-  const publishedGuides = homeCopy(lang).guides.flatMap((guide) => (source.getPage([guide.slug], lang) ? [guide.slug] : []));
-  return { lang, publishedGuides };
-};
+
+export const loader = ({ request }: Route.LoaderArgs) => ({ lang: localeFromPath(requestPath(request)) });
 
 const ExternalMark = ({ label }: { label: string }) => (
   <>
@@ -45,6 +41,26 @@ const NameLines = ({ name }: { name: string }) => {
   );
 };
 
+/** Brand marks lucide does not carry (Simple Icons paths, 24×24). */
+const BrandMark = ({ d }: { d: string }) => (
+  <svg viewBox="0 0 24 24" className="size-[18px]" fill="currentColor" aria-hidden>
+    <path d={d} />
+  </svg>
+);
+
+const GITHUB_MARK =
+  'M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12';
+const LINKEDIN_MARK =
+  'M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zM7.119 20.452H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z';
+
+const LINK_ICONS: Record<HomeLink['icon'], ReactNode> = {
+  linkedin: <BrandMark d={LINKEDIN_MARK} />,
+  github: <BrandMark d={GITHUB_MARK} />,
+  hwip: <Smartphone className="size-5" strokeWidth={1.5} aria-hidden />,
+  resume: <FileUser className="size-5" strokeWidth={1.5} aria-hidden />,
+  source: <CodeXml className="size-5" strokeWidth={1.5} aria-hidden />,
+};
+
 const isExternal = (href: string) => href.startsWith('http');
 
 /** The second action beside the brand button: the same size, drawn in the border tone. */
@@ -53,32 +69,14 @@ const outlineButton =
 
 const external = (link: { href: string }) => (isExternal(link.href) ? { rel: 'noreferrer noopener', target: '_blank' } : {});
 
-/** One guide in the left column: its title and one line, the whole row a link. */
-const GuideRow = ({ to, title, line }: { to: string; title: string; line: string }) => (
-  <li>
-    <Link to={to} className="group grid grid-cols-[9.5rem_1fr] items-baseline gap-x-4 rounded-sm py-1.5 break-keep max-sm:grid-cols-1">
-      <span className="text-[15px] font-medium">
-        {title}
-        <ArrowRight
-          className="ml-1.5 inline size-3.5 -translate-y-px motion-safe:transition-transform motion-safe:group-hover:translate-x-1"
-          strokeWidth={1.5}
-          aria-hidden
-        />
-      </span>
-      <span className="text-[15px] text-fd-muted-foreground">{line}</span>
-    </Link>
-  </li>
-);
-
 const Home = ({ loaderData }: Route.ComponentProps) => {
   const { lang } = loaderData;
   const copy = homeCopy(lang);
   const docsHref = localizedDocsHref(lang);
-  const guides = copy.guides.filter((guide) => loaderData.publishedGuides.includes(guide.slug));
 
   return (
     <HomeLayout {...baseOptions({ lang })}>
-      <section id={CONTENT_ID} aria-labelledby="hero-heading" className="home-frame grid items-start gap-12 pt-12 lg:grid-cols-12 lg:grid-rows-[auto_1fr] lg:gap-x-10 lg:gap-y-8 lg:pt-16">
+      <section id={CONTENT_ID} aria-labelledby="hero-heading" className="home-frame grid items-start gap-12 pt-12 lg:grid-cols-12 lg:items-center lg:gap-x-10 lg:pt-16">
         <div className="flex flex-col gap-6 lg:col-span-5">
           <h1 id="hero-heading" className="home-rise text-[clamp(min(3rem,13vw),5.6vw,5.25rem)] leading-[0.98] font-bold tracking-[-0.04em] text-balance break-keep">
             <NameLines name={copy.name} />
@@ -101,20 +99,8 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
             </li>
           </ul>
         </div>
-        {guides.length > 0 ? (
-          <nav aria-labelledby="guides-heading" className="home-rise flex flex-col gap-2 border-t border-fd-border pt-6 [--i:3] max-lg:order-last lg:col-span-5">
-            <h2 id="guides-heading" className="text-[15px] font-medium text-fd-muted-foreground">
-              {copy.guidesHeading}
-            </h2>
-            <ul className="flex flex-col">
-              {guides.map((guide) => (
-                <GuideRow key={guide.slug} to={`${docsHref}/${guide.slug}`} title={guide.title} line={guide.blurb} />
-              ))}
-            </ul>
-          </nav>
-        ) : null}
 
-        <section aria-labelledby="terminal-heading" className="lg:col-span-7 lg:col-start-6 lg:row-span-2 lg:row-start-1">
+        <section aria-labelledby="terminal-heading" className="lg:col-span-7 lg:col-start-6">
           <h2 id="terminal-heading" className="sr-only">
             {copy.terminalLabel}
           </h2>
@@ -123,31 +109,37 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
         </section>
       </section>
 
-      <footer className="home-frame mt-24 flex flex-col gap-6 bg-fd-card pt-16 pb-8 lg:mt-32 lg:pt-20">
-        <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3 text-[15px]">
-          <p>{copy.about}</p>
-          <ul className="flex flex-wrap gap-x-6 gap-y-1">
-            {copy.links.map((link) => (
-              <li key={link.name}>
-                <a href={link.href} {...external(link)} className="home-link font-medium">
-                  <span>{link.name}</span>
-                  {isExternal(link.href) ? <ExternalMark label={copy.newTabLabel} /> : null}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="flex flex-wrap justify-between gap-x-6 gap-y-2 text-sm text-fd-muted-foreground">
-          <span className="flex flex-wrap gap-x-6 gap-y-1">
-            <a href={`${REPO_URL}/blob/main/LICENSE`} className="inline-block py-1 underline-offset-4 hover:underline">
+      <footer className="home-frame mt-24 flex flex-wrap items-center justify-between gap-x-8 gap-y-4 bg-fd-card py-8 lg:mt-32">
+        <div className="flex flex-col gap-1 text-sm text-fd-muted-foreground">
+          <p className="text-[15px] font-medium text-fd-foreground">{copy.about}</p>
+          <p className="flex flex-wrap gap-x-4">
+            <span>© 2026 tak-bro</span>
+            <a href={`${REPO_URL}/blob/main/LICENSE`} className="underline-offset-4 hover:underline">
               {copy.codeLicense}
             </a>
-            <a href={`${REPO_URL}/blob/main/LICENSE-CONTENT`} className="inline-block py-1 underline-offset-4 hover:underline">
+            <a href={`${REPO_URL}/blob/main/LICENSE-CONTENT`} className="underline-offset-4 hover:underline">
               {copy.contentLicense}
             </a>
-          </span>
-          <span className="py-1">© 2026 tak-bro</span>
+          </p>
         </div>
+        <ul className="-mx-2.5 flex flex-wrap">
+          {copy.links.map((link) => (
+            <li key={link.icon}>
+              <a
+                href={link.href}
+                {...external(link)}
+                title={link.name}
+                className="flex size-11 items-center justify-center rounded-sm text-fd-muted-foreground hover:bg-fd-accent hover:text-fd-foreground motion-safe:transition-colors"
+              >
+                {LINK_ICONS[link.icon]}
+                <span className="sr-only">
+                  {link.name}
+                  {isExternal(link.href) ? ` ${copy.newTabLabel}` : ''}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
       </footer>
     </HomeLayout>
   );

@@ -143,8 +143,6 @@ export const HomeTerminal = ({ copy, docsHref }: HomeTerminalProps) => {
       </span>
     ) : null;
 
-  const guideTitle = (slug: string) => copy.guides.find((guide) => guide.slug === slug)?.title;
-
   return (
     <div
       ref={ref}
@@ -192,7 +190,7 @@ export const HomeTerminal = ({ copy, docsHref }: HomeTerminalProps) => {
                   to={`${docsHref}/${line.guide}`}
                   className="font-sans text-[12px] whitespace-nowrap text-fd-muted-foreground group-hover/log:text-brand hover:text-brand max-sm:hidden motion-safe:transition-colors sm:text-[13px]"
                 >
-                  {guideTitle(line.guide)} →
+                  {copy.guideTitles[line.guide]} →
                 </Link>
               </p>
               {tool ? (
