@@ -47,7 +47,7 @@ describe('proseOf', () => {
 
 // The guides are rewritten one slice at a time; a guide leaves this list when its Korean page is done.
 // Plan PLAN-09-15-51 slice 09 empties it and removes it.
-const TONE_PENDING = new Set(['herdr', 'keymaps']);
+const TONE_PENDING = new Set(['keymaps']);
 
 describe('Korean guides', async () => {
   const docs = join(import.meta.dirname, '../../content/docs');

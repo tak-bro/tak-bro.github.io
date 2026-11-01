@@ -20,10 +20,7 @@ herdr shortcuts have two kinds of input.
 
 To use Cmd keys I use a Ghostty **key table**. Only while the `herdr` table is on, Ghostty turns Cmd keys into [kitty keyboard protocol](https://sw.kovidgoyal.net/kitty/keyboard-protocol/) escape sequences (`CSI <key code>;<modifiers>u`, or `CSI 1;<modifiers><A-D>` for arrow keys) and sends them to herdr. While the table is off, the same keys do what Ghostty normally does (a new tab, and so on).
 
-```text
-Cmd+T ──▶ Ghostty (herdr table on)  ──▶ CSI 116;9u ──▶ herdr: new_tab
-Cmd+T ──▶ Ghostty (table off)       ──▶ new Ghostty tab
-```
+<KeyPathDiagram />
 
 The modifier value is `1 + shift(1) + alt(2) + ctrl(4) + cmd(8)`. `Cmd` alone is `9`, and `Cmd+Shift` is `10`.
 
@@ -34,6 +31,8 @@ A key turns the table on and off by hand (`Cmd+Shift+H`), but usually a shell fu
 ### A timer script fills in the sidebar branch
 
 To show each pane's git branch on the second line of an agent row, I use a custom token, `$branch`. herdr does not fill this token itself. So the right side of the tab bar has a command entry that prints nothing, and it runs `pane-branch.sh` every 5 seconds. The script reads the branch of each agent pane and reports it with `herdr pane report-metadata`. The token has a 30-second TTL, so the branch disappears on its own if the script stops.
+
+<BranchTokenDiagram />
 
 ## My config
 
@@ -81,7 +80,7 @@ The herdr table is at the top of the file. The rest is Ghostty's own config and 
 
 ### Shell function
 
-`.zshrc` mixes in personal settings, so it is not synced. Only the herdr part is copied here. Its comments are in Korean, as in the source.
+Only the herdr function is copied here, from `zsh/.zshrc` in dotfiles. The rest of that file is shell setup unrelated to herdr, and secrets live in the untracked `~/.zshrc.local`. Its comments are in Korean, as in the source.
 
 ```zsh title="~/.zshrc"
 herdr() {
