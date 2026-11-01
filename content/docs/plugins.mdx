@@ -3,11 +3,11 @@ title: 플러그인·MCP
 description: 켜 두고 쓰는 Claude Code 플러그인과 MCP 서버, 그리고 설치 스크립트가 같은 목록을 다시 붙이는 방법.
 ---
 
-Claude Code 에는 내가 만든 규칙·훅·스킬 말고도 남이 만든 확장을 두 가지 방식으로 붙인다. 플러그인과 MCP 서버다. 이 페이지는 무엇을 켜 두는지, 왜 켜 두는지, 설치 스크립트가 같은 목록을 어떻게 다시 붙이는지 적는다. 내가 만든 쪽은 [에이전트 설정](./agent-config.mdx)에서 다룬다.
+Claude Code 에는 제가 만든 규칙·훅·스킬 말고도 남이 만든 확장을 두 가지 방식으로 붙여요. 플러그인과 MCP 서버예요. 이 페이지는 무엇을 켜 두는지, 왜 켜 두는지, 설치 스크립트가 같은 목록을 어떻게 다시 붙이는지 적어요. 제가 만든 쪽은 [에이전트 설정](./agent-config.mdx)에서 다뤄요.
 
 ## 동작 원리
 
-### 플러그인과 MCP 는 사는 곳이 다르다
+### 플러그인과 MCP 는 사는 곳이 달라요
 
 | | 플러그인 | MCP 서버 |
 |---|---|---|
@@ -15,18 +15,20 @@ Claude Code 에는 내가 만든 규칙·훅·스킬 말고도 남이 만든 확
 | 켜고 끄는 곳 | `~/.claude/settings.json` 의 `enabledPlugins` | `~/.claude.json` 의 `mcpServers` |
 | 내 정본 | 에이전트 설정 레포의 `settings.json` | dotfiles 레포의 `claude/mcp-servers.json` |
 
-`settings.json` 에는 플러그인 목록과 켜짐 여부만 있다. 실제 설치본은 `~/.claude/plugins` 아래 머신 로컬 파일이라, 복사만으로는 설치되지 않는다. MCP 목록은 아예 `settings.json` 에 없다. 그래서 두 목록 모두 설치 스크립트가 다시 붙인다.
+`settings.json` 에는 플러그인 목록과 켜짐 여부만 있어요. 실제 설치본은 `~/.claude/plugins` 아래 머신 로컬 파일이라, 복사만으로는 설치되지 않아요. MCP 목록은 아예 `settings.json` 에 없어요. 그래서 두 목록 모두 설치 스크립트가 다시 붙여요.
 
-### 설치 스크립트가 없는 것만 붙인다
+### 설치 스크립트가 없는 것만 붙여요
 
-dotfiles 의 `install.sh` 가 두 목록을 읽어 다시 붙인다. 다시 돌려도 이미 있는 것은 건너뛴다.
+dotfiles 의 `install.sh` 가 두 목록을 읽어 다시 붙여요. 다시 돌려도 이미 있는 것은 건너뛰어요.
 
-- **플러그인** — 실제 `~/.claude/settings.json` 을 읽는다. 이 파일은 에이전트 설정 레포의 사본에서 처음 한 번 복사되고, 그 뒤 차이는 세션 시작 훅이 알려 준다. 마켓플레이스 목록을 먼저 추가하고, `enabledPlugins` 에서 `true` 인 것만 설치한다.
-- **MCP 서버** — `mcp-servers.json` 에서 `~/.claude.json` 에 없는 이름만 더한다. 이미 있는 항목은 고치지 않는다. VS Code 가 깔려 있고 `mcp.json` 이 없으면 같은 목록으로 만든다.
+<RestoreListsDiagram />
 
-pi 와 opencode 에는 이 목록 중 `qmd` 하나만 넣는다(`opencode.json` 의 `mcp`, `~/.pi/agent/mcp.json`). 나머지는 Claude Code 에서만 쓴다.
+- **플러그인** — 실제 `~/.claude/settings.json` 을 읽어요. 이 파일은 에이전트 설정 레포의 사본에서 처음 한 번 복사되고, 그 뒤 차이는 세션 시작 훅이 알려 줘요. 마켓플레이스 목록을 먼저 추가하고, `enabledPlugins` 에서 `true` 인 것만 설치해요.
+- **MCP 서버** — `mcp-servers.json` 에서 `~/.claude.json` 에 없는 이름만 더해요. 이미 있는 항목은 고치지 않아요. VS Code 가 깔려 있고 `mcp.json` 이 없으면 같은 목록으로 만들어요.
 
-목록에서 지운 서버는 등록이 풀리지 않는다. 추가만 하기 때문이다. 그래서 뺀 서버는 설치 스크립트에 해제 명령을 따로 적는다. 지금은 브라우저를 모는 MCP 두 개(`playwright`, `chrome-devtools`)를 이렇게 해제한다. 브라우저 확인은 MCP 대신 `agent-browser` CLI 하나로 모았다.
+pi 와 opencode 에는 이 목록 중 `qmd` 하나만 넣어요(`opencode.json` 의 `mcp`, `~/.pi/agent/mcp.json`). 나머지는 Claude Code 에서만 써요.
+
+목록에서 지운 서버는 등록이 풀리지 않아요. 추가만 하기 때문이에요. 그래서 뺀 서버는 설치 스크립트에 해제 명령을 따로 적어요. 지금은 목록에서 뺀 서버 다섯 개를 이렇게 해제해요. 그중 둘은 브라우저를 모는 MCP(`playwright`, `chrome-devtools`)이고, 브라우저 확인은 MCP 대신 `agent-browser` CLI 하나로 모았어요. 나머지 셋(`codebase-memory-mcp`, `enquire`, `basic-memory`)은 각각 `codegraph` 와 `qmd` 로 바꾸거나 뺐어요.
 
 ## 내 설정
 
@@ -36,44 +38,44 @@ pi 와 opencode 에는 이 목록 중 `qmd` 하나만 넣는다(`opencode.json` 
 |---|---|
 | `claude-mem` | 세션 사이 기억. 지난 작업 검색과 작업 목록 |
 | `caveman` | 채팅 답을 짧게 줄이는 응답 모드 |
-| `hwip` | 폰으로 알림·파일을 보내고, 폰에서 답을 받는다 |
+| `hwip` | 폰으로 알림·파일을 보내고, 폰에서 답을 받아요 |
 | `impeccable` | 제품 UI 화면 제작과 수정 |
 | `humanize-korean` | 한국어 문서 윤문 |
 | `last30days` | 최근 30일 여론·트렌드 리서치 |
-| `watch` | 영상 분석. `ffmpeg`·`yt-dlp` 가 먼저 있어야 한다 |
+| `watch` | 영상 분석. `ffmpeg`·`yt-dlp` 가 먼저 있어야 해요 |
 | `swift-lsp`·`clangd-lsp` | Swift·C/C++ 코드의 언어 서버 |
 
-이 밖에 9개는 `false` 로 꺼 둔다. 켜 두면 스킬 목록과 프롬프트가 그만큼 길어지므로 필요할 때만 켠다. 꺼 둔 플러그인은 설치 스크립트가 설치하지 않는다.
+이 밖에 9개는 `false` 로 꺼 둬요. 켜 두면 스킬 목록과 프롬프트가 그만큼 길어지니 필요할 때만 켜요. 꺼 둔 플러그인은 설치 스크립트가 설치하지 않아요.
 
 ### MCP 서버
 
 | 서버 | 하는 일 |
 |---|---|
-| `codegraph` | 코드 심볼·호출 관계를 미리 색인한 그래프. 파일을 하나씩 읽는 대신 한 번에 묻는다 |
+| `codegraph` | 코드 심볼·호출 관계를 미리 색인한 그래프. 파일을 하나씩 읽는 대신 한 번에 물어요 |
 | `context7` | 라이브러리·프레임워크의 현재 문서 조회 |
 | `mobile-mcp` | iOS 시뮬레이터·Android 에뮬레이터 조작 |
 | `figma-desktop` | Figma 데스크톱 앱이 로컬에 여는 HTTP 서버 |
-| `qmd` | 내 메모·문서 저장소 검색. 로컬 데몬이 HTTP 로 띄워 두어 세션마다 임베딩 모델을 올리지 않는다 |
+| `qmd` | 제 메모·문서 저장소 검색. 로컬 데몬이 HTTP 로 띄워 둬서 세션마다 임베딩 모델을 올리지 않아요 |
 
-실행 경로의 홈 디렉터리는 `__HOME__` 으로 적어 두고, 설치 스크립트가 등록할 때 바꾼다.
+실행 경로의 홈 디렉터리는 `__HOME__` 으로 적어 두고, 설치 스크립트가 등록할 때 바꿔요.
 
 <include lang="json" meta='title="claude/mcp-servers.json"'>../snippets/dotfiles/claude/mcp-servers.json</include>
 
 ## 확인
 
-1. 붙은 MCP 서버와 연결 상태를 본다. 위 목록의 5개가 모두 보여야 한다.
+1. 붙은 MCP 서버와 연결 상태를 봐요. 위 목록의 5개가 모두 보여야 해요.
 
 ```sh
 claude mcp list
 ```
 
-2. Claude Code 안에서 플러그인 목록을 연다. 위 표의 플러그인이 켜져 있어야 한다.
+2. Claude Code 안에서 플러그인 목록을 열어요. 위 표의 플러그인이 켜져 있어야 해요.
 
 ```text
 /plugin
 ```
 
-3. dotfiles 검사를 돌린다. 목록의 서버가 `~/.claude.json` 에 없으면 경고, 등록됐는데 실행 파일이 없으면 실패로 남는다.
+3. dotfiles 검사를 돌려요. 목록의 서버가 `~/.claude.json` 에 없으면 경고, 등록됐는데 실행 파일이 없으면 실패로 남아요.
 
 ```sh
 task dot:check
