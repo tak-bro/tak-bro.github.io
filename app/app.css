@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/lib/default-colors.css';
 @import 'fumadocs-ui/css/preset.css';
 /* Pretendard (OFL, from npm) covers Hangul and Latin; the dynamic subset loads only the glyphs a page uses. */
 @import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';
@@ -7,9 +7,42 @@
 @source '../app';
 @source '../content';
 
-/* fumadocs' neutral muted text (#737373) falls under 4.5:1 on its light card and accent backgrounds. */
-:root:not(.dark) {
-  --color-fd-muted-foreground: hsl(0, 0%, 35%);
+/* hwip.app's palette on fumadocs' tokens (DESIGN.md § System), so the docs follow it too. */
+:root {
+  --color-fd-background: #fff;
+  --color-fd-foreground: #111113;
+  --color-fd-card: #f2f2f4;
+  --color-fd-card-foreground: #111113;
+  --color-fd-popover: #fff;
+  --color-fd-popover-foreground: #111113;
+  --color-fd-muted: #f0f0f2;
+  --color-fd-muted-foreground: #66666c;
+  --color-fd-secondary: #f0f0f2;
+  --color-fd-secondary-foreground: #111113;
+  --color-fd-accent: #e3e3e7;
+  --color-fd-accent-foreground: #111113;
+  --color-fd-border: #e3e3e7;
+  --color-fd-primary: #111113;
+  --color-fd-primary-foreground: #fff;
+  --color-fd-ring: var(--color-brand);
+}
+
+.dark {
+  --color-fd-background: #000;
+  --color-fd-foreground: #fff;
+  --color-fd-card: #151517;
+  --color-fd-card-foreground: #fff;
+  --color-fd-popover: #151517;
+  --color-fd-popover-foreground: #fff;
+  --color-fd-muted: #232326;
+  --color-fd-muted-foreground: #a0a0a6;
+  --color-fd-secondary: #232326;
+  --color-fd-secondary-foreground: #fff;
+  --color-fd-accent: #232326;
+  --color-fd-accent-foreground: #fff;
+  --color-fd-border: #2a2a2e;
+  --color-fd-primary: #fff;
+  --color-fd-primary-foreground: #000;
 }
 
 @theme {
@@ -17,12 +50,16 @@
   /* Hangul has no glyphs in the system mono fonts; Pretendard keeps it from falling back to a wide CJK mono. */
   /* taste-skill-ignore: the code face, used only inside <pre>/<code>. */
   --font-mono: ui-monospace, SFMono-Regular, Menlo, 'Pretendard Variable', monospace;
-  /* The one accent: the primary button, link underlines in the nav. 5:1 on the light background. */
-  --color-brand: oklch(0.52 0.16 42);
+  /* The one accent, hwip's yellow. Yellow text is unreadable on white, so in light mode `brand` (text, lines,
+     rings) is the darker yellow, 5:1 on the card; `brand-fill` keeps the bright one for the primary button. */
+  --color-brand: #856600;
+  --color-brand-fill: #f8c200;
+  --color-on-brand: #171718;
 }
 
 .dark {
-  --color-brand: oklch(0.76 0.14 55);
+  --color-brand: #f8c200;
+  --color-on-brand: #000;
 }
 
 /* Korean words break whole instead of mid-syllable. */

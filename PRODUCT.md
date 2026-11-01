@@ -42,8 +42,8 @@ config repositories, so nothing is general advice dressed up as experience.
 - Korean is the default language and English mirrors it with the same structure. Korean copy speaks in 해요체
   (formal statements in 습니다체); `pnpm check` enforces it on the guides.
 - No motion library (no GSAP, no Lenis). Under `prefers-reduced-motion` every motion is off.
-- Colour and type stay on the fumadocs tokens and Pretendard, shared with the guides; the home does not become a
-  separate visual island.
+- Colour is hwip.app's palette (greys and one yellow, 2026-11-01) written onto the fumadocs tokens, and type is
+  Pretendard, shared with the guides; the home does not become a separate visual island.
 - The current employer and customer names stay off the site (a sensitive-content gate blocks them). GE Healthcare,
   the first employer, may be named (the user, 2026-11-01: "2015년부터 ge 다닌것도 어필해야"); it is on the public resume. The config repositories stay private: no links
   to them.

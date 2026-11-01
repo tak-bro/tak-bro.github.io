@@ -26,13 +26,16 @@ At rest:     Still. After the session the input box shows a caret that blinks fo
 
 ## System
 
-- Palette: the fumadocs light and dark tokens. One ground `--color-fd-background`, one ink `--color-fd-foreground`,
-  the field tone `--color-fd-card` for the terminal panel, the footer and the outline button's hover. Keylines are
-  `--color-fd-border`. Muted text `--color-fd-muted-foreground` (overridden to `hsl(0, 0%, 35%)` in light mode for
-  4.5:1 on the card) for the note under the terminal, the footer's licence line and icons at rest, and the
-  terminal's secondary output. One accent, `--color-brand` (`oklch(0.52 0.16 42)` light, `oklch(0.76 0.14 55)` dark):
-  the primary button, the nav underline, focus rings, and inside the terminal the prompt and Claude
-  Code's own marks (see Terminal). The home uses no error tone.
+- Palette: hwip.app's (taken from its theme CSS on 2026-11-01, the user: "테마 색상이 너무 ai 처럼 흔함. hwip.app 테마
+  가져오자"), written onto the fumadocs tokens in `app/app.css` so the docs follow it. Light: ground `#fff`, ink
+  `#111113`, field `#f2f2f4`, raised `#f0f0f2`, keylines `#e3e3e7`, muted text `#66666c`. Dark: ground `#000`, ink
+  `#fff`, field `#151517`, raised `#232326`, keylines `#2a2a2e`, muted text `#a0a0a6`. The field tone is the terminal
+  panel, the footer and the outline button's hover; muted text is the note under the terminal, the footer's licence
+  line and icons at rest, and the terminal's secondary output. One accent, hwip's yellow: `--color-brand-fill`
+  `#f8c200` fills the primary button with `--color-on-brand` text (`#171718` light, `#000` dark); `--color-brand`
+  draws text, lines and rings — `#856600` in light mode (yellow text is unreadable on white), `#f8c200` in dark: the
+  nav underline, focus rings, diagram highlights, and inside the terminal the prompt and Claude Code's own marks.
+  The home uses no error tone.
 - Type: Pretendard Variable everywhere on the page. System mono (with Pretendard after it for Hangul) appears only
   inside the terminal, because it is real command output; the docs use it for code. Sizes: the name (the h1)
   `clamp(3rem, 5.6vw, 5.25rem)`, bold, line height 0.98, tracking -0.04em, balanced; the lede

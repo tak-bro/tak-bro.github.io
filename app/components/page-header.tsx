@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 /** The one accent button: the page's primary action. */
 export const primaryButton =
-  'home-press inline-flex items-center gap-2 rounded-sm bg-brand px-4 py-2.5 text-[15px] font-semibold text-fd-background hover:bg-fd-foreground';
+  'home-press inline-flex items-center gap-2 rounded-sm bg-brand-fill px-4 py-2.5 text-[15px] font-semibold text-on-brand hover:bg-fd-foreground hover:text-fd-background';
 
 /** The top of every page outside the home and the docs: the title and one line under it. */
 export const PageHeader = ({
