@@ -1,7 +1,8 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 import { languageSelectSlot } from '../components/language-select';
+import { TakLogo } from '../components/tak-logo';
 import { i18n, localized as byLang, resumeHref } from './i18n';
-import { APP_NAME, GITHUB_URL } from './shared';
+import { GITHUB_URL } from './shared';
 
 const RESUME_LABELS: Record<string, string> = { ko: '이력서', en: 'Resume' };
 
@@ -17,11 +18,8 @@ interface LayoutOptions {
 // from the i18n provider in root.tsx.
 export const baseOptions = ({ lang = i18n.defaultLanguage, localized = true }: LayoutOptions = {}): BaseLayoutProps => ({
   nav: {
-    title: (
-      <>
-        <span className="font-semibold">{APP_NAME}</span>
-      </>
-    ),
+    // The wordmark names the site in the nav on every page (home, guides, 404).
+    title: <TakLogo className="h-4.5 w-auto" />,
   },
   links: [
     { text: byLang(RESUME_LABELS, lang), url: resumeHref(lang), external: true },
