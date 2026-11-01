@@ -51,7 +51,7 @@ config repositories, so nothing is general advice dressed up as experience.
 
 ## Brand Commitments
 
-- Name shown as "Tak(진형탁)" / "Tak (Hyungtak Jin)".
+- Name shown on the page as "Tak" in both languages (2026-11-01); "Tak(진형탁)" / "Tak (Hyungtak Jin)" only in the document title and description.
 - Voice: plain, first person, specific. Korean in 해요체.
 
 ## Evidence on Hand

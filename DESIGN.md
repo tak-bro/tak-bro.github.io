@@ -35,10 +35,11 @@ At rest:     Still. After the session the input box shows a caret that blinks fo
   Code's own marks (see Terminal). The home uses no error tone.
 - Type: Pretendard Variable everywhere on the page. System mono (with Pretendard after it for Hangul) appears only
   inside the terminal, because it is real command output; the docs use it for code. Sizes: the name (the h1)
-  `clamp(min(3rem, 13vw), 5.6vw, 5.25rem)` (the floor drops under 3rem below about 370px wide, so "(Hyungtak Jin)" fits 320px), bold, line height 0.98, tracking -0.04em, balanced; the lede
+  `clamp(3rem, 5.6vw, 5.25rem)`, bold, line height 0.98, tracking -0.04em, balanced; the lede
   `clamp(1.0625rem, 1.3vw, 1.1875rem)` at most 40ch, one line ("a developer into building software with AI agents"; 2026-11-01, the user: "소개문구는 그냥 개발자고 ai agentic 개발하는데 관심있다 이정도" — the history is in the resume, one click away, as on the old site); buttons and the footer name 15px;
   the note under the terminal and the licence line 14px; terminal text 12.5px on a phone and 13.5px from `sm`.
-  Korean words break whole (`keep-all`); "Tak (Hyungtak Jin)" breaks only before the parenthesis.
+  Korean words break whole (`keep-all`). The name on the page is "Tak" alone in both languages (2026-11-01, the user:
+  "(진형탁) 이거 없애 그냥 Tak 만"); the full name stays in the document title and description for search.
 - Frame: one pair of outer margins (`.home-frame`: 24px, 40px from 64rem). From `lg` a 12-column grid with a 40px
   column gap: the hero (name, lede, actions) takes columns 1 to 5, centred against the terminal, which takes columns
   6 to 12 (a full-width terminal under a header row was tried and rejected, 2026-11-01: "레이아웃은 아까가 더 나아").

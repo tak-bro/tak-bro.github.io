@@ -29,18 +29,6 @@ const ExternalMark = ({ label }: { label: string }) => (
   </>
 );
 
-/** "Tak (Hyungtak Jin)" breaks before the parenthesis, never inside it. */
-const NameLines = ({ name }: { name: string }) => {
-  const at = name.indexOf('(');
-  if (at < 0) return name;
-  return (
-    <>
-      {name.slice(0, at)}
-      <span className="whitespace-nowrap">{name.slice(at)}</span>
-    </>
-  );
-};
-
 /** Brand marks lucide does not carry (Simple Icons paths, 24×24). */
 const BrandMark = ({ d }: { d: string }) => (
   <svg viewBox="0 0 24 24" className="size-[18px]" fill="currentColor" aria-hidden>
@@ -77,8 +65,8 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
     <HomeLayout {...baseOptions({ lang })}>
       <section id={CONTENT_ID} aria-labelledby="hero-heading" className="home-frame grid items-start gap-12 pt-12 lg:grid-cols-12 lg:items-center lg:gap-x-10 lg:pt-16">
         <div className="flex flex-col gap-6 lg:col-span-5">
-          <h1 id="hero-heading" className="home-rise text-[clamp(min(3rem,13vw),5.6vw,5.25rem)] leading-[0.98] font-bold tracking-[-0.04em] text-balance break-keep">
-            <NameLines name={copy.name} />
+          <h1 id="hero-heading" className="home-rise text-[clamp(3rem,5.6vw,5.25rem)] leading-[0.98] font-bold tracking-[-0.04em] text-balance break-keep">
+            {copy.name}
           </h1>
           <p className="home-rise max-w-[40ch] text-[clamp(1.0625rem,1.3vw,1.1875rem)] leading-relaxed text-pretty break-keep [--i:1]">
             {copy.lede}
@@ -110,7 +98,7 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
 
       <footer className="home-frame mt-24 flex flex-wrap items-center justify-between gap-x-8 gap-y-4 bg-fd-card py-8 lg:mt-32">
         <div className="flex flex-col gap-1 text-sm text-fd-muted-foreground">
-          <p className="text-[15px] font-medium text-fd-foreground">{copy.about}</p>
+          <p className="text-[15px] font-medium text-fd-foreground">{copy.name}</p>
           <p className="flex flex-wrap gap-x-4">
             <span>© 2026 tak-bro</span>
             <a href={`${REPO_URL}/blob/main/LICENSE`} className="underline-offset-4 hover:underline">

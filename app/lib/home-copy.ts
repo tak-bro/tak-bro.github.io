@@ -17,11 +17,9 @@ export type HomeSessionLine =
   | { readonly kind: 'tool'; readonly call: string; readonly result: readonly string[] };
 
 export interface HomeCopy {
-  /** The site name, for llms.txt. */
-  readonly title: string;
   readonly documentTitle: string;
   readonly description: string;
-  /** The person's name, the page's h1. */
+  /** The person's name: the page's h1, the footer, and the site name in llms.txt. */
   readonly name: string;
   readonly lede: string;
   readonly resumeLabel: string;
@@ -30,7 +28,6 @@ export interface HomeCopy {
   readonly request: string;
   readonly session: readonly HomeSessionLine[];
   readonly logNote: string;
-  readonly about: string;
   readonly links: readonly HomeLink[];
   readonly codeLicense: string;
   readonly contentLicense: string;
@@ -47,11 +44,10 @@ const footerLinks = (resume: string, resumeHref: string, source: string): HomeLi
 ];
 
 const en: HomeCopy = {
-  title: 'Tak',
   documentTitle: 'Tak (Hyungtak Jin) — coding-agent harnesses',
   description:
     'How I build coding-agent harnesses and work with them: setup guides by Tak (Hyungtak Jin).',
-  name: 'Tak (Hyungtak Jin)',
+  name: 'Tak',
   lede: 'A developer into building software with AI agents.',
   resumeLabel: 'Resume',
   terminalLabel: 'Claude Code session',
@@ -65,7 +61,6 @@ const en: HomeCopy = {
     { kind: 'tool', call: 'Skill(ship)', result: ['committed → draft PR #20'] },
   ],
   logNote: 'Lines picked from the Claude Code session that rebuilt this site.',
-  about: 'Tak (Hyungtak Jin)',
   links: footerLinks('Resume', RESUME_HREF.en, 'Site source'),
   codeLicense: 'Code: MIT',
   contentLicense: 'Content: CC BY 4.0',
@@ -74,10 +69,9 @@ const en: HomeCopy = {
 };
 
 const ko: HomeCopy = {
-  title: 'Tak',
   documentTitle: 'Tak(진형탁) — 코딩 에이전트 하네스',
   description: 'Tak(진형탁)이 코딩 에이전트 하네스를 만들고 쓰는 법을 정리한 셋업 가이드예요.',
-  name: 'Tak(진형탁)',
+  name: 'Tak',
   lede: 'AI 에이전트와 함께 개발하는 데 관심 많은 개발자예요.',
   resumeLabel: '이력서',
   terminalLabel: 'Claude Code 세션',
@@ -91,7 +85,6 @@ const ko: HomeCopy = {
     { kind: 'tool', call: 'Skill(ship)', result: ['committed → draft PR #20'] },
   ],
   logNote: '이 사이트를 고친 실제 Claude Code 세션에서 골랐어요.',
-  about: 'Tak(진형탁)',
   links: footerLinks('이력서', RESUME_HREF.ko, '사이트 소스'),
   codeLicense: '코드: MIT',
   contentLicense: '문서: CC BY 4.0',
