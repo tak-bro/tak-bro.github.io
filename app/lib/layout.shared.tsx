@@ -19,7 +19,7 @@ interface LayoutOptions {
 export const baseOptions = ({ lang = i18n.defaultLanguage, localized = true }: LayoutOptions = {}): BaseLayoutProps => ({
   nav: {
     // The wordmark names the site in the nav on every page (home, guides, 404).
-    title: <TakLogo className="h-6 w-auto" />,
+    title: <TakLogo className="h-4.5 w-auto" />,
   },
   links: [
     { text: byLang(RESUME_LABELS, lang), url: resumeHref(lang), external: true },

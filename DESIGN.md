@@ -70,7 +70,7 @@ At rest:     Still. After the session the input box shows a caret that blinks fo
   colour on hover. The hero has only this one, an internal link to the guides with a right arrow.
 - Hover: footer icons take the ink colour on the accent tone; 404 text links darken their underline and nudge the
   arrow 3px; nav links draw an accent underline. The terminal has no links.
-- Logo: the "tak" wordmark, its letters hanging from one line (2026-11-01, the user picked it from the logo rounds). `app/components/tak-logo.tsx` draws it inline as the nav title on every page, 24px tall: letters in the text colour, the line in `--color-brand`, labelled with `APP_NAME`. The favicon (`public/favicon.svg`, `favicon.ico` 16/32/48, `apple-touch-icon.png`) is the same wordmark in ink `#d8d2c3` and salmon `#c87e74` on a `#171718` tile.
+- Logo: the "tak" wordmark, its letters hanging from one line (2026-11-01, the user picked it from the logo rounds). `app/components/tak-logo.tsx` draws it inline as the nav title on every page, 18px tall: letters in the text colour, the line in `--color-brand`, labelled with `APP_NAME`. The favicon (`public/favicon.svg`, `favicon.ico` 16/32/48, `apple-touch-icon.png`) is the same wordmark in ink `#d8d2c3` and salmon `#c87e74` on a `#171718` tile.
 - Share card: `public/og.png` (1200×630) is the dark set: the wordmark beside the domain on top, "Tak" at display size, "Tak's config — coding-agent harness
   guides", and `tak ~ $ hwip cc` in a field-tone panel with the prompt in the accent. Source `scripts/og/og.html`,
   captured by `just og`; one card for both languages.
