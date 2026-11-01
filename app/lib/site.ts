@@ -16,7 +16,17 @@ export const SITE_URL: string = import.meta.env.VITE_SITE_URL;
  */
 export const IS_PROD: boolean = import.meta.env.VITE_ENV === 'PROD';
 
-export const canonicalUrl = (pathname: string): string => new URL(pathname, SITE_URL).href;
+/**
+ * A page's published URL ends in a slash, a file's (`/og.png`, `/sitemap.xml`) does not. Each page is
+ * prerendered as `<path>/index.html`, and GitHub Pages answers the slashless path with a 301 to the slashed
+ * one, so a canonical without the slash would point at a redirect.
+ */
+export const canonicalUrl = (pathname: string): string => {
+  const url = new URL(pathname, SITE_URL);
+  // A dotted last segment reads as a file, so a page slug must not contain a dot.
+  if (!url.pathname.endsWith('/') && !/\.[a-z0-9]+$/i.test(url.pathname)) url.pathname += '/';
+  return url.href;
+};
 
 // Open Graph wants a territory-qualified locale, which the language code does not carry.
 const OG_LOCALES: Record<string, string> = { en: 'en_US', ko: 'ko_KR' };

@@ -17,6 +17,7 @@ export {
   pageTitle,
 } from './shared';
 export { canonicalUrl, IS_PROD, ogLocale, SITE_URL } from './site';
+export { guideLd, personLd } from './structured-data';
 export { sitemapEntries, sitemapXml, type SitemapEntry } from './sitemap';
 export { docs, source } from './source';
 export { tocLabel, translations } from './translations';

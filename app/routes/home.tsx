@@ -4,8 +4,9 @@ import { Link } from 'react-router';
 import type { ReactNode } from 'react';
 import type { Route } from './+types/home';
 import { HomeTerminal } from '../components/home-terminal';
+import { JsonLd } from '../components/json-ld';
 import { primaryButton } from '../components/page-header';
-import { baseOptions, CONTENT_ID, GITHUB_URL, GUIDES_LABEL, homeCopy, localeFromPath, localizedDocsHref, requestPath, type HomeLink } from '../lib';
+import { baseOptions, CONTENT_ID, GITHUB_URL, GUIDES_LABEL, homeCopy, localeFromPath, localizedDocsHref, personLd, requestPath, type HomeLink } from '../lib';
 
 export const meta = ({ location }: Route.MetaArgs) => {
   const copy = homeCopy(localeFromPath(location.pathname));
@@ -47,6 +48,7 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
 
   return (
     <HomeLayout {...baseOptions({ lang })}>
+      <JsonLd data={personLd()} />
       <section id={CONTENT_ID} aria-labelledby="hero-heading" className="home-frame grid flex-1 items-start gap-12 pt-12 pb-24 lg:grid-cols-12 lg:content-center lg:items-center lg:gap-x-10 lg:pt-16 lg:pb-32">
         <div className="flex flex-col gap-6 lg:col-span-5">
           <h1 id="hero-heading" className="home-rise text-[clamp(3rem,5.6vw,5.25rem)] leading-[0.98] font-bold tracking-[-0.04em] text-balance break-keep">

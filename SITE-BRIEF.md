@@ -89,6 +89,7 @@ nav = 이력서 · GitHub(`app/lib/layout.shared.tsx`, 테스트 `app/lib/__test
 
 - 홈 대표 버튼 = 가이드로 가는 "Tak's config"(2026-11-01 사용자: "홈 헤더에 가이드가 너무 쌩뚱맞음", "Config 버튼을 대표로 주고 네브에 이력서 깃허브를 추가할까"). nav = 이력서·GitHub(홈·404). docs 사이드바에는 nav 링크가 없다("이력서, 깃허브 쌩뚱맞고").
 - 가이드 다이어그램 = 직접 만든 SVG React 컴포넌트, 의존성 추가 없음(사용자 답).
+- SEO(2026-11-01 grilling): 공개 URL 은 슬래시로 끝난다(canonical·hreflang·og:url·sitemap·llms, 내부 링크는 그대로). 가이드마다 검색용 `seoTitle`, description 160자 이하(frontmatter 스키마가 빌드에서 막는다). JSON-LD = 홈 Person, 가이드 TechArticle·BreadcrumbList(회사 이름 없음). og.png = 다크 9009 한 장, "Tak's config — coding-agent harness guides"(`scripts/og/og.html`).
 - 옛 `/blog/*`·`/projects/*` 는 리다이렉트 없이 404.
 
 정하지 않고 미룬 것(사용자 결정):

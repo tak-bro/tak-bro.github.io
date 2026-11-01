@@ -70,6 +70,9 @@ At rest:     Still. After the session the input box shows a caret that blinks fo
   colour on hover. The hero has only this one, an internal link to the guides with a right arrow.
 - Hover: footer icons take the ink colour on the accent tone; 404 text links darken their underline and nudge the
   arrow 3px; nav links draw an accent underline. The terminal has no links.
+- Share card: `public/og.png` (1200×630) is the dark set: "Tak" at display size, "Tak's config — coding-agent harness
+  guides", and `tak ~ $ hwip cc` in a field-tone panel with the prompt in the accent. Source `scripts/og/og.html`,
+  captured by `just og`; one card for both languages.
 - Diagrams: the home loads none. Guide figures live in `app/components/diagrams/`, are bound to the MDX components in
   `app/components/mdx.tsx`, and stay in the docs chunk. The home's first-load JS was 205859 B gzip when this was
   written.

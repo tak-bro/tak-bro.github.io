@@ -1,0 +1,41 @@
+<!doctype html>
+<!--
+  Source of public/og.png, the share card every page carries (1200×630). GMK 9009 dark, as on the site
+  (app/app.css). Capture: `just og` (needs agent-browser), or open this file at a 1200×630 viewport and screenshot.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      @font-face {
+        font-family: 'Pretendard Variable';
+        src: url('../../node_modules/pretendard/dist/web/variable/woff2/PretendardVariable.woff2') format('woff2');
+        font-weight: 45 920;
+      }
+      * { margin: 0; box-sizing: border-box; }
+      html, body { width: 1200px; height: 630px; }
+      body {
+        display: flex; flex-direction: column; justify-content: space-between;
+        padding: 64px 72px; background: #171718; color: #d8d2c3;
+        font-family: 'Pretendard Variable', system-ui, sans-serif;
+      }
+      .site { font-size: 26px; color: #aca693; }
+      h1 { font-size: 196px; font-weight: 700; line-height: 0.9; letter-spacing: -0.04em; }
+      .lede { margin-top: 28px; font-size: 42px; font-weight: 500; letter-spacing: -0.01em; }
+      .term {
+        width: fit-content; padding: 18px 26px; border: 1px solid #393b3b; border-radius: 6px; background: #202021;
+        font: 500 32px ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      .prompt { color: #c87e74; }
+      .caret { display: inline-block; width: 0.6em; height: 1.1em; margin-left: 4px; vertical-align: -0.2em; background: #d8d2c3; }
+    </style>
+  </head>
+  <body>
+    <p class="site">tak-bro.github.io</p>
+    <div>
+      <h1>Tak</h1>
+      <p class="lede">Tak's config — coding-agent harness guides</p>
+    </div>
+    <p class="term"><span class="prompt">tak ~ $ </span>hwip cc<span class="caret"></span></p>
+  </body>
+</html>

@@ -31,6 +31,10 @@ It runs, in order: sensitive pattern scan, guide check, typecheck, tests, produc
 ## Content
 
 - Docs pages live in `content/docs/`. Each page has a Korean file `x.mdx` and an English file `x.en.mdx`, and each `meta.json` has a `meta.en.json`. A test fails if either side is missing.
+- Frontmatter needs `title` (the h1 and sidebar), `seoTitle` (the `<title>` alone, with the topic words a search needs) and `description` (160 characters at most, the frontmatter schema fails the build on a longer one).
+- Published URLs end in a slash (`/docs/herdr/`): pages are prerendered as `<path>/index.html` and GitHub Pages redirects the slashless path. `canonicalUrl` (`app/lib/site.ts`) adds it for the canonical, hreflang, `og:url`, sitemap and `llms.txt`; in-site links stay as they are.
+- Home and guides carry schema.org JSON-LD (`app/lib/structured-data.ts`): a `Person` on the home, a `TechArticle` and `BreadcrumbList` on each guide.
+- `public/og.png`, the share card, is drawn from `scripts/og/og.html`; `just og` recaptures it.
 - Config snippets in `content/snippets/` are copied from my private repos by `just sync-configs`. Only the files listed in `config/sync-allowlist.json` are copied. If any file matches a sensitive pattern, nothing is written. Docs show a snippet only through `<include>../snippets/<repo>/<path></include>`, and a test fails if an include points anywhere but an allowlisted snippet.
 
 ## License
