@@ -56,8 +56,8 @@ export const localeFromPath = (pathname: string): string => {
 };
 
 /**
- * Whether the page at `pathname` exists in every language: the homes and docs do,
- * the blog and projects are Korean only.
+ * Whether the page at `pathname` exists in every language: the homes and docs do; any
+ * other path is not a page.
  */
 export const isLocalizedPath = (pathname: string): boolean => {
   const path = localeSwitchPath(pathname, localeFromPath(pathname), i18n.defaultLanguage);
@@ -73,7 +73,7 @@ export interface AlternateLink {
 
 /**
  * The page at `pathname` in every language, plus `x-default` naming the default-language one.
- * None for a Korean-only page, which has no translation to point at.
+ * None for a path outside the homes and docs, which has no translation to point at.
  *
  * Every localized page is prerendered in every language (config/prerender-paths.ts),
  * so the set is the same for each member, which is what keeps the references reciprocal.

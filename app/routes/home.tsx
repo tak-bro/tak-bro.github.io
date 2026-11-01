@@ -1,28 +1,9 @@
 import { HomeLayout } from 'fumadocs-ui/layouts/home';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
-import { useEffect, type ReactNode } from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router';
 import type { Route } from './+types/home';
-import { Session } from '../components';
-import {
-  baseOptions,
-  BLOG_ROUTE,
-  blogPosts,
-  CONTENT_ID,
-  GITHUB_URL,
-  homeCopy,
-  i18n,
-  listedProjects,
-  localeFromPath,
-  localizedDocsHref,
-  projectPages,
-  recentPosts,
-  PROJECTS_ROUTE,
-  requestPath,
-  resumeHref,
-  source,
-  type HomeListCopy,
-} from '../lib';
+import { baseOptions, CONTENT_ID, GITHUB_URL, homeCopy, localeFromPath, localizedDocsHref, requestPath, resumeHref, source } from '../lib';
 
 export const meta = ({ location }: Route.MetaArgs) => {
   const copy = homeCopy(localeFromPath(location.pathname));
@@ -37,11 +18,6 @@ export const meta = ({ location }: Route.MetaArgs) => {
 };
 
 const REPO_URL = `${GITHUB_URL}/tak-bro.github.io`;
-/** How many of the newest posts the home lists. */
-const RECENT_POSTS = 3;
-/** The one project whose output prints next to the list: a statusline is its own picture. */
-const SAMPLE_PROJECT = 'tak-cc-statusline';
-
 // Guide rows only for guides that exist; check:links fails on a link to an unwritten one.
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const lang = localeFromPath(requestPath(request));
@@ -55,17 +31,9 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
       return [slug, lastModified ? lastModified.toISOString().slice(0, 10) : null] as const;
     }),
   );
-  const posts = recentPosts(
-    blogPosts().map((post) => ({ url: post.url, title: post.data.title, line: post.data.description, date: post.data.date })),
-    RECENT_POSTS,
-  );
-  const projects = listedProjects(projectPages());
 
   return {
     lang,
-    posts,
-    projects: projects.map((project) => ({ url: project.url, title: project.data.title, line: project.data.description, date: project.data.date })),
-    sample: projects.find((project) => project.slugs[0] === SAMPLE_PROJECT)?.data.sample ?? null,
     publishedGuides: pages.map(({ slug }) => slug),
     updated: Object.fromEntries(updated) as Record<string, string | null>,
   };
@@ -92,41 +60,14 @@ const isExternal = (href: string) => href.startsWith('http');
 
 const external = (link: { href: string }) => (isExternal(link.href) ? { rel: 'noreferrer noopener', target: '_blank' } : {});
 
-const AllLink = ({ to, label }: { to: string; label: string }) => (
-  <Link to={to} className="home-link home-reveal self-start text-[15px] font-medium">
-    <span>{label}</span>
-    <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
-  </Link>
-);
-
-/**
- * One row of an index list: the title and an arrow, one line under it, a date or year at the right.
- * Short titles (`titleColumn`, the guides) take their own column from `sm`; post and project titles are
- * sentences, so they keep the full width with the line under them. `lang` marks Korean rows on the English home.
- */
-const IndexRow = ({
-  to,
-  title,
-  line,
-  meta,
-  dateTime,
-  lang,
-  titleColumn = false,
-}: {
-  to: string;
-  title: string;
-  line: string;
-  meta: string | null;
-  dateTime?: string;
-  lang?: string;
-  titleColumn?: boolean;
-}) => (
+/** One guide row: the title and an arrow, one line, the last commit date; the title takes its own column from `sm`. */
+const IndexRow = ({ to, title, line, meta }: { to: string; title: string; line: string; meta: string | null }) => (
   <li className="home-reveal">
     <Link
       to={to}
-      className={`group grid grid-cols-[1fr_auto] items-baseline gap-x-6 gap-y-1 rounded-md px-4 py-4 hover:bg-fd-card motion-safe:transition-colors ${titleColumn ? 'sm:grid-cols-[11rem_1fr_auto]' : ''}`}
+      className="group grid grid-cols-[1fr_auto] items-baseline gap-x-6 gap-y-1 rounded-md px-4 py-4 hover:bg-fd-card motion-safe:transition-colors sm:grid-cols-[11rem_1fr_auto]"
     >
-      <span lang={lang} className="text-[19px] font-semibold tracking-tight text-pretty break-keep">
+      <span className="text-[19px] font-semibold tracking-tight text-pretty break-keep">
         {title}
         <ArrowRight
           className="ml-2 inline size-4 -translate-y-px motion-safe:transition-transform motion-safe:group-hover:translate-x-1"
@@ -134,28 +75,16 @@ const IndexRow = ({
           aria-hidden
         />
       </span>
-      <span lang={lang} className={`col-span-2 row-start-2 text-[15px] text-fd-muted-foreground break-keep ${titleColumn ? 'sm:col-span-1 sm:row-start-auto' : ''}`}>
+      <span className="col-span-2 row-start-2 text-[15px] text-fd-muted-foreground break-keep sm:col-span-1 sm:row-start-auto">
         {line}
       </span>
       {meta ? (
-        <time dateTime={dateTime ?? meta} className={`col-start-2 row-start-1 text-sm tabular-nums text-fd-muted-foreground ${titleColumn ? 'sm:col-start-3' : ''}`}>
+        <time dateTime={meta} className="col-start-2 row-start-1 text-sm tabular-nums text-fd-muted-foreground sm:col-start-3">
           {meta}
         </time>
       ) : null}
     </Link>
   </li>
-);
-
-/** A heading column on the left, the index rows from column 7. */
-const IndexSection = ({ id, copy, allHref, children, aside }: { id: string; copy: HomeListCopy; allHref: string; children: ReactNode; aside?: ReactNode }) => (
-  <section aria-labelledby={id} className="home-frame grid gap-10 pt-28 lg:grid-cols-12 lg:gap-x-10 lg:pt-32">
-    <div className="flex min-w-0 flex-col gap-6 lg:col-span-6">
-      <SectionHead id={id} heading={copy.heading} lede={copy.lede} />
-      <AllLink to={allHref} label={copy.all} />
-      {aside}
-    </div>
-    <ol className="-mx-4 flex flex-col lg:col-span-6">{children}</ol>
-  </section>
 );
 
 /** Elements below the fold rise in once as they enter; anything already on screen is left alone. */
@@ -187,8 +116,6 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
   const { lang } = loaderData;
   const copy = homeCopy(lang);
   const docsHref = localizedDocsHref(lang);
-  // Posts and project pages are Korean only.
-  const contentLang = lang === i18n.defaultLanguage ? undefined : i18n.defaultLanguage;
   const guides = copy.guides.filter((guide) => loaderData.publishedGuides.includes(guide.slug));
   const heroLinks = [
     { name: copy.resumeLabel, href: resumeHref(lang) },
@@ -220,44 +147,6 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
         </ul>
       </section>
 
-      {loaderData.posts.length > 0 ? (
-        <IndexSection id="posts-heading" copy={copy.posts} allHref={BLOG_ROUTE}>
-          {loaderData.posts.map((post) => (
-            <IndexRow key={post.url} to={post.url} title={post.title} line={post.line} meta={post.date} lang={contentLang} />
-          ))}
-        </IndexSection>
-      ) : null}
-
-      {loaderData.projects.length > 0 ? (
-        <IndexSection
-          id="projects-heading"
-          copy={copy.projects}
-          allHref={PROJECTS_ROUTE}
-          aside={
-            loaderData.sample ? (
-              <figure className="home-reveal mt-4 flex min-w-0 flex-col gap-4 rounded-md bg-fd-card p-4 sm:p-5 lg:p-7">
-                <figcaption id="sample-caption" className="text-sm text-fd-muted-foreground">
-                  {copy.sampleCaption}
-                </figcaption>
-                <Session lines={loaderData.sample} labelledBy="sample-caption" />
-              </figure>
-            ) : null
-          }
-        >
-          {loaderData.projects.map((project) => (
-            <IndexRow
-              key={project.url}
-              to={project.url}
-              title={project.title}
-              line={project.line}
-              meta={project.date.slice(0, 4)}
-              dateTime={project.date}
-              lang={contentLang}
-            />
-          ))}
-        </IndexSection>
-      ) : null}
-
       {guides.length > 0 ? (
         <section id="guides" aria-labelledby="guides-heading" className="home-frame grid scroll-mt-20 gap-10 pt-28 lg:grid-cols-12 lg:gap-x-10 lg:pt-40">
           <div className="lg:col-span-6">
@@ -265,7 +154,7 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
           </div>
           <ul className="-mx-4 flex flex-col lg:col-span-6">
             {guides.map((guide) => (
-              <IndexRow key={guide.slug} to={`${docsHref}/${guide.slug}`} title={guide.title} line={guide.blurb} meta={loaderData.updated[guide.slug]} titleColumn />
+              <IndexRow key={guide.slug} to={`${docsHref}/${guide.slug}`} title={guide.title} line={guide.blurb} meta={loaderData.updated[guide.slug]} />
             ))}
           </ul>
         </section>

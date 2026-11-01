@@ -1,7 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { listMdxFiles } from '../../../config';
-import { BLOG_CONTENT_DIR, PROJECTS_CONTENT_DIR } from '../shared';
-import { blogSource, projectsSource, source } from '../source';
+import { source } from '../source';
 
 // `source` is the pinned seam: routing, prerendering and the search index all
 // read page identity from it. Expectations are written as literals on purpose —
@@ -30,12 +28,5 @@ describe('source', () => {
 
     expect(urls).toContain('/docs');
     expect(source.getPageTree().children.length).toBeGreaterThan(0);
-  });
-
-  // The `dir` literals in source.ts cannot reference these constants (fumadocs-mdx
-  // macro), and routes.ts builds one route per file from the constants.
-  it('reads the same files the routes are built from', async () => {
-    expect(blogSource.getPages()).toHaveLength((await listMdxFiles(BLOG_CONTENT_DIR)).length);
-    expect(projectsSource.getPages()).toHaveLength((await listMdxFiles(PROJECTS_CONTENT_DIR)).length);
   });
 });

@@ -151,19 +151,6 @@ html > body[data-scroll-locked] {
     opacity: 0;
     translate: 0 24px;
   }
-
-  /* The signature: output prints one line after another, like a terminal, when its fragment enters. */
-  [data-reveal] .home-line {
-    transition:
-      opacity 0.18s linear,
-      translate 0.18s linear;
-    transition-delay: calc(var(--l, 0) * 70ms + 250ms);
-  }
-
-  [data-reveal='pending'] .home-line {
-    opacity: 0;
-    translate: -6px 0;
-  }
 }
 
 /* Transform only, so the first screen is painted on the first frame. */

@@ -13,13 +13,6 @@ export interface HomeLink {
   readonly href: string;
 }
 
-/** A list section: its heading, one line under it, and the link to the whole list. */
-export interface HomeListCopy {
-  readonly heading: string;
-  readonly lede: string;
-  readonly all: string;
-}
-
 export interface HomeCopy {
   /** The site name, for llms.txt. */
   readonly title: string;
@@ -30,10 +23,6 @@ export interface HomeCopy {
   readonly headline: string;
   readonly lede: string;
   readonly resumeLabel: string;
-  readonly posts: HomeListCopy;
-  readonly projects: HomeListCopy;
-  /** Caption of the one output fragment next to the projects. */
-  readonly sampleCaption: string;
   readonly guidesHeading: string;
   readonly guidesLede: string;
   readonly guides: readonly HomeGuide[];
@@ -62,15 +51,12 @@ const en: HomeCopy = {
   title: 'Tak',
   documentTitle: 'Tak (Hyungtak Jin) — coding-agent harnesses',
   description:
-    'Building coding-agent harnesses, and working with them. Posts, projects and setup guides by Tak (Hyungtak Jin).',
+    'Building coding-agent harnesses, and working with them. Setup guides by Tak (Hyungtak Jin).',
   name: 'Tak (Hyungtak Jin)',
   // U+2011 keeps 'coding-agent' on one line.
   headline: 'Building coding‑agent harnesses, and working with them',
   lede: 'I have built web, React Native and Electron apps since 2018. Now I work through Claude Code, opencode and pi with my own rules, hooks and skills, and write down the setup and the work here.',
   resumeLabel: 'Resume',
-  posts: { heading: 'Posts', lede: 'Notes from building the harness and working with it. Written in Korean.', all: 'All posts' },
-  projects: { heading: 'Projects', lede: 'Things I built to work with coding agents. The pages are in Korean.', all: 'All projects' },
-  sampleCaption: 'tak-cc-statusline, under Claude Code',
   guidesHeading: 'Setup guides',
   guidesLede: 'The real config and why it is that way. Read as much as you like.',
   guides: guides({
@@ -92,14 +78,11 @@ const en: HomeCopy = {
 const ko: HomeCopy = {
   title: 'Tak',
   documentTitle: 'Tak(진형탁) — 코딩 에이전트 하네스',
-  description: '코딩 에이전트 하네스를 만들고, 그걸로 일한 기록. Tak(진형탁)의 글, 프로젝트, 셋업 가이드.',
+  description: '코딩 에이전트 하네스를 만들고, 그걸로 일한 기록. Tak(진형탁)의 셋업 가이드.',
   name: 'Tak(진형탁)',
   headline: '코딩 에이전트 하네스를 만들고, 그걸로 일한 기록',
   lede: '2018년부터 웹, React Native, Electron으로 앱을 만들어 왔다. 지금은 Claude Code, opencode, pi에 내 규칙과 훅, 스킬을 붙여 일하고, 그 설정과 일한 기록을 여기에 쓴다.',
   resumeLabel: '이력서',
-  posts: { heading: '글', lede: '하네스를 고치고, 그걸로 일하면서 남긴 노트.', all: '모든 글' },
-  projects: { heading: '프로젝트', lede: '코딩 에이전트와 일하려고 만든 것들.', all: '모든 프로젝트' },
-  sampleCaption: 'tak-cc-statusline, Claude Code 아래 한 줄',
   guidesHeading: '셋업 가이드',
   guidesLede: '설정 원문과 그렇게 한 이유. 원하는 만큼만 읽으면 된다.',
   guides: guides({

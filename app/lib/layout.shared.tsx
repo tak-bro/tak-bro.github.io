@@ -1,17 +1,16 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 import { i18n, localizedDocsHref, resumeHref } from './i18n';
-import { APP_NAME, BLOG_ROUTE, GITHUB_URL, PROJECTS_ROUTE } from './shared';
+import { APP_NAME, GITHUB_URL } from './shared';
 
-// The posts and projects are Korean only, so both languages link the same pages.
-const NAV_LABELS: Record<string, { posts: string; projects: string; guides: string; resume: string }> = {
-  ko: { posts: '글', projects: '프로젝트', guides: '가이드', resume: '이력서' },
-  en: { posts: 'Posts', projects: 'Projects', guides: 'Guides', resume: 'Resume' },
+const NAV_LABELS: Record<string, { guides: string; resume: string }> = {
+  ko: { guides: '가이드', resume: '이력서' },
+  en: { guides: 'Guides', resume: 'Resume' },
 };
 
 interface LayoutOptions {
   /** The page's language, for the nav labels. */
   readonly lang?: string;
-  /** False on a Korean-only page, which has no translation to switch to. */
+  /** False on a page with no translation to switch to (a 404 outside the homes and docs). */
   readonly localized?: boolean;
 }
 
@@ -30,8 +29,6 @@ export const baseOptions = ({ lang = i18n.defaultLanguage, localized = true }: L
       ),
     },
     links: [
-      { text: labels.posts, url: BLOG_ROUTE },
-      { text: labels.projects, url: PROJECTS_ROUTE },
       { text: labels.guides, url: localizedDocsHref(lang) },
       { text: labels.resume, url: resumeHref(lang), external: true },
       { text: 'GitHub', url: GITHUB_URL, external: true },

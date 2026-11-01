@@ -1,12 +1,11 @@
 import { alternateLinks, i18n, type AlternateLink } from './i18n';
 import { canonicalUrl } from './site';
-import { blogPosts, projectPages, source } from './source';
-import { BLOG_ROUTE, PROJECTS_ROUTE } from './shared';
+import { source } from './source';
 
 /** One sitemap entry: the page, when it last changed, and its translations. */
 export interface SitemapEntry {
   readonly alternates: readonly AlternateLink[];
-  /** Git's for docs, the frontmatter date for posts and projects; absent for list pages and docs git has no commit for. */
+  /** Git's, for docs; absent for the homes and docs git has no commit for. */
   readonly lastModified?: Date;
   readonly path: string;
 }
@@ -16,7 +15,7 @@ const homePath = (lang: string): string => (lang === i18n.defaultLanguage ? '/' 
 /**
  * Every page the site publishes: homes and docs in every language, each with the
  * same hreflang set its own head carries (root.tsx), so the sitemap cannot offer a
- * translation the page itself does not; then the Korean-only blog and projects.
+ * translation the page itself does not.
  */
 export const sitemapEntries = async (): Promise<SitemapEntry[]> => {
   const homes = i18n.languages.map((lang) => ({
@@ -35,17 +34,7 @@ export const sitemapEntries = async (): Promise<SitemapEntry[]> => {
     ),
   );
 
-  // Korean only: no alternates, and the frontmatter date stands in for git's.
-  const dated = (pages: { url: string; data: { date: string } }[]): SitemapEntry[] =>
-    pages.map((page) => ({ alternates: [], lastModified: new Date(page.data.date), path: page.url }));
-  const collections = [
-    { alternates: [], path: BLOG_ROUTE },
-    ...dated(blogPosts()),
-    { alternates: [], path: PROJECTS_ROUTE },
-    ...dated(projectPages()),
-  ];
-
-  return [...homes, ...pages, ...collections];
+  return [...homes, ...pages];
 };
 
 const escapeXml = (value: string): string =>
