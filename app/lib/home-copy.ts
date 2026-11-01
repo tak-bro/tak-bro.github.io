@@ -52,7 +52,7 @@ const en: HomeCopy = {
   description:
     'How I build coding-agent harnesses and work with them: setup guides by Tak (Hyungtak Jin).',
   name: 'Tak (Hyungtak Jin)',
-  lede: 'Software engineer. I started on ultrasound device software at GE Healthcare in 2015, have built web, mobile and desktop products since 2018, and now shape how I work with coding agents.',
+  lede: 'A developer into building software with AI agents.',
   resumeLabel: 'Resume',
   terminalLabel: 'Claude Code session',
   request: '/orch drop the posts and projects, polish the guides, and redraw them with diagrams',
@@ -78,7 +78,7 @@ const ko: HomeCopy = {
   documentTitle: 'Tak(진형탁) — 코딩 에이전트 하네스',
   description: 'Tak(진형탁)이 코딩 에이전트 하네스를 만들고 쓰는 법을 정리한 셋업 가이드예요.',
   name: 'Tak(진형탁)',
-  lede: '소프트웨어 엔지니어예요. 2015년 GE Healthcare에서 초음파 의료기기 소프트웨어로 시작했고, 2018년부터 웹·앱·데스크톱 제품을 만들고 있어요. 요즘은 코딩 에이전트와 일하는 방식을 다듬어요.',
+  lede: 'AI 에이전트와 함께 개발하는 데 관심 많은 개발자예요.',
   resumeLabel: '이력서',
   terminalLabel: 'Claude Code 세션',
   request: '/orch 글·프로젝트 없애고, 가이드 윤문하고, 다이어그램 적극 활용해서 재개정해',
