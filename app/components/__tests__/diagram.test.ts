@@ -11,7 +11,6 @@ const named = (html: string) => {
   return ids.map((id) => html.match(new RegExp(`id="${id}">([^<]*)<`))?.[1] ?? '');
 };
 
-// The home's diagram is imported by path, so it is not in the guide map.
 describe.each(Object.entries(guideDiagrams))('%s', (_, Figure) => {
   it('is one named image: role img, labelled by a non-empty title and description', () => {
     for (const lang of ['ko', 'en']) {

@@ -16,8 +16,8 @@ describe('home loader', () => {
 
   it('lists only guides whose docs page exists', async () => {
     // All six guides are written; a row without a docs page would link to a 404.
-    expect((await call('/')).publishedGuides).toEqual(['principles', 'agent-config', 'workflow', 'plugins', 'herdr', 'keymaps']);
-    expect((await call('/en')).publishedGuides).toEqual(['principles', 'agent-config', 'workflow', 'plugins', 'herdr', 'keymaps']);
+    expect((await call('/')).publishedGuides).toEqual(['principles', 'agent-config', 'workflow', 'knowledge', 'plugins', 'herdr', 'keymaps']);
+    expect((await call('/en')).publishedGuides).toEqual(['principles', 'agent-config', 'workflow', 'knowledge', 'plugins', 'herdr', 'keymaps']);
   });
 
   it('dates every published guide by its last commit', async () => {
@@ -36,7 +36,7 @@ describe('home copy', () => {
   };
 
   it('carries the same guides and links in the same order in both languages', () => {
-    expect(shape('ko').guides).toHaveLength(6);
+    expect(shape('ko').guides).toHaveLength(7);
     expect(shape('en')).toEqual(shape('ko'));
   });
 

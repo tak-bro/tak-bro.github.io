@@ -50,7 +50,7 @@ nav = 가이드 · 이력서 · GitHub(`app/lib/layout.shared.tsx`, 테스트 `a
 - 훅이 실제로 막은 커밋 출력(`hooks/commit-convention.py`, exit 2), `/orch` 실행의 플랜 Outcome 줄, 규칙 한 곳과 세 하네스 표. 지운 글(fecc325 기준 `content/blog/`)에 있던 것은 1차 출처로 다시 확인한 것만 가이드로 옮긴다.
 - herdr 녹화 `public/assets/video/herdr.mp4` + 포스터 `herdr-poster.webp`. **사용자 결정: 영상은 `/docs/herdr` 에만 둔다. 홈에 넣지 않는다.**
 
-**가이드 6편**(`content/docs/meta.json` 순서): 원칙 · 에이전트 설정 · 워크플로우 · 플러그인·MCP · Herdr · 키맵. 각 ko/en. 1차 출처 = agent-config·dotfiles 레포.
+**가이드 7편**(`content/docs/meta.json` 순서): 원칙 · 에이전트 설정 · 워크플로우 · 지식 루프 · 플러그인·MCP · Herdr · 키맵. 각 ko/en. 1차 출처 = agent-config·dotfiles 레포.
 
 ## 6. 고정 조건(바꾸지 않는다)
 

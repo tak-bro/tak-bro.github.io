@@ -34,7 +34,7 @@ export interface HomeCopy {
   readonly skipLabel: string;
 }
 
-const GUIDE_SLUGS = ['principles', 'agent-config', 'workflow', 'plugins', 'herdr', 'keymaps'] as const;
+const GUIDE_SLUGS = ['principles', 'agent-config', 'workflow', 'knowledge', 'plugins', 'herdr', 'keymaps'] as const;
 
 const guides = (lines: Record<(typeof GUIDE_SLUGS)[number], readonly [string, string]>): HomeGuide[] =>
   GUIDE_SLUGS.map((slug) => ({ slug, title: lines[slug][0], blurb: lines[slug][1] }));
@@ -63,6 +63,7 @@ const en: HomeCopy = {
     principles: ['Principles', 'Why the setup looks the way it does.'],
     'agent-config': ['Agent config', 'Rules, hooks and subagents for three harnesses.'],
     workflow: ['Workflow', 'From a one-line request to a merged PR.'],
+    knowledge: ['Knowledge loop', 'Where a finished task’s record goes.'],
     plugins: ['Plugins and MCP', 'What stays on, and why.'],
     herdr: ['Herdr', 'The terminal workspace and its keys.'],
     keymaps: ['Keymaps', 'macOS, Ghostty, Karabiner, LazyVim.'],
@@ -89,6 +90,7 @@ const ko: HomeCopy = {
     principles: ['원칙', '셋업이 이렇게 생긴 이유.'],
     'agent-config': ['에이전트 설정', '세 하네스의 규칙·훅·서브에이전트.'],
     workflow: ['워크플로우', '한 줄 요청에서 머지까지.'],
+    knowledge: ['지식 루프', '끝난 작업의 기록이 가는 곳.'],
     plugins: ['플러그인·MCP', '켜 두는 플러그인과 그 이유.'],
     herdr: ['Herdr', '터미널 작업 공간과 단축키.'],
     keymaps: ['키맵', 'macOS, Ghostty, Karabiner, LazyVim.'],

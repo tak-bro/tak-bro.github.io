@@ -1,0 +1,36 @@
+---
+title: Knowledge loop
+description: How the record of a finished task is distilled into the knowledge base on Friday, and how the next plan cites it.
+---
+
+The [workflow](./workflow.mdx) guide ends at a draft PR. This guide covers what comes after: where the record of a finished task goes, and how it comes back to the next task.
+
+## How it works
+
+### One turn of the loop
+
+<KnowledgeLoopDiagram />
+
+The left column is the path of one task, and the right column is the path that turns once a week. No one tidies the record by hand. The plan file fills up while the work runs, and lanes read that file at set times.
+
+### The plan file is the raw material
+
+<PlanAnatomyDiagram />
+
+The plan says what the work means to do, and the Outcome says what actually happened. How often a slice failed review, how often it was fixed, and which commits went in all stay in the Outcome. Monday's compound reads a fix loop that ran twice or more as a sign of a mistake that could have been avoided.
+
+Besides plans, distillation also collects bug investigation reports and the notes left at the end of a session.
+
+### Lanes run on Friday
+
+<FridayLanesDiagram />
+
+macOS launchd runs the lanes at set times, so I don't have to remember them.
+
+- **Distillation** — the plan distill turns records into decision notes, and when three or more similar notes gather, it writes what they share as a concept note. At the end of the lane it rewrites a one-page overview of the knowledge base.
+- **Proposals** — compound and friction reports are only proposals, so they are written outside what search can see. Only a report that passes both a mechanical check and a small model's review moves into search. This keeps an unchecked proposal from being found as if it were knowledge. Whether a rule change compound proposes is actually applied is my call.
+- **Team wiki** — the retro lane picks documents worth promoting to the team wiki, and I decide whether to promote them.
+
+### The next plan cites it
+
+Before a plan is written, past decisions on the same topic are looked up in the knowledge base. A decision that turns up is cited rather than made again, and an alternative rejected before is not proposed again. A past decision is treated as a hypothesis: the first line of the implementation checklist checks that its premise still holds.
