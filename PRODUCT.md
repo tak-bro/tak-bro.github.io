@@ -32,8 +32,8 @@ config repositories, so nothing is general advice dressed up as experience.
 - Subject: Tak (Hyungtak Jin, 진형탁). Started in 2015 on ultrasound device software (C++) at GE Healthcare (intern
   2015.07–12, research engineer 2016.02–2017.10, per the public resume); web, React Native and Electron since 2018; now works through Claude Code,
   opencode and pi with his own rules, hooks and skills.
-- Guides (7 pairs, ko and en): introduction, principles, agent config, workflow, knowledge loop, plugins and MCP,
-  Herdr and keymaps (one page since 2026-11-01).
+- Guides (7 pairs, ko and en): introduction, principles, agent config, workflow, skills and habits, knowledge loop,
+  Herdr. Keymaps were cut and plugins and MCP folded into agent config on 2026-11-01 (setup detail, not agent work).
 - Visitors arrive from the resume (PDF in the nav), LinkedIn, GitHub and search.
 
 ## Capabilities and Constraints

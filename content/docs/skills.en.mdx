@@ -1,0 +1,85 @@
+---
+title: Skills and habits
+seoTitle: "Where Claude Code skills sit in my workflow, and habits that stuck"
+description: Which step of the workflow each skill I reach for sits beside, what it does differently, and the habits that set in while using this harness.
+---
+
+[Workflow](./workflow.mdx) is the main path one task takes. This page is the skills I actually call beside it.
+
+<SkillMapDiagram />
+
+The main path runs in a fixed order; the skills beside it I call when I need them. They split into reading and questioning before the code, and looking again and learning after it.
+
+## Before the code
+
+### `/explore` — a read-only fork
+
+Exploration runs as a fork. The fork may read dozens of files, and only the conclusion comes back to the main session. The subagent that runs it (`explorer`) has no Edit or Write at all, so "I'll just fix this while I'm here" cannot happen during a look around.
+
+One rule goes with it: after an exploration report arrives, nothing gets built without my word. When a report is wrong, the one who reads it and judges it has to be me. In a repo I have never seen, `--onboard` maps the structure first.
+
+### `/investigate` — no hypothesis without a red signal
+
+The first step of a defect investigation is a gate. Without a red signal, such as a failing test or a command that reproduces it, it does not move on to hypotheses. A hypothesis with no signal under it tends to end as a plausible story.
+
+The skill only analyses. It leaves the cause and the evidence in a `.claude/<date>/DEBUG-*.md` report and stops. The fix belongs to whoever called it ("fix it", `/04-fix`). The context that finds the cause and the context that fixes it are kept apart. The Friday distillation lane takes these reports into the [knowledge loop](./knowledge.mdx).
+
+### `/grilling` — down the decision tree to the end
+
+The agent interviews me about a plan or a decision. Each round puts every open question on the table, numbered, each with a recommended answer. I skip the ones I agree with and answer at length only where it splits. Rounds go on until every branch is settled.
+
+The concept document of hwip, an app I built, was settled in two rounds of this skill. The core user, what sets it apart, how answers are given (button, free text, voice), and how far automatic answers go were all left in tables then. When an idea is still only talk, `/office-hours` comes first; when a screen or a state model has to be touched to be decided, `/prototype` does.
+
+## After the code
+
+### `/review` — a gateless diff, from scratch
+
+I type `/review` on diffs that did not go through the slice gate (`/03-review`): edits I made by hand, PRs another session or worker opened, a local diff. It runs in a fresh context that knows nothing of the conversation, so it looks again at what my session believes is fine.
+
+A whole-branch review (`--full`) crosses two models ([Agent config](./agent-config.mdx)). A finding that only one side produced stays in the table as "only opus" or "only sonnet", which shows how many a single model would have missed.
+
+### `/simplify` — not bugs, but excess
+
+Where review hunts bugs, `/simplify` finds and fixes a helper rebuilt when one already existed, an abstraction nothing needs, and empty comments. I run it once after the queue drains, before ship.
+
+### `/explain-diff` — I learn before the merge
+
+Instead of reviewing a diff, it turns it into an explanation page. Background, intuition, a walkthrough by file, a list of **decisions the agent made without confidence**, and a quiz come out as one HTML page. The quiz measures whether I can explain the change the agent wrote. Code I cannot explain does not get merged.
+
+The unsure decisions also stay in the plan file's `## Outcome` as `- unsure:` lines. The Friday distillation takes those lines into the knowledge base.
+
+## Handing a session over
+
+`/summary` with no argument summarises this session. Switching sessions uses two modes. `prompt` copies a kickoff prompt for a new session to the clipboard, and `handover` writes a note for another directory, harness or person.
+
+## The context is emptied only at a phase boundary
+
+I type `/compact` and `/clear` more often than any skill. When to empty the context is a decision that comes up that often, so it has its own rule. It is made only at the boundary of a phase of work (grilling, building, QA), taking the first that fits from the top.
+
+1. If the next phase uses this phase's raw text as its primary source, or the window has room, carry on.
+2. If the exploration and decisions so far have nothing to do with what comes next, `/clear`.
+3. If the work moves to another directory, harness or person, write a note with `/summary handover`.
+4. If it is narrow enough to run away from the keyboard, hand it to a subagent.
+5. Otherwise, `/compact`.
+
+A hook (`compact-gate.py`) lets automatic compaction through only at phase boundaries. Compacting in the middle of building a slice cuts the thread. A reply that ends a phase marks the boundary with one `<!-- phase-end -->` line at the end.
+
+`/model` and `/effort` change only the main session. Subagent models are pinned in their definition files ([Agent config](./agent-config.mdx)), so turning the main session down leaves the review side where it was.
+
+## Habits that stuck
+
+### Branching in the original checkout is blocked
+
+Work that will be committed happens in a separate `git worktree` checkout, even in the session's own repo. At first this was a sentence in the rules. Then an agent switched branches with `checkout` in the original checkout, and pi, working in the same repo, ended up implementing on master. Since then a hook (`worktree-guard.py`) blocks `checkout -b` and `switch -c` in the original checkout. With several sessions on one repo, a sentence saying "don't switch branches" does not hold.
+
+### A research report does not go straight to implementation
+
+When a subagent sent to explore returns its report, the agent wants to read it and carry on implementing. That happened twice. Even when the report was wrong or not the direction I wanted, the code had already changed. So one instruction from me has to sit between research and implementation. I built a hook for this too, but it blocked the normal flow more often than it caught the mistake, so I removed it; now only the rule holds it.
+
+### Only numbers counted in that turn
+
+An agent writes a number pulled from memory in the same voice as a measured one. So only a number counted in that turn goes in as is, and a number from memory gets marked `미측정` (unmeasured). A fact not checked against a primary source gets a separate `미검증` (unverified) mark.
+
+### Away from the desk, I answer from my phone
+
+Sessions start with `hwip cc`. Normally the only thing I get is one push when a turn ends. When I send that session a message from my phone, it switches to remote mode, and from then on the agent ends every reply with a question carrying two to four buttons (`hwip_ask`). I tap a button or answer in one line on the phone, and a done button brings it back to normal. The point is that a long task does not sit stalled on one answer from me. I built this tool, hwip.

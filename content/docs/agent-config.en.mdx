@@ -4,7 +4,7 @@ seoTitle: "Agent config: rules and hooks for Claude Code, pi, opencode"
 description: How Claude Code, pi, and opencode share the rules, hooks, skills, and subagents in one repo.
 ---
 
-I keep my coding agent config in one repo, `agent-config`. Three harnesses read it through symlinks: Claude Code, pi, and opencode. The repo is private, so you cannot clone it as is. The install script and the review subagent definition are shown in full below. The skill pipeline that takes one task from plan to merge is covered separately in the [Workflow](./workflow.mdx) guide.
+I keep my coding agent config in one repo, `agent-config`. Three harnesses read it through symlinks: Claude Code, pi, and opencode. The repo is private, so you cannot clone it as is. The review subagent definition is shown in full below. The skill pipeline that takes one task from plan to merge is covered separately in the [Workflow](./workflow.mdx) guide.
 
 ## How it works
 
@@ -31,13 +31,13 @@ The skills all three harnesses share (plan, implement, review, ship, and so on) 
 
 Rule files are instructions the model reads. Shared rules (git, commit messages, how to reply, coding discipline) live in one harness-neutral file, `RULES.md`. Claude Code imports that file from `CLAUDE.md`, and opencode reads the same file through `instructions` in `opencode.json`. pi keeps a shortened copy of the same rules in its own system prompt addendum. Only what differs per harness goes in a per-harness file.
 
-The model can break a rule. What must not happen is blocked by a hook. A hook is a script that runs before or after a tool call. If a hook that runs before the call exits with 2, the call does not run.
+The model can break a rule. What must not happen is blocked by a hook.
 
 <HookGateDiagram />
 
 The model reads the rules before it works; the hook is the safety net that catches a wrong try anyway.
 
-A hook blocks only what one command can decide. "Open the PR as a draft, and merge only when the request says to merge" cannot be decided from a command, so it stays a rule only.
+A hook blocks only what one command can decide. "Open the PR as a draft, and merge only when I call `/land`" cannot be decided from a command, so it stays a rule only.
 
 ### Subagents pin their model
 
@@ -48,12 +48,6 @@ The caller can override the pinned model for one call. Run solo, the whole-branc
 <CrossModelReviewDiagram />
 
 ## My config
-
-### Install script
-
-The header comment sums up the link policy. A correct link is left alone, a broken link is replaced, and any other file is moved to `<item>.bak-<time>` before linking. So running it again is safe. `--claude-only` skips the pi and opencode side. Then the `~/.agents/skills` links are not made either, and Claude Code reads `agent-skills/` from the repo checkout directly.
-
-<include lang="sh" meta='title="install.sh"'>../snippets/agent-config/install.sh</include>
 
 ### Hooks
 
@@ -88,34 +82,19 @@ These are the categories it blocks now.
 - Changing permissions or ownership across the whole system
 - Deleting a repo with `gh` (API calls included), deleting secrets, SSH keys, or GPG keys, and making a repo public
 
+### Few plugins and MCP servers on
+
+Of the plugins other people wrote, I keep 9 on and 9 set to `false`. Every plugin on makes the skill list and the prompt longer, so they go on only when needed. The ones on are memory across sessions (`claude-mem`), terse chat replies (`caveman`), phone pushes and answers (`hwip`), Korean copy editing, UI work, research, video analysis, and Swift and C/C++ language servers.
+
+There are five MCP servers (`codegraph`, `context7`, `mobile-mcp`, `figma-desktop`, `qmd`). Two of them are used in a particular way.
+
+- **codegraph** — a graph with code symbols and call relations indexed ahead of time. One question replaces reading files one by one. A subagent does not use it unless told, so the delegation prompt says so.
+- **qmd** — search over my notes and documents. A local daemon serves it over HTTP, so no session loads the embedding model again. It is the only MCP server pi and opencode get too.
+
+Clone the repos on a new Mac and both lists are missing: `settings.json` holds only plugin names and on or off, and the MCP list lives in `~/.claude.json`. So the dotfiles install script reads both lists and adds back only what is missing. A server removed from the list is not unregistered, so a dropped server gets its own removal command.
+
 ### Review subagent
 
 `reviewer` is the subagent that runs reviews. The caller's brief says what to look at, and this file only holds the constraints on how it runs. It does not change the code under review and only returns findings. The caller decides pass or fail.
 
 <include lang="text" meta='title="claude/agents/reviewer.md"'>../snippets/agent-config/agents/reviewer.md</include>
-
-## Check
-
-1. See what would be linked, without changing anything.
-
-```sh
-bash install.sh --dry-run
-```
-
-2. Check that the items in `~/.claude` point into the repo.
-
-```sh
-ls -l ~/.claude   # hooks, agents, skills, CLAUDE.md, and so on point to <agent-config checkout>/claude/...
-```
-
-3. Run the regression tests for the command guard hook. The last line must end in `failed: 0`.
-
-```sh
-bash ~/.claude/hooks/test-guard.sh
-```
-
-4. See the difference between the repo's `settings.json` and the real file. When they match, it prints one line ending in `전부 일치` ("all match").
-
-```sh
-python3 ~/.claude/hooks/settings-sync.py --diff
-```

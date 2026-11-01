@@ -100,14 +100,12 @@ Before deleting, three questions: what was it added to stop; does it still fire 
 
 ## Working principles
 
-There are 19 short principle files, each read when its situation comes up. The rule file says only when to read each one; the body is read at that moment. These are the ones that come up most.
+There are 19 short principle files, each read when its situation comes up. The rule file says only when to read each one; the body is read at that moment. The ones that overlap with common advice are left out; these are the ones with a specific trigger.
 
 | Principle | When | What |
 |---|---|---|
 | verify-primary-source | Before writing a fact or number into a document | Did I read the primary source myself? If I only heard it, mark it unverified |
-| fix-root-causes | Debugging, or before adding a guard or retry | Reproduce first. Ask "why" until the answer is a wrong decision in the code, not a consequence of one |
 | attack-the-premise | Two fixes on one premise failed the same check | Before the third fix, write the shared premise as one sentence and test it directly |
-| test-behavior-not-implementation | Writing or judging a test | Breaking the behavior must fail it; restructuring internals with the same results must pass it. Derive the expected value from the requirement |
 | explain-the-number | Reporting a measurement | Ask "why not double?" and name the limiter. Keep the run count and spread next to the number |
 | subtract-before-you-add | Extending a system, prompt, or rule set | Remove complexity first. Design for observed usage, not speculative edge cases |
 

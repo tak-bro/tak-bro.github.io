@@ -35,3 +35,57 @@ macOS launchd runs the lanes at set times, so I don't have to remember them.
 ### The next plan cites it
 
 Before a plan is written, past decisions on the same topic are looked up in the knowledge base. A decision that turns up is cited rather than made again, and an alternative rejected before is not proposed again. A past decision is treated as a hypothesis: the first line of the implementation checklist checks that its premise still holds.
+
+## My config
+
+### One distilled decision note
+
+This note was distilled on a Friday from the plan for showing progress while [aicommit2](https://github.com/tak-bro/aicommit2) generates commit messages. It carries the source plan path and the commit, so the note leads back to the raw material. The "rejected" rows in the table are the alternatives the next plan will not propose again. I cut the implementation decisions down to one. The note is written in Korean; this is a translation.
+
+```md title="docs/aicommit2-progress-settled-requests.md"
+---
+kind: doc
+type: decision
+status: adopted
+domain: [aicommit2]
+links: ["[[plan-aicommit2]]"]
+---
+
+# Progress unit = settled Request — message axis and token axis rejected
+
+Response to Issue #258 ("loading slider while generating commits"). The root cause is not
+missing feedback but **false feedback**: the empty-state text `⚠ No commit messages were
+generated` renders before any response arrives, declaring failure while work is still running.
+
+## Decision
+
+| Option | Decision | Reason |
+|---|---|---|
+| Progress unit | **settled Request** = (provider, model) pair | Denominator Σ models is fixed before start. Success and failure both count → denominator always reached |
+| Message unit | Rejected | With `generate` (1-5/model), one failure leaves the denominator unreached — a counter stuck at `4/6` reproduces #258 inside the fix |
+| Token-axis %/slider | Rejected | No denominator exists (ADR-0001) |
+| Dead-air gap fix | Rejected | Measured ~50ms — imperceptible. The draft's MUST item died by measurement |
+| Counter text | Unit noun dropped, `(2/3)` | Both `generated` and `responded` become a lie the moment a failure is counted |
+
+## Implementation decisions
+
+- **finalize at model level**: wrapping at provider level fires once for a `model: [a, b]`
+  provider → stalls at `1/2`. With single-model providers the two levels match, so the defect
+  stays hidden (why check V5 exists).
+
+## Outcome
+
+`99c0dcf` (feat: show settled-request progress while generating commit messages).
+
+## Provenance
+
+- `.claude/20260709/PLAN-11-06-20.md` (2026-07-09, #258)
+- Related: aicommit2 repo `docs/adr/0001-progress-over-settled-requests.md`
+
+## Timeline
+
+- 2026-07-12 | Weekly distill.
+- 2026-10-24 | Grouped into concept page [[aicommit2-implementation-lessons-2]] (concept-bulk).
+```
+
+The last Timeline line records that three or more aicommit2 decision notes were grouped into a concept note.
