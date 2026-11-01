@@ -11,10 +11,11 @@
     "build": "react-router build --mode prod && node scripts/write-404.mjs",
     "typecheck": "react-router typegen --mode prod && tsc --noEmit",
     "test": "vitest run",
+    "check:guides": "node scripts/check-guides.mjs",
     "check:links": "node scripts/check-docs-links.mjs",
     "check:required": "node scripts/check-required-files.mjs",
     "check:sensitive": "node scripts/check-sensitive.mjs",
-    "check": "pnpm check:sensitive && pnpm typecheck && pnpm test && pnpm build && pnpm check:links && pnpm check:required && echo 'check: ok'"
+    "check": "pnpm check:sensitive && pnpm check:guides && pnpm typecheck && pnpm test && pnpm build && pnpm check:links && pnpm check:required && echo 'check: ok'"
   },
   "dependencies": {
     "@react-router/node": "7.18.2",

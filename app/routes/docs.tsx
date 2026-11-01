@@ -4,8 +4,7 @@ import { DocsBody, DocsDescription, DocsPage, DocsTitle } from 'fumadocs-ui/layo
 import { useFumadocsLoader } from 'fumadocs-core/source/client';
 import type { Route } from './+types/docs';
 import { baseOptions, docs, DOCS_ROUTE, i18n, localeFromPath, localeSwitchPath, pageTitle, requestPath, source } from '../lib';
-import { docsMdxComponents } from '../components';
-// Not through the barrel: the home imports it too, and this pulls fumadocs' TOC into its first load.
+import { docsMdxComponents } from '../components/mdx';
 import { docsTocSlots } from '../components/toc';
 
 // One module behind a route per page and language (routes.ts), so the language

@@ -2,7 +2,7 @@ import { HomeLayout } from 'fumadocs-ui/layouts/home';
 import { ArrowRight } from 'lucide-react';
 import { use, useEffect } from 'react';
 import { Link, useLocation } from 'react-router';
-import { PageHeader, primaryButton } from '../components';
+import { PageHeader, primaryButton } from '../components/page-header';
 import { baseOptions, CONTENT_ID, i18n, isLocalizedPath, localeFromPath, localizedDocsHref, NotFoundPathContext, takeNotFoundPath, type NotFoundHold } from '../lib';
 
 declare global {

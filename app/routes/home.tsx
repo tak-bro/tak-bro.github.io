@@ -3,7 +3,6 @@ import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { useEffect } from 'react';
 import { Link } from 'react-router';
 import type { Route } from './+types/home';
-// By path, not through the components barrel: the home loads only its own diagram.
 import { SetupMapDiagram } from '../components/diagrams/setup-map';
 import { baseOptions, CONTENT_ID, GITHUB_URL, homeCopy, localeFromPath, localizedDocsHref, requestPath, resumeHref, source } from '../lib';
 

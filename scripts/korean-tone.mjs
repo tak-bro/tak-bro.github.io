@@ -5,14 +5,20 @@
 /** Endings that look plain but are not a sentence ending: none yet. Each entry needs its reason. */
 const ALLOWED = new Set([]);
 
-/** The prose of an MDX file: frontmatter, code, JSX tags, import/export lines and URLs removed. */
+/** Attributes whose text a reader hears or sees: a screen reader reads `label` and `alt`. */
+const SPOKEN_ATTRIBUTE = /\b(?:label|alt)="([^"]*)"/g;
+
+/**
+ * The prose of an MDX file: frontmatter, code, MDX comments, import/export lines and URLs removed. A JSX tag
+ * is replaced by the text of its spoken attributes, one per line, so an aria label is held to the same tone.
+ */
 export const proseOf = (mdx) =>
   mdx
     .replace(/^---\n[\s\S]*?\n---\n/, '')
     .replace(/^(```|~~~)[^\n]*\n[\s\S]*?^\1[^\n]*$/gm, '')
+    .replace(/\{\/\*[\s\S]*?\*\/\}/g, '')
     .replace(/^(import|export)\s.*$/gm, '')
-    .replace(/<[A-Za-z][^>]*\/>/g, '')
-    .replace(/<\/?[A-Za-z][^>]*>/g, '')
+    .replace(/<\/?[A-Za-z][^>]*>/g, (tag) => [...tag.matchAll(SPOKEN_ATTRIBUTE)].map(([, text]) => `\n${text}\n`).join(''))
     .replace(/`[^`\n]*`/g, 'CODE')
     .replace(/\]\([^)\s]*\)/g, ']')
     .replace(/https?:\/\/\S+/g, '');

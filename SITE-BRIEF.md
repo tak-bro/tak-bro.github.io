@@ -56,7 +56,7 @@ nav = 가이드 · 이력서 · GitHub(`app/lib/layout.shared.tsx`, 테스트 `a
 
 **스택·빌드**
 - React Router 7 + fumadocs, 전부 prerender 하는 정적 사이트, GitHub Pages. Tailwind 4, Pretendard.
-- 완료 판정 = `pnpm check` 마지막 줄 `check: ok`(sensitive → typecheck → test → build → 링크·이미지 → 필수 파일).
+- 완료 판정 = `pnpm check` 마지막 줄 `check: ok`(sensitive → 가이드 해요체·다이어그램 → typecheck → test → build → 링크·이미지 → 필수 파일).
 - 배포(Pages)는 사용자가 정한다. 작업은 draft PR 까지.
 
 **내용**
@@ -65,7 +65,7 @@ nav = 가이드 · 이력서 · GitHub(`app/lib/layout.shared.tsx`, 테스트 `a
 - ko 기본, en 은 `/en`. 홈과 docs 는 두 언어 모두.
 - 가이드의 사실은 1차 출처(agent-config·dotfiles 의 파일)에 있는 것만. 출력은 실제 출력이고, 줄였으면 "줄여 옮김"이라고 적는다.
 - 쓸 말: 하네스, 규칙, 훅, 게이트, draft PR. 피할 말: 혁신적인, 10배 생산성, AI 전문가, 프롬프트 엔지니어, 자동으로 다 해 준다.
-- 톤: 한국어는 해요체가 기본이고, 격식이 필요한 서술은 습니다체(2026-11-01 사용자 지시). 평서형 `-다` 로 끝내지 않는다. 결론 먼저, 주장 옆에 실제 출력.
+- 톤: 한국어는 해요체가 기본이고, 격식이 필요한 서술은 습니다체(2026-11-01 사용자 지시). 평서형 `-다` 로 끝내지 않는다(`pnpm check:guides` 와 홈 문구 테스트가 막는다). 결론 먼저, 주장 옆에 실제 출력.
 
 **품질**
 - 모션 라이브러리 금지(GSAP·Lenis 없음). `prefers-reduced-motion` 에서 모션은 꺼지고, 스크립트 없이도 숨는 내용이 없다.

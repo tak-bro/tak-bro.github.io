@@ -58,9 +58,10 @@ At rest:     Still. Nothing moves while the pointer is still; hovers carry the l
   library and no script. Fill and stroke come from the same tokens (`fd-card`, `fd-border`,
   `fd-muted-foreground`, `brand` for the one box the figure starts from), so dark mode follows the
   page. viewBox at most 400 wide, labels 16 and subs 14, captions under the drawing; each SVG is a
-  named image (title and description). The home's `SetupMapDiagram` is imported by path, never through
-  the components barrel, so the home loads only its own figure; guide figures are bound to the MDX
-  components in `app/components/mdx.tsx`.
+  named image (title and description). `app/components` has no barrel: each route imports a component by
+  path, so the home loads only `SetupMapDiagram` and the guide figures (bound to the MDX components in
+  `app/components/mdx.tsx`) stay in the docs chunk. A barrel once carried every guide figure into every page
+  through the 404 that root imports.
 - Hover: text links darken their underline and nudge the arrow; index rows take the field tone and
   nudge the arrow; nav links draw an accent underline.
 
@@ -88,5 +89,5 @@ the title and the line under both.
 - `node .claude/20261101/guides/guides-qa.mjs ac3` (needs a build): one diagram on the home in both
   languages, no plain `-다` ending in the Korean home and introduction, and the home's first-load JS
   budget.
-- `pnpm check`: sensitive words, types, tests (home loader guides, copy symmetry, resume per language,
-  nav), build, links and images.
+- `pnpm check`: sensitive words, guides (해요체 and diagram pairs, `scripts/check-guides.mjs`), types, tests (home
+  loader guides, copy symmetry, Korean home tone, diagrams, resume per language, nav), build, links and images.

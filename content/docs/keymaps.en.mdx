@@ -9,9 +9,7 @@ Most of my key settings are defaults. What I changed is the key repeat speed, au
 
 A key press passes through these layers, and each one can change it.
 
-```text
-keyboard ──▶ Karabiner ──▶ macOS (key repeat, KeyBindings) ──▶ Ghostty (keybind) ──▶ shell, herdr, Neovim
-```
+<KeyLayersDiagram />
 
 - **Karabiner-Elements** changes keys before the OS sees them. I use it only for a device setting, with no remaps.
 - **macOS** sets key repeat and text input rules. I change them with `defaults write`, and change typed characters with `~/Library/KeyBindings/DefaultkeyBinding.dict`.

@@ -43,21 +43,19 @@ describe('proseOf', () => {
     ].join('\n');
     expect(plainEndings(proseOf(mdx))).toEqual([]);
   });
-});
 
-// The guides are rewritten one slice at a time; a guide leaves this list when its Korean page is done.
-// Plan PLAN-09-15-51 slice 09 empties it and removes it.
-const TONE_PENDING = new Set(['keymaps']);
+  // A screen reader speaks these, so they keep the page's tone; a file title in `meta` is not prose.
+  it('reads the label and alt text of a JSX tag, and drops MDX comments', () => {
+    const mdx = ['<HerdrDemo label="사이드바를 접는다." />', '<include meta=\'title="막는다"\'>a.sh</include>', '{/* 바꾸지 않는다 */}', '<img alt="화면을 연다" />'].join('\n');
+    expect(plainEndings(proseOf(mdx))).toEqual(['사이드바를 접는다', '화면을 연다']);
+  });
+});
 
 describe('Korean guides', async () => {
   const docs = join(import.meta.dirname, '../../content/docs');
   const slugs = (await readdir(docs)).filter((file) => /^[^.]+\.mdx$/.test(file)).map((file) => file.slice(0, -4));
 
-  it.each(slugs.filter((slug) => !TONE_PENDING.has(slug)))('%s ends no sentence in the plain form', async (slug) => {
+  it.each(slugs)('%s ends no sentence in the plain form', async (slug) => {
     expect(plainEndings(proseOf(await readFile(join(docs, `${slug}.mdx`), 'utf8')))).toEqual([]);
-  });
-
-  it('lists only guides that exist as pending', () => {
-    for (const slug of TONE_PENDING) expect(slugs).toContain(slug);
   });
 });
