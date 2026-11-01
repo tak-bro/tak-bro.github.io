@@ -26,16 +26,18 @@ At rest:     Still. After the session the input box shows a caret that blinks fo
 
 ## System
 
-- Palette: hwip.app's (taken from its theme CSS on 2026-11-01, the user: "테마 색상이 너무 ai 처럼 흔함. hwip.app 테마
-  가져오자"), written onto the fumadocs tokens in `app/app.css` so the docs follow it. Light: ground `#fff`, ink
-  `#111113`, field `#f2f2f4`, raised `#f0f0f2`, keylines `#e3e3e7`, muted text `#66666c`. Dark: ground `#000`, ink
-  `#fff`, field `#151517`, raised `#232326`, keylines `#2a2a2e`, muted text `#a0a0a6`. The field tone is the terminal
-  panel, the footer and the outline button's hover; muted text is the note under the terminal, the footer's licence
-  line and icons at rest, and the terminal's secondary output. One accent, hwip's yellow: `--color-brand-fill`
-  `#f8c200` fills the primary button with `--color-on-brand` text (`#171718` light, `#000` dark); `--color-brand`
-  draws text, lines and rings — `#856600` in light mode (yellow text is unreadable on white), `#f8c200` in dark: the
-  nav underline, focus rings, diagram highlights, and inside the terminal the prompt and Claude Code's own marks.
-  The home uses no error tone.
+- Palette: GMK 9009, picked from the keycap colour codes on matrixzj.github.io/docs/gmk-keycaps (2026-11-01, the
+  user, after rejecting hwip.app's greys and yellow), written onto the fumadocs tokens in `app/app.css` so the docs
+  follow it. Dark is the set itself: ground `#171718` (CR), ink `#d8d2c3` (L9), field `#202021`, raised `#2a2a2b`,
+  keylines `#393b3b` (N9), muted text `#aca693` (U9). Light keeps the charcoal ink `#171718` on a neutral grey after
+  the set's cool grey 2M, because the set's own cream read too creamy (the user: "라이트테마일때가 별로네 너무
+  크리미함"): ground `#f6f6f5`, field `#ebecea`, raised `#e2e3e1`, keylines `#c6c9c7` (2M), muted text `#5e6060`.
+  The field tone is the terminal panel, the footer and the outline button's hover; muted text is the note under the
+  terminal, the footer's licence line and icons at rest, and the terminal's secondary output. One accent, the set's
+  salmon (3C): `--color-brand-fill` `#c87e74` fills the primary button with `--color-on-brand` `#171718` text
+  (5.7:1); `--color-brand` draws text, lines and rings — `#9c4f45` in light mode (the fill is under 3:1 as text on
+  grey), `#c87e74` in dark: the nav underline, focus rings, diagram highlights, and inside the terminal the prompt and
+  Claude Code's own marks. The home uses no error tone.
 - Type: Pretendard Variable everywhere on the page. System mono (with Pretendard after it for Hangul) appears only
   inside the terminal, because it is real command output; the docs use it for code. Sizes: the name (the h1)
   `clamp(3rem, 5.6vw, 5.25rem)`, bold, line height 0.98, tracking -0.04em, balanced; the lede
@@ -43,7 +45,9 @@ At rest:     Still. After the session the input box shows a caret that blinks fo
   the note under the terminal and the licence line 14px; terminal text 12.5px on a phone and 13.5px from `sm`.
   Korean words break whole (`keep-all`). The name on the page is "Tak" alone in both languages (2026-11-01, the user:
   "(진형탁) 이거 없애 그냥 Tak 만"); the full name stays in the document title and description for search.
-- Frame: one pair of outer margins (`.home-frame`: 24px, 40px from 64rem). From `lg` a 12-column grid with a 40px
+- Frame: `.home-frame` is the nav's frame: as wide as fumadocs' layout width (`--fd-layout-width`, 1400px), centred,
+  16px side padding, so the name lines up with the nav logo at every width. The hero section grows to fill the
+  viewport, so the footer sits on the bottom edge on a tall or wide screen. From `lg` a 12-column grid with a 40px
   column gap: the hero (name, lede, actions) takes columns 1 to 5, centred against the terminal, which takes columns
   6 to 12 (a full-width terminal under a header row was tried and rejected, 2026-11-01: "레이아웃은 아까가 더 나아").
   The home lists no guides (2026-11-01, the user: "셋업 가이드가 앞에 있어야 하나"): the nav leads there. Below `lg`

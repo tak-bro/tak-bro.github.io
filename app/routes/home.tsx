@@ -63,7 +63,7 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
 
   return (
     <HomeLayout {...baseOptions({ lang })}>
-      <section id={CONTENT_ID} aria-labelledby="hero-heading" className="home-frame grid items-start gap-12 pt-12 lg:grid-cols-12 lg:items-center lg:gap-x-10 lg:pt-16">
+      <section id={CONTENT_ID} aria-labelledby="hero-heading" className="home-frame grid flex-1 items-start gap-12 pt-12 pb-24 lg:grid-cols-12 lg:content-center lg:items-center lg:gap-x-10 lg:pt-16 lg:pb-32">
         <div className="flex flex-col gap-6 lg:col-span-5">
           <h1 id="hero-heading" className="home-rise text-[clamp(3rem,5.6vw,5.25rem)] leading-[0.98] font-bold tracking-[-0.04em] text-balance break-keep">
             {copy.name}
@@ -96,37 +96,39 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
         </section>
       </section>
 
-      <footer className="home-frame mt-24 flex flex-wrap items-center justify-between gap-x-8 gap-y-4 bg-fd-card py-8 lg:mt-32">
-        <div className="flex flex-col gap-1 text-sm text-fd-muted-foreground">
-          <p className="text-[15px] font-medium text-fd-foreground">{copy.name}</p>
-          <p className="flex flex-wrap gap-x-4">
-            <span>© 2026 tak-bro</span>
-            <a href={`${REPO_URL}/blob/main/LICENSE`} className="underline-offset-4 hover:underline">
-              {copy.codeLicense}
-            </a>
-            <a href={`${REPO_URL}/blob/main/LICENSE-CONTENT`} className="underline-offset-4 hover:underline">
-              {copy.contentLicense}
-            </a>
-          </p>
-        </div>
-        <ul className="-mx-2.5 flex flex-wrap">
-          {copy.links.map((link) => (
-            <li key={link.icon}>
-              <a
-                href={link.href}
-                {...external(link)}
-                title={link.name}
-                className="flex size-11 items-center justify-center rounded-sm text-fd-muted-foreground hover:bg-fd-accent hover:text-fd-foreground motion-safe:transition-colors"
-              >
-                {LINK_ICONS[link.icon]}
-                <span className="sr-only">
-                  {link.name}
-                  {isExternal(link.href) ? ` ${copy.newTabLabel}` : ''}
-                </span>
+      <footer className="bg-fd-card">
+        <div className="home-frame flex flex-wrap items-center justify-between gap-x-8 gap-y-4 py-8">
+          <div className="flex flex-col gap-1 text-sm text-fd-muted-foreground">
+            <p className="text-[15px] font-medium text-fd-foreground">{copy.name}</p>
+            <p className="flex flex-wrap gap-x-4">
+              <span>© 2026 tak-bro</span>
+              <a href={`${REPO_URL}/blob/main/LICENSE`} className="underline-offset-4 hover:underline">
+                {copy.codeLicense}
               </a>
-            </li>
-          ))}
-        </ul>
+              <a href={`${REPO_URL}/blob/main/LICENSE-CONTENT`} className="underline-offset-4 hover:underline">
+                {copy.contentLicense}
+              </a>
+            </p>
+          </div>
+          <ul className="-mx-2.5 flex flex-wrap">
+            {copy.links.map((link) => (
+              <li key={link.icon}>
+                <a
+                  href={link.href}
+                  {...external(link)}
+                  title={link.name}
+                  className="flex size-11 items-center justify-center rounded-sm text-fd-muted-foreground hover:bg-fd-accent hover:text-fd-foreground motion-safe:transition-colors"
+                >
+                  {LINK_ICONS[link.icon]}
+                  <span className="sr-only">
+                    {link.name}
+                    {isExternal(link.href) ? ` ${copy.newTabLabel}` : ''}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
       </footer>
     </HomeLayout>
   );
