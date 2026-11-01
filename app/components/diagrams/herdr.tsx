@@ -1,44 +1,6 @@
 import { Arrow, Box, Diagram } from '../diagram';
 import { pick, type DiagramLangProps } from './lang';
 
-// Source: dotfiles ghostty/config (the herdr key table: super+t sends CSI 116;9u; super+shift+h toggles the table)
-// and herdr/config.toml (new_tab on that key).
-const KEY_COPY = {
-  ko: {
-    title: 'herdr 테이블이 켜져 있을 때만 Cmd+T 가 herdr 에 닿아요',
-    description:
-      'Cmd+T 를 누르면 Ghostty 가 먼저 받아요. herdr 키 테이블이 켜져 있으면 Ghostty 가 키를 kitty keyboard protocol 이스케이프 시퀀스 CSI 116;9u 로 바꿔 보내고, herdr 가 그것을 new_tab 으로 읽어요. 테이블이 꺼져 있으면 Ghostty 가 원래 동작대로 새 탭을 열어요.',
-    ghosttySub: 'herdr 테이블이 켜졌나요?',
-    on: '켜졌을 때',
-    off: ['Ghostty 새 탭', '꺼졌을 때'],
-  },
-  en: {
-    title: 'Cmd+T reaches herdr only while the herdr table is on',
-    description:
-      'Ghostty receives Cmd+T first. While the herdr key table is on, Ghostty turns the key into the kitty keyboard protocol escape sequence CSI 116;9u and sends it on, and herdr reads that as new_tab. With the table off, Ghostty does what it always does and opens a new tab.',
-    ghosttySub: 'is the herdr table on?',
-    on: 'table on',
-    off: ['Ghostty new tab', 'table off'],
-  },
-};
-
-export const KeyPathDiagram = ({ lang }: DiagramLangProps) => {
-  const copy = pick(KEY_COPY, lang);
-  return (
-    <Diagram width={360} height={324} title={copy.title} description={copy.description}>
-      <Box x={110} y={12} w={140} h={48} label="Cmd+T" tone="brand" />
-      <Arrow points={[[180, 60], [180, 82]]} />
-      <Box x={60} y={84} w={240} h={56} label="Ghostty" sub={copy.ghosttySub} />
-      <Arrow points={[[180, 140], [180, 154], [95, 154], [95, 170]]} />
-      <Arrow points={[[180, 154], [265, 154], [265, 170]]} />
-      <Box x={20} y={172} w={150} h={56} label="CSI 116;9u" sub={copy.on} />
-      <Box x={190} y={172} w={150} h={56} label={copy.off[0]} sub={copy.off[1]} tone="muted" />
-      <Arrow points={[[95, 228], [95, 254]]} />
-      <Box x={20} y={256} w={150} h={56} label="herdr" sub="new_tab" mono />
-    </Diagram>
-  );
-};
-
 // Source: dotfiles herdr/config.toml (a tab-bar command entry runs pane-branch.sh every 5 s) and
 // herdr/pane-branch.sh (report-metadata --token branch=… --ttl-ms 30000).
 const BRANCH_COPY = {

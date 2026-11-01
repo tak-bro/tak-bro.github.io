@@ -30,7 +30,7 @@ With `/orch`, the agent makes this choice. Its first line declares the kind of t
 For M and up, the plan is written to `.claude/<date>/PLAN-<time>.md` in the repo. That file is the whole state of the task. If the session breaks or the context is compacted, the agent reads the file again and continues.
 
 - **Slice queue** — a table that splits the work into vertical slices. A slice is not one layer of the stack but a narrow path that works end to end, and it can be checked on its own. The checkboxes are the progress.
-- **Acceptance contract** — one line per done criterion, each tied to the command that measures it. Before implementing, the agent runs the contract checks to confirm they actually fail. A contract check that passes from the start measures nothing. Once implementation starts, the contract is frozen with a hash, and the implementing model only fills in the pass/fail columns. Just before ship, a script checks that record against the real runs.
+- **Acceptance contract** — one line per done criterion, each tied to the command that measures it. It is shown red before implementing, frozen while implementing, and the model fills in only the verdict; [Principles](./principles.mdx) covers why. Right before ship, a script checks that record against the actual run log.
 
 ### Every slice passes a review gate
 
@@ -44,7 +44,7 @@ When the gate passes, the slice is committed, its box is ticked, and the agent m
 
 ### It stops at a draft PR
 
-With `/orch`, once the queue is empty the whole branch is reviewed once more (`/review --full`). The slice gate only sees one slice at a time, so problems that cross slices are caught here. This review starts `opus` and `sonnet` separately with the same brief and merges the two results.
+With `/orch`, once the queue is empty the whole branch is reviewed once more (`/review --full`). The slice gate only sees one slice at a time, so problems that cross slices are caught here. This review crosses two models ([Agent config](./agent-config.mdx)).
 
 Then `/ship` runs the closing gate. It runs every check in the plan again and checks the PASS records in the contract. If code that draws a screen changed, it runs screen QA (a browser for web). If logic changed and no test changed with it, it has the missing tests written. Just before the commit, it writes down the decisions and lessons from this work worth keeping (`/harvest`). Then it pushes the commits and opens a draft PR. The PR body lists each contract line with its verdict and evidence.
 
@@ -63,7 +63,7 @@ These are the lines left in the plan's `## Outcome` on the day I handed this sit
 
 Every gate passed in the end. Then I opened the draft PR and my verdict was that I could not tell what the site was about. The gates can measure whether a sentence matches its source, whether a link resolves, whether tests are green. They cannot measure who a home page speaks to, or what it says. That judgment is why the work stops at a draft PR. The home never shipped, and changing direction cost a few rewritten commits.
 
-I start the merge with `/land`. It marks a draft ready, squash merges (in my personal repos), moves the base of stacked PRs, and cleans up the worktree in one go. If my request says "merge too" ("머지까지"), that phrase is the approval given in advance, so `/ship` merges right after it opens the PR. Where the record of a finished task goes is covered in the [knowledge loop](./knowledge.mdx) guide.
+Merging has one path, `/land`. It marks a draft ready, squash merges (in my personal repos), moves the base of stacked PRs, and cleans up the worktree in one go. The agent opens the PR and stops; I look at the PR, then call `/land`. Where the record of a finished task goes is covered in the [knowledge loop](./knowledge.mdx) guide, and the skills I actually reach for around this path in [Skills and habits](./skills.mdx).
 
 ### When several agents run
 
@@ -92,25 +92,3 @@ The canonical loop rules live in a shared skill file that all three harnesses re
 ```
 
 `check:` names a command in the plan's verification commands section. Only the `status` and `evidence` columns change during implementation. Evidence is the command that was actually run plus the one output line that backs the verdict.
-
-## Check
-
-The two scripts below live in `claude/hooks/` of the agent config repo, so they run only on a Mac linked to that repo.
-
-1. Run every check in the plan. All of them must be green.
-
-```sh
-bash ~/.claude/hooks/verify-check.sh --plan .claude/<date>/PLAN-<time>.md --all   # verify-check: N/N green
-```
-
-2. Check that the contract's PASS records match the real run records.
-
-```sh
-python3 ~/.claude/hooks/ac-contract.py audit .claude/<date>/PLAN-<time>.md   # audit: ok
-```
-
-3. Check that the PR is open as a draft and not merged yet.
-
-```sh
-gh pr view --json isDraft,state   # {"isDraft":true,"state":"OPEN"}
-```

@@ -35,3 +35,57 @@ description: 끝난 작업의 기록이 금요일에 지식베이스로 증류�
 ### 다음 플랜이 인용해요
 
 플랜을 쓰기 전에 같은 주제의 지난 결정을 지식베이스에서 찾아요. 찾은 결정은 다시 정하지 않고 인용하고, 예전에 버린 대안은 다시 제안하지 않아요. 지난 결정은 가설로 다뤄서, 그 결정의 전제가 지금도 맞는지를 구현 체크리스트 첫 줄에서 확인해요.
+
+## 내 설정
+
+### 증류된 결정 노트 한 장
+
+[aicommit2](https://github.com/tak-bro/aicommit2) 에서 커밋 메시지 생성 중 진행률을 보여 주는 작업을 하고, 그 플랜이 금요일에 증류된 노트예요. 원본 플랜 경로와 커밋이 붙어 있어서 노트에서 원재료로 거슬러 갈 수 있어요. 표에서 "기각" 줄이 다음 플랜이 다시 제안하지 않는 대안이에요. 구현 결정은 하나만 남기고 줄였어요.
+
+```md title="docs/aicommit2-progress-settled-requests.md"
+---
+kind: doc
+type: decision
+status: adopted
+domain: [aicommit2]
+links: ["[[plan-aicommit2]]"]
+---
+
+# 진행률 단위 = settled Request — 메시지 축·토큰 축 기각
+
+Issue #258("커밋 생성 중 로딩 슬라이더") 대응. 근본 원인은 피드백 부재가 아니라
+**거짓 피드백** — 응답 도착 전에 empty-state 문구 `⚠ No commit messages were
+generated`가 렌더되어, 아직 작업 중인데 이미 실패했다고 선언.
+
+## 결정
+
+| 선택지 | 결정 | 근거 |
+|---|---|---|
+| 진행률 단위 | **settled Request** = (provider, model) 쌍 | 분모 Σ models가 시작 전 확정. 성공·실패 모두 카운트 → 분모 항상 도달 |
+| Message 단위 | 기각 | `generate`(1-5/model) 탓에 실패 1건이면 분모 미도달 — `4/6`에서 멈춘 카운터는 #258을 픽스 안에서 재현 |
+| 토큰 축 %/슬라이더 | 기각 | 분모가 존재하지 않음 (ADR-0001) |
+| dead-air 갭 픽스 | 기각 | 실측 ~50ms — 지각 불가. 초안의 MUST 항목이 측정으로 사망 |
+| 카운터 문구 | 단위 명사 생략 `(2/3)` | `generated`/`responded` 둘 다 실패를 세는 순간 거짓말이 됨 |
+
+## 구현 결정
+
+- **finalize 위치 = model 레벨**: provider 레벨 래핑은 `model: [a, b]` provider에서
+  1회만 발화 → `1/2` 스톨. 단일 model provider들로는 두 레벨이 일치해 이 결함이
+  안 보임 (검증 V5의 존재 이유).
+
+## Outcome
+
+`99c0dcf` (feat: show settled-request progress while generating commit messages).
+
+## Provenance
+
+- `.claude/20260709/PLAN-11-06-20.md` (2026-07-09, #258)
+- 관련: aicommit2 repo `docs/adr/0001-progress-over-settled-requests.md`
+
+## Timeline
+
+- 2026-07-12 | 주간 증류.
+- 2026-10-24 | 개념 페이지 [[aicommit2-implementation-lessons-2]] 에 묶임 (concept-bulk).
+```
+
+본문은 요점만 남기는 레인 문체라 가이드와 말투가 달라요. Timeline 마지막 줄은 aicommit2 결정 노트가 셋 이상 모여 개념 노트로 묶인 기록이에요.

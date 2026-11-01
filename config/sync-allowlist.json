@@ -1,10 +1,6 @@
 [
   { "repo": "dotfiles", "from": "herdr/config.toml", "to": "herdr/config.toml" },
   { "repo": "dotfiles", "from": "herdr/pane-branch.sh", "to": "herdr/pane-branch.sh" },
-  { "repo": "dotfiles", "from": "ghostty/config", "to": "ghostty/config" },
-  { "repo": "dotfiles", "from": "nvim/config/lua/config/settings.lua", "to": "nvim/settings.lua" },
-  { "repo": "dotfiles", "from": "claude/mcp-servers.json", "to": "claude/mcp-servers.json" },
-  { "repo": "agent-config", "from": "install.sh", "to": "install.sh" },
   { "repo": "agent-config", "from": "claude/agents/reviewer.md", "to": "agents/reviewer.md" },
   { "repo": "agent-config", "from": "claude/skills/_shared/task-sizing.md", "to": "skills/task-sizing.md" },
   { "repo": "agent-config", "from": "agent-skills/03-review/LOOP.md", "to": "skills/review-loop.md" }
