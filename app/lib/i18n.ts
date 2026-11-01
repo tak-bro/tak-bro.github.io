@@ -91,4 +91,8 @@ export const alternateLinks = (pathname: string, currentLocale: string): Alterna
   ];
 };
 
-export const resumeHref = (lang: string): string => RESUME_HREF[lang] ?? RESUME_HREF[i18n.defaultLanguage];
+/** A per-language value, falling back to the default language's. */
+export const localized = <T,>(values: Record<string, T>, lang: string | undefined): T =>
+  values[lang ?? i18n.defaultLanguage] ?? values[i18n.defaultLanguage];
+
+export const resumeHref = (lang: string): string => localized(RESUME_HREF, lang);

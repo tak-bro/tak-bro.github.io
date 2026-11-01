@@ -32,10 +32,10 @@ At rest:     Still. After the session the input box shows a caret that blinks fo
   4.5:1 on the card) for the guides heading, guide lines, the note under the terminal, the licence line and the
   terminal's secondary output. One accent, `--color-brand` (`oklch(0.52 0.16 42)` light, `oklch(0.76 0.14 55)` dark):
   the primary button, the nav underline, focus rings, and inside the terminal the prompt and Claude
-  Code's own marks (see Terminal). `--color-fd-error` only on a hook that blocked something.
+  Code's own marks (see Terminal). `--color-fd-error` only on a hook that blocked something (overridden to `oklch(0.5 0.2 27)` in light mode for 4.5:1 on the card).
 - Type: Pretendard Variable everywhere on the page. System mono (with Pretendard after it for Hangul) appears only
   inside the terminal, because it is real command output; the docs use it for code. Sizes: the name (the h1)
-  `clamp(3rem, 5.6vw, 5.25rem)`, bold, line height 0.98, tracking -0.04em, balanced; the lede
+  `clamp(min(3rem, 13vw), 5.6vw, 5.25rem)` (the floor drops under 3rem below about 370px wide, so "(Hyungtak Jin)" fits 320px), bold, line height 0.98, tracking -0.04em, balanced; the lede
   `clamp(1.0625rem, 1.3vw, 1.1875rem)` at most 40ch; buttons, guide rows, the guides heading and the footer 15px;
   the note under the terminal and the licence line 14px; terminal text 12.5px on a phone and 13.5px from `sm`.
   Korean words break whole (`keep-all`); "Tak (Hyungtak Jin)" breaks only before the parenthesis.
@@ -100,7 +100,7 @@ The one live thing on the home, `app/components/home-terminal.tsx`, styled by th
   - `pending`: as prerendered. With motion allowed, CSS holds every line back and shows them all after 2.5s, so the
     panel reads even if script never runs.
   - `armed`: script is running and waiting; lines that have not played are `visibility: hidden`, so the panel keeps
-    its size and nothing reflows. It plays when 35% of the panel is in view, once.
+    its size and nothing reflows. It plays once, when the panel's top passes three quarters of the viewport height (a line, not a ratio of the panel, so a panel taller than a zoomed-in viewport still plays).
   - `playing`: every line types out. Commands (`claude`, the request) type one character at a time (300ms before
     the first, then about 42 to 74ms each, 280ms after the last). The header box appears 300ms after `claude`. The
     agent's lines stream two characters every 22ms: a session line starts 420ms after the line before it, a tool

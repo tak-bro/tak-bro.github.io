@@ -74,7 +74,8 @@ export const HomeTerminal = ({ copy, docsHref }: HomeTerminalProps) => {
         observer.disconnect();
         setPlay('playing');
       },
-      { threshold: 0.35 },
+      // A line, not a ratio: a panel taller than a zoomed-in viewport never reaches a ratio, and would stay hidden.
+      { rootMargin: '0px 0px -25% 0px' },
     );
     observer.observe(node);
     return () => observer.disconnect();

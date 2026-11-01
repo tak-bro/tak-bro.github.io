@@ -80,7 +80,7 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
     <HomeLayout {...baseOptions({ lang })}>
       <section id={CONTENT_ID} aria-labelledby="hero-heading" className="home-frame grid items-start gap-12 pt-12 lg:grid-cols-12 lg:grid-rows-[auto_1fr] lg:gap-x-10 lg:gap-y-8 lg:pt-16">
         <div className="flex flex-col gap-6 lg:col-span-5">
-          <h1 id="hero-heading" className="home-rise text-[clamp(3rem,5.6vw,5.25rem)] leading-[0.98] font-bold tracking-[-0.04em] text-balance break-keep">
+          <h1 id="hero-heading" className="home-rise text-[clamp(min(3rem,13vw),5.6vw,5.25rem)] leading-[0.98] font-bold tracking-[-0.04em] text-balance break-keep">
             <NameLines name={copy.name} />
           </h1>
           <p className="home-rise max-w-[40ch] text-[clamp(1.0625rem,1.3vw,1.1875rem)] leading-relaxed text-pretty break-keep [--i:1]">

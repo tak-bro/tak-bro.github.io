@@ -10,6 +10,8 @@
 /* fumadocs' neutral muted text (#737373) falls under 4.5:1 on its light card and accent backgrounds. */
 :root:not(.dark) {
   --color-fd-muted-foreground: hsl(0, 0%, 35%);
+  /* fumadocs' red (#fb2c36) is 3.4:1 on the light card; the home terminal's blocked hook line needs 4.5:1. */
+  --color-fd-error: oklch(0.5 0.2 27);
 }
 
 @theme {
@@ -113,6 +115,11 @@ html > body[data-scroll-locked] {
 /* Shiki's light colours are tuned for white; on fumadocs' grey card they fall to about 4:1. */
 :root:not(.dark) figure.shiki {
   background-color: var(--shiki-light-bg);
+}
+
+/* github-dark's comment grey (#6A737D) is 3.7:1 on the dark card; GitHub's own dark comment grey is 5.7:1. */
+.dark figure.shiki span[style*='--shiki-dark:#6A737D'] {
+  --shiki-dark: #8b949e !important;
 }
 
 #nd-nav nav > a:first-child > span,

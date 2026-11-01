@@ -1,4 +1,4 @@
-import { i18n } from './i18n';
+import { localized } from './i18n';
 import { GITHUB_URL, LINKEDIN_URL, RESUME_HREF } from './shared';
 
 /** One guide in the list: `slug` is the top-level page under content/docs. */
@@ -137,4 +137,4 @@ const ko: HomeCopy = {
 const HOME_COPY: Record<string, HomeCopy> = { en, ko };
 
 export const homeCopy = (locale: string | undefined): HomeCopy =>
-  HOME_COPY[locale ?? i18n.defaultLanguage] ?? HOME_COPY[i18n.defaultLanguage];
+  localized(HOME_COPY, locale);
