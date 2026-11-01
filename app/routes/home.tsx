@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 import type { Route } from './+types/home';
 import { HomeTerminal } from '../components/home-terminal';
 import { primaryButton } from '../components/page-header';
-import { baseOptions, CONTENT_ID, GITHUB_URL, homeCopy, localeFromPath, localizedDocsHref, requestPath, resumeHref, type HomeLink } from '../lib';
+import { baseOptions, CONTENT_ID, GITHUB_URL, homeCopy, localeFromPath, requestPath, resumeHref, type HomeLink } from '../lib';
 
 export const meta = ({ location }: Route.MetaArgs) => {
   const copy = homeCopy(localeFromPath(location.pathname));
@@ -72,39 +72,40 @@ const external = (link: { href: string }) => (isExternal(link.href) ? { rel: 'no
 const Home = ({ loaderData }: Route.ComponentProps) => {
   const { lang } = loaderData;
   const copy = homeCopy(lang);
-  const docsHref = localizedDocsHref(lang);
 
   return (
     <HomeLayout {...baseOptions({ lang })}>
-      <section id={CONTENT_ID} aria-labelledby="hero-heading" className="home-frame grid items-start gap-12 pt-12 lg:grid-cols-12 lg:items-center lg:gap-x-10 lg:pt-16">
-        <div className="flex flex-col gap-6 lg:col-span-5">
-          <h1 id="hero-heading" className="home-rise text-[clamp(min(3rem,13vw),5.6vw,5.25rem)] leading-[0.98] font-bold tracking-[-0.04em] text-balance break-keep">
+      <section id={CONTENT_ID} aria-labelledby="hero-heading" className="home-frame flex flex-col gap-10 pt-12 lg:gap-14 lg:pt-20">
+        <div className="grid items-end gap-6 lg:grid-cols-12 lg:gap-x-10">
+          <h1 id="hero-heading" className="home-rise text-[clamp(min(3rem,13vw),5.6vw,5.25rem)] leading-[0.98] font-bold tracking-[-0.04em] text-balance break-keep lg:col-span-6">
             <NameLines name={copy.name} />
           </h1>
-          <p className="home-rise max-w-[40ch] text-[clamp(1.0625rem,1.3vw,1.1875rem)] leading-relaxed text-pretty break-keep [--i:1]">
-            {copy.lede}
-          </p>
-          <ul className="home-rise flex flex-wrap gap-3 [--i:2]">
-            <li>
-              <a href={resumeHref(lang)} rel="noreferrer noopener" target="_blank" className={`${primaryButton} min-h-11`}>
-                <span>{copy.resumeLabel}</span>
-                <ExternalMark label={copy.newTabLabel} />
-              </a>
-            </li>
-            <li>
-              <a href={GITHUB_URL} rel="noreferrer noopener" target="_blank" className={outlineButton}>
-                <span>GitHub</span>
-                <ExternalMark label={copy.newTabLabel} />
-              </a>
-            </li>
-          </ul>
+          <div className="flex flex-col gap-6 lg:col-span-6">
+            <p className="home-rise max-w-[44ch] text-[clamp(1.0625rem,1.3vw,1.1875rem)] leading-relaxed text-pretty break-keep [--i:1]">
+              {copy.lede}
+            </p>
+            <ul className="home-rise flex flex-wrap gap-3 [--i:2]">
+              <li>
+                <a href={resumeHref(lang)} rel="noreferrer noopener" target="_blank" className={`${primaryButton} min-h-11`}>
+                  <span>{copy.resumeLabel}</span>
+                  <ExternalMark label={copy.newTabLabel} />
+                </a>
+              </li>
+              <li>
+                <a href={GITHUB_URL} rel="noreferrer noopener" target="_blank" className={outlineButton}>
+                  <span>GitHub</span>
+                  <ExternalMark label={copy.newTabLabel} />
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
 
-        <section aria-labelledby="terminal-heading" className="lg:col-span-7 lg:col-start-6">
+        <section aria-labelledby="terminal-heading">
           <h2 id="terminal-heading" className="sr-only">
             {copy.terminalLabel}
           </h2>
-          <HomeTerminal copy={copy} docsHref={docsHref} />
+          <HomeTerminal copy={copy} />
           <p className="mt-3 text-sm text-fd-muted-foreground break-keep">{copy.logNote}</p>
         </section>
       </section>

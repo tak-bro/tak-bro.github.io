@@ -18,7 +18,7 @@ The site is React Router 7, prerendered, with no motion library (no GSAP, no Len
 
 ```
 Idea:        A terminal opens Claude Code and replays the real agent session that rebuilt this site.
-Material:    Real output: `claude`, the request, and lines picked from that session.
+Material:    Real output: `hwip cc`, the request, and lines picked from that session.
 Motion verb: type. Every line types out, like the old env-tak page: commands at a person's pace, the agent's lines faster, a spinner in a line's slot until it starts.
 Live thing:  The terminal, once, when it scrolls into view.
 At rest:     Still. After the session the input box shows a caret that blinks four times and stays lit.
@@ -32,18 +32,19 @@ At rest:     Still. After the session the input box shows a caret that blinks fo
   4.5:1 on the card) for the note under the terminal, the footer's licence line and icons at rest, and the
   terminal's secondary output. One accent, `--color-brand` (`oklch(0.52 0.16 42)` light, `oklch(0.76 0.14 55)` dark):
   the primary button, the nav underline, focus rings, and inside the terminal the prompt and Claude
-  Code's own marks (see Terminal). `--color-fd-error` only on a hook that blocked something (overridden to `oklch(0.5 0.2 27)` in light mode for 4.5:1 on the card).
+  Code's own marks (see Terminal). The home uses no error tone.
 - Type: Pretendard Variable everywhere on the page. System mono (with Pretendard after it for Hangul) appears only
   inside the terminal, because it is real command output; the docs use it for code. Sizes: the name (the h1)
   `clamp(min(3rem, 13vw), 5.6vw, 5.25rem)` (the floor drops under 3rem below about 370px wide, so "(Hyungtak Jin)" fits 320px), bold, line height 0.98, tracking -0.04em, balanced; the lede
   `clamp(1.0625rem, 1.3vw, 1.1875rem)` at most 40ch; buttons and the footer name 15px;
   the note under the terminal and the licence line 14px; terminal text 12.5px on a phone and 13.5px from `sm`.
   Korean words break whole (`keep-all`); "Tak (Hyungtak Jin)" breaks only before the parenthesis.
-- Frame: one pair of outer margins (`.home-frame`: 24px, 40px from 64rem). From `lg` a 12-column grid with a 40px
-  column gap: the hero (name, lede, actions) takes columns 1 to 5, centred against the terminal, which takes columns
-  6 to 12. The home lists no guides (2026-11-01, the user: "셋업 가이드가 앞에 있어야 하나"): the nav, the terminal's
-  lines and the lede already lead there. Below `lg` one column with 48px between blocks, hero then terminal.
-- Rhythm: the hero starts 48px under the nav (64px from `lg`). The footer is the only field band: 96px above it
+- Frame: one pair of outer margins (`.home-frame`: 24px, 40px from 64rem). One column: a header row, then the
+  terminal at full width. From `lg` the header row is a 12-column grid with a 40px gap, bottom-aligned: the name in
+  columns 1 to 6, the lede and actions in 7 to 12. There is no side column and no guide list (2026-11-01, the user:
+  "셋업 가이드가 앞에 있어야 하나", then "좌측 내용이 있어야 할까"): the terminal is the stage, and the nav leads to
+  the guides.
+- Rhythm: the header starts 48px under the nav (80px from `lg`); 40px between header and terminal (56px from `lg`). The footer is the only field band: 96px above it
   (128px from `lg`), 32px inside top and bottom.
 - Shape: radius 4px on buttons, footer icon links and the request line; 6px on the terminal panel and the Claude Code
   header box. Keylines in the border tone only: the terminal panel, the outline button and
@@ -57,7 +58,7 @@ At rest:     Still. After the session the input box shows a caret that blinks fo
 - Buttons: the primary is brand on the background colour, 15px semibold, at least 44px tall, and turns to the ink
   colour on hover. The second action is the same size in outline (border tone) and takes the field tone on hover.
 - Hover: footer icons take the ink colour on the accent tone; 404 text links darken their underline and nudge the
-  arrow 3px; nav links draw an accent underline; a terminal session line lights its guide name in the accent.
+  arrow 3px; nav links draw an accent underline. The terminal has no links.
 - Diagrams: the home loads none. Guide figures live in `app/components/diagrams/`, are bound to the MDX components in
   `app/components/mdx.tsx`, and stay in the docs chunk. The home's first-load JS was 205859 B gzip when this was
   written.
@@ -65,12 +66,10 @@ At rest:     Still. After the session the input box shows a caret that blinks fo
 ## Sections
 
 ```
-HERO (cols 1-5, centred)          |  TERMINAL (cols 6-12)
-  name (h1, display size)         |    panel: claude, request, seven session lines, input box
-  lede: software engineer; GE    |    note: lines picked from the session that rebuilt this site
-    Healthcare 2015, products     |
-    since 2018, coding agents now |
-  Resume (brand) ↗  GitHub (outline) ↗
+HEADER    name (h1, cols 1-6)  |  lede (software engineer; GE Healthcare 2015, products since 2018,
+                                 |  coding agents now) and Resume (brand) ↗  GitHub (outline) ↗ (cols 7-12)
+TERMINAL  full width: hwip cc, Claude Code header, request, six session lines, input box
+          note: lines picked from the session that rebuilt this site
 FOOTER    field: name over "© · licences" | icon links (LinkedIn, GitHub, hwip, resume, source)
 ```
 
@@ -88,25 +87,26 @@ The one live thing on the home, `app/components/home-terminal.tsx`, styled by th
   `aria-busy` while it plays. Decorative marks (prompt, `>`, `⏺`, `⎿`, `✻`, the caret, the spinner) are hidden from
   assistive tech.
 - Content, top to bottom, every line in the prerendered HTML:
-  1. `tak ~ $ claude` with the prompt in the accent, then the Claude Code header: a box keylined in the accent at 60%, `✻` in the accent, "Claude
+  1. `tak ~ $ hwip cc` (Claude Code started through hwip) with the prompt in the accent, then the Claude Code header: a box keylined in the accent at 60%, `✻` in the accent, "Claude
      Code" in semibold and the working directory muted.
   2. The request the user typed (`/orch …`, per language), behind a `>` on a faint ink tint (7%).
-  3. Seven session lines from that run, from plan to draft PR. A `say` line is `⏺` and the agent's text. A `tool`
-     line is `⏺` and the call in semibold, with its result under it behind `⎿`, muted. The blocked commit hook
-     colours its `⏺` and its result in the error tone. From `sm`, each line ends with the name of the guide that
-     explains it, in the sans face, muted; on a phone guide names are dropped and lines wrap.
+  3. Six session lines from that run, from plan to draft PR, all in the ink and muted tones. A `say` line is `⏺`
+     and the agent's text. A `tool` line is `⏺` and the call in semibold, with its result lines under it, the first
+     behind `⎿`, muted. The questions the user answered (what stays in the nav, how the diagrams are drawn) show as
+     Claude Code shows them: "User answered Claude's questions:" and one `· question → answer` line each. Lines wrap
+     on a phone.
   4. An empty input box (border tone) with a `>` and a resting caret.
 - States (`data-play`):
   - `pending`: as prerendered. With motion allowed, CSS holds every line back and shows them all after 2.5s, so the
     panel reads even if script never runs.
   - `armed`: script is running and waiting; lines that have not played are `visibility: hidden`, so the panel keeps
     its size and nothing reflows. It plays once, when the panel's top passes three quarters of the viewport height (a line, not a ratio of the panel, so a panel taller than a zoomed-in viewport still plays).
-  - `playing`: every line types out. Commands (`claude`, the request) type one character at a time (300ms before
-    the first, then about 42 to 74ms each, 280ms after the last). The header box appears 300ms after `claude`. The
+  - `playing`: every line types out. Commands (`hwip cc`, the request) type one character at a time (300ms before
+    the first, then about 42 to 74ms each, 280ms after the last). The header box appears 300ms after `hwip cc`. The
     agent's lines stream two characters every 22ms: a session line starts 420ms after the line before it, a tool
     result 160ms after its call, and each waits 120ms after its last character; the input box comes last. Until an
     agent line's first character, a spinner (`·✢✳✶✻✽`, 110ms a frame) and "Orchestrating…" in the accent hold its
-    slot. A line's guide name shows once the line has finished. While a line types, the caret sits at its end and the
+    slot. While a line types, the caret sits at its end and the
     untyped rest stays invisible in place.
   - `done`: everything shows. Reduced motion, or a browser without IntersectionObserver, goes straight here.
 - The resting caret blinks four times (1.1s each, under five seconds) and then stays lit.

@@ -19,13 +19,13 @@ describe('home copy', () => {
   const shape = (lang: string) => {
     const copy = homeCopy(lang);
     return {
-      guides: Object.keys(copy.guideTitles),
+      session: copy.session.map((line) => (line.kind === 'tool' ? [line.call, line.result.length] : 'say')),
       links: copy.links.map((link) => [link.icon, link.href.startsWith('/assets/') ? 'resume' : link.href]),
     };
   };
 
-  it('carries the same guides and links in the same order in both languages', () => {
-    expect(shape('ko').guides).toHaveLength(7);
+  it('carries the same session and links in the same order in both languages', () => {
+    expect(shape('ko').session).toHaveLength(6);
     expect(shape('en')).toEqual(shape('ko'));
   });
 

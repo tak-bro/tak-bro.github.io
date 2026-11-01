@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { Link } from 'react-router';
 import type { HomeCopy } from '../lib/home-copy';
 
 /**
- * The home's terminal: `claude`, then the request that rebuilt this site and the session's own lines.
+ * The home's terminal: `hwip cc` opens Claude Code, then the request that rebuilt this site and the session's own lines.
  * It plays once when it scrolls into view, typed like the old env-tak page: commands type at a person's
  * pace, the agent's lines type out faster after them, and a spinner holds a line's slot until it starts.
  *
@@ -22,7 +21,8 @@ const TYPE_MS = 42;
 const STREAM_MS = 22;
 const STREAM_CHUNK = 2;
 const SPINNER = ['·', '✢', '✳', '✶', '✻', '✽', '✻', '✶', '✳', '✢'];
-const CLAUDE_CMD_TEXT = 'claude';
+/** Claude Code started through hwip, so its questions can reach the phone. */
+const CLAUDE_CMD_TEXT = 'hwip cc';
 
 const Shell = () => (
   <span className="text-brand" aria-hidden>
@@ -41,18 +41,13 @@ const buildScript = (copy: HomeCopy) => {
   const request = add({ kind: 'type', text: copy.request, lead: 300, agent: false });
   const session = copy.session.map((line) => ({
     head: add({ kind: 'type', text: line.kind === 'tool' ? line.call : line.text, lead: 420, agent: true }),
-    result: line.kind === 'tool' ? add({ kind: 'type', text: line.result, lead: 160, agent: true }) : -1,
+    results: line.kind === 'tool' ? line.result.map((text) => add({ kind: 'type', text, lead: 160, agent: true })) : [],
   }));
   const input = add({ kind: 'show', wait: 200 });
   return { beats, claudeCmd, header, request, session, input };
 };
 
-export interface HomeTerminalProps {
-  readonly copy: HomeCopy;
-  readonly docsHref: string;
-}
-
-export const HomeTerminal = ({ copy, docsHref }: HomeTerminalProps) => {
+export const HomeTerminal = ({ copy }: { readonly copy: HomeCopy }) => {
   const script = useMemo(() => buildScript(copy), [copy]);
   const { beats } = script;
 
@@ -116,8 +111,7 @@ export const HomeTerminal = ({ copy, docsHref }: HomeTerminalProps) => {
     const beat = beats[index];
     return play === 'playing' && pos.at === index && beat.kind === 'type' && (!beat.agent || pos.chars > 0);
   };
-  const stepOn = (on: boolean) => ({ 'data-step': '', ...(playing && on ? { 'data-on': '' } : {}) });
-  const step = (index: number) => stepOn(pos.at > index || typing(index));
+  const step = (index: number) => ({ 'data-step': '', ...(playing && (pos.at > index || typing(index)) ? { 'data-on': '' } : {}) });
 
   /** A command as typed so far, the caret at its end, the rest kept invisible so the line never reflows. */
   const typed = (index: number): ReactNode => {
@@ -173,33 +167,23 @@ export const HomeTerminal = ({ copy, docsHref }: HomeTerminalProps) => {
 
       <ol className="mt-3 flex flex-col gap-1.5">
         {copy.session.map((line, index) => {
-          const { head, result } = script.session[index];
-          const tool = line.kind === 'tool' ? line : null;
+          const { head, results } = script.session[index];
           return (
-            <li key={index} className="group/log">
-              <p className="relative items-baseline gap-x-6 break-keep sm:grid sm:grid-cols-[1fr_auto]" {...step(head)}>
+            <li key={index}>
+              <p className="relative flex gap-2 break-keep" {...step(head)}>
                 {spinner(head)}
-                <span className="flex gap-2">
-                  <span className={tool?.blocked ? 'text-fd-error' : 'text-fd-foreground'} aria-hidden>
-                    ⏺
-                  </span>
-                  <span className={tool ? 'font-semibold' : undefined}>{typed(head)}</span>
-                </span>
-                <Link
-                  {...stepOn(pos.at > head)}
-                  to={`${docsHref}/${line.guide}`}
-                  className="font-sans text-[12px] whitespace-nowrap text-fd-muted-foreground group-hover/log:text-brand hover:text-brand max-sm:hidden motion-safe:transition-colors sm:text-[13px]"
-                >
-                  {copy.guideTitles[line.guide]} →
-                </Link>
+                <span aria-hidden>⏺</span>
+                <span className={line.kind === 'tool' ? 'font-semibold' : undefined}>{typed(head)}</span>
               </p>
-              {tool ? (
-                <p className={`relative flex gap-2 pl-5 break-keep ${tool.blocked ? 'text-fd-error' : 'text-fd-muted-foreground'}`} {...step(result)}>
+              {results.map((result, row) => (
+                <p key={result} className="relative flex gap-2 pl-5 break-keep text-fd-muted-foreground" {...step(result)}>
                   {spinner(result)}
-                  <span aria-hidden>⎿</span>
+                  <span className={row === 0 ? undefined : 'invisible'} aria-hidden>
+                    ⎿
+                  </span>
                   <span>{typed(result)}</span>
                 </p>
-              ) : null}
+              ))}
             </li>
           );
         })}

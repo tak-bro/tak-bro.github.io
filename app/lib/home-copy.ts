@@ -9,12 +9,12 @@ export interface HomeLink {
 }
 
 /**
- * One turn of the agent in the home's Claude Code session, and the guide that explains it.
- * `say` is a line the agent printed; `tool` is a call (`Skill(ship)`) and the result under it.
+ * One turn of the agent in the home's Claude Code session.
+ * `say` is a line the agent printed; `tool` is a call (`Skill(ship)`) and the lines under it.
  */
 export type HomeSessionLine =
-  | { readonly kind: 'say'; readonly text: string; readonly guide: GuideSlug }
-  | { readonly kind: 'tool'; readonly call: string; readonly result: string; readonly blocked?: boolean; readonly guide: GuideSlug };
+  | { readonly kind: 'say'; readonly text: string }
+  | { readonly kind: 'tool'; readonly call: string; readonly result: readonly string[] };
 
 export interface HomeCopy {
   /** The site name, for llms.txt. */
@@ -30,8 +30,6 @@ export interface HomeCopy {
   readonly request: string;
   readonly session: readonly HomeSessionLine[];
   readonly logNote: string;
-  /** The guide a session line points to, by its top-level page under content/docs. */
-  readonly guideTitles: Readonly<Record<GuideSlug, string>>;
   readonly about: string;
   readonly links: readonly HomeLink[];
   readonly codeLicense: string;
@@ -39,8 +37,6 @@ export interface HomeCopy {
   readonly newTabLabel: string;
   readonly skipLabel: string;
 }
-
-type GuideSlug = 'principles' | 'agent-config' | 'workflow' | 'knowledge' | 'plugins' | 'herdr' | 'keymaps';
 
 const footerLinks = (resume: string, resumeHref: string, source: string): HomeLink[] => [
   { icon: 'linkedin', name: 'LinkedIn', href: LINKEDIN_URL },
@@ -61,24 +57,14 @@ const en: HomeCopy = {
   terminalLabel: 'Claude Code session',
   request: '/orch drop the posts and projects, polish the guides, and redraw them with diagrams',
   session: [
-    { kind: 'say', text: 'orch: change · L · done: /blog 404 · every guide polite Korean · a diagram each', guide: 'workflow' },
-    { kind: 'tool', call: 'Skill(01-plan)', result: 'contract frozen 35485d5f · 12 rows, red before any code', guide: 'workflow' },
-    { kind: 'tool', call: 'Skill(03-review) slice 04', result: 'FAIL → PASS · one fix loop', guide: 'workflow' },
-    { kind: 'tool', call: 'Bash(git commit)', result: '[commit-convention] blocked — AI co-author trailer', blocked: true, guide: 'agent-config' },
-    { kind: 'tool', call: 'Skill(review --full)', result: 'cross-model: sonnet · only opus 1', guide: 'agent-config' },
-    { kind: 'tool', call: 'Bash(verify-check.sh --all)', result: '12/12 green', guide: 'workflow' },
-    { kind: 'tool', call: 'Skill(ship)', result: 'committed → draft PR #20', guide: 'workflow' },
+    { kind: 'say', text: 'orch: change · L · done: /blog 404 · every guide polite Korean · a diagram each' },
+    { kind: 'tool', call: "User answered Claude's questions:", result: ['· What stays in the nav → Guides, Resume, GitHub', '· Diagrams → hand-made SVG components'] },
+    { kind: 'tool', call: 'Skill(01-plan)', result: ['contract frozen 35485d5f · 12 rows, red before any code'] },
+    { kind: 'tool', call: 'Skill(03-review) slice 04', result: ['FAIL → PASS · one fix loop'] },
+    { kind: 'tool', call: 'Bash(verify-check.sh --all)', result: ['12/12 green'] },
+    { kind: 'tool', call: 'Skill(ship)', result: ['committed → draft PR #20'] },
   ],
   logNote: 'Lines picked from the Claude Code session that rebuilt this site.',
-  guideTitles: {
-    principles: 'Principles',
-    'agent-config': 'Agent config',
-    workflow: 'Workflow',
-    knowledge: 'Knowledge loop',
-    plugins: 'Plugins and MCP',
-    herdr: 'Herdr',
-    keymaps: 'Keymaps',
-  },
   about: 'Tak (Hyungtak Jin)',
   links: footerLinks('Resume', RESUME_HREF.en, 'Site source'),
   codeLicense: 'Code: MIT',
@@ -97,24 +83,14 @@ const ko: HomeCopy = {
   terminalLabel: 'Claude Code 세션',
   request: '/orch 글·프로젝트 없애고, 가이드 윤문하고, 다이어그램 적극 활용해서 재개정해',
   session: [
-    { kind: 'say', text: 'orch: change · L · 완료: /blog 404 · 가이드 해요체 · 가이드마다 그림', guide: 'workflow' },
-    { kind: 'tool', call: 'Skill(01-plan)', result: 'contract frozen 35485d5f · 12행, 구현 전 red 확인', guide: 'workflow' },
-    { kind: 'tool', call: 'Skill(03-review) slice 04', result: 'FAIL → PASS · fix 루프 1회', guide: 'workflow' },
-    { kind: 'tool', call: 'Bash(git commit)', result: '[commit-convention] 차단 — AI co-author 트레일러', blocked: true, guide: 'agent-config' },
-    { kind: 'tool', call: 'Skill(review --full)', result: 'cross-model: sonnet · only opus 1', guide: 'agent-config' },
-    { kind: 'tool', call: 'Bash(verify-check.sh --all)', result: '12/12 green', guide: 'workflow' },
-    { kind: 'tool', call: 'Skill(ship)', result: 'committed → draft PR #20', guide: 'workflow' },
+    { kind: 'say', text: 'orch: change · L · 완료: /blog 404 · 가이드 해요체 · 가이드마다 그림' },
+    { kind: 'tool', call: "User answered Claude's questions:", result: ['· nav에 남길 메뉴 → 가이드·이력서·GitHub', '· 다이어그램 → 직접 만든 SVG 컴포넌트'] },
+    { kind: 'tool', call: 'Skill(01-plan)', result: ['contract frozen 35485d5f · 12행, 구현 전 red 확인'] },
+    { kind: 'tool', call: 'Skill(03-review) slice 04', result: ['FAIL → PASS · fix 루프 1회'] },
+    { kind: 'tool', call: 'Bash(verify-check.sh --all)', result: ['12/12 green'] },
+    { kind: 'tool', call: 'Skill(ship)', result: ['committed → draft PR #20'] },
   ],
   logNote: '이 사이트를 고친 실제 Claude Code 세션에서 골랐어요.',
-  guideTitles: {
-    principles: '원칙',
-    'agent-config': '에이전트 설정',
-    workflow: '워크플로우',
-    knowledge: '지식 루프',
-    plugins: '플러그인·MCP',
-    herdr: 'Herdr',
-    keymaps: '키맵',
-  },
   about: 'Tak(진형탁)',
   links: footerLinks('이력서', RESUME_HREF.ko, '사이트 소스'),
   codeLicense: '코드: MIT',
