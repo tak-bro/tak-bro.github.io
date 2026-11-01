@@ -118,7 +118,7 @@ const Home = ({ loaderData }: Route.ComponentProps) => {
           <h2 id="terminal-heading" className="sr-only">
             {copy.terminalLabel}
           </h2>
-          <HomeTerminal copy={copy} docsHref={docsHref} resumeHref={resumeHref(lang)} />
+          <HomeTerminal copy={copy} docsHref={docsHref} />
           <p className="mt-3 text-sm text-fd-muted-foreground break-keep">{copy.logNote}</p>
         </section>
       </section>

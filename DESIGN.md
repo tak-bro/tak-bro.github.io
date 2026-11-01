@@ -17,8 +17,8 @@ The site is React Router 7, prerendered, with no motion library (no GSAP, no Len
 ## Concept
 
 ```
-Idea:        The person introduces himself in a terminal, then replays the real agent session that rebuilt this site.
-Material:    Real command output: `env | grep tak`, then `claude` and lines picked from that session.
+Idea:        A terminal opens Claude Code and replays the real agent session that rebuilt this site.
+Material:    Real output: `claude`, the request, and lines picked from that session.
 Motion verb: type. Commands type in, output prints after them, a spinner holds the slot while the agent works.
 Live thing:  The terminal, once, when it scrolls into view.
 At rest:     Still. After the session the input box shows a caret that blinks four times and stays lit.
@@ -31,7 +31,7 @@ At rest:     Still. After the session the input box shows a caret that blinks fo
   `--color-fd-border`. Muted text `--color-fd-muted-foreground` (overridden to `hsl(0, 0%, 35%)` in light mode for
   4.5:1 on the card) for the guides heading, guide lines, the note under the terminal, the licence line and the
   terminal's secondary output. One accent, `--color-brand` (`oklch(0.52 0.16 42)` light, `oklch(0.76 0.14 55)` dark):
-  the primary button, the nav underline, focus rings, and inside the terminal the prompt, the grep match and Claude
+  the primary button, the nav underline, focus rings, and inside the terminal the prompt and Claude
   Code's own marks (see Terminal). `--color-fd-error` only on a hook that blocked something.
 - Type: Pretendard Variable everywhere on the page. System mono (with Pretendard after it for Hangul) appears only
   inside the terminal, because it is real command output; the docs use it for code. Sizes: the name (the h1)
@@ -66,7 +66,7 @@ At rest:     Still. After the session the input box shows a caret that blinks fo
 
 ```
 HERO + GUIDES (cols 1-5)          |  TERMINAL (cols 6-12)
-  name (h1, display size)         |    panel: env | grep tak, claude, request, seven session lines, input box
+  name (h1, display size)         |    panel: claude, request, seven session lines, input box
   lede: since 2018, now writes    |    note: lines picked from the session that rebuilt this site
     the rules for coding agents   |
   Resume (brand) ↗  GitHub (outline) ↗
@@ -88,23 +88,21 @@ The one live thing on the home, `app/components/home-terminal.tsx`, styled by th
   `aria-busy` while it plays. Decorative marks (prompt, `>`, `⏺`, `⎿`, `✻`, the caret, the spinner) are hidden from
   assistive tech.
 - Content, top to bottom, every line in the prerendered HTML:
-  1. `tak ~ $ env | grep tak` with the prompt in the accent, then four lines `NAME`, `GITHUB`, `LINKED_IN`, `RESUME`.
-     Each "tak" in the output is marked in the accent; the last three are working links (new tab).
-  2. `tak ~ $ claude`, then the Claude Code header: a box keylined in the accent at 60%, `✻` in the accent, "Claude
+  1. `tak ~ $ claude` with the prompt in the accent, then the Claude Code header: a box keylined in the accent at 60%, `✻` in the accent, "Claude
      Code" in semibold and the working directory muted.
-  3. The request the user typed (`/orch …`, per language), behind a `>` on a faint ink tint (7%).
-  4. Seven session lines from that run, from plan to draft PR. A `say` line is `⏺` and the agent's text. A `tool`
+  2. The request the user typed (`/orch …`, per language), behind a `>` on a faint ink tint (7%).
+  3. Seven session lines from that run, from plan to draft PR. A `say` line is `⏺` and the agent's text. A `tool`
      line is `⏺` and the call in semibold, with its result under it behind `⎿`, muted. The blocked commit hook
      colours its `⏺` and its result in the error tone. From `sm`, each line ends with the name of the guide that
      explains it, in the sans face, muted; on a phone guide names are dropped and lines wrap.
-  5. An empty input box (border tone) with a `>` and a resting caret.
+  4. An empty input box (border tone) with a `>` and a resting caret.
 - States (`data-play`):
   - `pending`: as prerendered. With motion allowed, CSS holds every line back and shows them all after 2.5s, so the
     panel reads even if script never runs.
   - `armed`: script is running and waiting; lines that have not played are `visibility: hidden`, so the panel keeps
     its size and nothing reflows. It plays when 35% of the panel is in view, once.
   - `playing`: commands type one character at a time (300ms before the first, then about 30 to 60ms each, 280ms
-    after the last). Output lines appear after their command: env lines 70ms apart, the header after 300ms, each
+    after the last). Output lines appear after their command: the header after 300ms, each
     session line after 520ms and a tool result 260ms after its call, the input box last. From the request until the
     input box, a spinner (`·✢✳✶✻✽`, 110ms a frame) and "Orchestrating…" in the accent hold the slot of the next line.
     While a command types, the caret sits at its end and the untyped rest stays invisible in place.

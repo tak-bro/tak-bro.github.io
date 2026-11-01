@@ -1,13 +1,11 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link } from 'react-router';
 import type { HomeCopy } from '../lib/home-copy';
-import { GITHUB_URL, LINKEDIN_URL } from '../lib/shared';
-import { SITE_URL } from '../lib/site';
 
 /**
- * The home's terminal: `env | grep tak`, then `claude`, then the request that rebuilt this site and the
- * session's own lines. It plays once when it scrolls into view: commands type character by character,
- * output prints after its command, and a spinner runs while the agent works.
+ * The home's terminal: `claude`, then the request that rebuilt this site and the session's own lines.
+ * It plays once when it scrolls into view: commands type character by character, output prints after
+ * its command, and a spinner runs while the agent works.
  *
  * Every line is in the prerendered HTML, so the page reads without JS. Lines that have not played yet
  * are `visibility: hidden`, so nothing moves when they appear. Under reduced motion it never plays.
@@ -20,25 +18,7 @@ type Play = 'pending' | 'armed' | 'playing' | 'done';
 
 const TYPE_MS = 30;
 const SPINNER = ['·', '✢', '✳', '✶', '✻', '✽', '✻', '✶', '✳', '✢'];
-const ENV_CMD_TEXT = 'env | grep tak';
 const CLAUDE_CMD_TEXT = 'claude';
-
-const linkClass = 'underline decoration-fd-border underline-offset-4 [overflow-wrap:anywhere] hover:decoration-current';
-
-/** `grep tak` colours each match in its output. */
-const Grep = ({ text }: { text: string }) => (
-  <>
-    {text.split(/(tak)/).map((part, index) =>
-      part === 'tak' ? (
-        <mark key={index} className="bg-transparent text-brand">
-          {part}
-        </mark>
-      ) : (
-        part
-      ),
-    )}
-  </>
-);
 
 const Shell = () => (
   <span className="text-brand" aria-hidden>
@@ -48,25 +28,10 @@ const Shell = () => (
 
 const Caret = ({ rest }: { rest?: boolean }) => <span className={rest ? 'home-term-caret home-term-caret-rest' : 'home-term-caret'} aria-hidden />;
 
-const ExternalLink = ({ href, text }: { href: string; text: string }) => (
-  <a href={href} rel="noreferrer noopener" target="_blank" className={linkClass}>
-    <Grep text={text} />
-  </a>
-);
-
-const envLines = (resumeHref: string) => [
-  { name: 'NAME', node: <Grep text="Hyungtak Jin" /> },
-  { name: 'GITHUB', node: <ExternalLink href={GITHUB_URL} text="tak-bro" /> },
-  { name: 'LINKED_IN', node: <ExternalLink href={LINKEDIN_URL} text={LINKEDIN_URL.replace(/^https:\/\/(www\.)?/, '').replace(/\/$/, '')} /> },
-  { name: 'RESUME', node: <ExternalLink href={resumeHref} text={`${new URL(SITE_URL).host}${resumeHref}`} /> },
-];
-
 /** The script, one beat per command or printed line, and where each part of the panel sits in it. */
-const buildScript = (copy: HomeCopy, envCount: number) => {
+const buildScript = (copy: HomeCopy) => {
   const beats: Beat[] = [];
   const add = (beat: Beat) => beats.push(beat) - 1;
-  const envCmd = add({ kind: 'type', text: ENV_CMD_TEXT });
-  const env = Array.from({ length: envCount }, () => add({ kind: 'show', wait: 70 }));
   const claudeCmd = add({ kind: 'type', text: CLAUDE_CMD_TEXT });
   const header = add({ kind: 'show', wait: 300 });
   const request = add({ kind: 'type', text: copy.request });
@@ -75,18 +40,16 @@ const buildScript = (copy: HomeCopy, envCount: number) => {
     result: line.kind === 'tool' ? add({ kind: 'show', wait: 260 }) : -1,
   }));
   const input = add({ kind: 'show', wait: 200 });
-  return { beats, envCmd, env, claudeCmd, header, request, session, input };
+  return { beats, claudeCmd, header, request, session, input };
 };
 
 export interface HomeTerminalProps {
   readonly copy: HomeCopy;
   readonly docsHref: string;
-  readonly resumeHref: string;
 }
 
-export const HomeTerminal = ({ copy, docsHref, resumeHref }: HomeTerminalProps) => {
-  const env = envLines(resumeHref);
-  const script = useMemo(() => buildScript(copy, env.length), [copy, env.length]);
+export const HomeTerminal = ({ copy, docsHref }: HomeTerminalProps) => {
+  const script = useMemo(() => buildScript(copy), [copy]);
   const { beats } = script;
 
   const ref = useRef<HTMLDivElement>(null);
@@ -178,17 +141,7 @@ export const HomeTerminal = ({ copy, docsHref, resumeHref }: HomeTerminalProps) 
       aria-busy={play === 'playing'}
       className="home-term rounded-md border border-fd-border bg-fd-card px-4 py-5 font-mono text-[12.5px] leading-[1.8] sm:px-7 sm:py-6 sm:text-[13.5px]"
     >
-      <p {...step(script.envCmd)}>
-        <Shell />
-        {typed(script.envCmd)}
-      </p>
-      {env.map((entry, index) => (
-        <p key={entry.name} {...step(script.env[index])}>
-          {entry.name}={entry.node}
-        </p>
-      ))}
-
-      <p className="mt-4" {...step(script.claudeCmd)}>
+      <p {...step(script.claudeCmd)}>
         <Shell />
         {typed(script.claudeCmd)}
       </p>
